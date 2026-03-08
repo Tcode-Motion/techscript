@@ -1,0 +1,42 @@
+# TechScript — Classes and OOP
+
+class Animal:
+    fn init(self, name, sound):
+        self.name = name
+        self.sound = sound
+
+    fn speak(self):
+        say f"{self.name} says {self.sound}!"
+
+    fn describe(self):
+        say f"I am {self.name}, an animal."
+
+class Dog(Animal):
+    fn init(self, name):
+        self.name = name
+        self.sound = "Woof"
+
+    fn fetch(self, item):
+        say f"{self.name} fetches the {item}!"
+
+class Cat(Animal):
+    fn init(self, name):
+        self.name = name
+        self.sound = "Meow"
+
+    fn purr(self):
+        say f"{self.name} purrs softly..."
+
+# Create instances
+say "=== OOP Demo ==="
+dog = Dog("Rex")
+cat = Cat("Whiskers")
+
+dog.speak()
+dog.fetch("ball")
+dog.describe()
+
+say ""
+cat.speak()
+cat.purr()
+cat.describe()

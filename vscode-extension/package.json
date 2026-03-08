@@ -1,0 +1,40 @@
+{
+  "name": "techscript",
+  "displayName": "TechScript Language",
+  "description": "Syntax highlighting, snippets, and file icons for TechScript (.txs)",
+  "version": "1.0.0",
+  "publisher": "techscript-team",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "categories": ["Programming Languages", "Themes"],
+  "icon": "icons/techscript-logo.png",
+  "contributes": {
+    "languages": [
+      {
+        "id": "techscript",
+        "aliases": ["TechScript", "txs"],
+        "extensions": [".txs", ".tx"],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/techscript-file.png",
+          "dark": "./icons/techscript-file.png"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "techscript",
+        "scopeName": "source.techscript",
+        "path": "./syntaxes/techscript.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "techscript",
+        "path": "./snippets/techscript.json"
+      }
+    ]
+  }
+}

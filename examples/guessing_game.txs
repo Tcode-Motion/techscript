@@ -1,0 +1,20 @@
+# Number Guessing Game in TechScript
+
+target = randint(1, 100)
+attempts = 0
+
+say "=== Guess the Number ==="
+say "I'm thinking of a number between 1 and 100."
+say ""
+
+until false:
+    guess = ask "Your guess: " |> to_int
+    attempts += 1
+
+    if guess < target:
+        say "Too low! Try higher."
+    elif guess > target:
+        say "Too high! Try lower."
+    else:
+        say f"Correct! You got it in {attempts} attempts!"
+        break

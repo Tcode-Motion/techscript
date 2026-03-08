@@ -1,0 +1,34 @@
+# TechScript — Fibonacci, list methods, and functional patterns
+
+fn fib(n):
+    if n <= 1:
+        return n
+    return fib(n - 1) + fib(n - 2)
+
+# Generate first 15 fibonacci numbers
+say "=== Fibonacci Sequence ==="
+for i in 0..15:
+    say f"fib({i}) = {fib(i)}"
+
+# List methods demo
+say ""
+say "=== List Operations ==="
+numbers = [5, 2, 8, 1, 9, 3, 7, 4, 6]
+say f"Original:  {numbers}"
+say f"Sorted:    {numbers.sort()}"
+say f"Reversed:  {numbers.reverse()}"
+say f"Length:    {numbers.length}"
+say f"First:     {numbers.first}"
+say f"Last:      {numbers.last}"
+
+# Functional patterns
+say ""
+say "=== Functional Patterns ==="
+doubled = [1, 2, 3, 4, 5].map((x) => x * 2)
+say f"Doubled:  {doubled}"
+
+evens = [1, 2, 3, 4, 5, 6].filter((x) => x % 2 == 0)
+say f"Evens:    {evens}"
+
+total = [1, 2, 3, 4, 5].reduce((acc, x) => acc + x, 0)
+say f"Sum:      {total}"

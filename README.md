@@ -53,7 +53,82 @@ Start the interactive TechScript prompt to test out commands line-by-line:
 tech repl
 ```
 
+## Language Overview & Examples
+
+TechScript (`.txs`) reads like English and supports modern features out of the box.
+
+```python
+# Variables
+name = "Alice"
+age = 30
+const PI = 3.14159
+
+# Output & Input
+say "Hello!"
+say f"Name: {name}, Age: {age}"
+answer = ask "What's your name? "
+
+# Control flow
+if age >= 18:
+    say "Adult"
+elif age >= 13:
+    say "Teen"
+else:
+    say "Child"
+
+# Loops
+for i in 1..=10:
+    say i
+
+while age > 0:
+    age -= 1
+
+# Functions
+fn greet(name, greeting = "Hello"):
+    say f"{greeting}, {name}!"
+
+greet("Bob")
+
+# Classes
+class Dog:
+    fn init(self, name):
+        self.name = name
+    fn speak(self):
+        say f"{self.name} says Woof!"
+
+rex = Dog("Rex")
+rex.speak()
+
+# Pipe operator (functional style)
+"hello world" |> upper |> say
+
+# List methods
+[1, 2, 3].map((x) => x * 2).filter((x) => x > 3)
+
+# Error handling
+try:
+    throw "something went wrong"
+catch err:
+    say err
+```
+
 ## Documentation & Learning
 
-- **[Language Documentation](docs/)**: Explore the `docs/` folder for a deep dive into the language features, standard library, and architecture.
-- **[Examples](examples/)**: Check out the `examples/` directory for ready-to-use snippets demonstrating loops, functions, variables, and more basics to get you started quickly!
+- **[Language Specification](docs/TECHSCRIPT_SPEC.md)**: Complete language spec with EBNF grammar.
+- **[200 Keyword Reference](docs/TECHSCRIPT_REFERENCE.md)**: All keywords, functions, and methods.
+- **[User Guide](docs/TECHSCRIPT_GUIDE.md)**: Beginner-friendly getting started guide.
+- **[Example Programs](docs/TECHSCRIPT_EXAMPLES.md)**: 15 complete example programs.
+- **[Build Guide (Lexer/Parser)](docs/TECHSCRIPT_BUILD.md)**: How the interpreter works internally.
+- **[Build Guide (Interpreter)](docs/TECHSCRIPT_BUILD_2.md)**: Evaluator, CLI, REPL, and packaging details.
+
+You can find ready-to-use `.txs` files in the **[examples/](examples/)** directory!
+
+## License
+
+TechScript is released under the MIT License. See [LICENSE](LICENSE) for details.
+
+---
+
+<p align="center">
+  <strong>Made with 🐉 by the TechScript Team</strong>
+</p>

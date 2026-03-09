@@ -1,3 +1,46 @@
-.vscode/
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+*.whl
+
+# Build outputs (keeps installer scripts, but ignores generated binaries)
+build/
+dist/
+*.spec
+
+# Temp web build
+.tech_web_tmp/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# OS
 .DS_Store
-*.log
+Thumbs.db
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+pytest_output.txt
+
+# Dev scripts
+debug_web.py
+error_output*.txt
+tmp_update_docs.py
+process_logo.py
+build_release_repo.py
+
+# Extra image blobs
+ChatGPT Image*.png

@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF2D55;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00D4FF;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad2" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF2D55;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#00D4FF;stop-opacity:0.9" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Dragon body - geometric, angular design -->
+  <!-- Main body / torso -->
+  <polygon points="256,80 180,200 210,280 256,320 302,280 332,200" fill="url(#grad1)" opacity="0.9" filter="url(#glow)"/>
+
+  <!-- Left wing -->
+  <polygon points="180,200 60,120 80,220 140,260 180,240" fill="url(#grad2)" opacity="0.85"/>
+  <polygon points="60,120 30,100 50,180 80,220" fill="#FF2D55" opacity="0.7"/>
+
+  <!-- Right wing -->
+  <polygon points="332,200 452,120 432,220 372,260 332,240" fill="url(#grad2)" opacity="0.85"/>
+  <polygon points="452,120 482,100 462,180 432,220" fill="#00D4FF" opacity="0.7"/>
+
+  <!-- Head -->
+  <polygon points="256,80 230,60 240,100 256,110 272,100 282,60" fill="url(#grad1)" filter="url(#glow)"/>
+
+  <!-- Eyes -->
+  <circle cx="245" cy="85" r="4" fill="#FFF" opacity="0.95"/>
+  <circle cx="267" cy="85" r="4" fill="#FFF" opacity="0.95"/>
+
+  <!-- Horns -->
+  <polygon points="230,60 218,30 235,65" fill="#FF2D55" opacity="0.9"/>
+  <polygon points="282,60 294,30 277,65" fill="#00D4FF" opacity="0.9"/>
+
+  <!-- Tail -->
+  <polygon points="256,320 240,380 256,420 272,380" fill="url(#grad1)" opacity="0.8"/>
+  <polygon points="256,420 240,440 256,470 272,440" fill="#FF2D55" opacity="0.6"/>
+
+  <!-- Circuit-board patterns on body -->
+  <line x1="256" y1="150" x2="256" y2="280" stroke="#FFF" stroke-width="1" opacity="0.3"/>
+  <line x1="220" y1="200" x2="290" y2="200" stroke="#FFF" stroke-width="1" opacity="0.3"/>
+  <line x1="230" y1="240" x2="280" y2="240" stroke="#FFF" stroke-width="1" opacity="0.3"/>
+
+  <!-- Circuit nodes -->
+  <circle cx="256" cy="150" r="3" fill="#FFF" opacity="0.5"/>
+  <circle cx="256" cy="200" r="3" fill="#FFF" opacity="0.5"/>
+  <circle cx="256" cy="240" r="3" fill="#FFF" opacity="0.5"/>
+  <circle cx="220" cy="200" r="2" fill="#00D4FF" opacity="0.6"/>
+  <circle cx="290" cy="200" r="2" fill="#FF2D55" opacity="0.6"/>
+
+  <!-- Data particles from mouth -->
+  <circle cx="256" cy="55" r="2" fill="#FF2D55" opacity="0.8"/>
+  <circle cx="248" cy="45" r="1.5" fill="#00D4FF" opacity="0.6"/>
+  <circle cx="264" cy="42" r="1.5" fill="#FFF" opacity="0.5"/>
+  <circle cx="252" cy="35" r="1" fill="#FF2D55" opacity="0.4"/>
+  <circle cx="260" cy="32" r="1" fill="#00D4FF" opacity="0.4"/>
+</svg>

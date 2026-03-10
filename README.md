@@ -9,10 +9,10 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-v1.0.1-7c3aed?style=flat-square">
-  <img src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square">
-  <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-green?style=flat-square">
-  <img src="https://img.shields.io/badge/license-MIT-orange?style=flat-square">
+  <img src="https://img.shields.io/badge/version-v1.0.2-7c3aed?style=flat-square">
+  <img src="https://img.shields.io/badge/runtime-Native_Rust_VM-orange?style=flat-square">
+  <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux%20%7C%20Android-green?style=flat-square">
+  <img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square">
 </p>
 
 ---
@@ -36,10 +36,10 @@ say f"Hello, {name}!"
 That's it. **No semicolons. No brackets. No confusing symbols.** Just simple words that make sense.
 
 TechScript is:
-- 🟢 **A programming language** — you can write code that runs on your computer
+- 🟢 **A programming language** — you can write code that runs on your computer natively
 - 🌐 **A web builder** — you can build full websites with it (no HTML or CSS needed!)
-- 🐍 **Powered by Python** — works on any computer that has Python installed
-- 📦 **One command** — `tech run yourfile.txs` and your program runs instantly
+- 🦀 **Powered by Native Rust** — blazing fast compilation, completely independent of Python
+- 📦 **One command** — `tech run yourfile.txs` and your program runs instantly into bytecodes
 
 ---
 
@@ -68,7 +68,7 @@ TechScript is:
 ### Option 1: One-Click Installer (Recommended for Beginners)
 
 1. Go to the [📥 Releases page](../../releases/latest)
-2. Download **`TechScript-Setup.exe`**
+2. Download **`setup.exe`**
 3. Double-click it — it will install everything automatically!
 4. Open **PowerShell** (press `Win + X` → "Windows PowerShell") and type:
 
@@ -76,7 +76,7 @@ TechScript is:
 tech version
 ```
 
-You should see: `TechScript v1.0.1` 🎉
+You should see: `TechScript v1.0.2` 🎉
 
 **What the installer does automatically:**
 - ✅ Puts `tech.exe` on your computer
@@ -84,33 +84,26 @@ You should see: `TechScript v1.0.1` 🎉
 - ✅ Registers `.txs` files so they know they belong to TechScript
 - ✅ Installs the VS Code extension for syntax highlighting
 
-### Option 2: Using pip (If you already have Python)
+### Option 2: Using pip (Cross-Platform Wrapper)
 
 ```powershell
-pip install techscript
+pip install techscript-lang
 ```
 
 ---
 
-## 🐧 Install on Linux (Ubuntu, Kali, Arch, etc.)
+## 🐧 Install on Linux (Ubuntu, Kali, Debian, Arch)
 
 ### Super Simple — Just paste this in your terminal:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Tcode-Moti/TechScript/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
 ```
 
-**Or manually:**
-
+**Using APT (Debian/Ubuntu):**
 ```bash
-# Step 1: Make sure Python 3.10+ is installed
-python3 --version
-
-# Step 2: Install TechScript
-pip3 install techscript
-
-# Step 3: Test it
-tech version
+sudo apt update
+sudo apt install techscript
 ```
 
 ---
@@ -118,20 +111,20 @@ tech version
 ## 🍎 Install on macOS
 
 ```bash
-# If you have Homebrew and Python:
-pip3 install techscript
+# Using Homebrew:
+brew install tcode-motion/techscript/techscript
 
 # OR use the one-line installer:
-curl -fsSL https://raw.githubusercontent.com/Tcode-Moti/TechScript/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
 ```
 
 ---
 
 ## 📱 Install on Android (Termux)
 
+Using the built-in PKG manager:
 ```bash
-pkg install python
-pip install techscript
+pkg install techscript
 tech version
 ```
 
@@ -425,24 +418,17 @@ After installing, all your `.txs` files will have the dragon icon and coloured s
 
 ---
 
-## ✨ v1.0.1 Changelog — What's New vs v1.0.0
+## ✨ v1.0.2 Changelog
 
-| Feature | v1.0.0 | v1.0.1 |
+| Feature | v1.0.1 | v1.0.2 |
 |---|---|---|
-| Basic scripting (say, make, loops) | ✅ | ✅ |
-| Functions, classes, error handling | ✅ | ✅ |
-| 80+ built-in functions | ✅ | ✅ |
-| VS Code extension (syntax + icons) | ✅ | ✅ Updated to v1.0.2 |
-| `use web` — Build websites | ❌ | ✅ **NEW** |
-| No HTML/CSS/JS needed | ❌ | ✅ **NEW** |
-| Browser opens automatically | ❌ | ✅ **NEW** |
-| Auto port selection (no conflicts) | ❌ | ✅ **NEW** |
-| Windows one-click Setup.exe | ❌ | ✅ **NEW** |
-| Mac/Linux one-line install script | ❌ | ✅ **NEW** |
-| Auto PATH setup | ❌ | ✅ **NEW** |
-| Reactive counter demo | ❌ | ✅ **NEW** |
-| Live API fetch example | ❌ | ✅ **NEW** |
-| Contact form example | ❌ | ✅ **NEW** |
+| Runtime Engine | Python Interpreted | ✅ **Native Rust VM** |
+| Execution Speed | Standard | ✅ **Blazing Fast Bytecode** |
+| Try/Rescue Blocks | ❌ | ✅ **NEW Stack Unwinding** |
+| Division by Zero Errors | Immediate Crash | ✅ **Safely Trapped** |
+| VS Code extension | ✅ | ✅ Updated |
+| Windows Executable | `tech.exe` | ✅ `techscriptv1.0.2.exe` |
+| Native `setup.exe` Bundle | ❌ | ✅ **NEW** |
 
 ---
 
@@ -460,12 +446,10 @@ After installing, all your `.txs` files will have the dragon icon and coloured s
 
 | Platform | Status | Install Method |
 |---|---|---|
-| **Windows 10/11** | ✅ Fully supported | `TechScript-Setup.exe` or pip |
-| **macOS** | ✅ Fully supported | `install.sh` or pip |
-| **Linux** (Ubuntu, Kali, Arch) | ✅ Fully supported | `install.sh` or pip |
-| **Android (Termux)** | ✅ Works | pip |
-
-**Minimum requirement:** Python 3.10 or newer.
+| **Windows 10/11** | ✅ Fully supported | `setup.exe` or `pip` |
+| **macOS** | ✅ Fully supported | `install.sh` or `brew` |
+| **Linux** (Ubuntu, Kali, Arch) | ✅ Fully supported | `install.sh` or `apt` |
+| **Android (Termux)** | ✅ Works | `pkg install techscript` |
 
 ---
 

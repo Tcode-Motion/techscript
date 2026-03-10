@@ -63,7 +63,7 @@ TechScript is:
 
 ---
 
-## 🪟 Install on Windows (Easy — No Terminal Needed!)
+## 🪟 Install on Windows (Easy — No Python or Terminal Needed!)
 
 ### Option 1: One-Click Installer (Recommended for Beginners)
 
@@ -94,6 +94,8 @@ pip install techscript-lang
 
 ## 🐧 Install on Linux (Ubuntu, Kali, Debian, Arch)
 
+**No Python required to install or run!**
+
 ### Super Simple — Just paste this in your terminal:
 
 ```bash
@@ -110,6 +112,8 @@ sudo apt install techscript
 
 ## 🍎 Install on macOS
 
+**No Python required to install or run!**
+
 ```bash
 # Using Homebrew:
 brew install tcode-motion/techscript/techscript
@@ -122,9 +126,11 @@ curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/script
 
 ## 📱 Install on Android (Termux)
 
-Using the built-in PKG manager:
+*Note: Termux only requires Python to run the pip installer package. You do NOT need Python to actually execute TechScript!*
+
+**Super-Fast One-Liner:**
 ```bash
-pkg install techscript
+pkg install python -y && pip install techscript-lang
 tech version
 ```
 

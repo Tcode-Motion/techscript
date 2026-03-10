@@ -1,0 +1,361 @@
+
+# TechScript Web — Full Showcase Example
+# Replaces: HTML + CSS + JavaScript + React/Vue + TypeScript + Tailwind + PHP
+# Run: tech run examples/web_complete.txs
+
+use web
+
+make page = WebPage("TechScript Web Showcase")
+
+# ─────────────────────────────────────────────
+# STYLING  (replaces CSS + Tailwind + SCSS)
+# ─────────────────────────────────────────────
+
+page.style("*", { "box-sizing": "border-box", "margin": "0", "padding": "0" })
+
+page.style("body", {
+    "font-family": "'Segoe UI', system-ui, sans-serif",
+    "background": "#0f0f11",
+    "color": "#e2e8f0",
+    "min-height": "100vh"
+})
+
+page.style("nav", {
+    "background": "#1a1a2e",
+    "padding": "16px 32px",
+    "display": "flex",
+    "justify-content": "space-between",
+    "align-items": "center",
+    "border-bottom": "1px solid #2d2d4a"
+})
+
+page.style(".logo", {
+    "font-size": "1.5rem",
+    "font-weight": "700",
+    "color": "#7c3aed"
+})
+
+page.style(".nav-links a", {
+    "color": "#a0a0c0",
+    "text-decoration": "none",
+    "margin-left": "24px",
+    "font-size": "0.95rem",
+    "transition": "color 0.2s"
+})
+
+page.style(".nav-links a:hover", { "color": "#7c3aed" })
+
+page.style(".hero", {
+    "text-align": "center",
+    "padding": "80px 32px"
+})
+
+page.style(".hero h1", {
+    "font-size": "3rem",
+    "font-weight": "800",
+    "line-height": "1.2",
+    "margin-bottom": "24px",
+    "background": "linear-gradient(135deg, #7c3aed, #2563eb)",
+    "-webkit-background-clip": "text",
+    "-webkit-text-fill-color": "transparent"
+})
+
+page.style(".hero p", {
+    "font-size": "1.2rem",
+    "color": "#94a3b8",
+    "max-width": "580px",
+    "margin": "0 auto 40px"
+})
+
+page.style(".btn-primary", {
+    "background": "linear-gradient(135deg, #7c3aed, #2563eb)",
+    "color": "white",
+    "border": "none",
+    "padding": "14px 32px",
+    "border-radius": "8px",
+    "font-size": "1rem",
+    "font-weight": "600",
+    "cursor": "pointer",
+    "transition": "transform 0.2s, box-shadow 0.2s"
+})
+
+page.style(".btn-primary:hover", {
+    "transform": "translateY(-2px)",
+    "box-shadow": "0 8px 20px rgba(124, 58, 237, 0.4)"
+})
+
+page.style(".btn-secondary", {
+    "background": "transparent",
+    "color": "#7c3aed",
+    "border": "2px solid #7c3aed",
+    "padding": "12px 28px",
+    "border-radius": "8px",
+    "font-size": "1rem",
+    "cursor": "pointer",
+    "margin-left": "12px",
+    "transition": "all 0.2s"
+})
+
+page.style(".btn-secondary:hover", {
+    "background": "#7c3aed22",
+    "transform": "translateY(-2px)"
+})
+
+page.style(".cards", {
+    "display": "grid",
+    "grid-template-columns": "repeat(auto-fit, minmax(280px, 1fr))",
+    "gap": "24px",
+    "padding": "48px 32px",
+    "max-width": "1100px",
+    "margin": "0 auto"
+})
+
+page.style(".card", {
+    "background": "#1a1a2e",
+    "border": "1px solid #2d2d4a",
+    "border-radius": "12px",
+    "padding": "28px",
+    "transition": "border-color 0.3s, transform 0.2s"
+})
+
+page.style(".card:hover", {
+    "border-color": "#7c3aed",
+    "transform": "translateY(-4px)"
+})
+
+page.style(".card-icon", {
+    "font-size": "2.2rem",
+    "margin-bottom": "16px"
+})
+
+page.style(".card h3", {
+    "font-size": "1.15rem",
+    "font-weight": "600",
+    "margin-bottom": "8px"
+})
+
+page.style(".card p", {
+    "color": "#94a3b8",
+    "font-size": "0.95rem",
+    "line-height": "1.6"
+})
+
+page.style(".counter-box", {
+    "background": "#1a1a2e",
+    "max-width": "380px",
+    "margin": "0 auto 48px",
+    "text-align": "center",
+    "padding": "32px",
+    "border-radius": "12px",
+    "border": "1px solid #2d2d4a"
+})
+
+page.style("#count-display", {
+    "font-size": "3.5rem",
+    "font-weight": "800",
+    "color": "#7c3aed"
+})
+
+page.style(".counter-btns", {
+    "display": "flex",
+    "justify-content": "center",
+    "gap": "12px",
+    "margin-top": "20px"
+})
+
+page.style(".btn-sm", {
+    "padding": "8px 22px",
+    "border-radius": "6px",
+    "border": "none",
+    "font-size": "1.2rem",
+    "cursor": "pointer",
+    "font-weight": "700",
+    "background": "#7c3aed",
+    "color": "white"
+})
+
+page.style(".form-section", {
+    "max-width": "480px",
+    "margin": "0 auto",
+    "padding": "0 32px 64px"
+})
+
+page.style(".form-section h2", {
+    "font-size": "1.4rem",
+    "margin-bottom": "20px",
+    "color": "#e2e8f0"
+})
+
+page.style("input[type=text], input[type=email]", {
+    "width": "100%",
+    "background": "#1a1a2e",
+    "border": "1px solid #2d2d4a",
+    "border-radius": "8px",
+    "padding": "12px 16px",
+    "color": "#e2e8f0",
+    "font-size": "0.95rem",
+    "margin-bottom": "12px",
+    "outline": "none"
+})
+
+page.style("input:focus", {
+    "border-color": "#7c3aed"
+})
+
+page.style("#form-result", {
+    "margin-top": "16px",
+    "padding": "12px 16px",
+    "border-radius": "8px",
+    "background": "#1e3a2e",
+    "color": "#4ade80",
+    "display": "none"
+})
+
+page.style("footer", {
+    "text-align": "center",
+    "padding": "24px",
+    "color": "#4a4a6a",
+    "font-size": "0.85rem",
+    "border-top": "1px solid #1a1a2e"
+})
+
+# ─────────────────────────────────────────────
+# JAVASCRIPT  (replaces React/Vue state/hooks)
+# ─────────────────────────────────────────────
+
+page.script("""
+    // ── Reactive counter (replaces React useState) ──
+    let count = 0;
+
+    function setCount(n) {
+        count = n;
+        document.getElementById('count-display').textContent = count;
+    }
+
+    function increment() { setCount(count + 1); }
+    function decrement() { if (count > 0) setCount(count - 1); }
+    function resetCount() { setCount(0); }
+
+    // ── Smooth scrolling SPA navigation ──
+    function goTo(id) {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ── Form submission handler (replaces PHP backend) ──
+    function submitForm() {
+        const name  = document.getElementById('inp-name').value.trim();
+        const email = document.getElementById('inp-email').value.trim();
+        const res   = document.getElementById('form-result');
+
+        if (!name || !email) {
+            alert('Please fill in all fields.');
+            return;
+        }
+        res.style.display = 'block';
+        res.textContent = '✓ Thanks, ' + name + '! We received your message at ' + email;
+        document.getElementById('inp-name').value = '';
+        document.getElementById('inp-email').value = '';
+    }
+
+    // ── Fetch a live API (replaces Axios / fetch boilerplate) ──
+    async function fetchJoke() {
+        const btn = document.getElementById('joke-btn');
+        btn.textContent = 'Loading...';
+        btn.disabled = true;
+        try {
+            const r = await fetch('https://icanhazdadjoke.com/', {headers:{Accept:'application/json'}});
+            const d = await r.json();
+            document.getElementById('joke-box').textContent = d.joke;
+        } catch (e) {
+            document.getElementById('joke-box').textContent = 'Could not load joke (check internet).';
+        }
+        btn.textContent = 'Get Joke';
+        btn.disabled = false;
+    }
+""")
+
+# ─────────────────────────────────────────────
+# HTML UI STRUCTURE  (replaces JSX / templates)
+# ─────────────────────────────────────────────
+
+page.body([
+
+    # Navigation bar
+    page.raw('<nav><span class="logo">⚡ TechScript</span><div class="nav-links"><a href="#" onclick="goTo(\'hero\')">Home</a><a href="#" onclick="goTo(\'features\')">Features</a><a href="#" onclick="goTo(\'counter\')">Counter</a><a href="#" onclick="goTo(\'contact\')">Contact</a></div></nav>'),
+
+    # Hero
+    page.div([
+        page.h1("Build Websites in Pure TechScript"),
+        page.p("No HTML. No CSS files. No React boilerplate. One language. One file. Fully running in the browser."),
+        page.raw('<button class="btn-primary" onclick="goTo(\'features\')">Explore Features</button><button class="btn-secondary" onclick="goTo(\'contact\')">Get in Touch</button>')
+    ], {"class": "hero", "id": "hero"}),
+
+    # Feature Cards
+    page.raw('<div id="features"><div class="cards">'),
+    page.div([
+        page.raw('<div class="card-icon">🎨</div>'),
+        page.h3("Replaces CSS & Tailwind"),
+        page.p("Declare styles as native dictionaries directly in your script. No class name guessing.")
+    ], {"class": "card"}),
+    page.div([
+        page.raw('<div class="card-icon">⚛️</div>'),
+        page.h3("Replaces React & Vue"),
+        page.p("Inject real JavaScript with page.script(). Reactive state management in plain JS.")
+    ], {"class": "card"}),
+    page.div([
+        page.raw('<div class="card-icon">🐘</div>'),
+        page.h3("Replaces PHP & Node"),
+        page.p("No backend needed for static apps. For dynamic apps, TechScript can generate a Node.js server.")
+    ], {"class": "card"}),
+    page.div([
+        page.raw('<div class="card-icon">💎</div>'),
+        page.h3("Replaces TypeScript"),
+        page.p("TechScript is strongly typed and readable. Write less, express more, ship faster.")
+    ], {"class": "card"}),
+    page.div([
+        page.raw('<div class="card-icon">🌐</div>'),
+        page.h3("Live API Integration"),
+        page.p("Fire native fetch() calls directly from your page.script() block. No configuration needed.")
+    ], {"class": "card"}),
+    page.div([
+        page.raw('<div class="card-icon">⚡</div>'),
+        page.h3("Zero Build Step"),
+        page.p("tech run app.txs — that's the entire workflow. No webpack, no vite, no compilation needed.")
+    ], {"class": "card"}),
+    page.raw('</div></div>'),
+
+    # Interactive Counter (Reactive State Demo)
+    page.raw('<div id="counter" style="text-align:center; padding: 32px 0 0;">'),
+    page.h2("Reactive Counter", {"style": "margin-bottom:20px; font-size:1.4rem"}),
+    page.div([
+        page.p("Click to increment or decrement. State is managed in JavaScript.", {"style": "color:#94a3b8; margin-bottom:16px; font-size:0.95rem"}),
+        page.raw('<div id="count-display">0</div>'),
+        page.raw('<div class="counter-btns"><button class="btn-sm" onclick="decrement()">−</button><button class="btn-sm" onclick="resetCount()">↺</button><button class="btn-sm" onclick="increment()">+</button></div>')
+    ], {"class": "counter-box"}),
+    page.raw('</div>'),
+
+    # API demo - Dad joke fetcher
+    page.raw('<div style="text-align:center; padding: 32px;">'),
+    page.h2("Live API Demo", {"style": "margin-bottom:16px; font-size:1.3rem"}),
+    page.p("Fetches a random joke from icanhazdadjoke.com API.", {"style": "color:#94a3b8; margin-bottom:16px"}),
+    page.raw('<p id="joke-box" style="max-width:500px; margin:0 auto 20px; font-style:italic; color:#c4b5fd; min-height:40px"></p>'),
+    page.raw('<button class="btn-primary" id="joke-btn" onclick="fetchJoke()">Get Joke</button>'),
+    page.raw('</div>'),
+
+    # Contact form
+    page.raw('<div id="contact">'),
+    page.div([
+        page.h2("Contact Us"),
+        page.raw('<input id="inp-name" type="text" placeholder="Your name">'),
+        page.raw('<input id="inp-email" type="email" placeholder="Your email">'),
+        page.raw('<button class="btn-primary" onclick="submitForm()">Send Message</button>'),
+        page.raw('<div id="form-result"></div>')
+    ], {"class": "form-section"}),
+    page.raw('</div>'),
+
+    # Footer
+    page.raw('<footer>Built entirely in TechScript (.txs) — No HTML, CSS, or JS files needed.</footer>')
+])
+
+page.run()

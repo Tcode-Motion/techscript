@@ -1,0 +1,80 @@
+{
+  "Say Statement": {
+    "prefix": "say",
+    "body": ["say \"${1:message}\""],
+    "description": "Print output"
+  },
+  "Make Variable": {
+    "prefix": "make",
+    "body": ["make ${1:name} = ${2:value}"],
+    "description": "Declare a variable"
+  },
+  "Keep Constant": {
+    "prefix": "keep",
+    "body": ["keep ${1:NAME} = ${2:value}"],
+    "description": "Declare a constant"
+  },
+  "Function": {
+    "prefix": "build",
+    "body": ["build ${1:name}(${2:params}) {", "    ${3:say \"Hello\"}", "}"],
+    "description": "Define a function"
+  },
+  "Class": {
+    "prefix": "model",
+    "body": ["model ${1:Name} {", "    build init(self, ${2:args}) {", "        self.${2:args} = ${2:args}", "    }", "}"],
+    "description": "Define a class"
+  },
+  "When (If)": {
+    "prefix": "when",
+    "body": ["when ${1:condition} {", "    ${2:say \"yes\"}", "} else {", "    ${3:say \"no\"}", "}"],
+    "description": "If-else block"
+  },
+  "Each Loop": {
+    "prefix": "each",
+    "body": ["each ${1:item} in ${2:list} {", "    say ${1:item}", "}"],
+    "description": "For-each loop"
+  },
+  "Repeat (While)": {
+    "prefix": "repeat",
+    "body": ["repeat ${1:condition} {", "    ${2:pass}", "}"],
+    "description": "While loop"
+  },
+  "Attempt (Try-Catch)": {
+    "prefix": "attempt",
+    "body": ["attempt {", "    ${1:pass}", "} catch ${2:err} {", "    say err.message", "}"],
+    "description": "Try-catch error handling"
+  },
+  "Lambda": {
+    "prefix": "lambda",
+    "body": ["(${1:x}) => ${2:x}"],
+    "description": "Arrow / lambda function"
+  },
+  "Web Page Starter": {
+    "prefix": "useweb",
+    "body": [
+      "use web",
+      "",
+      "make page = WebPage(\"${1:My App}\")",
+      "",
+      "page.style(\"body\", { \"background\": \"#111\", \"color\": \"#eee\", \"font-family\": \"sans-serif\" })",
+      "",
+      "page.body([",
+      "    page.h1(\"${2:Welcome}\"),",
+      "    page.p(\"${3:Your text here}\")",
+      "])",
+      "",
+      "page.run()"
+    ],
+    "description": "Full web page starter template (v2)"
+  },
+  "Web Style": {
+    "prefix": "pagestyle",
+    "body": ["page.style(\"${1:selector}\", { \"${2:property}\": \"${3:value}\" })"],
+    "description": "Add a CSS style rule"
+  },
+  "Web Script": {
+    "prefix": "pagescript",
+    "body": ["page.script(\"\"\"", "    ${1:// JavaScript here}", "\"\"\")"],
+    "description": "Inject JavaScript into the page"
+  }
+}

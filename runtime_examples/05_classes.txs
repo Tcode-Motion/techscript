@@ -1,0 +1,41 @@
+say "=== Classes & OOP ==="
+
+# Base class
+model Animal {
+    build init(name, species) {
+        self.name = name
+        self.species = species
+    }
+    
+    build describe() {
+        say f"[{self.species}] I am {self.name}"
+    }
+
+    build make_sound() {
+        say "...(silence)..."
+    }
+}
+
+# Inheritance
+model Dog(Animal) {
+    build init(name, breed) {
+        self.name = name
+        self.species = "Dog"
+        self.breed = breed
+    }
+
+    build make_sound() {
+        say f"{self.name} says Woof!"
+    }
+}
+
+# Instantiation & Usage
+make generic_animal = new Animal("Blob", "Unknown")
+generic_animal.describe()
+generic_animal.make_sound()
+
+make my_dog = new Dog("Rex", "German Shepherd")
+my_dog.describe()
+my_dog.make_sound()
+
+say f"{my_dog.name}'s breed is {my_dog.breed}"

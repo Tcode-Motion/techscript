@@ -1,0 +1,28 @@
+﻿tech : 
+At line:1 char:24
++ $env:RUST_BACKTRACE=1; tech 
+03_control_flow.txs 2> panic.log; 
+Get-Con ...
++                        ~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSp 
+   ecified: (:String) [], RemoteEx  
+  ception
+    + FullyQualifiedErrorId : Nativ 
+   eCommandError
+ 
+thread 'main' (6424) panicked at 
+src\vm.rs:122:41:
+index out of bounds: the len is 1 
+but the index is 1
+stack backtrace:
+   0: __rustc::rust_begin_unwind
+   1: core::panicking::panic_fmt
+   2: 
+core::panicking::panic_bounds_check
+   3: techscript::vm::VM::execute
+   4: techscript::run_file
+   5: techscript::main
+note: Some details are omitted, run 
+with `RUST_BACKTRACE=full` for a 
+verbose backtrace.

@@ -399,6 +399,7 @@ Run any of these to see TechScript in action:
 | `examples/classes.txs` | Dogs and cats using OOP | `tech run examples/classes.txs` |
 | `examples/calculator.txs` | Simple calculator | `tech run examples/calculator.txs` |
 | `examples/guessing_game.txs` | Guess the number game | `tech run examples/guessing_game.txs` |
+| `examples/07_performance_test.txs` | **1-Million Iteration Native VM Benchmark** | `tech run examples/07_performance_test.txs` |
 | `examples/web_app_simple.txs` | Simple dark-theme website | `tech run examples/web_app_simple.txs` |
 | `examples/web_complete.txs` | Full showcase: counter, API, form | `tech run examples/web_complete.txs` |
 
@@ -424,17 +425,26 @@ After installing, all your `.txs` files will have the dragon icon and coloured s
 
 ---
 
-## ✨ v1.0.2 Changelog
+## ✨ v1.0.2 Changelog - Why We Rebuilt The Engine
 
-| Feature | v1.0.1 | v1.0.2 |
+The `v1.0.1` version of TechScript was built on top of a Python wrapper. While this made development easy, it introduced massive flaws that had to be destroyed:
+1. **The Python Flaw**: It required users to install heavy Python environments just to run basic scripts.
+2. **The Speed Flaw**: Python's dynamic interpretation caused severe bottlenecks. A basic `while` loop running 1,000,000 times inside the old engine would choke natively.
+3. **The Crash Flaw**: Basic errors like dividing by zero (`10 / 0`) would completely crash the transpiler instantly without warning.
+
+### 🦀 The v1.0.2 Native Solution
+We entirely deleted the Python runtime and **rewrote the entire core architecture natively in Rust**. 
+
+| Feature | 🐢 v1.0.1 (Old System) | 🚀 v1.0.2 (New System) |
 |---|---|---|
-| Runtime Engine | Python Interpreted | ✅ **Native Rust VM** |
-| Execution Speed | Standard | ✅ **Blazing Fast Bytecode** |
-| Try/Rescue Blocks | ❌ | ✅ **NEW Stack Unwinding** |
-| Division by Zero Errors | Immediate Crash | ✅ **Safely Trapped** |
-| VS Code extension | ✅ | ✅ Updated |
-| Windows Executable | `tech.exe` | ✅ `techscriptv1.0.2.exe` |
-| Native `setup.exe` Bundle | ❌ | ✅ **NEW** |
+| **Underlying Engine** | Python Interpreted | ✅ **Native Rust Virtual Machine** |
+| **Execution Speed** | Sluggish (Python limits) | ✅ **Blazing Fast Bytecode (1 Million loops in 2.9s)** |
+| **Dependencies Needed** | Python 3.10+ | ✅ **NONE (Completely Standalone)** |
+| **Try/Rescue Blocks** | ❌ Did not exist | ✅ **NEW Stack Unwinding Implementation** |
+| **Math Crashing (Zero Div)** | Immediate Hard Crash | ✅ **Safely Trapped & Rescued** |
+| **Windows Executable** | `tech.exe` (Clunky wrapper) | ✅ `techscriptv1.0.2.exe` |
+| **VS Code extension** | ✅ | ✅ Updated Icons & Syntax |
+| **Native `setup.exe` Bundle**| ❌ | ✅ **NEW** |
 
 ---
 

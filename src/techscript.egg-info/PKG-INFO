@@ -1,0 +1,306 @@
+Metadata-Version: 2.4
+Name: techscript
+Version: 1.0.1
+Summary: TechScript — A simple, friendly programming language (.txs)
+Author: TechScript Team
+License: MIT
+Keywords: programming-language,interpreter,transpiler,techscript
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Topic :: Software Development :: Interpreters
+Classifier: Topic :: Software Development :: Compilers
+Classifier: Intended Audience :: Education
+Classifier: Intended Audience :: Developers
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0; extra == "dev"
+Requires-Dist: pytest-cov; extra == "dev"
+Requires-Dist: black; extra == "dev"
+Requires-Dist: flake8; extra == "dev"
+Dynamic: license-file
+Dynamic: requires-python
+
+# 🐉 TechScript
+
+<p align="center">
+  <img src="assets/logo.png" alt="TechScript Logo" width="200">
+</p>
+
+<p align="center">
+  <strong>A simple, friendly programming language that reads like English.</strong><br>
+  Replaces HTML, CSS, JavaScript, React, TypeScript, Tailwind, and more — all in one <code>.txs</code> file.
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/version-v2.0.0-7c3aed?style=flat-square">
+  <img src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square">
+  <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-green?style=flat-square">
+  <img src="https://img.shields.io/badge/license-MIT-orange?style=flat-square">
+</p>
+
+---
+
+## ⚡ What is TechScript?
+
+TechScript is a programming language for everyone — beginners, students, and developers who want to write code that **looks and reads like plain English**.
+
+With TechScript v2, you can now build **full websites** with zero HTML, CSS, or JavaScript files — just one `.txs` file and `tech run`.
+
+---
+
+## 🪟 Windows Installation (Easy — No Terminal Needed)
+
+1. **Download** `TechScript-Setup.exe` from the [📥 Releases](../../releases/latest) page  
+2. **Double-click** the installer and follow the steps  
+3. **Open PowerShell** and type:
+
+```powershell
+tech run examples\hello.txs
+```
+
+The installer automatically:
+- ✅ Installs TechScript
+- ✅ Adds `tech` command to your PATH
+- ✅ Registers `.txs` files with your OS
+- ✅ Installs the VS Code / Cursor extension
+
+---
+
+## 🐧 Linux / 🍎 macOS Installation (One Command)
+
+Open your terminal and paste:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/your-org/techscript/main/scripts/install.sh | bash
+```
+
+Or if you already have Python + pip:
+
+```bash
+pip install techscript
+```
+
+Test it:
+```bash
+tech run examples/hello.txs
+```
+
+---
+
+## 📱 Android (Termux)
+
+```bash
+pkg install python && pip install techscript
+tech run examples/hello.txs
+```
+
+---
+
+## ✨ What's New in v2 vs v1
+
+| Feature | v1 | v2 |
+|---|---|---|
+| Basic scripting | ✅ | ✅ |
+| English-like syntax | ✅ | ✅ |
+| 80+ built-in functions | ✅ | ✅ |
+| VS Code extension | ✅ | ✅ (v2.0.0 updated) |
+| Web module (`use web`) | ❌ | ✅ **NEW** |
+| Build websites with `.txs` | ❌ | ✅ **NEW** |
+| Replaces HTML/CSS/JS/React | ❌ | ✅ **NEW** |
+| Browser auto-launch | ❌ | ✅ **NEW** |
+| Auto port selection | ❌ | ✅ **NEW** |
+| Windows auto-installer (.exe) | ❌ | ✅ **NEW** |
+| Mac/Linux one-line install | ❌ | ✅ **NEW** |
+| Auto PATH setup | ❌ | ✅ **NEW** |
+
+---
+
+## 🌐 Build a Website in TechScript (New in v2!)
+
+No HTML. No CSS. No JavaScript files. Just one `.txs` file:
+
+```techscript
+use web
+
+make page = WebPage("My First Website")
+
+page.style("body", {
+    "background": "#0f0f11",
+    "color": "#eee",
+    "font-family": "sans-serif",
+    "text-align": "center",
+    "padding": "60px"
+})
+
+page.script("""
+    function greet() {
+        alert('Hello from TechScript!');
+    }
+""")
+
+page.body([
+    page.h1("Welcome to TechScript"),
+    page.p("No HTML. No CSS. No build steps. Just TechScript."),
+    page.button("Say Hello", { "onclick": "greet()" })
+])
+
+page.run()
+```
+
+Run it:
+```bash
+tech run my_site.txs
+```
+
+**Your browser opens automatically!** 🚀
+
+---
+
+## 📝 Language at a Glance
+
+```techscript
+# Hello World
+say "Hello, World!"
+
+# Variables
+make name = "Alice"
+keep MAX = 100
+
+# Input
+make answer = ask "What is your name? "
+say f"Hello, {answer}!"
+
+# Conditions
+when name == "Alice" {
+    say "Welcome, Alice!"
+} else {
+    say f"Who are you, {name}?"
+}
+
+# Loops
+each i in 1..5 {
+    say f"Count: {i}"
+}
+
+# Functions
+build greet(name, msg = "Hello") {
+    say f"{msg}, {name}!"
+}
+greet("Bob")
+
+# Classes
+model Dog {
+    build init(self, name) {
+        self.name = name
+    }
+    build speak(self) {
+        say f"{self.name} says Woof!"
+    }
+}
+make rex = Dog("Rex")
+rex.speak()
+
+# Error handling
+attempt {
+    say 1 / 0
+} catch err {
+    say "Caught error!"
+}
+```
+
+---
+
+## 🛠️ All CLI Commands
+
+```bash
+tech run <file.txs>          # Run a TechScript file
+tech run <file.txs> --debug  # Run with debug output
+tech check <file.txs>        # Check for syntax errors
+tech repl                    # Interactive REPL shell
+tech transpile <file.txs>    # Convert to Python
+tech version                 # Show version
+```
+
+---
+
+## 📋 Example Programs
+
+All examples are in the `examples/` folder:
+
+| File | Description |
+|---|---|
+| `hello.txs` | Hello World |
+| `calc.txs` | Calculator |
+| `fibonacci.txs` | Fibonacci sequence |
+| `fizzbuzz.txs` | FizzBuzz in 5 lines |
+| `classes.txs` | Object-oriented programming |
+| `guessing_game.txs` | Interactive number guessing |
+| `web_app_simple.txs` | Simple website |
+| `web_complete.txs` | Full showcase website with interactions, API, forms |
+
+Run any of them:
+```bash
+tech run examples/fibonacci.txs
+tech run examples/web_complete.txs
+```
+
+---
+
+## 🎨 VS Code / Cursor Extension
+
+The TechScript extension gives you:
+- 🐉 Dragon icon for `.txs` files
+- 🎨 Syntax highlighting
+- 💡 Code snippets
+- 🔤 Language auto-configuration
+
+**Method 1 — One command:**
+```bash
+code --install-extension vscode-extension/techscript-2.0.0.vsix
+```
+
+**Method 2 — GUI:**
+1. Open VS Code → Extensions panel (`Ctrl+Shift+X`)
+2. Click `...` → **Install from VSIX...**
+3. Select `vscode-extension/techscript-2.0.0.vsix`
+
+---
+
+## 📚 Documentation
+
+| Document | Description |
+|---|---|
+| [Quick Start](docs/QUICKSTART.md) | Step-by-step setup guide for all platforms |
+| [Language Reference](docs/REFERENCE.md) | All syntax, keywords, and built-ins |
+| [Web Module Guide](docs/WEB_MODULE.md) | Build websites with TechScript |
+
+---
+
+## 🌍 Platform Support
+
+| Platform | Status |
+|---|---|
+| **Windows 10/11** | ✅ Fully supported (installer EXE available) |
+| **macOS** | ✅ Fully supported (one-line install) |
+| **Linux** (Ubuntu, Debian, Arch, Kali) | ✅ Fully supported (one-line install) |
+| **Android (Termux)** | ✅ Works with Python 3.10+ |
+
+**Requirements:** Python 3.10 or newer.
+
+---
+
+## 📄 License
+
+MIT — free to use, modify, and share. See [LICENSE](LICENSE).
+
+---
+
+<p align="center">
+  <strong>Made with 🐉 by the TechScript Team</strong>
+</p>

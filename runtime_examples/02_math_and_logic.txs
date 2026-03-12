@@ -1,0 +1,34 @@
+say "=== Math & Logic ==="
+
+make a = 10
+make b = 3
+
+say a, "+", b, "=", a + b
+say a, "-", b, "=", a - b
+say a, "*", b, "=", a * b
+say a, "/", b, "=", a / b
+say a, "#", b, "=", a # b
+say a, "%", b, "=", a % b
+say a, "**", b, "=", a ** b
+
+# Native Math functions
+say "Absolute of -5:", abs(-5)
+say "Square root of 16:", sqrt(16)
+say "Max of 10 and 20:", max(10, 20)
+say "Min of 10 and 20:", min(10, 20)
+
+# Random numbers
+say "Random float:", random()
+say "Random int 1-100:", random_int(1, 100)
+
+say "=== Logic ==="
+say "10 > 3:", 10 > 3
+say "10 == 10:", 10 == 10
+say "10 != 5:", 10 != 5
+say "true and false:", true and false
+say "true or false:", true or false
+say "not true:", not true
+
+# Ternary expression (expr when cond else expr)
+make status = "Valid" when a > b else "Invalid"
+say "Status using ternary:", status

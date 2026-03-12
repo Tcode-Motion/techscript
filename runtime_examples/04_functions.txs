@@ -1,0 +1,48 @@
+say "=== Functions & Closures ==="
+
+# Basic function
+build greet(name) {
+    say f"Hello, {name}!"
+}
+greet("Developer")
+
+# Function with default parameter & return
+build add(a, b = 10) {
+    send a + b
+}
+say "add(5):", add(5)
+say "add(5, 7):", add(5, 7)
+
+# Closures (Lexical scoping)
+say "Testing closure:"
+build make_counter() {
+    make count = 0
+    build increment() {
+        count += 1
+        send count
+    }
+    send increment
+}
+
+make counter1 = make_counter()
+say "Counter 1:", counter1()
+say "Counter 1:", counter1()
+
+make counter2 = make_counter()
+say "Counter 2:", counter2()
+
+# Lambdas and functional programming
+make double = (x) => x * 2
+say "Lambda double(4):", double(4)
+
+# Pipe operator for function chaining
+build apply_tax(amount) {
+    send amount * 1.2
+}
+build format_currency(amount) {
+    send f"${amount}"
+}
+
+make price = 100
+make final_price = price |> apply_tax |> format_currency
+say "Chained pipe operator result:", final_price

@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=67.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "techscript"
+version = "1.0.1"
+description = "TechScript — A simple, friendly programming language (.txs)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "TechScript Team"}]
+keywords = ["programming-language", "interpreter", "transpiler", "techscript"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Software Development :: Interpreters",
+    "Topic :: Software Development :: Compilers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Developers",
+]
+
+[project.scripts]
+tech = "techscript.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "pytest-cov", "black", "flake8"]
+
+[tool.setuptools.package-data]
+techscript = ["../assets/icons/*.png", "../assets/icons/*.ico", "../assets/icons/*.icns", "../assets/icons/*.svg"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

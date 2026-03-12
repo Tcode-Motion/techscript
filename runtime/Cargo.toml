@@ -1,0 +1,17 @@
+[package]
+name = "techscript"
+version = "1.0.3"
+edition = "2021"
+authors = ["Tanmoy"]
+description = "TechScript native runtime"
+
+[dependencies]
+clap = { version = "4.4", features = ["derive"] }
+rustyline = "13.0"
+colored = "2.1"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"

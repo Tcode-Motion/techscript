@@ -142,10 +142,18 @@ pip install techscript-lang==1.0.4.4
 
 ### 🐧 Install on Linux (Ubuntu, Kali, Debian, Arch)
 
-> **No Python required to install or run!**
-
 **Using pip (Easiest):**
+If you see an "externally-managed-environment" error (Common on Kali, Debian 12+, Ubuntu 23.04+), use one of these methods:
+
+**Method A: Quick Force (Bypass PEP 668)**
 ```bash
+pip install techscript-lang --break-system-packages
+```
+
+**Method B: Using Virtual Environment (Recommended)**
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
 pip install techscript-lang
 ```
 
@@ -154,6 +162,7 @@ pip install techscript-lang
 curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
 ```
 
+---
 **Using APT (Debian/Ubuntu):**
 ```bash
 sudo apt update

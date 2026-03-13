@@ -174,10 +174,14 @@ curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/script
 
 > *Note: Termux only requires Python to run the pip installer package. You do NOT need Python to actually execute TechScript!*
 
-**Super-Fast One-Liner:**
+**Fresh Install:**
 ```bash
 pkg install python -y && pip install techscript-lang
-tech version
+```
+
+**Update to Latest (v1.0.4.3):**
+```bash
+pip install --upgrade techscript-lang
 ```
 
 > 📖 See [docs/TERMUX.md](docs/TERMUX.md) for the full Android guide.

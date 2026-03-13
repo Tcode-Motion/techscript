@@ -60,7 +60,7 @@ fi
 
 # ---------- Detect Architecture & Version ----------
 ARCH="$(uname -m)"
-LATEST_VERSION="1.0.4.5"
+LATEST_VERSION="1.0.4.6"
 REPO="Tcode-Motion/techscript"
 
 # ---------- Native Binary Check (Fastest) ----------

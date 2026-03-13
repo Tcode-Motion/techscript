@@ -1,0 +1,9 @@
+say "=== TechScript v1.0.2 Native VM Performance Benchmark ==="
+say "Running 1,000,000 iterations inside Rust Bytecode VM..."
+
+make i = 0
+repeat i < 1000000 {
+    i = i + 1
+}
+
+say f"Completed 1 million iterations! Final loop count is: {i}"

@@ -1,0 +1,35 @@
+# ── TechScript v1.0.3 — Date Module Demo ─────────────
+# Run: tech run 12_date_module.txs
+
+say "═══ Date & Time Module Demo ═══"
+say ""
+
+# ── Current Date/Time ──
+say f"Now:           {date.now}"
+say f"Year:          {date.year}"
+say f"Month:         {date.month}"
+say f"Day:           {date.day}"
+say f"Hour (UTC):    {date.hour}"
+say f"Minute:        {date.minute}"
+say f"Second:        {date.second}"
+
+say ""
+
+# ── Unix Timestamps ──
+say f"Unix (secs):   {date.unix}"
+say f"Unix (ms):     {date.unix_ms}"
+
+say ""
+
+# ── Practical: Measure execution time ──
+make start = time_ms()
+make total = 0
+each i in 1..100000 {
+    total = total + i
+}
+make elapsed = time_ms() - start
+say f"Sum of 1..100000 = {total}"
+say f"Computed in {elapsed}ms"
+
+say ""
+say "Done! ✅"

@@ -1,0 +1,27 @@
+# TechScript Calculator — demonstrates functions, match/case, and loops
+
+build calculate(a, op, b) {
+    match op {
+        case "+" { send a + b }
+        case "-" { send a - b }
+        case "*" { send a * b }
+        case "/" {
+            when b == 0 {
+                send "Error: division by zero"
+            }
+            send a / b
+        }
+        case "**" { send a ** b }
+        case "%" { send a % b }
+        case _ { send f"Unknown operator: {op}" }
+    }
+}
+
+# Demo
+say "=== TechScript Calculator ==="
+say f"10 + 3 = {calculate(10, '+', 3)}"
+say f"10 - 3 = {calculate(10, '-', 3)}"
+say f"10 * 3 = {calculate(10, '*', 3)}"
+say f"10 / 3 = {calculate(10, '/', 3)}"
+say f"2 ** 8 = {calculate(2, '**', 8)}"
+say f"17 % 5 = {calculate(17, '%', 5)}"

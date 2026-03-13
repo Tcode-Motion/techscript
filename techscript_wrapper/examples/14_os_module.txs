@@ -1,0 +1,32 @@
+# ── TechScript v1.0.3 — OS Module Demo ───────────────
+# Run: tech run 14_os_module.txs
+
+say "═══ OS Module Demo ═══"
+say ""
+
+# ── System Information ──
+say f"OS Name:     {os.name}"
+say f"Architecture:{os.arch}"
+say f"Process ID:  {os.pid}"
+
+say ""
+
+# ── Environment Variables ──
+say f"USERNAME:    {os.env_get('USERNAME')}"
+say f"TEMP:        {os.env_get('TEMP')}"
+say f"HOME:        {os.env_get('USERPROFILE')}"
+
+say ""
+
+# ── Command Line Args ──
+say f"CLI Args:    {os.args}"
+
+say ""
+
+# ── Run a system command ──
+say "Running 'echo Hello from OS module':"
+make output = os.popen("echo Hello from OS module")
+say f"  Output: {trim(output)}"
+
+say ""
+say "Done! ✅"

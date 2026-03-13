@@ -4,7 +4,7 @@ import platform
 import urllib.request
 import subprocess
 
-VERSION = "1.0.2"
+VERSION = "1.0.4.3"
 REPO = "Tcode-Motion/techscript"
 
 def download_binary():
@@ -14,7 +14,7 @@ def download_binary():
     # Define asset name based on OS Architecture
     asset_name = None
     if system == "windows":
-        asset_name = "techscriptv1.0.2.exe"
+        asset_name = "techscriptv1.0.4.3.exe"
     elif system == "linux":
         asset_name = "tech-linux-x64" # Placeholder for future linux release
     elif system == "darwin":

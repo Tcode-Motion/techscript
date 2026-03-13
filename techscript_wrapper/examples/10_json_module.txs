@@ -1,0 +1,42 @@
+# ── TechScript v1.0.3 — JSON Module Demo ─────────────
+# Run: tech run 10_json_module.txs
+
+say "═══ JSON Module Demo ═══"
+say ""
+
+# ── Encoding ──
+make user = {
+    "name": "Tanmoy",
+    "age": 22,
+    "skills": ["Rust", "Python", "TechScript"],
+    "active": true
+}
+
+make json_str = json.encode(user)
+say f"json.encode:        {json_str}"
+
+say ""
+make pretty = json.encode_pretty(user)
+say "json.encode_pretty:"
+say pretty
+
+say ""
+
+# ── Decoding ──
+make raw = '{"language":"TechScript","version":1.03,"native":true}'
+make parsed = json.decode(raw)
+say f"json.decode:  {parsed}"
+say f"Language:     {parsed.language}"
+say f"Version:      {parsed.version}"
+say f"Native:       {parsed.native}"
+
+say ""
+
+# ── Round-trip ──
+make original = [1, 2, 3, {"nested": true}]
+make encoded = json.encode(original)
+make decoded = json.decode(encoded)
+say f"Round-trip: {original} → '{encoded}' → {decoded}"
+
+say ""
+say "Done! ✅"

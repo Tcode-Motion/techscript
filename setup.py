@@ -19,6 +19,10 @@ setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.7",
+    package_data={
+        "techscript_wrapper": ["examples/*.txs"],
+    },
+    include_package_data=True,
     entry_points={
         "console_scripts": [
             "tech=techscript_wrapper.__main__:main",

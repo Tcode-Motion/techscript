@@ -135,8 +135,8 @@ TechScript is:
 
 #### Option 1: One-Click Installer *(Recommended for Beginners)*
 
-1. Go to the [📥 Releases page](../../releases/latest)
-2. Download **`setup.exe`**
+1. Go to the [📥 v1.0.4.3 Release Page](https://github.com/Tcode-Motion/techscript/releases/tag/v1.0.4.3)
+2. Download **[TechScript_v1.0.4.3_Setup.exe](https://github.com/Tcode-Motion/techscript/releases/download/v1.0.4.3/TechScript_v1.0.4.3_Setup.exe)**
 3. Double-click it — it will install everything automatically!
 4. Open **PowerShell** (`Win + X` → "Windows PowerShell") and type:
 
@@ -147,7 +147,7 @@ tech version
 You should see: `TechScript v1.0.4.3` 🎉
 
 **What the installer does automatically:**
-- ✅ Puts `tech.exe` on your computer
+- ✅ Puts `tech.exe` (v1.0.4.3) on your computer
 - ✅ Makes the `tech` command available everywhere in your terminal
 - ✅ Registers `.txs` files so they know they belong to TechScript
 - ✅ Installs the VS Code extension for syntax highlighting
@@ -155,7 +155,7 @@ You should see: `TechScript v1.0.4.3` 🎉
 #### Option 2: Using pip *(Cross-Platform Wrapper)*
 
 ```powershell
-pip install techscript-lang
+pip install techscript-lang==1.0.4.3
 ```
 
 ---
@@ -641,7 +641,7 @@ tech run examples/animation_studio.txs
 ## 🎨 VS Code / Cursor Editor Extension
 
 ### 🐉 Direct Download Link
-*   **[Download TechScript v1.0.4.3 VS Code Extension (.vsix)](techscript-1.0.4.3.vsix)**
+*   **[Download TechScript v1.0.4.3 VS Code Extension (.vsix)](https://github.com/Tcode-Motion/techscript/releases/download/v1.0.4.3/techscript-1.0.4.3.vsix)**
 
 **Method 1 — Command line (fastest):**
 ```bash

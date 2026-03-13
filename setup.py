@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="techscript-lang",
-    version="1.0.4.5",
+    version="1.0.4.7",
     author="Tanmoy",
     author_email="tanmoy@example.com",
     description="TechScript — A simple, friendly programming language (.txs)",

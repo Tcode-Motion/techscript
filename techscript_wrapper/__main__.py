@@ -4,7 +4,7 @@ import platform
 import urllib.request
 import subprocess
 
-VERSION = "1.0.4.5"
+VERSION = "1.0.4.7"
 REPO = "Tcode-Motion/techscript"
 
 def download_binary():

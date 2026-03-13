@@ -18,7 +18,7 @@
 
 <div align="center">
 
-![version](https://img.shields.io/badge/version-v1.0.4.5-7c3aed?style=for-the-badge)
+![version](https://img.shields.io/badge/version-v1.0.4.6-7c3aed?style=for-the-badge)
 ![runtime](https://img.shields.io/badge/runtime-Native_Rust_VM-f97316?style=for-the-badge&logo=rust&logoColor=white)
 ![platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux%20%7C%20Android-22c55e?style=for-the-badge)
 ![license](https://img.shields.io/badge/license-MIT-3b82f6?style=for-the-badge)
@@ -115,8 +115,8 @@ TechScript is:
 
 #### Option 1: One-Click Installer *(Recommended for Beginners)*
 
-1. Go to the [📥 v1.0.4.5 Release Page](https://github.com/Tcode-Motion/techscript/releases/tag/v1.0.4.5)
-2. Download **[TechScript_v1.0.4.5_Setup.exe](https://github.com/Tcode-Motion/techscript/releases/download/v1.0.4.5/TechScript_v1.0.4.5_Setup.exe)**
+1. Go to the [📥 v1.0.4.6 Release Page](https://github.com/Tcode-Motion/techscript/releases/tag/v1.0.4.6)
+2. Download **[TechScript_v1.0.4.6_Setup.exe](https://github.com/Tcode-Motion/techscript/releases/download/v1.0.4.6/TechScript_v1.0.4.6_Setup.exe)**
 3. Double-click it — it will install everything automatically!
 4. Open **PowerShell** (`Win + X` → "Windows PowerShell") and type:
 
@@ -124,10 +124,10 @@ TechScript is:
 tech version
 ```
 
-You should see: `TechScript v1.0.4.5` 🎉
+You should see: `TechScript v1.0.4.6` 🎉
 
 **What the installer does automatically:**
-- ✅ Puts `tech.exe` (v1.0.4.5) on your computer
+- ✅ Puts `tech.exe` (v1.0.4.6) on your computer
 - ✅ Makes the `tech` command available everywhere in your terminal
 - ✅ Registers `.txs` files so they know they belong to TechScript
 - ✅ Installs the VS Code extension for syntax highlighting

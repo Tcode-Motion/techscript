@@ -4,7 +4,7 @@ import platform
 import urllib.request
 import subprocess
 
-VERSION = "1.0.4.4"
+VERSION = "1.0.4.5"
 REPO = "Tcode-Motion/techscript"
 
 def download_binary():
@@ -28,7 +28,7 @@ def download_binary():
     exe_path = os.path.join(bin_dir, "tech.exe" if system == "windows" else "tech")
     
     if not os.path.exists(exe_path):
-        print(f"Downloading TechScript Native Engine (Windows) for peak performance...")
+        print(f"Downloading TechScript Native Engine for peak performance...")
         try:
             urllib.request.urlretrieve(url, exe_path)
             print("Download complete!")
@@ -40,8 +40,17 @@ def download_binary():
 def run_python_engine():
     """Fallback to the built-in Python interpreter."""
     try:
-        from .techscript.cli import main as python_main
+        # Use absolute import now that techscript is a top-level package
+        from techscript.cli import main as python_main
         python_main()
+    except ImportError:
+        # If absolute import fails, try relative just in case
+        try:
+            from .techscript.cli import main as python_main
+            python_main()
+        except Exception as e:
+            print(f"Error: Could not launch TechScript engine: {e}")
+            sys.exit(1)
     except Exception as e:
         print(f"Error: Could not launch TechScript engine: {e}")
         sys.exit(1)

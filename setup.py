@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="techscript-lang",
-    version="1.0.4.4",
+    version="1.0.4.5",
     author="Tanmoy",
     author_email="tanmoy@example.com",
     description="TechScript — A simple, friendly programming language (.txs)",
@@ -17,8 +17,10 @@ setup(
     package_data={
         "techscript_wrapper": [
             "examples/*.txs",
-            "techscript/*.py",
-            "techscript/*.md"
+        ],
+        "techscript": [
+            "*.py",
+            "*.md"
         ],
     },
     classifiers=[

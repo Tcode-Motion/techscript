@@ -356,11 +356,18 @@ impl VM {
                     let name = match &name_val { Value::String(s) => s.as_ref().clone(), _ => String::new() };
                     let val = self.pop();
                     let obj = self.pop();
-                    if let Value::Instance(inst) = &obj {
-                        inst.borrow_mut().fields.insert(name, val.clone());
-                        self.push(val);
-                    } else {
-                        return Err(self.runtime_error("Only instances have settable fields"));
+                    match &obj {
+                        Value::Instance(inst) => {
+                            inst.borrow_mut().fields.insert(name, val.clone());
+                            self.push(val);
+                        }
+                        Value::Map(m) => {
+                            m.borrow_mut().insert(name, val.clone());
+                            self.push(val);
+                        }
+                        _ => {
+                            return Err(self.runtime_error("Only instances and maps have settable properties"));
+                        }
                     }
                 }
                 OpCode::Method => {
@@ -387,8 +394,20 @@ impl VM {
 
                 // Modules
                 OpCode::Import => {
-                    let _name = self.read_constant();
-                    // Module system stub — add modules as plugins later
+                    let name_val = self.read_constant();
+                    let name = match &name_val { Value::String(s) => s.as_ref().clone(), _ => String::new() };
+                    // Lazily activate module builtins
+                    match name.as_str() {
+                        "api"   => crate::builtins::register_api_module(&mut self.globals),
+                        "web"   => crate::builtins::register_web_module(&mut self.globals),
+                        "gui"   => crate::builtins::register_gui_module(&mut self.globals),
+                        "three_d" => crate::builtins::register_three_d_module(&mut self.globals),
+                        "anime"   => crate::builtins::register_anime_module(&mut self.globals),
+                        "debug"   => crate::builtins::register_debug_module(&mut self.globals),
+                        // Built-in modules already registered at startup
+                        "math" | "fs" | "os" | "random" | "json" | "crypto" | "date" => {}
+                        _ => return Err(self.runtime_error(format!("Unknown module: '{}'. Available: api, web, gui, three_d, anime, debug, math, fs, os, random, json, crypto, date", name))),
+                    }
                 }
 
                 // Iteration
@@ -569,11 +588,12 @@ impl VM {
             "last" => Ok(list.borrow().last().cloned().unwrap_or(Value::None)),
             _ => {
                 let l = list.clone();
+                let method_name = name.to_string();
                 match name {
-                    "append" | "sort" | "reverse" | "map" | "filter" | "reduce" | "remove" => {
+                    "append" | "sort" | "reverse" | "remove" => {
                         Ok(Value::NativeFunction(Rc::new(NativeFnObj {
-                            name: name.to_string(),
-                            func: Box::new(move |args| Self::list_method_call(&l, &l.borrow().len().to_string(), args)),
+                            name: method_name.clone(),
+                            func: Box::new(move |args| Self::list_method_call(&l, &method_name, args)),
                         })))
                     }
                     _ => Err(self.runtime_error(format!("Unknown list method: {}", name))),
@@ -582,8 +602,31 @@ impl VM {
         }
     }
 
-    fn list_method_call(_list: &Rc<RefCell<Vec<Value>>>, _name: &str, _args: &[Value]) -> Result<Value, String> {
-        Ok(Value::None)
+    fn list_method_call(list: &Rc<RefCell<Vec<Value>>>, name: &str, args: &[Value]) -> Result<Value, String> {
+        let mut l = list.borrow_mut();
+        match name {
+            "append" => {
+                for arg in args {
+                    l.push(arg.clone());
+                }
+                Ok(Value::None)
+            }
+            "remove" => {
+                if let Some(idx_val) = args.first() {
+                    if let Value::Int(idx) = idx_val {
+                        if *idx >= 0 && (*idx as usize) < l.len() {
+                            return Ok(l.remove(*idx as usize));
+                        }
+                    }
+                }
+                Ok(Value::None)
+            }
+            "reverse" => {
+                l.reverse();
+                Ok(Value::None)
+            }
+            _ => Ok(Value::None),
+        }
     }
 
     fn map_property(&self, map: &Rc<RefCell<HashMap<String, Value>>>, name: &str) -> TechResult<Value> {
@@ -674,9 +717,16 @@ impl VM {
     }
     fn op_mod(&self, a: Value, b: Value) -> TechResult<Value> {
         match (&a, &b) {
-            (Value::Int(x), Value::Int(y)) => Ok(Value::Int(x % y)),
-            (Value::Float(x), Value::Float(y)) => Ok(Value::Float(x % y)),
-            _ => Err(self.runtime_error("Modulo requires numbers")),
+            (Value::Int(x), Value::Int(y)) => {
+                if *y == 0 { return Err(self.runtime_error("Modulo by zero")); }
+                Ok(Value::Int(x % y))
+            },
+            _ => {
+                let x = a.as_f64().ok_or_else(|| self.runtime_error("Modulo requires numbers"))?;
+                let y = b.as_f64().ok_or_else(|| self.runtime_error("Modulo requires numbers"))?;
+                if y == 0.0 { return Err(self.runtime_error("Modulo by zero")); }
+                Ok(Value::Float(x % y))
+            }
         }
     }
     fn op_pow(&self, a: Value, b: Value) -> TechResult<Value> {

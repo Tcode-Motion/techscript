@@ -1,0 +1,5 @@
+use anime
+make anim = anime.create()
+say "Anim type: " + type(anim)
+say "Anim keys: " + str(anim.keys) 
+say "Styles: " + type(anim["styles"])

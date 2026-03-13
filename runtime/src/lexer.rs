@@ -270,9 +270,6 @@ impl Lexer {
     fn read_string_content(&mut self, quote: char) -> TechResult<String> {
         let mut result = String::new();
         while self.pos < self.source.len() && self.current() != quote {
-            if self.current() == '\n' {
-                return Err(self.error("Unterminated string literal"));
-            }
             if self.current() == '\\' {
                 self.advance();
                 result.push(self.read_escape());
@@ -290,9 +287,6 @@ impl Lexer {
     fn read_raw_string_content(&mut self, quote: char) -> TechResult<String> {
         let mut result = String::new();
         while self.pos < self.source.len() && self.current() != quote {
-            if self.current() == '\n' {
-                return Err(self.error("Unterminated raw string literal"));
-            }
             result.push(self.advance());
         }
         if self.pos >= self.source.len() {

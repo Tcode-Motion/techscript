@@ -15,7 +15,7 @@ if readme.exists():
 
 setup(
     name="techscript",
-    version="1.0.1",
+    version="1.0.4",
     description="TechScript — A simple, friendly programming language (.txs)",
     long_description=long_description,
     long_description_content_type="text/markdown",

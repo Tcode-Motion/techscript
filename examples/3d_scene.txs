@@ -1,0 +1,57 @@
+# TechScript v1.0.4.3 — THE COSMIC SINGULARITY [PRO SHOWCASE]
+# Run: tech run 3d_scene.txs
+
+use three_d
+
+# Initialize a deep space void
+make s = scene.scene()
+s["bg"] = "#000002"
+make objects = s["objects"]
+
+# 🌌 GENERATE STARFIELD (500 Stars)
+# Using a fixed seed for reproducible beauty
+each i in 0..500 {
+    make star = scene.sphere("#ffffff", 0.03)
+    # Pseudo-random positioning in a large sphere
+    star["x"] = (i * 0.73) % 40 - 20
+    star["y"] = (i * 0.91) % 40 - 20
+    star["z"] = (i * 0.55) % 40 - 20
+    objects.append(star)
+}
+
+# 🌑 THE SINGULARITY (Black Hole)
+objects.append(scene.blackhole(2.0))
+
+# ✨ ACCRETION DISK (Multi-layered Glow)
+# Inner hot disk
+make disk1 = scene.torus("#ff5e00")
+disk1["size"] = 0.1
+objects.append(disk1)
+
+# Outer cool disk
+make disk2 = scene.torus("#7209b7")
+disk2["size"] = 0.05
+objects.append(disk2)
+
+# ➰ THE INFINITY LOOPS (Orbiting Mobius Strips)
+make m1 = scene.mobius("#4cc9f0")
+m1["x"] = 8
+m1["y"] = 2
+objects.append(m1)
+
+make m2 = scene.mobius("#f72585")
+m2["x"] = -8
+m2["y"] = -3
+m2["z"] = 4
+objects.append(m2)
+
+# 💡 CINEMATIC LIGHTING
+# Deep blue ambient and harsh white directional
+objects.append(scene.light("ambient", "#12123e", 2.2))
+objects.append(scene.light("directional", "#ffffff", 1.5))
+
+say "🚀 INITIALIZING HYPER-REALISTIC COSMIC SINGULARITY..."
+say "🌌 500 Stars Loaded. Black Hole Singularity Stable."
+say "🖱️ INTERACTION: [Left-Click + Drag] to Orbit | [Scroll] to Zoom"
+scene.render(s)
+

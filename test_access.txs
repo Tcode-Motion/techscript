@@ -1,0 +1,5 @@
+make m = {"a": [1, 2]}
+say "m.a length before:", m.a.length
+m.a.append(3)
+say "m.a length after:", m.a.length
+say "m.a:", m.a

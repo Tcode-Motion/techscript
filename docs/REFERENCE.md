@@ -1,6 +1,6 @@
 # TechScript Language Cheat Sheet
 
-A simple reference card for TechScript v2. Save this for quick lookups!
+A quick reference for TechScript v1.0.4. Save this for quick lookups!
 
 ---
 
@@ -88,23 +88,109 @@ attempt {
 }
 ```
 
-## 🌐 Web (use web)
+---
+
+## 🌐 use web — Build Websites
 
 ```techscript
 use web
-make page = WebPage("Title")
+make page = web.page("My Site")
+make body = page["body"]
+make styles = page["styles"]
 
-page.style("body", { "background": "#111" })
-page.script("function hello() { alert('Hi!'); }")
+styles.append(web.style("h1", {"color": "#e94560"}))
+body.append(web.h1("Hello World"))
+body.append(web.p("Built with TechScript!"))
+body.append(web.button("Click", {"onclick": "alert('Hi!')"}))
 
-page.body([
-    page.h1("My Page"),
-    page.p("Some text"),
-    page.button("Click", { "onclick": "hello()" })
-])
-
-page.run()           # Starts browser instantly!
+make path = web.build(page)
+web.open(path)
 ```
+
+**Elements:** `web.h1` `web.h2` `web.h3` `web.p` `web.div` `web.span` `web.button` `web.input` `web.img` `web.a` `web.ul` `web.table` `web.form`
+**Layout:** `web.style` `web.css_class` `web.layout`
+**Actions:** `web.build` `web.open` `web.serve`
+
+---
+
+## 🚀 use api — HTTP Server
+
+```techscript
+use api
+say "Starting server..."
+api.listen(3000)    # Starts on http://localhost:3000
+```
+
+**Functions:** `api.listen` `api.json` `api.text` `api.html` `api.status`
+
+---
+
+## 🖥️ use gui — Desktop Apps
+
+```techscript
+use gui
+make win = gui.window("My App", 600, 400)
+make els = win["elements"]
+els.append(gui.label("Hello!"))
+els.append(gui.button("Click Me", "alert('Hi!')"))
+els.append(gui.textbox("Type here...", "input1"))
+els.append(gui.dropdown(["Option 1", "Option 2"]))
+gui.show(win)
+```
+
+**Widgets:** `gui.window` `gui.label` `gui.button` `gui.textbox` `gui.checkbox` `gui.dropdown` `gui.vbox` `gui.hbox` `gui.show`
+
+---
+
+## 🎮 use three_d — 3D Graphics
+
+```techscript
+use three_d
+make s = scene.scene()
+make objects = s["objects"]
+objects.append(scene.box("#e94560", 1.0))
+objects.append(scene.sphere("#4ecdc4", 0.7))
+objects.append(scene.torus("#ffd93d"))
+scene.render(s)
+```
+
+**Shapes:** `scene.box` `scene.sphere` `scene.cylinder` `scene.plane` `scene.torus`
+**Setup:** `scene.scene` `scene.light` `scene.render`
+
+---
+
+## 🎬 use anime — Animations
+
+```techscript
+use anime
+make anim = anime.create()
+make els = anim["elements"]
+els.append(anime.target("div", "", "anim-el"))
+make anims = anim["animations"]
+anims.append(anime.animate(".anim-el", {"translateX": "250", "duration": "2000"}))
+anime.render(anim)
+```
+
+**Functions:** `anime.create` `anime.target` `anime.animate` `anime.timeline` `anime.stagger` `anime.render`
+
+---
+
+## 🔍 use debug — Debugging Tools
+
+```techscript
+use debug
+debug.trace(myVar)           # Show value + type
+debug.inspect(myList)        # Deep inspection
+debug.timer_start("task")
+# ... some code ...
+debug.timer_end("task")      # Shows elapsed time
+debug.assert(x > 0, "x must be positive")
+debug.table(myList)          # Pretty-print as table
+debug.log("INFO", "Server started")
+debug.benchmark(1000000, "loop test")
+```
+
+---
 
 ## 📐 Built-in Functions
 
@@ -143,3 +229,15 @@ nums.map((x) => x * 2)
 nums.filter((x) => x > 2)
 nums.length
 ```
+
+## 📦 Built-in Modules
+
+| Module | Namespace | Use |
+|---|---|---|
+| Math | `math.*` | Trig, sqrt, log, etc. |
+| File System | `fs.*` | read, write, list_dir |
+| OS | `os.*` | env, system, popen |
+| Random | `random.*` | random, choice, uuid |
+| JSON | `json.*` | encode, decode |
+| Crypto | `crypto.*` | sha256, base64 |
+| Date | `date.*` | now, unix, year |

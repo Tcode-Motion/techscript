@@ -573,8 +573,16 @@ impl Parser {
                 expr = Expr::Call { callee: Box::new(expr), args };
             } else if self.match_tok(TokenType::Dot, None) {
                 // Member access
-                let member = self.expect(TokenType::Identifier, None)?;
-                expr = Expr::Member { obj: Box::new(expr), member: member.value };
+                let tok = self.peek();
+                if tok.token_type == TokenType::Identifier || tok.token_type == TokenType::Keyword {
+                    let name = self.advance().value;
+                    expr = Expr::Member { obj: Box::new(expr), member: name };
+                } else {
+                    return Err(TechError::parse(
+                        format!("Expected Identifier or Keyword after '.', got {:?}", tok.token_type),
+                        tok.line, tok.column, &self.filename
+                    ));
+                }
             } else if self.match_tok(TokenType::LBracket, None) {
                 // Index access
                 let index = self.parse_expression()?;

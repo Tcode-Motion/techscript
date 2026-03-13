@@ -58,11 +58,60 @@ if ! command -v pip3 &>/dev/null && ! python3 -m pip --version &>/dev/null 2>&1;
     fi
 fi
 
-# ---------- Install TechScript ----------
+# ---------- Detect Architecture & Version ----------
+ARCH="$(uname -m)"
+LATEST_VERSION="1.0.4.5"
+REPO="Tcode-Motion/techscript"
+
+# ---------- Native Binary Check (Fastest) ----------
 echo ""
-echo "  [2/4] Installing TechScript..."
-python3 -m pip install techscript --quiet --upgrade
-echo -e "  ${GREEN}✓ TechScript installed${NC}"
+echo "  [2/4] Checking for Native High-Performance Engine..."
+NATIVE_ASSET=""
+if [ "$PLATFORM" = "Linux" ] && [ "$ARCH" = "x86_64" ]; then
+    NATIVE_ASSET="tech-linux-x64"
+elif [ "$PLATFORM" = "macOS" ]; then
+    NATIVE_ASSET="tech-macos-x64"
+fi
+
+if [ -n "$NATIVE_ASSET" ]; then
+    BIN_DIR="$HOME/.local/bin"
+    mkdir -p "$BIN_DIR"
+    echo "  [INFO] Native binary support detected for $PLATFORM ($ARCH)."
+    echo "  [INFO] Attempting to download native engine..."
+    
+    # Try to download native binary from GitHub Release
+    if curl -fsSL "https://github.com/$REPO/releases/download/v$LATEST_VERSION/$NATIVE_ASSET" -o "$BIN_DIR/tech"; then
+        chmod +x "$BIN_DIR/tech"
+        echo -e "  ${GREEN}✓ Native Rust Engine downloaded successfully.${NC}"
+        NATIVE_SUCCESS=true
+    else
+        echo "  [INFO] Native binary not yet available for v$LATEST_VERSION. Falling back to Python engine."
+        NATIVE_SUCCESS=false
+    fi
+fi
+
+# ---------- Install via PIP (Fallback / Universal) ----------
+if [ "$NATIVE_SUCCESS" != "true" ]; then
+    echo ""
+    echo "  [2/4] Installing Universal Python Engine..."
+    # Detect if we need --break-system-packages (PEP 668)
+    PIP_FLAGS=""
+    if pip3 install techscript-lang --dry-run 2>&1 | grep -q "externally-managed-environment"; then
+        echo "  [INFO] Detected externally-managed environment (Kali/Debian/Ubuntu)."
+        echo "  [INFO] Applying --break-system-packages workaround..."
+        PIP_FLAGS="--break-system-packages"
+    fi
+
+    if ! python3 -m pip install techscript-lang --quiet --upgrade $PIP_FLAGS; then
+        echo -e "  ${YELLOW}[WARN] Normal install failed. Trying with --break-system-packages...${NC}"
+        python3 -m pip install techscript-lang --quiet --upgrade --break-system-packages || {
+            echo -e "  ${RED}[ERROR] Installation failed.${NC}"
+            echo "  Try creating a virtual environment: python3 -m venv .venv && source .venv/bin/activate"
+            exit 1
+        }
+    fi
+    echo -e "  ${GREEN}✓ Universal Engine installed via pip${NC}"
+fi
 
 # ---------- Ensure 'tech' is in PATH ----------
 echo ""

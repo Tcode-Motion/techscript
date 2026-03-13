@@ -1,0 +1,7 @@
+use anime
+make anim = anime.create()
+# say "anim keys:", anim.keys()
+say "anim.scripts:", anim.scripts
+say "anim.styles:", anim.styles
+say "anim.elements:", anim.elements
+say "anim.animations:", anim.animations

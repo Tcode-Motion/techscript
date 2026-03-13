@@ -1,0 +1,9 @@
+﻿≡ƒº¬ Running TechScript Integration Tests
+-------------------------------------
+≡ƒöä Testing examples/api_server.txs... Γ£à Passed (server running steadily)
+≡ƒöä Testing examples/web_page.txs... Γ¥î Failed (exited with exit code: 1)
+≡ƒöä Testing examples/gui_app.txs... Γ£à Passed (server running steadily)
+≡ƒöä Testing examples/3d_scene.txs... Γ¥î Failed (exited with exit code: 1)
+≡ƒöä Testing examples/animation.txs... Γ£à Passed (server running steadily)
+
+Test Results: 3/5 passed.

@@ -1,0 +1,6 @@
+use anime
+make anim = anime.create()
+say "anim keys:", keys(anim)
+say "anim.scripts:", anim.scripts
+anim.scripts.append("test")
+say "OK"

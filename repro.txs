@@ -1,0 +1,17 @@
+use anime
+make a = anime.create()
+
+# Check if key exists
+when "styles" in a {
+    say "✓ 'styles' key found"
+} else {
+    say "✗ 'styles' key NOT found"
+}
+
+# Check value
+make s = a["styles"]
+say "Type of a['styles']:", typeof s
+
+# Try append
+s.append("test")
+say "✓ append worked"

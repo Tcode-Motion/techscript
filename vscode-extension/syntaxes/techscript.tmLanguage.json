@@ -109,11 +109,11 @@
       "patterns": [
         {
           "name": "keyword.control.techscript",
-          "match": "\\b(if|elif|else|for|while|until|unless|match|case|try|catch|finally|throw|break|skip|pass|return|guard|with|do|defer)\\b"
+          "match": "\\b(if|elif|else|for|while|until|unless|match|case|try|catch|finally|throw|break|skip|pass|return|guard|with|do|defer|when|attempt|repeat)\\b"
         },
         {
           "name": "keyword.declaration.techscript",
-          "match": "\\b(fn|class|set|const|mut|del|global|export|import|from|as|new)\\b"
+          "match": "\\b(fn|build|class|model|set|make|const|keep|mut|del|global|export|import|use|from|as|new|send)\\b"
         },
         {
           "name": "keyword.operator.logical.techscript",
@@ -122,6 +122,10 @@
         {
           "name": "keyword.other.techscript",
           "match": "\\b(say|ask|self|super|async|await|yield|each)\\b"
+        },
+        {
+          "name": "support.class.module.techscript",
+          "match": "\\b(api|web|gui|three_d|anime|debug|math|fs|os|random|json|crypto|date)\\b"
         }
       ]
     },
@@ -145,7 +149,7 @@
       "patterns": [
         {
           "name": "support.function.builtin.techscript",
-          "match": "\\b(abs|round|ceil|floor|min|max|sum|sqrt|pow|clamp|sign|len|size|range|enumerate|zip|sorted|reversed|map|filter|to_int|to_float|to_str|to_bool|to_list|is_int|is_float|is_str|is_list|is_map|is_none|is_bool|is_even|is_odd|typeof|write|debug|log|warn|error|clear|format|read_file|write_file|append_file|read_lines|read_json|write_json|file_exists|list_dir|make_dir|delete_file|split|join|replace|contains|starts_with|ends_with|upper|lower|trim|chars|repeat|capitalize|index_of|flat|unique|take|drop|push|pop|keys|values|entries|merge|has_key|random|randint|choice|shuffle|sleep|exit|assert|hash|gcd|title|count)\\b"
+          "match": "\\b(abs|round|ceil|floor|min|max|sum|sqrt|pow|clamp|sign|len|size|range|enumerate|zip|sorted|reversed|map|filter|int|float|str|bool|list|type|to_int|to_float|to_str|to_bool|to_list|is_int|is_float|is_str|is_list|is_map|is_none|is_bool|is_even|is_odd|typeof|print|write|log|warn|error|clear|format|read_file|write_file|append_file|split|join|replace|replace_all|contains|starts_with|ends_with|upper|lower|trim|chars|repeat|reverse|find|sleep|exit|assert|panic|time|time_ms|version|callable|random_int)\\b"
         }
       ]
     },
@@ -185,7 +189,7 @@
       "patterns": [
         {
           "name": "entity.name.function.techscript",
-          "match": "(?<=fn\\s)[a-zA-Z_][a-zA-Z0-9_]*"
+          "match": "(?<=(fn|build)\\s)[a-zA-Z_][a-zA-Z0-9_]*"
         }
       ]
     },
@@ -193,7 +197,7 @@
       "patterns": [
         {
           "name": "entity.name.class.techscript",
-          "match": "(?<=class\\s)[a-zA-Z_][a-zA-Z0-9_]*"
+          "match": "(?<=(class|model)\\s)[a-zA-Z_][a-zA-Z0-9_]*"
         }
       ]
     },

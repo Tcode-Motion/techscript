@@ -1,0 +1,4 @@
+use anime
+make anim = anime.create()
+anim.styles.append("/* test */")
+say "OK"

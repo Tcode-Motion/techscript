@@ -1,6 +1,6 @@
 [package]
 name = "techscript"
-version = "1.0.3"
+version = "1.0.4"
 edition = "2021"
 authors = ["Tanmoy"]
 description = "TechScript native runtime"
@@ -9,6 +9,9 @@ description = "TechScript native runtime"
 clap = { version = "4.4", features = ["derive"] }
 rustyline = "13.0"
 colored = "2.1"
+
+[build-dependencies]
+winres = "0.1"
 
 [profile.release]
 opt-level = 3

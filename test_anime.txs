@@ -1,0 +1,6 @@
+use anime
+make anim = anime.create()
+say "anim type:", typeof anim
+say "anim.styles type:", typeof anim.styles
+anim.styles.append("test")
+say "OK"

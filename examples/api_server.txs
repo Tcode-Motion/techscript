@@ -1,0 +1,13 @@
+# TechScript v1.0.4 — API Server Example
+# Run: tech run api_server.txs
+
+use api
+
+say "🚀 Starting TechScript API server..."
+say "Available endpoints:"
+say "  GET  http://localhost:3000/"
+say "  All routes return JSON with method + path info"
+say ""
+
+# Start the server on port 3000
+api.listen(3000)

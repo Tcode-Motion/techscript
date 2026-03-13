@@ -1,0 +1,37 @@
+# TechScript v1.0.4 — Web Page Builder Example
+# Run: tech run web_page.txs
+
+use web
+
+# Create a page
+make page = web.page("TechScript Language")
+
+page["styles"].append("
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&display=swap');
+  :root { --primary: #7209b7; --secondary: #4cc9f0; --bg: #0b090a; --glass: rgba(255,255,255,0.05); }
+  body { font-family: 'Outfit', sans-serif; background: var(--bg); color: #fff; margin:0; line-height: 1.6; }
+  .hero { padding: 100px 20px; text-align: center; background: radial-gradient(circle at center, #1b1b1b, #000); }
+  .hero h1 { font-size: 4rem; margin:0; background: linear-gradient(90deg, var(--secondary), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 50px; }
+  .card { background: var(--glass); backdrop-filter: blur(10px); padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
+  .card:hover { transform: translateY(-10px); background: rgba(255,255,255,0.08); }
+  .tag { background: var(--primary); padding: 5px 15px; border-radius: 50px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+")
+
+page["body"].append(web.div("
+  <section class='hero'>
+    <span class='tag'>Beta v2.0 Coming Soon</span>
+    <h1>Think in TechScript</h1>
+    <p>The human-first programming language for the next generation of creators.</p>
+  </section>
+  <div class='features'>
+    <div class='card'><h2>Fast Execution</h2><p>Native Rust VM performance with zero-overhead syntax.</p></div>
+    <div class='card'><h2>Modern GUI</h2><p>Build stunning Glassmorphic interfaces with single lines of code.</p></div>
+    <div class='card'><h2>3d & Anime</h2><p>Integrated Three.js and Anime.js support out of the box.</p></div>
+  </div>
+", "container"))
+
+# Build and open
+make path = web.build(page)
+say f"💎 Premium Landing Page built: {path}"
+web.open(path)

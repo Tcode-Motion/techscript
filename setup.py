@@ -5,24 +5,28 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="techscript-lang",
-    version="1.0.4.3",
+    version="1.0.4.4",
     author="Tanmoy",
     author_email="tanmoy@example.com",
-    description="A friendly native programming language that reads like plain English.",
+    description="TechScript — A simple, friendly programming language (.txs)",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Tcode-Motion/techscript",
-    packages=["techscript_wrapper"],
+    packages=find_packages(),
+    include_package_data=True,
+    package_data={
+        "techscript_wrapper": [
+            "examples/*.txs",
+            "techscript/*.py",
+            "techscript/*.md"
+        ],
+    },
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.7",
-    package_data={
-        "techscript_wrapper": ["examples/*.txs"],
-    },
-    include_package_data=True,
     entry_points={
         "console_scripts": [
             "tech=techscript_wrapper.__main__:main",

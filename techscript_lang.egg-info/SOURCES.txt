@@ -35,3 +35,17 @@ techscript_wrapper/examples/hello.txs
 techscript_wrapper/examples/web_app.txs
 techscript_wrapper/examples/web_app_simple.txs
 techscript_wrapper/examples/web_complete.txs
+techscript_wrapper/techscript/__init__.py
+techscript_wrapper/techscript/__main__.py
+techscript_wrapper/techscript/ast_nodes.py
+techscript_wrapper/techscript/builtins.py
+techscript_wrapper/techscript/cli.py
+techscript_wrapper/techscript/environment.py
+techscript_wrapper/techscript/errors.py
+techscript_wrapper/techscript/interpreter.py
+techscript_wrapper/techscript/lexer.py
+techscript_wrapper/techscript/parser.py
+techscript_wrapper/techscript/repl.py
+techscript_wrapper/techscript/tokens.py
+techscript_wrapper/techscript/transpiler.py
+techscript_wrapper/techscript/web.py

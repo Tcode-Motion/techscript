@@ -18,7 +18,7 @@
 
 <div align="center">
 
-![version](https://img.shields.io/badge/version-v1.0.4.3-7c3aed?style=for-the-badge)
+![version](https://img.shields.io/badge/version-v1.0.4.4-7c3aed?style=for-the-badge)
 ![runtime](https://img.shields.io/badge/runtime-Native_Rust_VM-f97316?style=for-the-badge&logo=rust&logoColor=white)
 ![platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux%20%7C%20Android-22c55e?style=for-the-badge)
 ![license](https://img.shields.io/badge/license-MIT-3b82f6?style=for-the-badge)
@@ -28,7 +28,7 @@
 <div align="center">
 
 ![deps](https://img.shields.io/badge/dependencies-NONE-00ff88?style=for-the-badge)
-![stdlib](https://img.shields.io/badge/stdlib-150%2B_functions-7c3aed?style=for-the-badge)
+![stdlib](https://img.shields.io/badge/stdlib-180%2B_functions-7c3aed?style=for-the-badge)
 ![vscode](https://img.shields.io/badge/VS_Code-Extension_v1.0.3-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white)
 [![Author](https://img.shields.io/badge/Made_by-Tcode--Motion-181717?style=for-the-badge&logo=github)](https://github.com/Tcode-Motion)
 [![Stars](https://img.shields.io/github/stars/Tcode-Motion/techscript?style=for-the-badge&color=yellow&label=⭐)](https://github.com/Tcode-Motion/techscript/stargazers)
@@ -44,7 +44,7 @@
 ║                                                                         ║
 ║   No semicolons. No brackets. No confusing symbols.                     ║
 ║   No Python runtime. No dependencies. Just pure speed.                  ║
-║   Powered by a Native Rust VM.  — Tcode-Motion ⚡                       ║
+║   Universal Support — Windows, Linux, Mac, & Termux! ⚡                 ║
 ╚═════════════════════════════════════════════════════════════════════════╝
 ```
 
@@ -73,7 +73,8 @@ That's it. **No semicolons. No brackets. No confusing symbols.** Just simple wor
 TechScript is:
 - 🟢 **A programming language** — you can write code that runs on your computer natively
 - 🌐 **A web builder** — you can build full websites with it (no HTML or CSS needed!)
-- 🦀 **Powered by Native Rust** — blazing fast compilation, completely independent of Python
+- 🦀 **Powered by Native Rust** — blazing fast compilation on Windows
+- 🐍 **Universal Fallback** — works on Termux, Linux, and Mac via built-in Python engine
 - 📦 **One command** — `tech run yourfile.txs` and your program runs instantly into bytecodes
 
 ---
@@ -114,8 +115,8 @@ TechScript is:
 
 #### Option 1: One-Click Installer *(Recommended for Beginners)*
 
-1. Go to the [📥 v1.0.4.3 Release Page](https://github.com/Tcode-Motion/techscript/releases/tag/v1.0.4.3)
-2. Download **[TechScript_v1.0.4.3_Setup.exe](https://github.com/Tcode-Motion/techscript/releases/download/v1.0.4.3/TechScript_v1.0.4.3_Setup.exe)**
+1. Go to the [📥 v1.0.4.4 Release Page](https://github.com/Tcode-Motion/techscript/releases/tag/v1.0.4.4)
+2. Download **[TechScript_v1.0.4.4_Setup.exe](https://github.com/Tcode-Motion/techscript/releases/download/v1.0.4.4/TechScript_v1.0.4.4_Setup.exe)**
 3. Double-click it — it will install everything automatically!
 4. Open **PowerShell** (`Win + X` → "Windows PowerShell") and type:
 
@@ -123,10 +124,10 @@ TechScript is:
 tech version
 ```
 
-You should see: `TechScript v1.0.4.3` 🎉
+You should see: `TechScript v1.0.4.4` 🎉
 
 **What the installer does automatically:**
-- ✅ Puts `tech.exe` (v1.0.4.3) on your computer
+- ✅ Puts `tech.exe` (v1.0.4.4) on your computer
 - ✅ Makes the `tech` command available everywhere in your terminal
 - ✅ Registers `.txs` files so they know they belong to TechScript
 - ✅ Installs the VS Code extension for syntax highlighting
@@ -134,7 +135,7 @@ You should see: `TechScript v1.0.4.3` 🎉
 #### Option 2: Using pip *(Cross-Platform Wrapper)*
 
 ```powershell
-pip install techscript-lang==1.0.4.3
+pip install techscript-lang==1.0.4.4
 ```
 
 ---
@@ -143,7 +144,12 @@ pip install techscript-lang==1.0.4.3
 
 > **No Python required to install or run!**
 
-**One-line installer:**
+**Using pip (Easiest):**
+```bash
+pip install techscript-lang
+```
+
+**One-line script installer:**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
 ```
@@ -160,11 +166,18 @@ sudo apt install techscript
 
 > **No Python required to install or run!**
 
+**Using pip (Easiest):**
 ```bash
-# Using Homebrew:
-brew install tcode-motion/techscript/techscript
+pip install techscript-lang
+```
 
-# OR use the one-line installer:
+**Using Homebrew:**
+```bash
+brew install tcode-motion/techscript/techscript
+```
+
+**OR use the one-line installer:**
+```bash
 curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
 ```
 

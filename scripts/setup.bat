@@ -58,8 +58,13 @@ if %ERRORLEVEL% NEQ 0 (
     for /f "delims=" %%P in ('python -c "import sys, os; print(os.path.join(os.path.dirname(sys.executable), 'Scripts'))"') do set SCRIPTS_DIR=%%P
     set PATH=!SCRIPTS_DIR!;%PATH%
     echo  Added %SCRIPTS_DIR% to session PATH.
-    :: Persist to user PATH
-    setx PATH "!SCRIPTS_DIR!;%PATH%" >nul 2>&1
+    :: Persist to user PATH safely via PowerShell .NET API (no 1024-char limit)
+    powershell -NoProfile -Command "[Environment]::SetEnvironmentVariable('PATH', '%SCRIPTS_DIR%;' + [Environment]::GetEnvironmentVariable('PATH', 'User'), 'User')" >nul 2>&1
+    if %ERRORLEVEL% EQU 0 (
+        echo  PATH updated safely via PowerShell.
+    ) else (
+        echo  [WARN] Could not update PATH automatically. Please add %SCRIPTS_DIR% manually.
+    )
 )
 tech version
 echo  'tech' command is available!

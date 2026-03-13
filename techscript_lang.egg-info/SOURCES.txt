@@ -1,0 +1,9 @@
+README.md
+setup.py
+techscript_lang.egg-info/PKG-INFO
+techscript_lang.egg-info/SOURCES.txt
+techscript_lang.egg-info/dependency_links.txt
+techscript_lang.egg-info/entry_points.txt
+techscript_lang.egg-info/top_level.txt
+techscript_wrapper/__init__.py
+techscript_wrapper/__main__.py

@@ -1,0 +1,37 @@
+# ── TechScript v1.0.3 — Crypto Module Demo ───────────
+# Run: tech run 11_crypto_module.txs
+
+say "═══ Crypto Module Demo ═══"
+say ""
+
+# ── SHA-256 Hashing ──
+make message = "Hello, TechScript!"
+make hash = crypto.sha256(message)
+say f"Message:     {message}"
+say f"SHA-256:     {hash}"
+
+say ""
+
+# ── Different inputs = totally different hashes ──
+say "Same word, tiny change:"
+say f"  sha256('hello')  = {crypto.sha256('hello')}"
+say f"  sha256('hello.') = {crypto.sha256('hello.')}"
+say f"  sha256('Hello')  = {crypto.sha256('Hello')}"
+
+say ""
+
+# ── Base64 Encoding/Decoding ──
+make secret = "TechScript v1.0.3 is blazing fast!"
+make encoded = crypto.base64_encode(secret)
+make decoded = crypto.base64_decode(encoded)
+say f"Original:       {secret}"
+say f"Base64 Encode:  {encoded}"
+say f"Base64 Decode:  {decoded}"
+
+say ""
+
+# ── MD5 Hash ──
+say f"MD5('test'):    {crypto.md5('test')}"
+
+say ""
+say "Done! ✅"

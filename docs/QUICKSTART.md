@@ -1,4 +1,4 @@
-# TechScript v2 — Quick Start Guide
+# TechScript v1.0.3 — Quick Start Guide
 
 > **You don't need to be a programmer to use TechScript.**  
 > Just follow the steps below for your operating system!
@@ -13,106 +13,59 @@
 4. Open **PowerShell** or **Command Prompt** and type:
 
 ```
-tech run examples/hello.txs
+tech version
 ```
 
-5. Done! Your first TechScript program just ran. 🎉
-
----
-
-## 🍎 macOS — Terminal Install
-
-Open **Terminal** and paste this one command:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/your-org/techscript/main/scripts/install.sh | bash
-```
-
-After install, test it:
-```bash
-tech run examples/hello.txs
-```
-
----
-
-## 🐧 Linux — Terminal Install
-
-Open a terminal and paste:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/your-org/techscript/main/scripts/install.sh | bash
-```
-
-Or if you have `pip`:
-```bash
-pip install techscript
-```
-
-Then:
-```bash
-tech run examples/hello.txs
-```
+You should see: `TechScript v1.0.3` 🎉
 
 ---
 
 ## 📱 Android (Termux)
 
+See the detailed [Termux Guide](TERMUX.md) or just run:
 ```bash
-pkg install python
-pip install techscript
-tech run examples/hello.txs
+pkg install python -y && pip install techscript
+tech version
 ```
 
 ---
 
-## 🖊️ Writing Your First Program
+## 🚀 New in v1.0.3 — 150+ Functions
 
-Create a file called `hello.txs` and write:
+Your language just got a massive upgrade! You can now use professional tools out of the box:
 
+- `crypto.sha256("hello")` — Generate secure hashes
+- `math.sin(x)`, `math.factorial(n)` — Advanced math
+- `json.encode(my_list)`, `json.decode(str)` — Handle data
+- `fs.read("file.txt")`, `fs.write("file.txt", "hi")` — File management
+- `date.now`, `os.name`, `random.uuid` — And much more!
+
+---
+
+## ⚡ Execution Modes
+
+### 1. Run a File
+Create `hello.txs`:
 ```
 say "Hello, World!"
-say "I am learning TechScript!"
 ```
+Run it: `tech run hello.txs`
 
-Run it with:
-```
-tech run hello.txs
-```
+### 2. Interactive Mode (REPL)
+Just type `tech repl` to open a live console where you can type code and see results instantly.
 
----
-
-## 🌐 Building a Website
-
-```
-use web
-
-make page = WebPage("My First Website")
-
-page.style("body", { "background": "#111", "color": "white", "font-family": "sans-serif" })
-
-page.body([
-    page.h1("Welcome to My Website"),
-    page.p("Built 100% in TechScript — no HTML or CSS needed!")
-])
-
-page.run()
-```
-
-Run it:
-```
-tech run my_site.txs
-```
-
-Your browser opens automatically! 🚀
+### 3. Inline Execution (New!)
+Run code instantly without a file:
+`tech eval "say crypto.sha256('hello')"`
 
 ---
 
 ## 🛠️ Available Commands
 
-| Command | What it does |
-|---|---|
-| `tech run file.txs` | Run a TechScript file |
-| `tech check file.txs` | Check for errors without running |
-| `tech repl` | Interactive coding mode (like a calculator) |
-| `tech version` | Show version |
-| `tech transpile file.txs` | Convert to Python |
+| Command | What it does | Example |
+|---|---|---|
+| `tech run file.txs` | Run a TechScript file | `tech run calc.txs` |
+| `tech eval "code"` | **NEW** — Run code instantly | `tech eval "say 42"` |
+| `tech check file.txs` | Check for errors without running | `tech check script.txs` |
+| `tech repl` | Interactive coding mode | `tech repl` |
+| `tech version` | Show version | `tech version` |

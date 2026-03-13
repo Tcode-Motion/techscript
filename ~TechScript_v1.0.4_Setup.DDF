@@ -1,0 +1,20 @@
+;Auto-generated Diamond Directive File. Can be deleted without harm.
+.Set CabinetNameTemplate=c:\Users\tanmoy\Documents\jast work on this now\techscript\public-release\~TechScript_v1.0.4_Setup.CAB
+.Set CompressionType=LZX
+.Set CompressionLevel=7
+.Set InfFileName=c:\Users\tanmoy\Documents\jast work on this now\techscript\public-release\~TechScript_v1.0.4_Setup_LAYOUT.INF
+.Set RptFileName=c:\Users\tanmoy\Documents\jast work on this now\techscript\public-release\~TechScript_v1.0.4_Setup.RPT
+.Set MaxDiskSize=CDROM
+.Set ReservePerCabinetSize=0
+.Set InfCabinetLineFormat=*cab#*=Application Source Media,*cabfile*,0
+.Set Compress=on
+.Set CompressionMemory=21
+.Set DiskDirectoryTemplate=
+.Set Cabinet=ON
+.Set MaxCabinetSize=999999999
+.Set InfDiskHeader=
+.Set InfDiskLineFormat=
+.Set InfCabinetHeader=[SourceDisksNames]
+.Set InfFileHeader=
+.Set InfFileHeader1=[SourceDisksFiles]
+.Set InfFileLineFormat=*file*=*cab#*,,*size*,*csum*

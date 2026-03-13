@@ -1,0 +1,437 @@
+# TechScript Animation Studio v7.0 — Cinematic 3D Edition
+# 🎬 The Ultimate Motion Design Suite — Hyper-Realistic & Pro-Performance
+
+use anime
+
+make anim = anime.create()
+
+# ── 1. Pro Design System (v7.0 Cinematic) ───────────────────────────────────
+anim.styles.append("""
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap');
+
+  :root {
+    --bg: #020205;
+    --sidebar: #06060c;
+    --accent: #00f5d4;
+    --accent-glow: rgba(0, 245, 212, 0.3);
+    --pink: #f15bb5;
+    --purple: #9b5de5;
+    --yellow: #fee440;
+    --orange: #ff6b35;
+    --surface: rgba(255, 255, 255, 0.03);
+    --border: rgba(255, 255, 255, 0.08);
+    --text: #ffffff;
+    --text-dim: #777788;
+    --r: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+  
+  html, body { 
+    background: var(--bg); color: var(--text); 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    overflow: hidden; height: 100vh; width: 100vw;
+  }
+
+  #app {
+    display: flex; flex-direction: column;
+    height: 100vh; width: 100vw;
+  }
+
+  /* Header with Logo */
+  header {
+    height: 54px; background: var(--sidebar); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 20px; justify-content: space-between;
+    flex-shrink: 0; z-index: 100;
+  }
+  .logo-area { display: flex; align-items: center; gap: 10px; }
+  .logo-svg { width: 24px; height: 24px; fill: var(--accent); filter: drop-shadow(0 0 10px var(--accent-glow)); }
+  .brand { font-size: 13px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: #fff; }
+  .brand span { color: var(--accent); }
+
+  /* Workspace */
+  #workspace { display: flex; flex: 1; min-height: 0; }
+
+  aside { 
+    background: var(--sidebar); width: 260px; 
+    display: flex; flex-direction: column; overflow-y: auto; padding: 18px; flex-shrink: 0;
+  }
+  #left-sidebar { border-right: 1px solid var(--border); }
+  #right-panel { border-left: 1px solid var(--border); width: 280px; }
+
+  aside::-webkit-scrollbar { width: 3px; }
+  aside::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+  .label-group { font-size: 9px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.5px; margin: 20px 0 10px 0; }
+  .label-group:first-child { margin-top: 0; }
+  
+  /* Library Presets */
+  .preset-card {
+    background: var(--surface); border: 1px solid var(--border); padding: 10px 14px; border-radius: 8px;
+    margin-bottom: 8px; cursor: pointer; transition: 0.2s;
+    display: flex; flex-direction: column; gap: 3px; border-left: 3px solid transparent;
+  }
+  .preset-card:hover { border-color: var(--accent); background: rgba(0, 245, 212, 0.03); }
+  .preset-card.active { border-color: var(--accent); border-left-color: var(--accent); background: rgba(0, 245, 212, 0.06); }
+  .p-name { font-weight: 700; font-size: 11px; color: var(--text); }
+  .p-desc { font-size: 9px; color: var(--text-dim); }
+
+  /* Stage */
+  main { 
+    flex: 1; position: relative; display: flex; align-items: center; justify-content: center; 
+    background: radial-gradient(circle at 50% 50%, #0d0d1a 0%, #020205 100%);
+    overflow: hidden; perspective: 1000px;
+  }
+  .grid-bg {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 40px 40px; background-position: center; pointer-events: none;
+  }
+
+  #viewport { 
+    position: relative; z-index: 5; display: flex; align-items: center; justify-content: center; 
+    transform-style: preserve-3d;
+  }
+  #canvas-grid { display: grid; gap: 10px; transform-style: preserve-3d; }
+  
+  /* Shapes & 3D Simulations */
+  .box { 
+    width: 60px; height: 60px; background: var(--accent); 
+    border-radius: 4px; box-shadow: 0 0 40px var(--accent-glow);
+    transition: background 0.3s, border-radius 0.3s, clip-path 0.4s;
+    position: relative;
+  }
+  
+  /* Advanced Shape Definitions */
+  .s-orb { border-radius: 50% !important; }
+  .s-hex { clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%); }
+  .s-star { clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+  .s-ring { background: transparent !important; border: 4px solid var(--accent); border-radius: 50%; }
+  .s-diamond { clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
+  .s-cross { clip-path: polygon(30% 0%, 70% 0%, 70% 30%, 100% 30%, 100% 70%, 70% 70%, 70% 100%, 30% 100%, 30% 70%, 0% 70%, 0% 30%, 30% 30%); }
+  .s-tri { clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+  
+  /* Complex/Loop Shapes */
+  .s-mobius {
+    border-radius: 50%; border: 6px solid var(--accent);
+    background: transparent !important;
+    animation: mobius-spin 3s infinite linear;
+  }
+  @keyframes mobius-spin {
+    0% { transform: rotateY(0deg) rotateX(0deg); border-radius: 50%; border-width: 6px; }
+    50% { transform: rotateY(180deg) rotateX(20deg); border-radius: 20px; border-width: 12px; }
+    100% { transform: rotateY(360deg) rotateX(0deg); border-radius: 50%; border-width: 6px; }
+  }
+
+  .s-blackhole {
+    border-radius: 50%; background: #000 !important;
+    box-shadow: 0 0 20px #fff, inset 0 0 50px var(--accent);
+    border: 2px solid #fff;
+  }
+  .s-solar {
+    border-radius: 50%; background: radial-gradient(circle, var(--yellow), var(--orange));
+    box-shadow: 0 0 60px var(--orange);
+  }
+
+  /* Controls UI */
+  .ctrl-item { margin-bottom: 15px; }
+  .ctrl-header { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 6px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; }
+  .ctrl-val { color: var(--accent); font-family: 'Fira Code', monospace; }
+  
+  input[type='range'] { -webkit-appearance: none; width: 100%; height: 2px; background: #1a1a25; border-radius: 5px; cursor: pointer; }
+  input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 10px; height: 10px; background: #fff; border-radius: 50%; box-shadow: 0 0 10px var(--accent-glow);
+  }
+
+  .swatch-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 5px; }
+  .swatch { width: 22px; height: 22px; border-radius: 4px; cursor: pointer; border: 1px solid transparent; transition: 0.2s; }
+  .swatch.active { border-color: #fff; transform: scale(1.1); }
+
+  .shape-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+  .shape-pick {
+    aspect-ratio: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;
+  }
+  .shape-pick.active { border-color: var(--accent); background: rgba(0,245,212,0.1); }
+  .shape-pick svg { width: 16px; height: 16px; fill: var(--text-dim); }
+  .shape-pick.active svg { fill: var(--accent); }
+
+  select {
+    width: 100%; background: #0a0a14; border: 1px solid var(--border); color: #fff;
+    padding: 6px; border-radius: 6px; font-size: 10px; font-family: 'Fira Code', monospace;
+  }
+
+  /* Console Footer */
+  #console-footer {
+    height: 160px; background: var(--sidebar); border-top: 1px solid var(--border);
+    display: flex; flex-direction: column; flex-shrink: 0; z-index: 100;
+  }
+  .console-header { padding: 6px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  #code-content { 
+    flex: 1; font-family: 'Fira Code', monospace; font-size: 10px; color: #99aabb; 
+    overflow-y: auto; padding: 12px 20px; background: #05050a;
+  }
+  .t-kw { color: var(--pink); }
+  .t-fn { color: var(--accent); }
+  .t-str { color: var(--yellow); }
+
+  /* 3D Grid */
+  .g-1 { grid-template-columns: repeat(1, 1fr); }
+  .g-5 { grid-template-columns: repeat(5, 1fr); gap: 20px; }
+""")
+
+# ── 2. UI Structure ──────────────────────────────────────────────────────────
+anim.elements.append("""
+  <div id='app'>
+    <header>
+      <div class='logo-area'>
+        <svg class='logo-svg' viewBox='0 0 24 24'><path d='M12,2L4.5,20.29L5.21,21L12,18L18.79,21L19.5,20.29L12,2Z'/></svg>
+        <div class='brand'>TECHS<span>CRIPT</span> STUDIO</div>
+      </div>
+      <div class='controls-top'>
+        <div class='badge-v'>Cinema Edition v7.0</div>
+        <button onclick='toggleGrid()' id='grid-btn' style='background:rgba(0,245,212,0.1); border:1px solid var(--accent); color:var(--accent); padding:5px 14px; border-radius:20px; font-size:10px; font-weight:800; cursor:pointer;'>SYNC GRID: OFF</button>
+      </div>
+    </header>
+
+    <div id='workspace'>
+      <aside id='left-sidebar'>
+        <div class='label-group'>Cinema Library (20)</div>
+        <div id='preset-list'></div>
+      </aside>
+
+      <main>
+        <div class='grid-bg'></div>
+        <div id='viewport'>
+          <div id='canvas-grid' class='g-1'>
+            <div class='box target-el' id='main-box'></div>
+          </div>
+        </div>
+      </main>
+
+      <aside id='right-panel'>
+        <div class='label-group'>Geometry Engine</div>
+        <div class='shape-grid' id='shape-selector'></div>
+
+        <div class='label-group'>Technicolor Palette</div>
+        <div class='swatch-row' id='color-palette'></div>
+
+        <div class='label-group'>3D Motion Dynamics</div>
+        
+        <div class='ctrl-item'>
+          <div class='ctrl-header'><span>Duration</span><span class='ctrl-val' id='v-dur'>1500ms</span></div>
+          <input type='range' id='i-dur' min='200' max='5000' value='1500' oninput='sync()'>
+        </div>
+
+        <div class='ctrl-item'>
+          <div class='ctrl-header'><span>Perspective</span><span class='ctrl-val' id='v-pers'>800px</span></div>
+          <input type='range' id='i-pers' min='200' max='2000' value='1000' oninput='sync()'>
+        </div>
+
+        <div class='ctrl-item'>
+          <div class='ctrl-header'><span>Scale Focus</span><span class='ctrl-val' id='v-scale'>1.0x</span></div>
+          <input type='range' id='i-scale' min='1' max='30' value='10' oninput='sync()'>
+        </div>
+
+        <div class='ctrl-item'>
+          <div class='ctrl-header'><span>Rotation X/Y</span><span class='ctrl-val' id='v-rotxy'>0°</span></div>
+          <input type='range' id='i-rotxy' min='0' max='360' value='0' oninput='sync()'>
+        </div>
+
+        <div class='ctrl-item'>
+          <div class='ctrl-header'><span>Looping / Curve</span></div>
+          <select id='i-easing' onchange='sync()'>
+            <option value='easeInOutSine'>Cinematic Sine</option>
+            <option value='easeOutExpo'>Expo Burst</option>
+            <option value='easeInOutBack'>The Overshoot</option>
+            <option value='easeOutElastic(1, .5)'>Elastic Snap</option>
+            <option value='linear'>Constant Linear</option>
+          </select>
+        </div>
+
+        <button class='btn-pro' style='background:var(--accent); color:#000; font-weight:800; border:none; padding:10px; border-radius:8px; width:100%; cursor:pointer; font-size:10px;' onclick='sync()'>RE-RENDER SEQUENCE</button>
+      </aside>
+    </div>
+
+    <footer id='console-footer'>
+      <div class='console-header'>
+        <span style='font-size:9px; font-weight:800; color:var(--text-dim);'>TECHSCRIPT COMPILER OUTPUT</span>
+        <button onclick='copyCode()' style='background:transparent; border:1px solid var(--border); color:var(--accent); font-size:9px; padding:3px 10px; border-radius:4px; cursor:pointer;'>COPY TXS</button>
+      </div>
+      <div id='code-content'></div>
+    </footer>
+  </div>
+""")
+
+# ── 3. Engine Logic ──────────────────────────────────────────────────────────
+anim.scripts.append("""
+  const SHAPES = [
+    { id:'orb', icon:'<circle cx="10" cy="10" r="8"/>' },
+    { id:'hex', icon:'<polygon points="10,2 18,6 18,14 10,18 2,14 2,6"/>' },
+    { id:'star', icon:'<polygon points="10,2 12,8 19,8 14,12 16,18 10,14 4,18 6,12 1,8 8,8"/>' },
+    { id:'ring', icon:'<circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="2"/>' },
+    { id:'diamond', icon:'<polygon points="10,2 18,10 10,18 2,10"/>' },
+    { id:'cross', icon:'<path d="M7,2 h6 v16 h-6 v-16 M2,7 h16 v6 h-16 v-6"/>' },
+    { id:'tri', icon:'<polygon points="10,3 2,17 18,17"/>' },
+    { id:'mobius', icon:'<path d="M10,2 C15,2 18,10 10,18 C2,10 5,2 10,2" fill="none" stroke="currentColor" stroke-width="2"/>' },
+    { id:'blackhole', icon:'<circle cx="10" cy="10" r="6"/><circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="1"/>' },
+    { id:'solar', icon:'<circle cx="10" cy="10" r="5"/><path d="M10,2 v2 M10,16 v2 M2,10 h2 M16,10 h2" stroke="currentColor" stroke-width="1"/>' }
+  ];
+
+  const COLORS = ['#00f5d4', '#f15bb5', '#9b5de5', '#fee440', '#ff6b35', '#ffffff', '#00bbf9', '#ff006e'];
+
+  const PRESETS = [
+    { name: 'Black Hole Vortex', desc: 'Infinite inward spiral', props: { rotate: '5turn', scale: [1.5, 0.1], opacity: [1, 0], loop: true, easing: 'linear' } },
+    { name: 'Solar System', desc: 'Orbital path simulation', props: { rotate: '1turn', translateX: [0, 150, 0], translateY: [0, -50, 0], loop: true, easing: 'easeInOutSine' } },
+    { name: 'Mobius Flip', desc: '3D twisted rotation', props: { rotateY: '2turn', rotateX: '1turn', borderRadius: ['50%', '10%'], loop: true } },
+    { name: 'Hypno-Spiral', desc: 'Pulse and twist sequence', props: { scale: [0.5, 1.5], rotate: '3turn', duration: 3000, direction: 'alternate', loop: true } },
+    { name: 'Cosmic Pulse', desc: 'Glow intensity oscillation', props: { scale: [1, 1.3], filter: ['brightness(1)', 'brightness(2)'], direction: 'alternate', loop: true } },
+    { name: 'Hypercube Flow', desc: 'Sequential 3D morphing', props: { rotateX: '1turn', rotateZ: '0.5turn', skewX: [0, 20], loop: true } },
+    { name: 'Star-Field Jump', desc: 'Depth perspective warp', props: { translateZ: [-1000, 500], opacity: [0, 1], loop: true, easing: 'easeInExpo' } },
+    { name: 'Nebula Drift', desc: 'Slow color-shift drift', props: { translateX: [-100, 100], filter: ['hue-rotate(0deg)', 'hue-rotate(360deg)'], direction: 'alternate', loop: true, duration: 8000 } },
+    { name: 'Elastic Core', desc: 'High-tension snap back', props: { scale: [0, 1], easing: 'easeOutElastic(1, .5)', duration: 2000 } },
+    { name: 'Quantum Glitch', desc: 'Randomized jitter stream', props: { translateX: () => (Math.random()-0.5)*40, translateY: () => (Math.random()-0.5)*40, opacity: [0.2, 1], loop: true, duration: 100 } },
+    { name: 'Prism Ripple', desc: 'Sequential scale wave', props: { scale: [0.8, 1.4], delay: 100, direction: 'alternate', loop: true } },
+    { name: 'Ghost Mirror', desc: '3D reflection skew', props: { rotateY: '1turn', skewY: [0, 30], direction: 'alternate', loop: true } },
+    { name: 'Infinity Loom', desc: 'Double axis sine wave', props: { translateX: [-50, 50], translateY: [-50, 50], rotate: '1turn', loop: true } },
+    { name: 'Event Horizon', desc: 'Edge pulling distortion', props: { scaleX: [1, 5], opacity: [1, 0], easing: 'easeInQuad', loop: true } },
+    { name: 'Nova Burst', desc: 'Instant radial expansion', props: { scale: [0.1, 4], opacity: [1, 0], duration: 1200 } },
+    { name: 'Gravity Well', desc: 'Accelerated falling spin', props: { translateY: [-400, 400], rotate: '2turn', easing: 'easeInBack', loop: true } },
+    { name: 'Neon Rain', desc: 'Vertical streak sequence', props: { translateY: [-200, 200], scaleY: [4, 1], opacity: [0, 1, 0], loop: true, delay: 50 } },
+    { name: 'Matrix Rain', desc: 'Grid character flicker', props: { opacity: [0, 1, 0], scale: [1.2, 0.8], loop: true, delay: 20 } },
+    { name: '3D Flip Loom', desc: 'Rotating grid cards', props: { rotateY: '0.5turn', rotateX: '0.5turn', delay: 100, loop: true } },
+    { name: 'Chaos Engine', desc: 'Maximum entropy motion', props: { rotate: () => Math.random()*720, scale: [0.5, 2], loop: true, duration: 2000 } }
+  ];
+
+  let state = { preset: 0, color: 0, shape: 'orb', isGrid: false, engine: null };
+
+  function init() {
+    const plist = document.getElementById('preset-list');
+    PRESETS.forEach((p, i) => {
+      const el = document.createElement('div');
+      el.className = 'preset-card' + (i===0?' active':'');
+      el.innerHTML = `<span class='p-name'>${p.name}</span><span class='p-desc'>${p.desc}</span>`;
+      el.onclick = () => {
+        document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        state.preset = i;
+        sync();
+      };
+      plist.appendChild(el);
+    });
+
+    const palette = document.getElementById('color-palette');
+    COLORS.forEach((c, i) => {
+      const s = document.createElement('div');
+      s.className = 'swatch' + (i===0?' active':'');
+      s.style.backgroundColor = c;
+      s.onclick = () => {
+        document.querySelectorAll('.swatch').forEach(x => x.classList.remove('active'));
+        s.classList.add('active');
+        state.color = i;
+        sync();
+      };
+      palette.appendChild(s);
+    });
+
+    const sgrid = document.getElementById('shape-selector');
+    SHAPES.forEach(s => {
+      const d = document.createElement('div');
+      d.className = 'shape-pick' + (s.id==='orb'?' active':'');
+      d.innerHTML = `<svg viewBox="0 0 20 20">${s.icon}</svg>`;
+      d.onclick = () => {
+        document.querySelectorAll('.shape-pick').forEach(x => x.classList.remove('active'));
+        d.classList.add('active');
+        state.shape = s.id;
+        sync();
+      };
+      sgrid.appendChild(d);
+    });
+
+    sync();
+  }
+
+  function toggleGrid() {
+    state.isGrid = !state.isGrid;
+    const cont = document.getElementById('canvas-grid');
+    const btn = document.getElementById('grid-btn');
+    cont.className = state.isGrid ? 'g-5' : 'g-1';
+    btn.innerText = state.isGrid ? 'SYNC GRID: ON' : 'SYNC GRID: OFF';
+    btn.style.boxShadow = state.isGrid ? '0 0 10px var(--accent)' : 'none';
+    
+    cont.innerHTML = '';
+    const n = state.isGrid ? 25 : 1;
+    for(let i=0; i<n; i++) {
+        const b = document.createElement('div');
+        b.className = 'box target-el';
+        cont.appendChild(b);
+    }
+    sync();
+  }
+
+  function sync() {
+    const dur = document.getElementById('i-dur').value;
+    const pers = document.getElementById('i-pers').value;
+    const scaleFocus = document.getElementById('i-scale').value / 10;
+    const rotxy = document.getElementById('i-rotxy').value;
+    const easing = document.getElementById('i-easing').value;
+    const color = COLORS[state.color];
+
+    document.getElementById('v-dur').innerText = dur + 'ms';
+    document.getElementById('v-pers').innerText = pers + 'px';
+    document.getElementById('v-scale').innerText = scaleFocus.toFixed(1) + 'x';
+    document.getElementById('v-rotxy').innerText = rotxy + '°';
+
+    document.getElementById('viewport').style.perspective = pers + 'px';
+
+    document.querySelectorAll('.target-el').forEach(el => {
+        el.className = 'box target-el s-' + state.shape;
+        el.style.backgroundColor = color;
+        el.style.boxShadow = `0 0 40px ${color}66`;
+        if(state.shape === 'ring') el.style.borderColor = color;
+    });
+
+    if(state.engine) state.engine.pause();
+    anime.remove('.target-el');
+
+    const p = PRESETS[state.preset].props;
+    const config = {
+        targets: '.target-el',
+        ...p,
+        duration: parseInt(dur),
+        easing: easing,
+        delay: state.isGrid && p.delay ? anime.stagger(p.delay) : 0,
+        rotate: rotxy != 0 ? rotxy + 'deg' : p.rotate,
+        scale: scaleFocus != 1.0 ? scaleFocus : p.scale
+    };
+
+    state.engine = anime(config);
+    updateCode(config);
+  }
+
+  function updateCode(config) {
+    let code = `<span class='t-kw'>use</span> anime\n\n`;
+    code += `<span class='t-kw'>make</span> anim = anime.create()\n\n`;
+    code += `<span class='t-kw'>make</span> config = {\n`;
+    for(let k in config) {
+        if(k === 'targets') continue;
+        let v = config[k];
+        if(Array.isArray(v)) v = `[${v[0]}, ${v[1]}]`;
+        else if(typeof v === 'string') v = `<span class='t-str'>"${v}"</span>`;
+        else if(typeof v === 'number') v = `<span class='t-num'>${v}</span>`;
+        code += `    <span class='t-fn'>${k}</span>: ${v},\n`;
+    }
+    code += `}\n\n`;
+    code += `<span class='t-fn'>anime.animate</span>(<span class='t-str'>".target-el"</span>, config)`;
+    document.getElementById('code-content').innerHTML = code;
+  }
+
+  function copyCode() {
+    navigator.clipboard.writeText(document.getElementById('code-content').innerText).then(() => alert('TXS Code Copied!'));
+  }
+
+  window.onload = init;
+""")
+
+say "🚀 Launching TechScript Studio v7.0 Cinematic 3D..."
+anime.render(anim)

@@ -1,0 +1,3 @@
+[console_scripts]
+tech = techscript_wrapper.__main__:main
+techscript = techscript_wrapper.__main__:main

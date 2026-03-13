@@ -1,0 +1,22 @@
+# Extremely simple TechScript Native Web Example
+
+use web
+
+make page = WebPage("Simple TechScript App")
+
+page.style("body", { "background": "#121212", "color": "#f0f0f0", "font-family": "system-ui, sans-serif", "padding": "2rem" })
+page.style(".btn", { "background": "#007AFF", "color": "white", "border": "none", "padding": "10px 20px", "border-radius": "8px", "cursor": "pointer" })
+
+page.script("""
+    function handleClick() {
+        alert('TechScript Web is working! Native integration complete.');
+    }
+""")
+
+page.body([
+    page.h1("Welcome to TechScript Web"),
+    page.p("This is a 100% native execution. No build steps. No separate server files."),
+    page.button("Click Me!", { "class": "btn", "onclick": "handleClick()" })
+])
+
+page.run()

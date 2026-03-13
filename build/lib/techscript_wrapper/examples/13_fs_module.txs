@@ -1,0 +1,49 @@
+# ── TechScript v1.0.3 — File System Module Demo ─────
+# Run: tech run 13_fs_module.txs
+
+say "═══ File System Module Demo ═══"
+say ""
+
+# ── Current Working Directory ──
+say f"Current dir: {fs.cwd}"
+
+say ""
+
+# ── Write a file ──
+make filename = "_test_output.txt"
+fs.write(filename, "Hello from TechScript v1.0.3!\nLine 2\nLine 3")
+say f"Wrote '{filename}'"
+
+# ── Check if it exists ──
+say f"Exists: {fs.exists(filename)}"
+
+# ── Read it back ──
+make content = fs.read(filename)
+say f"Content: {content}"
+
+# ── File size ──
+say f"Size: {fs.size(filename)} bytes"
+
+say ""
+
+# ── Append to file ──
+fs.append(filename, "\nLine 4 — appended!")
+say f"After append: {fs.read(filename)}"
+
+say ""
+
+# ── List directory ──
+say "Files in current dir:"
+make files = fs.list_dir(".")
+each f in files {
+    say f"  → {f}"
+}
+
+say ""
+
+# ── Clean up ──
+fs.delete(filename)
+say f"Deleted '{filename}'. Exists: {fs.exists(filename)}"
+
+say ""
+say "Done! ✅"

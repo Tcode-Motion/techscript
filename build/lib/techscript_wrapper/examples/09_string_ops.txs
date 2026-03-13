@@ -1,0 +1,39 @@
+# ── TechScript v1.0.3 — String Operations Demo ──────
+# Run: tech run 09_string_ops.txs
+
+say "═══ String Operations Demo ═══"
+say ""
+
+make text = "  Hello, TechScript World!  "
+
+say f"Original:   '{text}'"
+say f"upper():    '{upper(text)}'"
+say f"lower():    '{lower(text)}'"
+say f"trim():     '{trim(text)}'"
+say f"len():      {len(text)}"
+
+say ""
+
+# ── Search & Replace ──
+make sentence = "TechScript is fast, TechScript is fun"
+say f"contains 'fast': {contains(sentence, 'fast')}"
+say f"find 'fun':      index {find(sentence, 'fun')}"
+say f"replace:         {replace(sentence, 'fun', 'powerful')}"
+
+say ""
+
+# ── Split & Join ──
+make csv = "apple,banana,cherry,date"
+make fruits = split(csv, ",")
+say f"split('{csv}', ','): {fruits}"
+say f"join(fruits, ' | '):  {join(fruits, ' | ')}"
+
+say ""
+
+# ── Characters ──
+make word = "Hello"
+say f"chars('{word}'): {chars(word)}"
+say f"reverse:         {join(reverse(chars(word)), '')}"
+
+say ""
+say "Done! ✅"

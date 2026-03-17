@@ -1,41 +1,40 @@
 [build-system]
-requires = ["setuptools>=67.0", "wheel"]
+requires = ["setuptools>=75", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "techscript"
-version = "1.0.4"
-description = "TechScript — A simple, friendly programming language (.txs)"
+name = "techscript-lang"
+version = "1.0.5"
+description = "TechScript — a simple, friendly programming language."
 readme = "README.md"
-requires-python = ">=3.10"
-license = {text = "MIT"}
-authors = [{name = "TechScript Team"}]
-keywords = ["programming-language", "interpreter", "transpiler", "techscript"]
+requires-python = ">=3.9"
+license = "MIT"
+authors = [{ name = "Tanmoy", email = "tanmoy@users.noreply.github.com" }]
+keywords = ["techscript", "language", "interpreter", "compiler", "txs"]
 classifiers = [
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-    "Topic :: Software Development :: Interpreters",
-    "Topic :: Software Development :: Compilers",
-    "Intended Audience :: Education",
-    "Intended Audience :: Developers",
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
 ]
+
+[project.urls]
+Homepage = "https://github.com/Tcode-Motion/techscript"
+Repository = "https://github.com/Tcode-Motion/techscript"
+Issues = "https://github.com/Tcode-Motion/techscript/issues"
 
 [project.scripts]
 tech = "techscript.cli:main"
+techscript = "techscript.cli:main"
 
-[project.optional-dependencies]
-dev = ["pytest>=7.0", "pytest-cov", "black", "flake8"]
-
-[tool.setuptools.package-data]
-techscript = ["../assets/icons/*.png", "../assets/icons/*.ico", "../assets/icons/*.icns", "../assets/icons/*.svg"]
+[tool.setuptools]
+package-dir = {"" = "src"}
+license-files = ["LICENSE"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-pythonpath = ["src"]

@@ -14,6 +14,7 @@
 ![runtime](https://img.shields.io/badge/runtime-Native_Rust_VM-f97316?style=for-the-badge&logo=rust&logoColor=white)
 ![platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux%20%7C%20Android-22c55e?style=for-the-badge)
 ![license](https://img.shields.io/badge/license-MIT-3b82f6?style=for-the-badge)
+![release](https://img.shields.io/badge/release-7th_Official_Milestone-ff0055?style=for-the-badge)
 
 </div>
 

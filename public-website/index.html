@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TechScript — Build apps in plain English</title>
+    <meta
+      name="description"
+      content="TechScript (TXS): a friendly programming language with a native Rust VM, CLI tooling, VS Code extension, and modules for web, GUI, 3D, anime, and API servers."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=IBM+Plex+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="bg">
+      <div class="grain"></div>
+      <div class="mesh"></div>
+    </div>
+
+    <header class="top">
+      <div class="wrap top__inner">
+        <a class="brand" href="#top" aria-label="TechScript home">
+          <span class="brand__mark">TX</span>
+          <span class="brand__name">TechScript</span>
+        </a>
+        <nav class="nav">
+          <a href="#install">Install</a>
+          <a href="#examples">Examples</a>
+          <a href="#modules">Modules</a>
+          <a href="#publish">Publish</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="wrap hero__grid">
+          <div class="hero__copy">
+            <div class="pill">
+              <span class="dot"></span>
+              Native Rust VM • `.txs` • VS Code LSP
+            </div>
+            <h1>Build apps in <span class="accent">plain English</span>.</h1>
+            <p class="lead">
+              TechScript is a human-first language with a fast Rust runtime and batteries-included modules for websites,
+              GUIs, 3D scenes, animations, and API servers.
+            </p>
+
+            <div class="cta">
+              <a class="btn btn--primary" href="#install">Get started</a>
+              <a class="btn btn--ghost" href="#examples">See examples</a>
+            </div>
+
+            <div class="quick">
+              <div class="quick__row">
+                <span class="label">VS Code</span>
+                <button class="copy" data-copy="tanmoy.techscript">Copy: tanmoy.techscript</button>
+              </div>
+              <div class="quick__row">
+                <span class="label">PyPI</span>
+                <button class="copy" data-copy="pip install techscript">Copy: pip install techscript</button>
+              </div>
+              <div class="quick__row">
+                <span class="label">CLI</span>
+                <button class="copy" data-copy="tech run examples/hello.txs">Copy: tech run examples/hello.txs</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero__panel">
+            <div class="code">
+              <div class="code__bar">
+                <span class="lamp"></span><span class="lamp"></span><span class="lamp"></span>
+                <span class="code__title">hello.txs</span>
+              </div>
+              <pre class="code__body"><code>say "Hello, World!"
+
+use web
+make page = WebPage("My App")
+page.style("body", {"background":"#0f0f11","color":"#e2e8f0","padding":"40px"})
+page.body([ page.h1("TechScript"), page.p("Web module is live.") ])
+page.run()</code></pre>
+            </div>
+            <div class="badges">
+              <div class="badge">
+                <div class="badge__k">Runtime</div>
+                <div class="badge__v">Rust VM</div>
+              </div>
+              <div class="badge">
+                <div class="badge__k">Editor</div>
+                <div class="badge__v">LSP</div>
+              </div>
+              <div class="badge">
+                <div class="badge__k">Files</div>
+                <div class="badge__v">.txs</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="install" class="section">
+        <div class="wrap">
+          <h2>Install</h2>
+          <div class="cards">
+            <article class="card">
+              <h3>VS Code extension</h3>
+              <p>Search for <strong>TechScript</strong> in Extensions, or use the id below.</p>
+              <div class="cmd">
+                <code>tanmoy.techscript</code>
+                <button class="mini copy" data-copy="tanmoy.techscript">Copy</button>
+              </div>
+              <p class="muted">Includes syntax highlighting, snippets, icons, and LSP diagnostics/completions.</p>
+            </article>
+            <article class="card">
+              <h3>PyPI</h3>
+              <p>Install the Python package (includes a CLI entrypoint).</p>
+              <div class="cmd">
+                <code>pip install techscript</code>
+                <button class="mini copy" data-copy="pip install techscript">Copy</button>
+              </div>
+              <p class="muted">Then run: <code>tech --help</code></p>
+            </article>
+            <article class="card">
+              <h3>Rust binaries</h3>
+              <p>Download from GitHub Releases if you prefer native executables.</p>
+              <div class="cmd">
+                <code>tech</code>
+                <a class="mini link" href="../" onclick="return false" aria-disabled="true">Releases</a>
+              </div>
+              <p class="muted">This site is static; link your repo/releases when publishing.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="examples" class="section">
+        <div class="wrap">
+          <h2>Examples</h2>
+          <div class="grid2">
+            <div class="card">
+              <h3>CLI</h3>
+              <pre class="snippet"><code>tech run examples/hello.txs
+tech fmt examples/web_app.txs
+tech lint examples/web_app.txs
+tech test examples/</code></pre>
+            </div>
+            <div class="card">
+              <h3>Debug flags</h3>
+              <pre class="snippet"><code>tech run --ast examples/hello.txs
+tech run --bytecode examples/web_app.txs
+tech run --trace examples/api_server.txs</code></pre>
+              <p class="muted">For headless web/server tests: set <code>TECHSCRIPT_HEADLESS=1</code>.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="modules" class="section">
+        <div class="wrap">
+          <h2>Modules</h2>
+          <div class="modules">
+            <div class="module">
+              <div class="module__name">use web</div>
+              <div class="module__desc">Generate and serve HTML/CSS/JS from TechScript.</div>
+            </div>
+            <div class="module">
+              <div class="module__name">use gui</div>
+              <div class="module__desc">Simple desktop UI building blocks.</div>
+            </div>
+            <div class="module">
+              <div class="module__name">use three_d</div>
+              <div class="module__desc">Create scenes and render shapes.</div>
+            </div>
+            <div class="module">
+              <div class="module__name">use anime</div>
+              <div class="module__desc">Generate anime.js style animations.</div>
+            </div>
+            <div class="module">
+              <div class="module__name">use api</div>
+              <div class="module__desc">Run a tiny HTTP server and return JSON/text/html.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="publish" class="section section--thin">
+        <div class="wrap">
+          <h2>Publish</h2>
+          <div class="grid2">
+            <div class="card">
+              <h3>Marketplace</h3>
+              <p class="muted">See <code>vscode-extension/PUBLISHING_GUIDE.md</code> in this repo.</p>
+              <pre class="snippet"><code>cd vscode-extension
+npx @vscode/vsce package
+npx @vscode/vsce publish -p &lt;PAT&gt;</code></pre>
+            </div>
+            <div class="card">
+              <h3>PyPI</h3>
+              <p class="muted">Build + upload with:</p>
+              <pre class="snippet"><code>python -m build
+python -m twine check dist/*
+python -m twine upload dist/*</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="foot">
+        <div class="wrap foot__inner">
+          <div class="foot__left">
+            <div class="brand brand--small">
+              <span class="brand__mark">TX</span>
+              <span class="brand__name">TechScript</span>
+            </div>
+            <div class="muted">A clean, consistent, production-ready TechScript release.</div>
+          </div>
+          <div class="foot__right">
+            <a class="link" href="../" onclick="return false" aria-disabled="true">GitHub</a>
+            <a class="link" href="#top">Back to top</a>
+          </div>
+        </div>
+      </footer>
+    </main>
+
+    <script src="./main.js"></script>
+  </body>
+</html>
+

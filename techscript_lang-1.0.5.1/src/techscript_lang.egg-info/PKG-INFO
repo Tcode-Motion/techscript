@@ -1,0 +1,843 @@
+Metadata-Version: 2.4
+Name: techscript-lang
+Version: 1.0.5.1
+Summary: TechScript — a simple, friendly programming language.
+Author: TechScript Team
+Author-email: "Tanmoy (Tcode-Motion)" <sachkaswitch@gmail.com>
+License-Expression: MIT
+Project-URL: Homepage, https://github.com/Tcode-Motion/techscript
+Project-URL: Repository, https://github.com/Tcode-Motion/techscript
+Project-URL: Issues, https://github.com/Tcode-Motion/techscript/issues
+Keywords: techscript,language,interpreter,compiler,txs
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Dynamic: author
+Dynamic: license-file
+Dynamic: requires-python
+
+<div align="center">
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0d0d0d,30:0f0820,65:1a0a40,100:7c3aed&height=210&section=header&text=🐉%20TechScript&fontSize=70&fontColor=c084fc&animation=fadeIn&fontAlignY=42&desc=The%20world%27s%20easiest%20programming%20language.%20Now%20more%20powerful%20than%20ever.&descAlignY=65&descColor=9d7ec9&descSize=13" width="100%"/>
+
+</div>
+
+<div align="center">
+  <img src="assets/logo.png" alt="TechScript Dragon Logo" width="220"/>
+</div>
+
+<br/>
+
+<div align="center">
+
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=17&pause=900&color=C084FC&center=true&vCenter=true&width=860&lines=🦀+Native+Rust+VM+—+1+Million+loops+in+2.9s;tech+run+hello.txs+→+Hello%2C+World!+🐉;use+web+→+Full+website.+Zero+HTML%2FCSS%2FJS.;pip+install+techscript-lang+→+Works+everywhere;150%2B+Built-in+Functions.+crypto.*+math.*+fs.*;use+three_d+→+Full+3D+Scene+in+5+lines;Zero+Dependencies.+Blazing+Fast.+One+Binary.+⚡)](https://git.io/typing-svg)
+
+</div>
+
+<div align="center">
+
+![version](https://img.shields.io/badge/version-v1.0.5-7c3aed?style=for-the-badge)
+![runtime](https://img.shields.io/badge/runtime-Native_Rust_VM-f97316?style=for-the-badge&logo=rust&logoColor=white)
+![platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux%20%7C%20Android-22c55e?style=for-the-badge)
+![license](https://img.shields.io/badge/license-MIT-3b82f6?style=for-the-badge)
+![release](https://img.shields.io/badge/release-7th_Official_Milestone-ff0055?style=for-the-badge)
+
+</div>
+
+<div align="center">
+
+![deps](https://img.shields.io/badge/dependencies-NONE-00ff88?style=for-the-badge)
+![stdlib](https://img.shields.io/badge/stdlib-150%2B_functions-7c3aed?style=for-the-badge)
+![vscode](https://img.shields.io/badge/VS_Code-Extension_v1.0.5-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white)
+[![Author](https://img.shields.io/badge/Made_by-Tcode--Motion-181717?style=for-the-badge&logo=github)](https://github.com/Tcode-Motion)
+[![Stars](https://img.shields.io/github/stars/Tcode-Motion/techscript?style=for-the-badge&color=yellow&label=⭐)](https://github.com/Tcode-Motion/techscript/stargazers)
+
+</div>
+
+---
+
+<div align="center">
+
+```
+╔═════════════════════════════════════════════════════════════════════════╗
+║                                                                         ║
+║   No semicolons. No brackets. No confusing symbols.                     ║
+║   No Python runtime. No dependencies. Just pure speed.                  ║
+║   Powered by a Native Rust VM.  — Tcode-Motion ⚡                       ║
+╚═════════════════════════════════════════════════════════════════════════╝
+```
+
+</div>
+
+---
+
+## 🤔 What is TechScript? (Explain Like I'm 10)
+
+Imagine you want to tell a computer to do something. Normally, computers only understand confusing code like this:
+
+```javascript
+const x = document.getElementById('name');
+if (x !== null && x.value.length > 0) { ... }
+```
+
+**TechScript makes that feel like writing a sentence:**
+
+```
+make name = ask "What is your name? "
+say f"Hello, {name}!"
+```
+
+That's it. **No semicolons. No brackets. No confusing symbols.** Just simple words that make sense.
+
+TechScript is:
+- 🟢 **A programming language** — you can write code that runs natively on your computer
+- 🌐 **A web builder** — you can build full websites with it (no HTML or CSS needed!)
+- 🎮 **A 3D engine** — build real-time 3D scenes with `use three_d` (new in v1.0.5!)
+- 🦀 **Powered by Native Rust** — blazing fast, completely independent of Python
+- 📦 **One command** — `tech run yourfile.txs` and your program runs instantly
+
+---
+
+## ✨ What's New in v1.0.5 — Cinema Edition
+
+This is a milestone release that transitions TechScript to a **fully native Rust ecosystem**.
+
+- 🦀 **Native Rust Engine** — A complete rewrite of the runtime for blazing performance
+- 🌟 **Enhanced Visual Identity** — New glowing, production-quality logo with neon "bloom" effects
+- 📦 **Standalone Binaries** — Zero-dependency `TechScript_TX.exe` for seamless distribution
+- ⌨️ **Pro CLI Experience** — New ASCII "TX" banner and refined interactive REPL
+- 🎨 **Visual Overhaul** — Glowing icons for VS Code and enhanced file association visuals
+- 🎮 **`use three_d` module** — Build full 3D scenes in 5 lines of TechScript
+- 🛠️ **New Developer Toolchain** — `tech fmt`, `tech lint`, `tech build`, `tech test`
+
+---
+
+## 🚀 What Can TechScript Do?
+
+| What you want to do | TechScript can do it? |
+|:---|:---|
+| Print text to screen | ✅ `say "Hello!"` |
+| Ask the user a question | ✅ `make answer = ask "Your name? "` |
+| Do math | ✅ `say 10 + 5 * 2` |
+| Make decisions | ✅ `when age > 18 { say "Adult" }` |
+| Loop (repeat stuff) | ✅ `each i in 1..10 { say i }` |
+| Break out of loop | ✅ `stop` (fixed v1.0.3) |
+| Skip loop iteration | ✅ `skip` (fixed v1.0.3) |
+| Check if item is in list | ✅ `"apple" in fruits` (new v1.0.3) |
+| Get type of a value | ✅ `typeof x` (new v1.0.3) |
+| Make functions (reusable code) | ✅ `build greet(name) { say f"Hi {name}!" }` |
+| Make classes/objects | ✅ `model Dog { ... }` |
+| Handle errors | ✅ `attempt { ... } catch err { ... }` |
+| Build a website | ✅ `use web` + `page.run()` |
+| Replace HTML | ✅ `page.h1("Title")`, `page.div([...])` |
+| Replace CSS | ✅ `page.style("body", { "color": "white" })` |
+| Replace JavaScript | ✅ `page.script("function hello() {...}")` |
+| Replace React/Vue | ✅ Built-in state management via JS in `page.script()` |
+| Build 3D scenes | ✅ `use three_d` + `scene.render(s)` (new v1.0.5!) |
+| Encrypt data (SHA-256, MD5) | ✅ `crypto.sha256("hello")` (new v1.0.3) |
+| Read/write files | ✅ `fs.read("file.txt")` (new v1.0.3) |
+| Get OS info / env vars | ✅ `os.env_get("PATH")` (new v1.0.3) |
+| Parse/encode JSON | ✅ `json.encode(data)` (new v1.0.3) |
+| Advanced math (trig, stats) | ✅ `math.sin(3.14)`, `math.factorial(10)` (new v1.0.3) |
+| Generate UUID / random | ✅ `random.uuid()`, `random.choice(list)` (new v1.0.3) |
+| Get date/time/unix | ✅ `date.now()`, `date.unix()` (new v1.0.3) |
+| Run code instantly (no file) | ✅ `tech eval "say 42"` (new v1.0.3) |
+| Format your code | ✅ `tech fmt` (new v1.0.5) |
+| Lint for errors | ✅ `tech lint` (new v1.0.5) |
+| Compile to bytecode | ✅ `tech build` → `.txc` (new v1.0.5) |
+| Run unit tests | ✅ `tech test` (new v1.0.5) |
+
+---
+
+## 📦 Installation
+
+### 🏁 Quick Platform Reference
+
+| Platform | Install Method | Link / Command | Update Method |
+|:---|:---|:---|:---|
+| **🪟 Windows** | Full Setup Wizard | [Download Setup](https://github.com/Tcode-Motion/techscript/releases/latest) | Run new Setup.exe |
+| **🪟 Windows** | Standalone Binary | [Download EXE](https://github.com/Tcode-Motion/techscript/releases/latest) | Replace old .exe |
+| **🐧 Linux** | One-Liner Install | [See below](#-install-on-linux-ubuntu-kali-debian-arch) | Re-run command |
+| **🍎 macOS** | One-Liner Install | [See below](#-install-on-macos) | Re-run command |
+| **📱 Android** | Termux Engine | [See below](#-install-on-android-termux) | `pip install -U techscript-lang` |
+
+---
+
+### 🪟 Install on Windows (Easy — No Terminal Needed!)
+
+#### Option 1: Setup Wizard *(Recommended)*
+
+1. Go to the [📥 Releases page](../../releases/latest)
+2. Download **`TechScript_v1.0.5_Setup.exe`**
+3. Double-click it — it will install everything automatically!
+4. Open **PowerShell** (`Win + X` → "Windows PowerShell") and type:
+
+```
+tech version
+```
+
+You should see: `TechScript v1.0.5` 🎉
+
+**What the installer does automatically:**
+- ✅ Puts `TechScript_TX.exe` on your computer
+- ✅ Makes the `tech` command available everywhere in your terminal
+- ✅ Registers `.txs` files so they know they belong to TechScript
+- ✅ Installs the VS Code extension for syntax highlighting
+
+#### Option 2: Using pip *(Cross-Platform Wrapper)*
+
+```powershell
+pip install techscript-lang
+```
+
+---
+
+### 🐧 Install on Linux (Ubuntu, Kali, Debian, Arch)
+
+> **No Python required to install or run!**
+
+**One-line installer:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
+```
+
+**Using APT (Debian/Ubuntu):**
+```bash
+sudo apt update
+sudo apt install techscript
+```
+
+---
+
+### 🍎 Install on macOS
+
+```bash
+# Using Homebrew:
+brew install tcode-motion/techscript/techscript
+
+# OR use the one-line installer:
+curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
+```
+
+---
+
+### 📱 Install on Android (Termux)
+
+```bash
+pkg update && pkg upgrade -y
+pkg install python -y
+pip install techscript-lang
+tech version
+```
+
+**Update:**
+```bash
+pip install --upgrade techscript-lang
+```
+
+> 📖 See [docs/TERMUX.md](docs/TERMUX.md) for the full Android guide.
+
+---
+
+### 🌍 Platform Support
+
+| Platform | Status | Install Method |
+|:---|:---:|:---|
+| **Windows 10/11** | ✅ Fully supported | `Setup.exe` or `pip` |
+| **macOS** | ✅ Fully supported | `install.sh` or `brew` |
+| **Linux** (Ubuntu, Kali, Arch) | ✅ Fully supported | `install.sh` or `apt` |
+| **Android (Termux)** | ✅ Works | `pip install techscript-lang` |
+
+---
+
+## ✏️ Your First TechScript Program
+
+Create a new file called `hello.txs`:
+
+```
+# This is a comment — the computer ignores it
+say "Hello, World!"
+say "I am learning TechScript!"
+say "It is very easy to read 😊"
+```
+
+Run it:
+```
+tech run hello.txs
+```
+
+**Output:**
+```
+Hello, World!
+I am learning TechScript!
+It is very easy to read 😊
+```
+
+---
+
+## 📖 Language Guide — From 0 to 100 🚀
+
+### 🟢 Level 1: Core Basics
+
+#### 📦 Variables — Storing Information
+
+A variable is like a box where you put something to use later.
+
+```
+# 'make' creates a new box called 'name' and puts "Alice" inside
+make name = "Alice"
+
+# 'keep' creates a CONSTANT — a box you can NEVER change
+keep PI = 3.14159
+
+# You can store numbers, text, lists, anything!
+make age = 25
+make items = [1, 2, 3, 4, 5]      # A list (like a shopping list)
+make info = { "city": "Delhi" }    # A dictionary (like a phone book)
+```
+
+#### 🖨️ Output — Talking to the User
+
+```
+say "Hello!"                        # Prints: Hello!
+say "Name:", name                   # Prints: Name: Alice
+say f"My name is {name}!"          # f-strings insert variables: My name is Alice!
+say 10 + 5                          # Prints: 15
+```
+
+#### 💬 Input — Asking the User a Question
+
+```
+make name = ask "What is your name? "
+say f"Nice to meet you, {name}!"
+```
+
+---
+
+### 🟡 Level 2: Logic & Control Flow
+
+#### 🔀 Conditions — Making Decisions
+
+```
+make age = 20
+
+when age >= 18 {
+    say "You are an adult!"
+} or when age >= 13 {
+    say "You are a teenager!"
+} else {
+    say "You are a child!"
+}
+```
+
+#### 🔁 Loops — Doing Things Repeatedly
+
+**`each` loop** — do something for every item in a list:
+
+```
+# Count from 1 to 5
+each i in 1..5 {
+    say f"Count: {i}"
+}
+
+# Go through each item in a list
+each fruit in ["apple", "banana", "mango"] {
+    say f"I like {fruit}!"
+}
+```
+
+**`repeat` loop** — keep doing something while a condition is true:
+
+```
+make x = 1
+repeat x <= 5 {
+    say x
+    x = x + 1
+}
+```
+
+**`stop` and `skip`** — fixed in v1.0.3!
+
+```
+each i in 1..10 {
+    when i == 5 { stop }   # break out of the loop
+    when i == 3 { skip }   # skip this iteration (continue)
+    say i
+}
+```
+
+#### 🔍 New Operators — `in` and `typeof` (New in v1.0.3)
+
+```
+# 'in' operator — check if something is inside a list, string, map, or range
+make fruits = ["apple", "banana", "mango"]
+when "apple" in fruits {
+    say "Found it!"
+}
+when "ello" in "Hello" {
+    say "Substring found!"
+}
+
+# 'typeof' operator — get the type of any value
+make x = 42
+say typeof x         # int
+make name = "Alice"
+say typeof name      # str
+make items = [1, 2]
+say typeof items     # list
+```
+
+---
+
+### 🟠 Level 3: Reusing Logic (Functions)
+
+```
+# 'build' creates a function. 'name' is the input it receives.
+build greet(name, greeting = "Hello") {
+    say f"{greeting}, {name}!"
+}
+
+# Call the function:
+greet("Alice")             # Prints: Hello, Alice!
+greet("Bob", "Hi there")  # Prints: Hi there, Bob!
+greet("Charlie", "Hey")   # Prints: Hey, Charlie!
+```
+
+---
+
+### 🔴 Level 4: Pro Features (OOP & Error Handling)
+
+#### 🏗️ Classes — Blueprints for Objects
+
+```
+model Dog {
+    build init(self, name, breed) {
+        self.name = name      # Every dog has a name
+        self.breed = breed    # Every dog has a breed
+    }
+    build speak(self) {
+        say f"{self.name} says: Woof! Woof!"
+    }
+    build info(self) {
+        say f"{self.name} is a {self.breed}"
+    }
+}
+
+make rex = Dog("Rex", "German Shepherd")
+make buddy = Dog("Buddy", "Golden Retriever")
+
+rex.speak()     # Rex says: Woof! Woof!
+rex.info()      # Rex is a German Shepherd
+buddy.speak()   # Buddy says: Woof! Woof!
+```
+
+#### ⚠️ Error Handling — Catching Mistakes Gracefully
+
+```
+attempt {
+    # Try to do this risky thing
+    make result = 10 / 0      # Division by zero!
+} catch err {
+    # If anything goes wrong, come here instead of crashing
+    say f"Oops! Something went wrong: {err.message}"
+}
+
+say "Program continues normally after the error!"
+```
+
+---
+
+### 💎 Level 5: The Ecosystem (Special Modules)
+
+#### 🌐 `use web` — Build Full Websites
+
+```
+use web
+
+make page = WebPage("My First Website")
+
+page.style("body", {
+    "background": "#0f0f11",
+    "color": "#eeeeee",
+    "font-family": "sans-serif",
+    "text-align": "center",
+    "padding": "60px"
+})
+
+page.script("""
+    function sayHello() {
+        alert('Hello from TechScript! 🐉');
+    }
+""")
+
+page.body([
+    page.h1("Welcome to My Website! 🐉"),
+    page.p("This website was built 100% in TechScript."),
+    page.p("No HTML. No CSS files. No React. Just TechScript!"),
+    page.button("Click Me!", { "onclick": "sayHello()" })
+])
+
+page.run()
+```
+
+Run it:
+```
+tech run my_website.txs
+```
+
+Your browser opens automatically! Press `Ctrl+C` to stop the server.
+
+#### 🎮 `use three_d` — 3D Graphics (New in v1.0.5!)
+
+```
+use three_d
+
+make s = scene.scene()
+s.objects.append(scene.box("#e94560", 1.0))
+scene.render(s)
+```
+
+That's all — a 3D scene in 5 lines. No OpenGL setup. No shader code.
+
+---
+
+## ⚡ Standard Library — 150+ Built-in Functions (New in v1.0.3)
+
+TechScript v1.0.3+ ships with a massive built-in standard library. No internet imports needed — everything is baked into the binary.
+
+### 🔢 `math.*` — 38+ Advanced Math Functions
+
+```
+say math.sin(3.14159)          # Sine
+say math.cos(0)                # Cosine
+say math.log(100, 10)          # Logarithm
+say math.factorial(10)         # 3628800
+say math.gcd(48, 18)           # 6
+say math.mean([1, 2, 3, 4, 5]) # 3.0
+say math.sqrt(144)             # 12.0
+say math.TAU                   # 6.283185...
+```
+
+### 🔐 `crypto.*` — Real Cryptography
+
+```
+say crypto.sha256("hello")              # FIPS 180-4 SHA-256
+say crypto.md5("hello")                 # MD5 hash
+say crypto.base64_encode("TechScript")  # Base64 encode
+say crypto.base64_decode("VGVjaFNjcmlwdA==") # Base64 decode
+```
+
+### 📄 `json.*` — JSON Encode / Decode
+
+```
+make data = { "name": "Alice", "age": 25 }
+say json.encode(data)           # {"name":"Alice","age":25}
+say json.encode_pretty(data)    # Pretty-printed JSON
+make parsed = json.decode('{"x": 1}')
+say parsed["x"]                 # 1
+```
+
+### 📁 `fs.*` — File System (20+ Functions)
+
+```
+fs.write("hello.txt", "Hello, World!")
+say fs.read("hello.txt")         # Hello, World!
+say fs.exists("hello.txt")       # true
+fs.append("hello.txt", "\nMore!")
+say fs.size("hello.txt")         # file size in bytes
+say fs.list_dir(".")             # list files in current directory
+fs.copy("hello.txt", "copy.txt")
+```
+
+### 💻 `os.*` — OS Integration (10+ Functions)
+
+```
+say os.name()                   # windows / linux / macos
+say os.arch()                   # x86_64
+say os.pid()                    # process ID
+say os.env_get("PATH")          # read environment variable
+os.system("echo Hello from OS!")
+make result = os.popen("dir")   # capture command output
+```
+
+### 🎲 `random.*` — Random & UUID
+
+```
+say random.random()              # float between 0.0 and 1.0
+say random.randint(1, 100)       # random integer
+say random.uuid()                # UUID4 string
+say random.choice(["a","b","c"]) # random item from list
+make shuffled = random.sample([1,2,3,4,5], 3)
+```
+
+### 📅 `date.*` — Date & Time
+
+```
+say date.now()    # 2025-03-12 14:30:00
+say date.year()   # 2025
+say date.month()  # 3
+say date.day()    # 12
+say date.hour()   # 14
+say date.minute() # 30
+say date.unix()   # unix timestamp in seconds
+```
+
+---
+
+## 🛠️ All CLI Commands
+
+| Command | What it does | Example |
+|:---|:---|:---|
+| `tech run file.txs` | Run a TechScript file | `tech run hello.txs` |
+| `tech run file.txs --debug` | Run with debug info | `tech run calc.txs --debug` |
+| `tech check file.txs` | Check for errors without running | `tech check myapp.txs` |
+| `tech eval "code"` | ⚡ Run inline code instantly | `tech eval "say 42"` |
+| `tech "[[[code]]]"` | ⚡ Shorthand inline execution | `tech "[[[say 'hi']]]"` |
+| `tech repl` | Open interactive mode (type and run live) | `tech repl` |
+| `tech transpile file.txs` | Convert your code to Python | `tech transpile hello.txs` |
+| `tech fmt` | 🆕 Auto-format your code | `tech fmt myapp.txs` |
+| `tech lint` | 🆕 Find errors before running | `tech lint myapp.txs` |
+| `tech build` | 🆕 Compile to fast bytecode (`.txc`) | `tech build myapp.txs` |
+| `tech test` | 🆕 Run built-in unit tests | `tech test` |
+| `tech version` or `tech -V` | Show installed version | `tech -V` |
+
+---
+
+## 📋 All Example Programs
+
+| File | What it does | Run it |
+|:---|:---|:---|
+| `examples/hello.txs` | Prints Hello World | `tech run examples/hello.txs` |
+| `examples/fibonacci.txs` | Calculates Fibonacci numbers | `tech run examples/fibonacci.txs` |
+| `examples/fizzbuzz.txs` | The classic FizzBuzz challenge | `tech run examples/fizzbuzz.txs` |
+| `examples/classes.txs` | Dogs and cats using OOP | `tech run examples/classes.txs` |
+| `examples/calculator.txs` | Simple calculator | `tech run examples/calculator.txs` |
+| `examples/guessing_game.txs` | Guess the number game | `tech run examples/guessing_game.txs` |
+| `examples/07_performance_test.txs` | ⚡ **1-Million Iteration Native VM Benchmark** | `tech run examples/07_performance_test.txs` |
+| `examples/web_app_simple.txs` | Simple dark-theme website | `tech run examples/web_app_simple.txs` |
+| `examples/web_complete.txs` | Full showcase: counter, API, form | `tech run examples/web_complete.txs` |
+| ⚡ `examples/08_math_module.txs` | **NEW** — Math: trig, roots, factorial, stats | `tech run examples/08_math_module.txs` |
+| ⚡ `examples/09_string_ops.txs` | **NEW** — String operations: upper/lower/split/join | `tech run examples/09_string_ops.txs` |
+| ⚡ `examples/10_json_module.txs` | **NEW** — JSON encode/decode/pretty-print | `tech run examples/10_json_module.txs` |
+| ⚡ `examples/11_crypto_module.txs` | **NEW** — SHA-256, Base64, MD5 | `tech run examples/11_crypto_module.txs` |
+| ⚡ `examples/12_date_module.txs` | **NEW** — Date/time/unix timestamps | `tech run examples/12_date_module.txs` |
+| ⚡ `examples/13_fs_module.txs` | **NEW** — File read/write/delete/list | `tech run examples/13_fs_module.txs` |
+| ⚡ `examples/14_os_module.txs` | **NEW** — OS info, env vars, system commands | `tech run examples/14_os_module.txs` |
+| ⚡ `examples/15_random_module.txs` | **NEW** — Random numbers, UUID, choice | `tech run examples/15_random_module.txs` |
+| ⚡ `examples/16_control_flow_fix.txs` | **NEW** — stop/skip/in/typeof demos | `tech run examples/16_control_flow_fix.txs` |
+| ⚡ `examples/17_inline_eval.txs` | **NEW** — Inline code execution howto | `tech run examples/17_inline_eval.txs` |
+
+---
+
+## 🎨 VS Code / Cursor Editor Extension
+
+Get **syntax highlighting**, **code snippets**, and the **🐉 dragon file icon** for `.txs` files:
+
+**Method 1 — Command line (fastest):**
+```bash
+code --install-extension vscode-extension/techscript-1.0.5.vsix
+```
+
+**Method 2 — Using the GUI:**
+1. Open VS Code
+2. Press `Ctrl+Shift+X` to open Extensions
+3. Click the `···` menu (top right of the Extensions panel)
+4. Select **"Install from VSIX..."**
+5. Choose `vscode-extension/techscript-1.0.5.vsix`
+
+> After installing, all your `.txs` files will have the dragon icon and coloured syntax! 🎨
+
+---
+
+## 📂 Folder Structure
+
+```
+techscript/
+├── bin/              # Executables and installers (TechScript_TX.exe)
+├── docs/             # Full Language Spec & Reference
+├── examples/         # Ready-to-run sample projects (17+ files)
+├── assets/           # Official icons and logos
+├── scripts/          # install.sh for Linux/macOS
+└── vscode-extension/ # techscript-1.0.5.vsix
+```
+
+---
+
+## 🔄 The Evolution of TechScript: v1.0.1 → v1.0.2 → v1.0.3 → v1.0.5
+
+| Feature / Category | v1.0.1 | v1.0.2 | v1.0.3 | v1.0.5 (Latest) |
+|:---:|:---:|:---:|:---:|:---:|
+| **Engine** | 🐍 Python Interpreter | 🦀 First Rust VM | ⚡ Optimized Rust VM | 🚀 **Full Native Rust Ecosystem** |
+| **Speed** | 🐌 Slow | 🚀 Fast | ⚡ Ultra-Fast (+20%) | 🔥 **Cinema Performance** |
+| **StdLib Functions** | < 10 basics | ~10 basics | **150+ Full StdLib** | **150+ + 3D** |
+| **Math** | Basic Op | Basic Op | **math.*** (38+ functions) | ✅ |
+| **Cryptography** | None | None | **crypto.*** (SHA256, MD5, Base64) | ✅ |
+| **Data/JSON** | None | None | **json.*** | ✅ |
+| **File System** | None | None | **fs.*** (20+ functions) | ✅ |
+| **OS Integration** | None | None | **os.*** | ✅ |
+| **Random/UUID** | None | Basic random | **random.*** | ✅ |
+| **Dates/Unix** | None | None | **date.*** | ✅ |
+| **3D Graphics** | None | None | None | **🎮 `use three_d`** |
+| **Web Builder** | ❌ | ✅ NEW | ✅ | ✅ |
+| **Control Flow** | Basic | ❌ Broken | ✅ Fixed stop/skip | ✅ |
+| **Operators** | Basic | Basic | **`in` & `typeof`** | ✅ |
+| **Inline Mode** | File-only | File-only | **`tech eval`** | ✅ |
+| **Developer Toolchain** | None | None | None | **fmt, lint, build, test** |
+| **Binary** | N/A (Python) | ~2.5 MB | ~2.8 MB | **`TechScript_TX.exe`** |
+| **VM Safety** | Python | ❌ Unsafe Transmute | ✅ 100% Type-Safe | ✅ |
+| **VS Code Extension** | v1.0.1 | v1.0.2 | v1.0.3 | **v1.0.5 Glowing Icons** |
+
+---
+
+## ✨ v1.0.5 Changelog — Cinema Edition
+
+### 🚀 New Features
+- **`use three_d` module** — Build real-time 3D scenes in 5 lines. `scene.box()`, `scene.render()`, and more
+- **Standalone Binary** — `TechScript_TX.exe`, zero-dependency, no installer needed
+- **Pro CLI** — New ASCII "TX" banner on startup, refined REPL experience
+- **Developer Toolchain:**
+  - `tech fmt` — Auto-prettify your code
+  - `tech lint` — Find errors before you run
+  - `tech build` — Compile to fast bytecode (`.txc`)
+  - `tech test` — Run built-in unit tests
+- **Visual Overhaul** — Glowing neon logo, enhanced VS Code file icons
+
+---
+
+## ✨ v1.0.3 Changelog — Security & Power Overhaul
+
+### 🔐 Critical Safety Fixes
+
+- **Eliminated `unsafe` UB** — The VM's bytecode decoder now uses safe `TryFrom<u8>` instead of `unsafe { mem::transmute }`. Corrupt bytecode produces a clean error, not a crash.
+- **Fixed Windows installer** — `setup.bat` no longer destroys your PATH if it's over 1,024 characters. Now uses PowerShell's `.NET` API with no size limit.
+
+### ✅ Language Features Fixed
+
+- **`stop` and `skip` now actually work** — Previously `break` compiled to a `return` statement (completely wrong). Now emits a proper forward jump patched at loop end.
+- **`in` operator** — `x in list`, `x in map`, `"sub" in str`, `x in range` now all work correctly.
+- **`typeof x`** — Returns the actual type name string (`"int"`, `"str"`, `"list"`, etc.)
+
+### ⚡ New Features
+
+- **Inline Execution** — `tech eval "say 42"` or `tech "[[[say 42]]]"` runs code instantly without a file
+- **150+ Built-in Functions** — Expanded stdlib: `math.*`, `fs.*`, `os.*`, `json.*`, `crypto.*`, `date.*`, `random.*`
+- **Android/Termux Guide** — See `docs/TERMUX.md`
+
+| Feature | 🐢 v1.0.2 | 🚀 v1.0.3 |
+|:---|:---:|:---:|
+| VM Safety | ❌ `unsafe transmute` | ✅ Safe `TryFrom` |
+| `break` / `continue` | ❌ Broken | ✅ Fixed (`stop` / `skip`) |
+| `in` operator | ❌ Wrong result | ✅ Real containment check |
+| `typeof` | ❌ Always "unknown" | ✅ Returns real type |
+| Inline execution | ❌ Not possible | ✅ `tech eval "..."` |
+| Built-in functions | ~40 | ✅ **150+** in 7 modules |
+| Windows PATH safety | ❌ Could truncate | ✅ Fixed |
+
+---
+
+## ✨ v1.0.2 Changelog — The Rust Rebuild
+
+The `v1.0.1` version was built on top of a Python wrapper. While this made development easy, it introduced massive flaws:
+
+1. **The Python Flaw** — Required users to install heavy Python environments just to run basic scripts.
+2. **The Speed Flaw** — Python's dynamic interpretation caused severe bottlenecks. A 1,000,000-loop would choke natively.
+3. **The Crash Flaw** — Basic errors like dividing by zero (`10 / 0`) would completely crash the transpiler instantly without warning.
+
+**The v1.0.2 Solution:** We entirely deleted the Python runtime and **rewrote the entire core architecture natively in Rust.**
+
+| Feature | 🐢 v1.0.1 (Old System) | 🚀 v1.0.2 (New System) |
+|:---|:---:|:---:|
+| **Underlying Engine** | Python Interpreted | ✅ **Native Rust Virtual Machine** |
+| **Execution Speed** | Sluggish (Python limits) | ✅ **Blazing Fast Bytecode (1M loops in 2.9s)** |
+| **Dependencies Needed** | Python 3.10+ | ✅ **NONE (Completely Standalone)** |
+| **Try/Rescue Blocks** | ❌ Did not exist | ✅ **NEW Stack Unwinding Implementation** |
+| **Math Crashing (Zero Div)** | Immediate Hard Crash | ✅ **Safely Trapped & Rescued** |
+| **Windows Executable** | `tech.exe` (Clunky wrapper) | ✅ `techscriptv1.0.2.exe` |
+| **VS Code extension** | ✅ Basic | ✅ Updated Icons & Syntax |
+| **Native `setup.exe` Bundle** | ❌ | ✅ **NEW** |
+
+---
+
+## ✨ v1.0.1 Changelog — What's New vs v1.0.0
+
+| Feature | v1.0.0 | v1.0.1 |
+|:---|:---:|:---:|
+| Basic scripting (say, make, loops) | ✅ | ✅ |
+| Functions, classes, error handling | ✅ | ✅ |
+| 80+ built-in functions | ✅ | ✅ |
+| VS Code extension (syntax + icons) | ✅ | ✅ Updated to v2.0.0 |
+| `use web` — Build websites | ❌ | ✅ **NEW** |
+| No HTML/CSS/JS needed | ❌ | ✅ **NEW** |
+| Browser opens automatically | ❌ | ✅ **NEW** |
+| Auto port selection (no conflicts) | ❌ | ✅ **NEW** |
+| Windows one-click Setup.exe | ❌ | ✅ **NEW** |
+| Mac/Linux one-line install script | ❌ | ✅ **NEW** |
+| Auto PATH setup | ❌ | ✅ **NEW** |
+| Reactive counter demo | ❌ | ✅ **NEW** |
+| Live API fetch example | ❌ | ✅ **NEW** |
+| Contact form example | ❌ | ✅ **NEW** |
+
+---
+
+## 📚 Documentation
+
+| Document | Description |
+|:---|:---|
+| [Quick Start Guide](docs/QUICKSTART.md) | Simple step-by-step install for all platforms |
+| [Language Cheat Sheet](docs/REFERENCE.md) | All keywords, functions, and syntax at a glance |
+| [Standard Library Reference](docs/STDLIB_REFERENCE.md) | ⚡ All 150+ built-in functions by module |
+| [Web Module Guide](docs/WEB_MODULE.md) | How to build websites with TechScript |
+| [Termux Guide](docs/TERMUX.md) | ⚡ Install and run on Android via Termux |
+
+---
+
+## 👨‍💻 Made by Tcode-Motion
+
+<div align="center">
+
+**Tanmoy — Tcode-Motion**
+
+*Building languages, AI systems, and the future — one project at a time.*
+
+| 🔥 Project | 📖 Description |
+|:---|:---|
+| 🐉 **TechScript** | A modern scripting language — Native Rust VM + web builder + 3D engine |
+| 🧠 **Project JARVIS** | Personal AI assistant built in Python |
+| 💻 **Stark OS** | Sci-Fi UI for web environments |
+| 🎨 **3D Visuals** | WebGL particle systems + Three.js experiences |
+| 🤖 **AR Keyboard** | Hand-gesture virtual keyboard with OpenCV + MediaPipe |
+
+[![GitHub](https://img.shields.io/badge/GitHub-Tcode--Motion-181717?style=for-the-badge&logo=github)](https://github.com/Tcode-Motion)
+[![YouTube](https://img.shields.io/badge/YouTube-@sachkaswitch-FF0000?style=for-the-badge&logo=youtube)](https://youtube.com/@sachkaswitch)
+
+*"Predict the future by coding it." ⚡*
+
+</div>
+
+---
+
+## 📄 License
+
+MIT License — free to use, share, and modify. See [LICENSE](LICENSE).
+
+---
+
+<div align="center">
+  <img src="assets/logo.png" alt="TechScript Dragon" width="80"/>
+  <br/><br/>
+  <strong>Crafted with 🐉 and 🦀 by Tcode-Motion</strong>
+</div>
+
+<div align="center">
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:7c3aed,45:1a0a40,80:0f0820,100:0d0d0d&height=140&section=footer&text=🐉%20TechScript%20—%20Code%20the%20Future&fontSize=22&fontColor=c084fc&animation=fadeIn&fontAlignY=62" width="100%"/>
+
+</div>

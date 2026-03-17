@@ -1,0 +1,18 @@
+[workspace]
+members = [
+    "crates/techscript-core",
+    "crates/techscript-cli", "crates/techscript-lsp",
+]
+resolver = "2"
+
+[workspace.package]
+version = "2.0.0"
+edition = "2021"
+authors = ["Tanmoy"]
+license = "MIT"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"

@@ -1,0 +1,10 @@
+[package]
+name = "techscript-core"
+version = "1.0.5"
+edition = "2021"
+authors = ["Tanmoy"]
+description = "TechScript language core — lexer, parser, compiler, VM, and standard library"
+license = "MIT"
+
+[dependencies]
+ureq = { version = "3.2.0", features = ["json"] }

@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "techscript-lang"
-version = "1.0.5"
+version = "1.0.6"
 description = "TechScript — a simple, friendly programming language."
 readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"
-authors = [{ name = "Tanmoy", email = "tanmoy@users.noreply.github.com" }]
+authors = [{ name = "Tanmoy (Tcode-Motion)", email = "sachkaswitch@gmail.com" }]
 keywords = ["techscript", "language", "interpreter", "compiler", "txs"]
 classifiers = [
   "Development Status :: 4 - Beta",

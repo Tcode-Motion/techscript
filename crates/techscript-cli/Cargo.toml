@@ -1,0 +1,17 @@
+[package]
+name = "techscript-cli"
+version = "1.0.5"
+edition = "2021"
+authors = ["Tanmoy"]
+description = "TechScript CLI — run, build, check, format, lint, and REPL"
+license = "MIT"
+
+[[bin]]
+name = "tech"
+path = "src/main.rs"
+
+[dependencies]
+techscript-core = { path = "../techscript-core" }
+
+[build-dependencies]
+winres = "0.1"

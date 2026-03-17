@@ -1,10 +1,17 @@
 {
   "name": "techscript",
   "displayName": "TechScript Language",
-  "description": "Syntax highlighting, snippets, file icons for TechScript (.txs) v1.0.4 — API, Web, GUI, 3D, Animation",
-  "version": "1.0.4",
-  "repository": {"type": "git", "url": "https://github.com/techscript/techscript"},
-  "publisher": "techscript-team",
+  "description": "Syntax highlighting, snippets, file icons for TechScript (.txs) v1.0.5 — API, Web, GUI, 3D, Animation",
+  "version": "1.0.6",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tcode-Motion/techscript"
+  },
+  "publisher": "tanmoy",
+  "author": {
+    "name": "Tanmoy (Tcode-Motion)",
+    "url": "https://github.com/Tcode-Motion"
+  },
   "license": "MIT",
   "engines": {
     "vscode": "^1.70.0"

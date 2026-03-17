@@ -1,0 +1,11 @@
+[package]
+name = "techscript-lsp"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+techscript-core = { version = "1.0.5", path = "../techscript-core" }
+tokio = { version = "1.50.0", features = ["full"] }
+tower-lsp = "0.20.0"

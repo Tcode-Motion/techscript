@@ -94,20 +94,14 @@ TechScript is:
 
 ## 📦 Installation
 
-### 🪟 Windows (Recommended)
-1. Download **`TechScript_TX.exe`** from the `public-release` folder.
-2. Type `tech` in your terminal. Done! 🚀
-
-### 🐧 Linux (Ubuntu, Kali, Arch)
-**Super-Fast One-Liner (Auto-detects Native Rust binary):**
-```bash
-curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
-```
-
-### 📱 Android (Termux)
-```bash
-pkg install python -y && pip install techscript-lang
-```
+| Platform | Architecture | Type | Download / Install |
+|:---|:---|:---|:---|
+| **🪟 Windows** | x64 (64-bit) | Standalone EXE | **[Download](TechScript_TX.exe)** |
+| **🪟 Windows** | x64 (64-bit) | Full Setup Bundle | **[Download](TechScript_v1.0.5_Windows_Bundle.zip)** |
+| **🐧 Linux** | x86_64 | Native Binary | **[Download](https://github.com/Tcode-Motion/techscript/releases/latest)** |
+| **🍎 macOS** | Intel / M1 / M2 | Native Binary | **[Download](https://github.com/Tcode-Motion/techscript/releases/latest)** |
+| **📱 Android** | ARM / x64 | Termux Engine | **[Install via Pip](README.md#android-termux)** |
+| **🎨 Editor** | All | VS Code Extension | **[Download](techscript-1.0.5.vsix)** |
 *(v1.0.5+ is fully optimized for Termux with automatic Python-engine fallback)*
 
 ---
@@ -126,13 +120,14 @@ Check out the **[Full Reference Guide](docs/REFERENCE.md)** for more.
 ---
 
 ## 🎨 VS Code Extension
-code --install-extension vscode-extension/techscript-1.0.5.vsix
+```
+code --install-extension techscript-1.0.5.vsix
 ```
 
 ---
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Tcode-Motion/techscript/main/assets/techscript_v2_logo.png" alt="TechScript Dragon" width="80">
+  <img src="logo.png" alt="TechScript Dragon" width="80">
   <br>
   <strong>Made with 🐉 and 🦀 by Tcode-Motion</strong>
 </p>

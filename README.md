@@ -36,15 +36,40 @@ This is a milestone release that transitions TechScript to a **fully native Rust
 
 TechScript is designed to be **human-first**. No semicolons, no brackets, just pure logic. This guide will take you from your first "Hello" to building professional 3D simulations.
 
-### 🏁 Step 0: Installation
+### 🏁 Step 0: Installation & Updates
 
-| Platform | Recommended Method | Get Started |
-|:---|:---|:---|
-| **🪟 Windows** | **Full Setup Wizard** | [Download Setup](bin/TechScript_v1.0.5_Setup.exe) |
-| **🪟 Windows** | Standalone Binary | [Download (.exe)](bin/TechScript_TX.exe) |
-| **🐧 Linux** | One-Liner Install | `curl -fS scripts/install.sh | bash` |
-| **🍎 macOS** | One-Liner Install | `curl -fS scripts/install.sh | bash` |
-| **📱 Android** | Termux Engine | `pkg install python && pip install techscript-lang` |
+| Platform | Install Method | Link / Command | Update Method |
+|:---|:---|:---|:---|
+| **🪟 Windows** | **Full Setup Wizard** | [Download Setup](bin/TechScript_v1.0.5_Setup.exe) | Run new Setup.exe |
+| **🪟 Windows** | Standalone Binary | [Download (.exe)](bin/TechScript_TX.exe) | Replace old .exe |
+| **🐧 Linux** | One-Liner Install | `curl -fS scripts/install.sh | bash` | Re-run command |
+| **🍎 macOS** | One-Liner Install | `curl -fS scripts/install.sh | bash` | Re-run command |
+| **📱 Android** | Termux Engine | `pkg install python && pip install techscript-lang` | `pip install -U techscript-lang` |
+
+---
+
+### 📥 Detailed Setup Guides
+
+#### 🪟 Windows (Setup Wizard)
+1. Download **`TechScript_v1.0.5_Setup.exe`**.
+2. Double-click to run. It will extract the high-performance Rust engine to your system.
+3. The installer automatically adds **`tech`** to your System PATH.
+4. **Update**: Simply download the latest Setup.exe and run it again to overwrite the old version.
+
+#### 🐧 Linux & 🍎 macOS (Terminal)
+1. Open your terminal.
+2. Run the universal installer:
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
+   ```
+3. This script auto-detects your architecture (Intel/M1/M2) and installs the Native Rust binary.
+4. **Update**: Re-run the same `curl` command to fetch the latest binary instantly.
+
+#### 📱 Android (Termux)
+1. Install Termux from F-Droid.
+2. Run: `pkg update && pkg upgrade`
+3. Install the engine: `pkg install python && pip install techscript-lang`
+4. **Update**: Run `pip install --upgrade techscript-lang`.
 
 ---
 

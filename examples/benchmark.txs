@@ -1,0 +1,42 @@
+# TechScript v1.0.4 — Performance Benchmark
+# Run: tech run benchmark.txs
+# This demonstrates TechScript's lightning-fast native execution
+
+use debug
+
+say "🐉 TechScript v1.0.4 Performance Benchmark"
+say "============================================"
+say ""
+
+# Benchmark 1: 1 million loop iterations
+debug.timer_start("1M loop")
+make sum = 0
+each i in 0..1000000 {
+    sum += 1
+}
+debug.timer_end("1M loop")
+say f"✓ 1M iterations complete. Sum = {sum}"
+say ""
+
+# Benchmark 2: String operations
+debug.timer_start("strings")
+make s = ""
+each i in 0..10000 {
+    s = f"iteration {i}"
+}
+debug.timer_end("strings")
+say f"✓ 10K string operations complete"
+say ""
+
+# Benchmark 3: List operations
+debug.timer_start("lists")
+make items = []
+each i in 0..10000 {
+    items.append(i)
+}
+debug.timer_end("lists")
+say f"✓ 10K list appends complete. Length = {items.length}"
+say ""
+
+say "============================================"
+say "🏁 Benchmark complete!"

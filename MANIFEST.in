@@ -1,6 +1,0 @@
-recursive-include techscript_wrapper/examples *.txs
-recursive-include techscript *.py
-recursive-include techscript *.md
-include README.md
-include LICENSE
-recursive-include docs *.md

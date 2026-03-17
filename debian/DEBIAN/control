@@ -1,9 +1,0 @@
-Package: techscript
-Version: 1.0.2
-Section: devel
-Priority: optional
-Architecture: amd64
-Maintainer: Tanmoy <tanmoy@example.com>
-Description: TechScript Programming Language
- A friendly native programming language that reads like plain English.
- Blazing fast, standalone Rust VM execution.

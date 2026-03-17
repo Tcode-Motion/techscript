@@ -1,5 +1,0 @@
-# Ignore macOS custom attributes
-.DS_Store
-
-# Ignore Windows thumbnail cache
-Thumbs.db

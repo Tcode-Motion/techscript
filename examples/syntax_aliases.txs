@@ -1,0 +1,27 @@
+# Canonical syntax aliases (v1.0.6)
+
+const PI = 3.14
+say PI
+
+do add(a, b) {
+    return a + b
+}
+say add(2, 3)
+
+class Tiny {
+    do init(self, n) {
+        self.n = n
+    }
+}
+make t = Tiny(7)
+say t.n
+
+try {
+    throw "oops"
+} catch err {
+    say "caught"
+}
+
+loop 2 {
+    say "tick"
+}

@@ -1,47 +1,46 @@
-# TechScript Git Ignore
-
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
-# Temp web build
-.tech_web_tmp/
-*.whl
-# Virtual environments
 .venv/
 venv/
 env/
+*.egg-info/
+build/
+dist/
 
 # IDE
 .vscode/settings.json
 .idea/
 *.swp
-*.swo
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Testing
-.coverage
-htmlcov/
-.pytest_cache/
-pytest_output.txt
-
-# Dev scripts
-debug_web.py
-error_output*.txt
-tmp_update_docs.py
-process_logo.py
-build_release_repo.py
-
-# Rust build artifacts
+# Rust
 runtime/target/
 target/
 **/*.pdb
 
-# Binaries
-# We ignore root level exes but keep the public-release ones
-*.exe
-!public-release/bin/*.exe
-!public-release/scripts/*.bat
+# TechScript
+.tech/
+*.txbc
+.tech_web_tmp/
+
+# Generated / accidental
+graphify-out/
+%USERPROFILE%/
+
+# Old artifacts
+*.vsix
+public website/
+public-release/
+installer_build/_work/
+installer_build/workpath/
+installer_build/Output/
+
+# Logs
+*.log
+error.log
+trace*.log

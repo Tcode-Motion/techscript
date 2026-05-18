@@ -1,4 +1,4 @@
-# TechScript Web App Example
+# TechScript Web — component + page + API (Rust runtime)
 
 use web
 
@@ -6,35 +6,28 @@ state click_count = 0
 
 api MyApi {
     route "/hello" {
-        send { "message": "Hello from backend!" }
+        say "api ok"
     }
 }
 
 component Header {
     render "header" {
         render "h1" {
-            say "TechScript Web Module"
+            say "TechScript Web"
         }
     }
 }
 
 page Home {
-    style {
-        # A simple style object representation
-        container = { "padding": "20px", "font-family": "sans-serif", "background": "#121212", "color": "#f0f0f0" }
-        button_style = { "padding": "10px 20px", "background": "#007BFF", "color": "white", "border": "none", "border-radius": "5px" }
-    }
-
     render "div" {
         render "Header" {}
-        
         render "p" {
-            say "Welcome to the future of web development with TechScript!"
+            say "Welcome to TechScript"
         }
-        
         render "button" {
-            # In a real DOM this would bind an onClick event, but here it's just a representation
-            say "Click me (Count: {click_count})"
+            say "Click me"
         }
     }
 }
+
+__web_run_framework()

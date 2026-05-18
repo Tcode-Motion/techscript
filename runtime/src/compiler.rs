@@ -1,6 +1,7 @@
 // ── TechScript Bytecode Compiler ─────────────────────────────────────
 // Walks the AST and emits bytecode instructions.
 
+use std::collections::HashSet;
 use std::rc::Rc;
 
 use crate::ast::*;
@@ -36,6 +37,7 @@ enum FunctionType {
 /// The compiler state for a single function scope.
 struct CompilerScope {
     function: Function,
+    #[allow(dead_code)]
     fn_type: FunctionType,
     locals: Vec<Local>,
     upvalues: Vec<Upvalue>,
@@ -68,6 +70,9 @@ pub struct Compiler {
     class_stack: Vec<(String, bool)>,
     /// Stack of loop scopes for break/continue tracking
     loop_stack: Vec<LoopScope>,
+    /// Globals defined at script scope (for bare-assignment checks)
+    globals_defined: HashSet<String>,
+    pub is_repl: bool,
 }
 
 /// Tracks current loop for break/continue jump patching.
@@ -84,6 +89,8 @@ impl Compiler {
             scopes: vec![CompilerScope::new("<script>", FunctionType::Script)],
             class_stack: Vec::new(),
             loop_stack: Vec::new(),
+            globals_defined: HashSet::new(),
+            is_repl: false,
         }
     }
 
@@ -227,7 +234,17 @@ impl Compiler {
     // ─── Public Entry Point ──────────────────────────────────────────
 
     pub fn compile(mut self, program: &Program) -> TechResult<Function> {
-        for stmt in &program.body {
+        let body_len = program.body.len();
+        for (i, stmt) in program.body.iter().enumerate() {
+            let is_last = i == body_len - 1;
+            if self.is_repl && is_last {
+                if let Stmt::Expression { expression } = stmt {
+                    self.compile_expr(expression, 1)?;
+                    self.emit(OpCode::Return, 0);
+                    let scope = self.scopes.pop().unwrap();
+                    return Ok(scope.function);
+                }
+            }
             self.compile_stmt(stmt, 1)?;
         }
         self.emit(OpCode::None, 0);
@@ -254,6 +271,7 @@ impl Compiler {
                 if self.current().scope_depth > 0 {
                     self.add_local(name);
                 } else {
+                    self.globals_defined.insert(name.clone());
                     let idx = self.make_constant(Value::String(Rc::new(name.clone())));
                     self.emit(OpCode::DefineGlobal, line);
                     self.emit_byte((idx >> 8) as u8, line);
@@ -264,6 +282,22 @@ impl Compiler {
             Stmt::Assign { target, op, value } => {
                 match target {
                     Expr::Identifier(name) => {
+                        if op == "="
+                            && self.scopes.len() == 1
+                            && self.current().scope_depth == 0
+                            && self.resolve_local(0, name).is_none()
+                            && self.resolve_upvalue(0, name).is_none()
+                            && !self.globals_defined.contains(name)
+                        {
+                            return Err(TechError::compile(
+                                format!(
+                                    "Undefined variable '{}'. Use `make` or `const` for first declaration.",
+                                    name
+                                ),
+                                line,
+                                0,
+                            ));
+                        }
                         // Compound assignment
                         if op != "=" {
                             self.named_variable(name, true, line);
@@ -503,13 +537,15 @@ impl Compiler {
                 self.loop_stack.last_mut().unwrap().break_jumps.push(break_jump);
             }
 
-            Stmt::Skip | Stmt::Pass => {
-                // Skip = continue: jump back to loop start
+            Stmt::Skip => {
                 if let Some(scope) = self.loop_stack.last() {
                     let start = scope.loop_start;
                     self.emit_loop(start, line);
                 }
-                // Pass is always a no-op
+            }
+
+            Stmt::Pass => {
+                // no-op
             }
 
             Stmt::Try { body, catch_var, catch_body, finally_body } => {
@@ -633,8 +669,231 @@ impl Compiler {
             Stmt::Export { declaration } => {
                 self.compile_stmt(declaration, line)?;
             }
+
+            Stmt::State { name, value } => {
+                self.emit_call_global("__web_state", line);
+                self.emit_string_const(&name, line);
+                self.compile_expr(value, line)?;
+                self.emit(OpCode::Call, line);
+                self.emit_byte(2, line);
+                self.emit(OpCode::Pop, line);
+            }
+
+            Stmt::Component { name, body } => {
+                let html = self.compile_render_body(body, line)?;
+                self.emit_call_global("__web_component", line);
+                self.emit_string_const(&name, line);
+                self.emit_string_const(&html, line);
+                self.emit(OpCode::Call, line);
+                self.emit_byte(2, line);
+                self.emit(OpCode::Pop, line);
+            }
+
+            Stmt::Page { name, body } => {
+                let html = self.compile_render_body(body, line)?;
+                self.emit_call_global("__web_page", line);
+                self.emit_string_const(&name, line);
+                self.emit_string_const(&html, line);
+                self.emit(OpCode::Call, line);
+                self.emit_byte(2, line);
+                self.emit(OpCode::Pop, line);
+            }
+
+            Stmt::Api { name, routes } => {
+                for (method, path, route_body) in routes {
+                    let response = self.compile_route_response(route_body);
+                    self.emit_call_global("__web_route", line);
+                    self.emit_string_const(method, line);
+                    self.emit_string_const(path, line);
+                    self.emit_string_const(&response, line);
+                    self.emit(OpCode::Call, line);
+                    self.emit_byte(3, line);
+                    self.emit(OpCode::Pop, line);
+                }
+                let _ = name;
+            }
+
+            Stmt::Render { tag, body } => {
+                let inner = self.compile_render_body(body, line)?;
+                self.emit_call_global("__web_render", line);
+                self.emit_string_const(&tag, line);
+                self.emit_string_const(&inner, line);
+                self.emit(OpCode::Call, line);
+                self.emit_byte(2, line);
+            }
+
+            Stmt::Window { title, body } => {
+                self.emit_call_global("__gui_window", line);
+                self.emit_string_const(&title, line);
+                self.emit(OpCode::Call, line);
+                self.emit_byte(1, line);
+                self.emit(OpCode::Pop, line);
+                for s in body {
+                    self.compile_stmt(s, line)?;
+                }
+                self.emit_call_global("__gui_run", line);
+                self.emit(OpCode::Call, line);
+                self.emit_byte(0, line);
+                self.emit(OpCode::Pop, line);
+            }
+
+            Stmt::Button { label, body } => {
+                let handler = self.compile_button_handler(body);
+                self.emit_call_global("__gui_button", line);
+                self.emit_string_const(&label, line);
+                self.emit_string_const(&handler, line);
+                self.emit(OpCode::Call, line);
+                self.emit_byte(2, line);
+                self.emit(OpCode::Pop, line);
+            }
+
+            Stmt::Input { name, placeholder } => {
+                self.emit_call_global("__gui_input", line);
+                self.emit_string_const(&name, line);
+                self.emit_string_const(&placeholder, line);
+                self.emit(OpCode::Call, line);
+                self.emit_byte(2, line);
+                self.emit(OpCode::Pop, line);
+            }
+
+            Stmt::Label { text } => {
+                self.emit_call_global("__gui_label", line);
+                self.emit_string_const(&text, line);
+                self.emit(OpCode::Call, line);
+                self.emit_byte(1, line);
+                self.emit(OpCode::Pop, line);
+            }
+
+            Stmt::Scene { name, body } => {
+                self.emit_call_global("__3d_scene", line);
+                self.emit_string_const(&name, line);
+                self.emit(OpCode::Call, line);
+                self.emit_byte(1, line);
+                self.emit(OpCode::Pop, line);
+                for s in body {
+                    self.compile_stmt(s, line)?;
+                }
+                self.emit_call_global("__3d_run", line);
+                self.emit(OpCode::Call, line);
+                self.emit_byte(0, line);
+                self.emit(OpCode::Pop, line);
+            }
+
+            Stmt::Timeline { name, body } => {
+                self.emit_call_global("__anime_timeline", line);
+                self.emit_string_const(&name, line);
+                self.emit(OpCode::Call, line);
+                self.emit_byte(1, line);
+                self.emit(OpCode::Pop, line);
+                for s in body {
+                    self.compile_stmt(s, line)?;
+                }
+                self.emit_call_global("__anime_run", line);
+                self.emit(OpCode::Call, line);
+                self.emit_byte(0, line);
+                self.emit(OpCode::Pop, line);
+            }
+
+            Stmt::AnimeMove {
+                target,
+                coords,
+                duration,
+                ease,
+            } => {
+                self.emit_call_global("__anime_move", line);
+                self.emit_string_const(target, line);
+                self.emit_string_const(&self.format_list_expr(coords), line);
+                self.compile_expr(duration, line)?;
+                self.emit_string_const(ease, line);
+                self.emit(OpCode::Call, line);
+                self.emit_byte(4, line);
+                self.emit(OpCode::Pop, line);
+            }
+
+            Stmt::AnimeFade {
+                target,
+                opacity,
+                duration,
+            } => {
+                self.emit_call_global("__anime_fade", line);
+                self.emit_string_const(target, line);
+                self.compile_expr(opacity, line)?;
+                self.compile_expr(duration, line)?;
+                self.emit(OpCode::Call, line);
+                self.emit_byte(3, line);
+                self.emit(OpCode::Pop, line);
+            }
+
+            Stmt::Camera { coords } => {
+                self.emit_call_global("__3d_camera", line);
+                for i in 0..3 {
+                    if let Some(c) = coords.get(i) {
+                        self.compile_expr(c, line)?;
+                    } else {
+                        let default = if i == 2 { 5 } else { 0 };
+                        let idx = self.make_constant(Value::Int(default));
+                        self.emit(OpCode::Constant, line);
+                        self.emit_byte((idx >> 8) as u8, line);
+                        self.emit_byte((idx & 0xFF) as u8, line);
+                    }
+                }
+                self.emit(OpCode::Call, line);
+                self.emit_byte(3, line);
+                self.emit(OpCode::Pop, line);
+            }
+
+            Stmt::Light { kind: _ } => {
+                self.emit_call_global("__3d_light", line);
+                self.emit(OpCode::Call, line);
+                self.emit_byte(0, line);
+                self.emit(OpCode::Pop, line);
+            }
+
+            Stmt::Mesh { shape, color } => {
+                self.emit_call_global("__3d_mesh", line);
+                self.emit_string_const(&shape, line);
+                self.emit_string_const(&color, line);
+                self.emit(OpCode::Call, line);
+                self.emit_byte(2, line);
+                self.emit(OpCode::Pop, line);
+            }
         }
         Ok(())
+    }
+
+    fn emit_call_global(&mut self, name: &str, line: usize) {
+        self.named_variable(name, true, line);
+    }
+
+    fn emit_string_const(&mut self, s: &str, line: usize) {
+        let idx = self.make_constant(Value::String(Rc::new(s.to_string())));
+        self.emit(OpCode::Constant, line);
+        self.emit_byte((idx >> 8) as u8, line);
+        self.emit_byte((idx & 0xFF) as u8, line);
+    }
+
+    fn compile_render_body(&mut self, body: &[Stmt], line: usize) -> TechResult<String> {
+        let mut html = String::new();
+        for stmt in body {
+            match stmt {
+                Stmt::Render { tag, body: inner } => {
+                    let inner_html = self.compile_render_body(inner, line)?;
+                    html.push_str(&format!("<{}>{}</{}>", tag, inner_html, tag));
+                }
+                Stmt::Say { values } => {
+                    for v in values {
+                        if let Expr::String(s) = v {
+                            html.push_str(s);
+                        }
+                    }
+                }
+                Stmt::Expression { expression: Expr::String(s) } => {
+                    html.push_str(s);
+                }
+                _ => {}
+            }
+        }
+        Ok(html)
     }
 
     // ─── Function Compilation ────────────────────────────────────────
@@ -655,8 +914,13 @@ impl Compiler {
 
         self.begin_scope();
 
-        // Add parameters as locals
+        // Add parameters as locals (slot 0 is reserved implicit `self` for methods)
         for param in params {
+            if (fn_type == FunctionType::Method || fn_type == FunctionType::Initializer)
+                && param.name == "self"
+            {
+                continue;
+            }
             self.add_local(&param.name);
         }
 
@@ -859,11 +1123,6 @@ impl Compiler {
                 self.compile_expr(prompt, line)?;
                 self.emit(OpCode::ReadInput, line);
             }
-
-            Expr::Ask { prompt } => {
-                self.compile_expr(prompt, line)?;
-                self.emit(OpCode::ReadInput, line);
-            }
         }
         Ok(())
     }
@@ -928,6 +1187,53 @@ impl Compiler {
         self.emit(OpCode::FormatString, line);
         self.emit_byte(part_count as u8, line);
         Ok(())
+    }
+
+    /// Build a plain-text HTTP response body from route handler `say` statements.
+    fn compile_route_response(&self, body: &[Stmt]) -> String {
+        let mut parts = Vec::new();
+        for stmt in body {
+            if let Stmt::Say { values } = stmt {
+                for v in values {
+                    if let Expr::String(s) = v {
+                        parts.push(s.clone());
+                    }
+                }
+            }
+        }
+        if parts.is_empty() {
+            "{\"ok\":true}".to_string()
+        } else {
+            format!("{{\"ok\":true,\"message\":\"{}\"}}", parts.join(" ").replace('"', "\\\""))
+        }
+    }
+
+    fn format_list_expr(&self, exprs: &[Expr]) -> String {
+        let parts: Vec<String> = exprs
+            .iter()
+            .map(|e| match e {
+                Expr::NumberInt(i) => i.to_string(),
+                Expr::NumberFloat(f) => f.to_string(),
+                Expr::String(s) => s.clone(),
+                _ => "0".into(),
+            })
+            .collect();
+        format!("[{}]", parts.join(", "))
+    }
+
+    /// Encode button click actions as `say` messages separated by `|`.
+    fn compile_button_handler(&self, body: &[Stmt]) -> String {
+        let mut parts = Vec::new();
+        for stmt in body {
+            if let Stmt::Say { values } = stmt {
+                for v in values {
+                    if let Expr::String(s) = v {
+                        parts.push(s.clone());
+                    }
+                }
+            }
+        }
+        parts.join("|")
     }
 }
 

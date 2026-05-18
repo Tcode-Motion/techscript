@@ -1,6 +1,16 @@
-# TechScript Language Cheat Sheet
+# TechScript Language Reference (v1.0.6)
 
-A simple reference card for TechScript v2. Save this for quick lookups!
+Canonical syntax first; legacy aliases still parse.
+
+| Canonical | Alias |
+|-----------|-------|
+| `make x = 1` | (bare `x = 1` only for reassignment) |
+| `const x = 1` | `keep x = 1` |
+| `do fn()` | `build fn()` |
+| `class Car` | `model Car` |
+| `try` / `catch` / `throw` | `attempt` / `rescue` / `fail` |
+| `loop` / `while` | `each` / `repeat` |
+| `return x` | `send x` |
 
 ---
 

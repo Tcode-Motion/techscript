@@ -1,0 +1,24 @@
+Exit called with code 0
+GetConsoleProcessList count: 9
+My PID: 22536
+Checking PID: 22536
+Checking PID: 19452
+  Process path: C:\Users\tanmoy\.rustup\toolchains\stable-x86_64-pc-windows-msvc\bin\cargo.exe
+Checking PID: 27712
+  Process path: C:\Users\tanmoy\.cargo\bin\cargo.exe
+Checking PID: 24888
+  Process path: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+  -> Match: SHELL FOUND!
+Checking PID: 24168
+  Process path: C:\Users\tanmoy\AppData\Local\nvm\v24.13.0\node.exe
+Checking PID: 6188
+  Process path: C:\Windows\System32\cmd.exe
+  -> Match: SHELL FOUND!
+Checking PID: 19888
+  Process path: C:\Users\tanmoy\AppData\Local\nvm\v24.13.0\node.exe
+Checking PID: 16224
+  Process path: C:\Windows\System32\cmd.exe
+  -> Match: SHELL FOUND!
+Checking PID: 6264
+  Process path: C:\Users\tanmoy\AppData\Local\Programs\Antigravity\resources\app\extensions\antigravity\bin\language_server_windows_x64.exe
+shell_found decision: true

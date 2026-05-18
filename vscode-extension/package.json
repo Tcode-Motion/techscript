@@ -2,9 +2,20 @@
   "name": "techscript",
   "displayName": "TechScript Language",
   "description": "Syntax highlighting, snippets, file icons, and web module support for TechScript (.txs). v2",
-  "version": "1.0.2",
+  "version": "1.0.6",
   "publisher": "techscript-team",
+  "author": "Tanmoy Majumder",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tcode-Motion/techscript"
+  },
   "license": "MIT",
+  "main": "./extension.js",
+  "activationEvents": [
+    "onCommand:techscript.run",
+    "onCommand:techscript.repl",
+    "onCommand:techscript.studio"
+  ],
   "engines": {
     "vscode": "^1.70.0"
   },
@@ -34,6 +45,23 @@
       {
         "language": "techscript",
         "path": "./snippets/techscript.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "techscript.run",
+        "title": "TechScript: Run Current File",
+        "category": "TechScript"
+      },
+      {
+        "command": "techscript.repl",
+        "title": "TechScript: Open Interactive REPL",
+        "category": "TechScript"
+      },
+      {
+        "command": "techscript.studio",
+        "title": "TechScript: Launch Studio IDE",
+        "category": "TechScript"
       }
     ]
   }

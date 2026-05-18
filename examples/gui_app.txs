@@ -1,0 +1,10 @@
+# TechScript GUI (eframe) — closes window to exit
+
+use gui
+
+window "TechScript GUI" {
+    label "Hello from native Rust GUI"
+    button "Click me" {
+    }
+    input name placeholder "Your name"
+}

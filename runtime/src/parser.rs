@@ -65,6 +65,47 @@ impl Parser {
         self.match_tok(TokenType::Keyword, Some(value))
     }
 
+    /// Variable names may be identifiers; DSL keywords like `page` are allowed as bindings.
+    fn parse_member_name(&mut self) -> TechResult<String> {
+        match &self.peek().token_type {
+            TokenType::Identifier | TokenType::Keyword => Ok(self.advance().value),
+            other => Err(TechError::parse(
+                format!("Expected property name, got {:?}", other),
+                self.peek().line,
+                self.peek().column,
+                &self.filename,
+            )),
+        }
+    }
+
+    fn parse_binding_name(&mut self) -> TechResult<String> {
+        match &self.peek().token_type {
+            TokenType::Identifier => Ok(self.advance().value),
+            TokenType::Keyword => {
+                let name = self.peek().value.clone();
+                let allowed = [
+                    "page", "state", "component", "window", "scene", "timeline", "route", "api",
+                ];
+                if allowed.contains(&name.as_str()) {
+                    Ok(self.advance().value)
+                } else {
+                    Err(TechError::parse(
+                        format!("Expected variable name, got keyword '{}'", name),
+                        self.peek().line,
+                        self.peek().column,
+                        &self.filename,
+                    ))
+                }
+            }
+            other => Err(TechError::parse(
+                format!("Expected variable name, got {:?}", other),
+                self.peek().line,
+                self.peek().column,
+                &self.filename,
+            )),
+        }
+    }
+
     fn skip_nl(&mut self) {
         while self.peek().token_type == TokenType::Newline {
             self.advance();
@@ -73,6 +114,10 @@ impl Parser {
 
     fn at_end(&self) -> bool {
         self.peek().token_type == TokenType::Eof
+    }
+
+    fn next_token_is(&self, tt: TokenType) -> bool {
+        self.pos + 1 < self.tokens.len() && self.tokens[self.pos + 1].token_type == tt
     }
 
     // ─── Public Entry Point ──────────────────────────────────────────
@@ -97,9 +142,9 @@ impl Parser {
             match tok.value.as_str() {
                 "say"     => return self.parse_say(),
                 "make"    => return self.parse_set(),
-                "keep"    => return self.parse_const(),
-                "send"    => return self.parse_return(),
-                "fail"    => return self.parse_throw(),
+                "keep" | "const" => return self.parse_const(),
+                "send" | "return" => return self.parse_return(),
+                "fail" | "throw" => return self.parse_throw(),
                 "drop"    => return self.parse_del(),
                 "defer"   => return self.parse_defer(),
                 "use"     => return self.parse_import(),
@@ -109,15 +154,32 @@ impl Parser {
                 "unless"  => return self.parse_unless(),
                 "each"    => return self.parse_for(),
                 "repeat"  => return self.parse_while(),
+                "loop"    => return self.parse_loop(),
                 "until"   => return self.parse_until(),
-                "build"   => return self.parse_fn(),
-                "model"   => return self.parse_class(),
-                "attempt" => return self.parse_try(),
+                "build" | "do" => return self.parse_fn(),
+                "model" | "class" => return self.parse_class(),
+                "attempt" | "try" => return self.parse_try(),
                 "match"   => return self.parse_match(),
                 "guard"   => return self.parse_guard(),
                 "with"    => return self.parse_with(),
-                "stop"    => { self.advance(); return Ok(Stmt::Break); }
-                "skip"    => { self.advance(); return Ok(Stmt::Skip); }
+                "state" if self.next_token_is(TokenType::Identifier) => return self.parse_state(),
+                "component" if self.next_token_is(TokenType::Identifier) => return self.parse_component(),
+                "page" if self.next_token_is(TokenType::Identifier) => return self.parse_page(),
+                "api" if self.next_token_is(TokenType::Identifier) => return self.parse_api(),
+                "window" if self.next_token_is(TokenType::String) => return self.parse_window(),
+                "scene" if self.next_token_is(TokenType::Identifier) => return self.parse_scene(),
+                "timeline" if self.next_token_is(TokenType::Identifier) => return self.parse_timeline(),
+                "render" if self.next_token_is(TokenType::String) => return self.parse_render(),
+                "button" if self.next_token_is(TokenType::String) => return self.parse_button(),
+                "input" if self.next_token_is(TokenType::Identifier) => return self.parse_input(),
+                "label" if self.next_token_is(TokenType::String) => return self.parse_label(),
+                "camera"  => return self.parse_camera(),
+                "light"   => return self.parse_light(),
+                "mesh"    => return self.parse_mesh(),
+                "move" if self.next_token_is(TokenType::Identifier) => return self.parse_anime_move(),
+                "fade" if self.next_token_is(TokenType::Identifier) => return self.parse_anime_fade(),
+                "stop" | "break" => { self.advance(); return Ok(Stmt::Break); }
+                "skip" | "continue" => { self.advance(); return Ok(Stmt::Skip); }
                 "pass"    => { self.advance(); return Ok(Stmt::Pass); }
                 _ => {}
             }
@@ -137,18 +199,18 @@ impl Parser {
 
     fn parse_set(&mut self) -> TechResult<Stmt> {
         self.advance(); // "make"
-        let name_tok = self.expect(TokenType::Identifier, None)?;
+        let name = self.parse_binding_name()?;
         self.expect(TokenType::Assign, None)?;
         let value = self.parse_expression()?;
-        Ok(Stmt::Set { name: name_tok.value, value })
+        Ok(Stmt::Set { name, value })
     }
 
     fn parse_const(&mut self) -> TechResult<Stmt> {
         self.advance(); // "keep"
-        let name_tok = self.expect(TokenType::Identifier, None)?;
+        let name = self.parse_binding_name()?;
         self.expect(TokenType::Assign, None)?;
         let value = self.parse_expression()?;
-        Ok(Stmt::Const { name: name_tok.value, value })
+        Ok(Stmt::Const { name, value })
     }
 
     fn parse_return(&mut self) -> TechResult<Stmt> {
@@ -177,15 +239,33 @@ impl Parser {
         Ok(Stmt::Defer { expression: self.parse_expression()? })
     }
 
+    /// Module names may be identifiers or the special token sequence `3` + `d`.
+    fn parse_module_name(&mut self) -> TechResult<String> {
+        if self.peek().token_type == TokenType::NumberInt && self.peek().value == "3" {
+            self.advance();
+            if self.peek().token_type == TokenType::Identifier && self.peek().value == "d" {
+                self.advance();
+                return Ok("3d".into());
+            }
+            return Err(TechError::parse(
+                "Expected module name after 'use'",
+                self.peek().line,
+                self.peek().column,
+                &self.filename,
+            ));
+        }
+        Ok(self.expect(TokenType::Identifier, None)?.value)
+    }
+
     fn parse_import(&mut self) -> TechResult<Stmt> {
         self.advance(); // "use"
-        let module_tok = self.expect(TokenType::Identifier, None)?;
+        let module_name = self.parse_module_name()?;
         let alias = if self.kw("as") {
             Some(self.expect(TokenType::Identifier, None)?.value)
         } else {
             None
         };
-        Ok(Stmt::Import { module: module_tok.value, names: None, alias })
+        Ok(Stmt::Import { module: module_name, names: None, alias })
     }
 
     fn parse_from_import(&mut self) -> TechResult<Stmt> {
@@ -212,12 +292,22 @@ impl Parser {
         let mut elif_clauses = Vec::new();
         let mut else_body = None;
 
-        while self.peek().token_type == TokenType::Keyword && self.peek().value == "or" {
-            self.advance(); // "or"
-            self.expect(TokenType::Keyword, Some("when"))?;
-            let cond = self.parse_expression()?;
-            let b = self.parse_block()?;
-            elif_clauses.push((cond, b));
+        while self.peek().token_type == TokenType::Keyword {
+            let kw = self.peek().value.as_str();
+            if kw == "or" {
+                self.advance();
+                self.expect(TokenType::Keyword, Some("when"))?;
+                let cond = self.parse_expression()?;
+                let b = self.parse_block()?;
+                elif_clauses.push((cond, b));
+            } else if kw == "alt" {
+                self.advance();
+                let cond = self.parse_expression()?;
+                let b = self.parse_block()?;
+                elif_clauses.push((cond, b));
+            } else {
+                break;
+            }
         }
 
         if self.kw("else") {
@@ -248,6 +338,30 @@ impl Parser {
         let condition = self.parse_expression()?;
         let body = self.parse_block()?;
         Ok(Stmt::While { condition, body })
+    }
+
+    fn parse_loop(&mut self) -> TechResult<Stmt> {
+        self.advance(); // "loop"
+        if self.kw("while") {
+            let condition = self.parse_expression()?;
+            let body = self.parse_block()?;
+            return Ok(Stmt::While { condition, body });
+        }
+        let first = self.parse_expression()?;
+        let body = self.parse_block()?;
+        if let Expr::NumberInt(n) = first {
+            Ok(Stmt::For {
+                var_name: "_loop".into(),
+                iterable: Expr::Range {
+                    start: Box::new(Expr::NumberInt(1)),
+                    end: Box::new(Expr::NumberInt(n)),
+                    inclusive: true,
+                },
+                body,
+            })
+        } else {
+            Ok(Stmt::While { condition: first, body })
+        }
     }
 
     fn parse_until(&mut self) -> TechResult<Stmt> {
@@ -286,23 +400,14 @@ impl Parser {
         let mut catch_body = Vec::new();
         let mut finally_body = None;
 
-        if self.kw("rescue") {
+        if self.kw("rescue") || self.kw("catch") {
             if self.peek().token_type == TokenType::Identifier {
                 catch_var = Some(self.advance().value);
             }
             catch_body = self.parse_block()?;
         }
 
-        // Also accept "catch" as alias for rescue
-        if self.peek().token_type == TokenType::Identifier && self.peek().value == "catch" {
-            self.advance();
-            if self.peek().token_type == TokenType::Identifier {
-                catch_var = Some(self.advance().value);
-            }
-            catch_body = self.parse_block()?;
-        }
-
-        if self.kw("always") {
+        if self.kw("always") || self.kw("finally") {
             finally_body = Some(self.parse_block()?);
         }
 
@@ -342,6 +447,211 @@ impl Parser {
         Ok(Stmt::With { expression, var_name: var_tok.value, body })
     }
 
+    fn parse_state(&mut self) -> TechResult<Stmt> {
+        self.advance(); // "state"
+        let name_tok = self.expect(TokenType::Identifier, None)?;
+        self.expect(TokenType::Assign, None)?;
+        let value = self.parse_expression()?;
+        Ok(Stmt::State { name: name_tok.value, value })
+    }
+
+    fn parse_component(&mut self) -> TechResult<Stmt> {
+        self.advance();
+        let name_tok = self.expect(TokenType::Identifier, None)?;
+        let body = self.parse_block()?;
+        Ok(Stmt::Component { name: name_tok.value, body })
+    }
+
+    fn parse_page(&mut self) -> TechResult<Stmt> {
+        self.advance();
+        let name_tok = self.expect(TokenType::Identifier, None)?;
+        let body = self.parse_block()?;
+        Ok(Stmt::Page { name: name_tok.value, body })
+    }
+
+    fn parse_api(&mut self) -> TechResult<Stmt> {
+        self.advance();
+        let name_tok = self.expect(TokenType::Identifier, None)?;
+        self.expect(TokenType::LBrace, None)?;
+        self.skip_nl();
+        let mut routes = Vec::new();
+        while self.kw("route") {
+            let path_expr = self.parse_expression()?;
+            let path = match path_expr {
+                Expr::String(s) => s,
+                _ => return Err(TechError::parse("Route path must be a string", self.peek().line, self.peek().column, &self.filename)),
+            };
+            let body = self.parse_block()?;
+            routes.push(("GET".into(), path, body));
+            self.skip_nl();
+        }
+        self.expect(TokenType::RBrace, None)?;
+        Ok(Stmt::Api { name: name_tok.value, routes })
+    }
+
+    fn parse_window(&mut self) -> TechResult<Stmt> {
+        self.advance();
+        let title_expr = self.parse_expression()?;
+        let title = match title_expr {
+            Expr::String(s) => s,
+            _ => return Err(TechError::parse("Window title must be a string", self.peek().line, self.peek().column, &self.filename)),
+        };
+        let body = self.parse_block()?;
+        Ok(Stmt::Window { title, body })
+    }
+
+    fn parse_scene(&mut self) -> TechResult<Stmt> {
+        self.advance();
+        let name_tok = self.expect(TokenType::Identifier, None)?;
+        let body = self.parse_block()?;
+        Ok(Stmt::Scene { name: name_tok.value, body })
+    }
+
+    fn parse_timeline(&mut self) -> TechResult<Stmt> {
+        self.advance();
+        let name_tok = self.expect(TokenType::Identifier, None)?;
+        let body = self.parse_block()?;
+        Ok(Stmt::Timeline { name: name_tok.value, body })
+    }
+
+    fn parse_render(&mut self) -> TechResult<Stmt> {
+        self.advance();
+        let tag_expr = self.parse_expression()?;
+        let tag = match tag_expr {
+            Expr::String(s) => s,
+            _ => return Err(TechError::parse("Render tag must be a string", self.peek().line, self.peek().column, &self.filename)),
+        };
+        let body = self.parse_block()?;
+        Ok(Stmt::Render { tag, body })
+    }
+
+    fn parse_button(&mut self) -> TechResult<Stmt> {
+        self.advance();
+        let label_expr = self.parse_expression()?;
+        let label = match label_expr {
+            Expr::String(s) => s,
+            _ => return Err(TechError::parse("Button label must be a string", self.peek().line, self.peek().column, &self.filename)),
+        };
+        let body = self.parse_block()?;
+        Ok(Stmt::Button { label, body })
+    }
+
+    fn parse_input(&mut self) -> TechResult<Stmt> {
+        self.advance();
+        let name_tok = self.expect(TokenType::Identifier, None)?;
+        let placeholder = if self.kw("placeholder") {
+            match self.parse_expression()? {
+                Expr::String(s) => s,
+                _ => String::new(),
+            }
+        } else {
+            String::new()
+        };
+        Ok(Stmt::Input { name: name_tok.value, placeholder })
+    }
+
+    fn parse_label(&mut self) -> TechResult<Stmt> {
+        self.advance();
+        let text_expr = self.parse_expression()?;
+        let text = match text_expr {
+            Expr::String(s) => s,
+            _ => return Err(TechError::parse("Label text must be a string", self.peek().line, self.peek().column, &self.filename)),
+        };
+        Ok(Stmt::Label { text })
+    }
+
+    fn parse_camera(&mut self) -> TechResult<Stmt> {
+        self.advance();
+        let _ = self.kw("pos");
+        let list = self.parse_list_lit()?;
+        Ok(Stmt::Camera { coords: list })
+    }
+
+    fn parse_light(&mut self) -> TechResult<Stmt> {
+        self.advance();
+        let kind = if self.peek().token_type == TokenType::Identifier {
+            self.advance().value
+        } else {
+            "ambient".into()
+        };
+        Ok(Stmt::Light { kind })
+    }
+
+    fn parse_anime_move(&mut self) -> TechResult<Stmt> {
+        self.advance();
+        let target = self.expect(TokenType::Identifier, None)?.value;
+        let _ = self.kw("to");
+        let coords = self.parse_list_lit()?;
+        let duration = if self.kw("over") {
+            self.parse_expression()?
+        } else {
+            Expr::NumberFloat(1.0)
+        };
+        let ease = if self.kw("ease") {
+            match self.parse_expression()? {
+                Expr::String(s) => s,
+                Expr::Identifier(s) => s,
+                _ => "linear".into(),
+            }
+        } else {
+            "linear".into()
+        };
+        Ok(Stmt::AnimeMove {
+            target,
+            coords,
+            duration,
+            ease,
+        })
+    }
+
+    fn parse_anime_fade(&mut self) -> TechResult<Stmt> {
+        self.advance();
+        let target = self.expect(TokenType::Identifier, None)?.value;
+        let _ = self.kw("to");
+        let opacity = self.parse_expression()?;
+        let duration = if self.kw("over") {
+            self.parse_expression()?
+        } else {
+            Expr::NumberFloat(0.5)
+        };
+        Ok(Stmt::AnimeFade {
+            target,
+            opacity,
+            duration,
+        })
+    }
+
+    fn parse_mesh(&mut self) -> TechResult<Stmt> {
+        self.advance();
+        let shape = if self.peek().token_type == TokenType::Identifier {
+            self.advance().value
+        } else {
+            "cube".into()
+        };
+        let color = if self.kw("color") {
+            match self.parse_expression()? {
+                Expr::String(s) => s,
+                _ => "#7c3aed".into(),
+            }
+        } else {
+            "#7c3aed".into()
+        };
+        Ok(Stmt::Mesh { shape, color })
+    }
+
+    fn parse_list_lit(&mut self) -> TechResult<Vec<Expr>> {
+        self.expect(TokenType::LBracket, None)?;
+        let mut items = Vec::new();
+        if self.peek().token_type != TokenType::RBracket {
+            items.push(self.parse_expression()?);
+            while self.match_tok(TokenType::Comma, None) {
+                items.push(self.parse_expression()?);
+            }
+        }
+        self.expect(TokenType::RBracket, None)?;
+        Ok(items)
+    }
+
     // ─── Block ──────────────────────────────────────────────────────
 
     fn parse_block(&mut self) -> TechResult<Vec<Stmt>> {
@@ -371,7 +681,11 @@ impl Parser {
     }
 
     fn parse_one_param(&mut self) -> TechResult<Param> {
-        let name_tok = self.expect(TokenType::Identifier, None)?;
+        let name_tok = if self.peek().token_type == TokenType::Keyword && self.peek().value == "self" {
+            self.advance()
+        } else {
+            self.expect(TokenType::Identifier, None)?
+        };
         let default = if self.match_tok(TokenType::Assign, None) {
             Some(self.parse_expression()?)
         } else {
@@ -573,8 +887,8 @@ impl Parser {
                 expr = Expr::Call { callee: Box::new(expr), args };
             } else if self.match_tok(TokenType::Dot, None) {
                 // Member access
-                let member = self.expect(TokenType::Identifier, None)?;
-                expr = Expr::Member { obj: Box::new(expr), member: member.value };
+                let member = self.parse_member_name()?;
+                expr = Expr::Member { obj: Box::new(expr), member };
             } else if self.match_tok(TokenType::LBracket, None) {
                 // Index access
                 let index = self.parse_expression()?;
@@ -637,6 +951,15 @@ impl Parser {
             TokenType::Keyword if tok.value == "self" => {
                 self.advance();
                 Ok(Expr::Identifier("self".into()))
+            }
+            TokenType::Keyword
+                if matches!(
+                    tok.value.as_str(),
+                    "page" | "state" | "component" | "window" | "scene" | "timeline" | "run"
+                ) =>
+            {
+                self.advance();
+                Ok(Expr::Identifier(tok.value))
             }
             TokenType::Keyword if tok.value == "ask" => {
                 self.advance();

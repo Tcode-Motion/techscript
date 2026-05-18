@@ -58,10 +58,24 @@ impl fmt::Display for TechError {
 
 pub type TechResult<T> = Result<T, TechError>;
 
-/// Format an error with source code context
+/// Return close matches for "Did you mean?" suggestions.
+pub fn suggest_correction(unknown: &str, known_words: &[&str]) -> Vec<String> {
+    known_words
+        .iter()
+        .filter(|w| strsim::jaro_winkler(unknown, w) > 0.75)
+        .map(|s| s.to_string())
+        .take(3)
+        .collect()
+}
+
+/// Format an error with source code context and optional suggestions.
 pub fn format_error(error: &TechError, source_lines: &[&str]) -> String {
+    format_error_with_hints(error, source_lines, &[])
+}
+
+pub fn format_error_with_hints(error: &TechError, source_lines: &[&str], known_names: &[&str]) -> String {
     let mut out = String::new();
-    
+
     let kind_str = match error.kind {
         ErrorKind::Lexer | ErrorKind::Parse => "Syntax Error",
         ErrorKind::Compile => "Compile Error",
@@ -69,18 +83,28 @@ pub fn format_error(error: &TechError, source_lines: &[&str]) -> String {
     };
 
     out.push_str(&format!("{} in {}:{}\n", kind_str, error.file, error.line));
-    out.push_str(&format!("  {}\n\n", error.message));
+    out.push_str(&format!("  {}\n", error.message));
+
+    if error.message.contains("Undefined") || error.message.contains("Unknown") {
+        if let Some(word) = error.message.split('\'').nth(1) {
+            let suggestions = suggest_correction(word, known_names);
+            if let Some(first) = suggestions.first() {
+                out.push_str(&format!("  Did you mean: {}?\n", first));
+            }
+        }
+    }
+    out.push('\n');
 
     if error.line > 0 && error.line <= source_lines.len() {
         let line_idx = error.line - 1;
-        
+
         let start_line = if line_idx >= 2 { line_idx - 2 } else { 0 };
-        let end_line = (line_idx + 2).min(source_lines.len() - 1);
+        let end_line = (line_idx + 2).min(source_lines.len().saturating_sub(1));
 
         for i in start_line..=end_line {
             let prefix = if i == line_idx { "> " } else { "  " };
             out.push_str(&format!("{} {:4} | {}\n", prefix, i + 1, source_lines[i]));
-            
+
             if i == line_idx && error.column > 0 {
                 let padding = " ".repeat(7 + error.column);
                 out.push_str(&format!("{}^\n", padding));

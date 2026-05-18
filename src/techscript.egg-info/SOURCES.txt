@@ -13,6 +13,8 @@ src/techscript/interpreter.py
 src/techscript/lexer.py
 src/techscript/parser.py
 src/techscript/repl.py
+src/techscript/tech.exe
+src/techscript/tech_studio.exe
 src/techscript/tokens.py
 src/techscript/transpiler.py
 src/techscript/web.py

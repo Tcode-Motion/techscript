@@ -4,7 +4,6 @@ use std::collections::HashMap;
 use std::io::{self, Write};
 use std::rc::Rc;
 
-use crate::chunk::Chunk;
 use crate::error::{TechError, TechResult};
 use crate::opcode::OpCode;
 use crate::value::*;
@@ -24,10 +23,12 @@ struct TryHandler {
 
 pub struct VM {
     stack: Vec<Value>,
-    globals: HashMap<String, Value>,
+    pub globals: HashMap<String, Value>,
     frames: Vec<CallFrame>,
+    #[allow(dead_code)]
     open_upvalues: Vec<(usize, Rc<RefCell<Value>>)>,
     try_handlers: Vec<TryHandler>,
+    pub stdout_buffer: Option<std::sync::Arc<std::sync::Mutex<String>>>,
 }
 
 impl VM {
@@ -38,12 +39,18 @@ impl VM {
             frames: Vec::new(),
             open_upvalues: Vec::new(),
             try_handlers: Vec::new(),
+            stdout_buffer: None,
         };
         crate::builtins::register_builtins(&mut vm.globals);
         vm
     }
 
     pub fn run(&mut self, function: Function) -> TechResult<()> {
+        self.stack.clear();
+        self.frames.clear();
+        self.open_upvalues.clear();
+        self.try_handlers.clear();
+
         let func = Rc::new(function);
         self.frames.push(CallFrame {
             function: func, ip: 0, slot_offset: 0,
@@ -83,7 +90,8 @@ impl VM {
     }
 
     fn push(&mut self, val: Value) { self.stack.push(val); }
-    fn pop(&mut self) -> Value { self.stack.pop().unwrap_or(Value::None) }
+    pub fn pop(&mut self) -> Value { self.stack.pop().unwrap_or(Value::None) }
+    pub fn clear_stack(&mut self) { self.stack.clear(); }
     fn peek(&self, dist: usize) -> &Value { &self.stack[self.stack.len() - 1 - dist] }
 
     fn execute(&mut self) -> TechResult<()> {
@@ -138,7 +146,10 @@ impl VM {
                     let name = match &name_val { Value::String(s) => s.as_ref().clone(), _ => String::new() };
                     match self.globals.get(&name) {
                         Some(v) => self.push(v.clone()),
-                        None => return Err(self.runtime_error(format!("Undefined variable: '{}'", name))),
+                        None => {
+                            eprintln!("DEBUG: Registered globals are: {:?}", self.globals.keys().collect::<Vec<&String>>());
+                            return Err(self.runtime_error(format!("Undefined variable: '{}'", name)));
+                        }
                     }
                 }
                 OpCode::SetGlobal => {
@@ -239,14 +250,33 @@ impl VM {
                     let start = self.stack.len() - count;
                     let vals: Vec<String> = self.stack[start..].iter().map(|v| v.display_string()).collect();
                     self.stack.truncate(start);
-                    println!("{}", vals.join(" "));
+                    let output = vals.join(" ");
+                    if let Some(buf) = &self.stdout_buffer {
+                        if let Ok(mut lock) = buf.lock() {
+                            lock.push_str(&output);
+                            lock.push('\n');
+                        }
+                    } else {
+                        println!("{}", output);
+                    }
                 }
                 OpCode::ReadInput => {
                     let prompt = self.pop();
                     print!("{}", prompt.display_string());
                     io::stdout().flush().ok();
+                    if std::env::var("TECHSCRIPT_NON_INTERACTIVE").is_ok() {
+                        println!("\n[Non-interactive test: stopping execution]");
+                        crate::run::exit(0);
+                    }
                     let mut input = String::new();
-                    io::stdin().read_line(&mut input).ok();
+                    match io::stdin().read_line(&mut input) {
+                        Ok(0) => {
+                            // EOF encountered
+                            println!();
+                            crate::run::exit(0);
+                        }
+                        _ => {}
+                    }
                     self.push(Value::String(Rc::new(input.trim_end_matches('\n').trim_end_matches('\r').to_string())));
                 }
 
@@ -274,7 +304,11 @@ impl VM {
                 OpCode::Return => {
                     let result = self.pop();
                     let frame = self.frames.pop().unwrap();
-                    if self.frames.is_empty() { return Ok(()); }
+                    if self.frames.is_empty() {
+                        self.stack.truncate(frame.slot_offset);
+                        self.push(result);
+                        return Ok(());
+                    }
                     self.stack.truncate(frame.slot_offset);
                     self.push(result);
                 }
@@ -372,7 +406,19 @@ impl VM {
                         c.borrow_mut().methods.insert(name, method);
                     }
                 }
-                OpCode::Invoke => { /* TODO */ }
+                OpCode::Invoke => {
+                    let name_val = self.read_constant();
+                    let name = match &name_val {
+                        Value::String(s) => s.as_ref().clone(),
+                        _ => String::new(),
+                    };
+                    let arg_count = self.read_byte() as usize;
+                    let receiver_idx = self.stack.len() - 1 - arg_count;
+                    let receiver = self.stack[receiver_idx].clone();
+                    let method = self.get_property(&receiver, &name)?;
+                    self.stack[receiver_idx] = method;
+                    self.call_value(arg_count)?;
+                }
                 OpCode::Inherit => {
                     let subclass = self.pop();
                     let superclass = self.pop();
@@ -387,8 +433,13 @@ impl VM {
 
                 // Modules
                 OpCode::Import => {
-                    let _name = self.read_constant();
-                    // Module system stub — add modules as plugins later
+                    let name_val = self.read_constant();
+                    let name = match &name_val {
+                        Value::String(s) => s.as_ref().clone(),
+                        _ => String::new(),
+                    };
+                    crate::modules::load_module(&name, &mut self.globals)
+                        .map_err(|msg| self.runtime_error(msg))?;
                 }
 
                 // Iteration
@@ -519,6 +570,14 @@ impl VM {
                 });
                 Ok(())
             }
+            Value::ListMethod(list, method) => {
+                let start = self.stack.len() - arg_count;
+                let args: Vec<Value> = self.stack[start..].to_vec();
+                self.stack.truncate(callee_idx);
+                let result = self.invoke_list_method(&list, &method, &args)?;
+                self.push(result);
+                Ok(())
+            }
             _ => Err(self.runtime_error(format!("Cannot call {}", callee.type_name()))),
         }
     }
@@ -546,20 +605,24 @@ impl VM {
     fn string_property(&self, s: &str, name: &str) -> TechResult<Value> {
         match name {
             "length" => Ok(Value::Int(s.len() as i64)),
-            "upper" => Ok(self.make_native_str(s, |s, _| Ok(Value::String(Rc::new(s.to_uppercase()))))),
-            "lower" => Ok(self.make_native_str(s, |s, _| Ok(Value::String(Rc::new(s.to_lowercase()))))),
-            "trim" => Ok(self.make_native_str(s, |s, _| Ok(Value::String(Rc::new(s.trim().to_string()))))),
+            "upper" | "lower" | "trim" => {
+                let owned = s.to_string();
+                let method = name.to_string();
+                Ok(Value::NativeFunction(Rc::new(NativeFnObj {
+                    name: method.clone(),
+                    func: Box::new(move |_args| {
+                        let out = match method.as_str() {
+                            "upper" => owned.to_uppercase(),
+                            "lower" => owned.to_lowercase(),
+                            "trim" => owned.trim().to_string(),
+                            _ => owned.clone(),
+                        };
+                        Ok(Value::String(Rc::new(out)))
+                    }),
+                })))
+            }
             _ => Err(self.runtime_error(format!("Unknown string method: {}", name))),
         }
-    }
-
-    fn make_native_str(&self, _s: &str, f: fn(&str, &[Value]) -> Result<Value, String>) -> Value {
-        // For property access that returns a callable, we return a NativeFunction
-        // The actual string is captured via a workaround
-        Value::NativeFunction(Rc::new(NativeFnObj {
-            name: "str_method".to_string(),
-            func: Box::new(move |args: &[Value]| f("", args)),
-        }))
     }
 
     fn list_property(&self, list: &Rc<RefCell<Vec<Value>>>, name: &str) -> TechResult<Value> {
@@ -567,23 +630,111 @@ impl VM {
             "length" => Ok(Value::Int(list.borrow().len() as i64)),
             "first" => Ok(list.borrow().first().cloned().unwrap_or(Value::None)),
             "last" => Ok(list.borrow().last().cloned().unwrap_or(Value::None)),
-            _ => {
-                let l = list.clone();
-                match name {
-                    "append" | "sort" | "reverse" | "map" | "filter" | "reduce" | "remove" => {
-                        Ok(Value::NativeFunction(Rc::new(NativeFnObj {
-                            name: name.to_string(),
-                            func: Box::new(move |args| Self::list_method_call(&l, &l.borrow().len().to_string(), args)),
-                        })))
-                    }
-                    _ => Err(self.runtime_error(format!("Unknown list method: {}", name))),
-                }
+            "append" | "sort" | "reverse" | "map" | "filter" | "reduce" | "remove" => {
+                Ok(Value::ListMethod(list.clone(), name.to_string()))
             }
+            _ => Err(self.runtime_error(format!("Unknown list method: {}", name))),
         }
     }
 
-    fn list_method_call(_list: &Rc<RefCell<Vec<Value>>>, _name: &str, _args: &[Value]) -> Result<Value, String> {
-        Ok(Value::None)
+    fn invoke_list_method(
+        &mut self,
+        list: &Rc<RefCell<Vec<Value>>>,
+        name: &str,
+        args: &[Value],
+    ) -> TechResult<Value> {
+        match name {
+            "append" => {
+                if let Some(v) = args.first() {
+                    list.borrow_mut().push(v.clone());
+                }
+                Ok(Value::None)
+            }
+            "sort" => {
+                list.borrow_mut().sort_by(|a, b| {
+                    match (a.as_f64(), b.as_f64()) {
+                        (Some(x), Some(y)) => x.partial_cmp(&y).unwrap_or(std::cmp::Ordering::Equal),
+                        _ => a.display_string().cmp(&b.display_string()),
+                    }
+                });
+                Ok(Value::List(list.clone()))
+            }
+            "reverse" => {
+                list.borrow_mut().reverse();
+                Ok(Value::List(list.clone()))
+            }
+            "remove" => {
+                if let Some(v) = args.first() {
+                    list.borrow_mut().retain(|x| !x.equals(v));
+                }
+                Ok(Value::List(list.clone()))
+            }
+            "map" => {
+                let cb = args.first().ok_or_else(|| self.runtime_error("map() needs a function"))?;
+                let closure = match cb {
+                    Value::Closure(c) => c.clone(),
+                    _ => return Err(self.runtime_error("map() callback must be a function")),
+                };
+                let mut out = Vec::new();
+                for item in list.borrow().iter().cloned() {
+                    out.push(self.call_closure_sync(closure.clone(), vec![item])?);
+                }
+                Ok(Value::List(Rc::new(RefCell::new(out))))
+            }
+            "filter" => {
+                let cb = args.first().ok_or_else(|| self.runtime_error("filter() needs a function"))?;
+                let closure = match cb {
+                    Value::Closure(c) => c.clone(),
+                    _ => return Err(self.runtime_error("filter() callback must be a function")),
+                };
+                let mut out = Vec::new();
+                for item in list.borrow().iter().cloned() {
+                    let keep = self.call_closure_sync(closure.clone(), vec![item.clone()])?;
+                    if keep.is_truthy() {
+                        out.push(item);
+                    }
+                }
+                Ok(Value::List(Rc::new(RefCell::new(out))))
+            }
+            "reduce" => {
+                let cb = args.first().ok_or_else(|| self.runtime_error("reduce() needs a function"))?;
+                let closure = match cb {
+                    Value::Closure(c) => c.clone(),
+                    _ => return Err(self.runtime_error("reduce() callback must be a function")),
+                };
+                let mut acc = args.get(1).cloned().unwrap_or(Value::None);
+                for item in list.borrow().iter().cloned() {
+                    acc = self.call_closure_sync(closure.clone(), vec![acc, item])?;
+                }
+                Ok(acc)
+            }
+            _ => Err(self.runtime_error(format!("Unknown list method: {}", name))),
+        }
+    }
+
+    fn call_closure_sync(&mut self, closure: Rc<ClosureObj>, args: Vec<Value>) -> TechResult<Value> {
+        let frame_depth = self.frames.len();
+        let argc = args.len();
+        self.push(Value::Closure(closure));
+        for arg in args {
+            self.push(arg);
+        }
+        self.call_value(argc)?;
+        loop {
+            if self.frames.len() <= frame_depth {
+                return Ok(self.pop());
+            }
+            if let Err(e) = self.step() {
+                if let Some(handler) = self.try_handlers.pop() {
+                    self.frames.truncate(handler.frame_depth);
+                    self.stack.truncate(handler.stack_depth);
+                    self.frames.last_mut().unwrap().ip = handler.catch_ip;
+                    self.push(Value::String(Rc::new(e.message)));
+                } else {
+                    return Err(e);
+                }
+            }
+        }
     }
 
     fn map_property(&self, map: &Rc<RefCell<HashMap<String, Value>>>, name: &str) -> TechResult<Value> {

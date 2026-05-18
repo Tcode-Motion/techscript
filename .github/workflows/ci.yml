@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test:
+    runs-on: windows-latest
+    env:
+      RUSTFLAGS: -Dwarnings
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: cargo test
+        working-directory: runtime
+        run: cargo test --release
+      - name: cargo clippy
+        working-directory: runtime
+        run: cargo clippy
+      - name: cargo fmt check
+        working-directory: runtime
+        run: cargo fmt --check
+      - name: smoke examples
+        shell: pwsh
+        run: ./scripts/smoke_all.ps1

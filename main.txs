@@ -1,0 +1,7 @@
+make count = 5
+say "Counting down from:", count
+repeat count > 0 {
+    say "Number:", count
+    count -= 1
+}
+say "Liftoff! 🚀"

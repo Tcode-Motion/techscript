@@ -1,0 +1,9 @@
+# TechScript 3D preview (MVP)
+
+use 3d
+
+scene world {
+    camera pos [0, 0, 5]
+    light ambient
+    mesh cube color "#7c3aed"
+}

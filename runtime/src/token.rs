@@ -98,25 +98,30 @@ impl fmt::Display for Token {
     }
 }
 
-/// All 52 reserved keywords in TechScript.
+/// All reserved keywords in TechScript (canonical + legacy aliases).
 pub fn is_keyword(word: &str) -> bool {
     matches!(word,
         // I/O
         "say" | "ask" |
         // Variables
-        "make" | "keep" | "mut" | "drop" | "global" |
+        "make" | "keep" | "const" | "mut" | "drop" | "global" | "state" |
         // Functions & classes
-        "build" | "send" | "model" | "self" | "base" | "new" |
+        "build" | "do" | "send" | "return" | "model" | "class" | "self" | "base" | "new" |
         // Control flow
-        "when" | "alt" | "else" | "each" | "repeat" | "in" |
+        "when" | "alt" | "else" | "each" | "repeat" | "loop" | "while" | "in" |
         "unless" | "until" | "match" | "case" |
-        "stop" | "skip" | "pass" |
+        "stop" | "break" | "skip" | "continue" | "pass" |
         // Error handling
-        "attempt" | "rescue" | "fail" | "always" |
+        "attempt" | "try" | "rescue" | "catch" | "fail" | "throw" | "always" | "finally" |
         // Modules
         "use" | "take" | "share" | "as" |
+        // Web framework
+        "component" | "page" | "api" | "route" | "render" |
+        // GUI / 3D / anime
+        "window" | "button" | "input" | "label" | "placeholder" | "scene" | "camera" | "light" | "mesh" | "timeline" |
+        "move" | "fade" | "over" | "ease" | "to" | "color" | "pos" |
         // Scope / misc
-        "do" | "end" | "with" | "defer" | "guard" |
+        "end" | "with" | "defer" | "guard" | "run" |
         // Literals
         "true" | "false" | "none" |
         // Logical

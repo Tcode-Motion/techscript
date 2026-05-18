@@ -99,7 +99,7 @@ fn register_core(globals: &mut HashMap<String, Value>) {
     globals.insert("panic".into(), native!("panic", |args| {
         let msg = args.first().map(|v| v.display_string()).unwrap_or("panic!".into());
         eprintln!("PANIC: {}", msg);
-        std::process::exit(1);
+        crate::run::exit(1);
     }));
     globals.insert("sleep".into(), native!("sleep", |args| {
         let ms = args.first().and_then(|v| if let Value::Int(i) = v { Some(*i) } else { None }).unwrap_or(0);
@@ -116,10 +116,10 @@ fn register_core(globals: &mut HashMap<String, Value>) {
     }));
     globals.insert("exit".into(), native!("exit", |args| {
         let code = args.first().and_then(|v| if let Value::Int(i) = v { Some(*i) } else { None }).unwrap_or(0);
-        std::process::exit(code as i32);
+        crate::run::exit(code as i32);
     }));
     globals.insert("version".into(), native!("version", |_| {
-        Ok(Value::String(Rc::new("1.0.2".into())))
+        Ok(Value::String(Rc::new("1.0.6".into())))
     }));
     globals.insert("callable".into(), native!("callable", |args| {
         let r = matches!(args.first(), Some(Value::NativeFunction(_)) | Some(Value::Closure(_)));
@@ -138,6 +138,8 @@ fn register_type_conv(globals: &mut HashMap<String, Value>) {
             _ => Ok(Value::Int(0)),
         }
     }));
+    globals.insert("to_int".into(), globals.get("int").unwrap().clone());
+    
     globals.insert("float".into(), native!("float", |args| {
         match args.first() {
             Some(Value::Int(i)) => Ok(Value::Float(*i as f64)),
@@ -146,6 +148,7 @@ fn register_type_conv(globals: &mut HashMap<String, Value>) {
             _ => Ok(Value::Float(0.0)),
         }
     }));
+    globals.insert("to_float".into(), globals.get("float").unwrap().clone());
     globals.insert("str".into(), native!("str", |args| {
         Ok(Value::String(Rc::new(args.first().map(|v| v.display_string()).unwrap_or_default())))
     }));
@@ -477,7 +480,7 @@ fn register_os_module(globals: &mut HashMap<String, Value>) {
 fn register_random_module(globals: &mut HashMap<String, Value>) {
     let m = make_module(vec![
         ("random",   native!("random",   |_| { Ok(Value::Float(pseudo_random())) })),
-        ("randint",  native!("randint",  |args| { let lo = args.first().and_then(|v| if let Value::Int(i) = v { Some(*i) } else { None }).unwrap_or(0); let hi = args.get(1).and_then(|v| if let Value::Int(i) = v { Some(*i) } else { None }).unwrap_or(100); Ok(Value::Int(lo + (pseudo_random() * (hi - lo + 1) as f64) as i64)) })),
+        ("randint",  native!("randint",  |args| { let lo = args.first().and_then(|v| if let Value::Int(i) = v { Some(*i) } else { None }).unwrap_or(0); let hi = args.get(1).and_then(|v| if let Value::Int(i) = v { Some(*i) } else { None }).unwrap_or(100); let span = (hi as i128).saturating_sub(lo as i128).saturating_add(1).max(1); let offset = ((pseudo_random() * span as f64).floor() as i128).min(span - 1); let v = (lo as i128).saturating_add(offset); Ok(Value::Int(v.clamp(i64::MIN as i128, i64::MAX as i128) as i64)) })),
         ("randfloat",native!("randfloat",|args| { let lo = args.first().and_then(|v| v.as_f64()).unwrap_or(0.0); let hi = args.get(1).and_then(|v| v.as_f64()).unwrap_or(1.0); Ok(Value::Float(lo + pseudo_random() * (hi - lo))) })),
         ("choice",   native!("choice",   |args| { if let Some(Value::List(l)) = args.first() { let b = l.borrow(); if b.is_empty() { return Ok(Value::None); } let idx = (pseudo_random() * b.len() as f64) as usize; Ok(b[idx.min(b.len()-1)].clone()) } else { Ok(Value::None) } })),
         ("boolean",  native!("boolean",  |_| { Ok(Value::Bool(pseudo_random() >= 0.5)) })),
@@ -485,12 +488,24 @@ fn register_random_module(globals: &mut HashMap<String, Value>) {
         ("sample",   native!("sample",   |args| { if let Some(Value::List(l)) = args.first() { let n = args.get(1).and_then(|v| if let Value::Int(i) = v { Some(*i as usize) } else { None }).unwrap_or(1); let mut pool = l.borrow().clone(); let mut result = Vec::new(); for _ in 0..n.min(pool.len()) { let idx = (pseudo_random() * pool.len() as f64) as usize; result.push(pool.remove(idx.min(pool.len()-1))); } Ok(Value::List(Rc::new(RefCell::new(result)))) } else { Ok(Value::List(Rc::new(RefCell::new(Vec::new())))) } })),
         // Also keep global random/random_int aliases
     ]);
-    globals.insert("random".into(), m);
+    globals.insert("random_mod".into(), m);
+    globals.insert("random".into(), native!("random", |_| { Ok(Value::Float(pseudo_random())) }));
     // Global shorthand aliases
     globals.insert("random_int".into(), native!("random_int", |args| {
         let lo = args.first().and_then(|v| if let Value::Int(i) = v { Some(*i) } else { None }).unwrap_or(0);
         let hi = args.get(1).and_then(|v| if let Value::Int(i) = v { Some(*i) } else { None }).unwrap_or(100);
-        Ok(Value::Int(lo + (pseudo_random() * (hi - lo + 1) as f64) as i64))
+        let span = (hi as i128).saturating_sub(lo as i128).saturating_add(1).max(1);
+        let offset = ((pseudo_random() * span as f64).floor() as i128).min(span - 1);
+        let v = (lo as i128).saturating_add(offset);
+        Ok(Value::Int(v.clamp(i64::MIN as i128, i64::MAX as i128) as i64))
+    }));
+    globals.insert("randint".into(), native!("randint", |args| {
+        let lo = args.first().and_then(|v| if let Value::Int(i) = v { Some(*i) } else { None }).unwrap_or(0);
+        let hi = args.get(1).and_then(|v| if let Value::Int(i) = v { Some(*i) } else { None }).unwrap_or(100);
+        let span = (hi as i128).saturating_sub(lo as i128).saturating_add(1).max(1);
+        let offset = ((pseudo_random() * span as f64).floor() as i128).min(span - 1);
+        let v = (lo as i128).saturating_add(offset);
+        Ok(Value::Int(v.clamp(i64::MIN as i128, i64::MAX as i128) as i64))
     }));
 }
 
@@ -626,10 +641,14 @@ fn parse_json_value(b: &[u8], pos: &mut usize) -> Result<Value, String> {
     }
 }
 
-/// Simple pseudo-random using system time (LCG).
+/// Simple pseudo-random in [0, 1) using system time (LCG on low bits).
 fn pseudo_random() -> f64 {
-    let t = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_nanos();
-    ((t.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407) >> 33) as f64) / u32::MAX as f64
+    let t = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_nanos();
+    let x = t.wrapping_mul(1_103_515_245).wrapping_add(12_345);
+    (((x >> 16) & 0x7fff) as f64) / 32768.0
 }
 
 // ── Pure-std crypto helpers ─────────────────────────────────────────────

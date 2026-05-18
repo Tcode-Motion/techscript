@@ -80,6 +80,47 @@ pub enum Stmt {
     Unless { condition: Expr, body: Vec<Stmt> },
     /// `until <cond> { ... }`
     Until { condition: Expr, body: Vec<Stmt> },
+    /// `state count = 0` (web reactive state)
+    State { name: String, value: Expr },
+    /// `component Name { ... }`
+    Component { name: String, body: Vec<Stmt> },
+    /// `page Name { ... }`
+    Page { name: String, body: Vec<Stmt> },
+    /// `api Name { route ... }`
+    Api { name: String, routes: Vec<(String, String, Vec<Stmt>)> },
+    /// `window "Title" { ... }` (gui)
+    Window { title: String, body: Vec<Stmt> },
+    /// `scene name { ... }` (3d)
+    Scene { name: String, body: Vec<Stmt> },
+    /// `timeline name { ... }` (anime)
+    Timeline { name: String, body: Vec<Stmt> },
+    /// `render "tag" { ... }`
+    Render { tag: String, body: Vec<Stmt> },
+    /// `button "text" { ... }` (gui)
+    Button { label: String, body: Vec<Stmt> },
+    /// `input name placeholder "text"` (gui)
+    Input { name: String, placeholder: String },
+    /// `label "text"` (gui)
+    Label { text: String },
+    /// `camera pos [0, 0, 5]`
+    Camera { coords: Vec<Expr> },
+    /// `light ambient`
+    Light { kind: String },
+    /// `mesh cube color "#fff"`
+    Mesh { shape: String, color: String },
+    /// `move obj to [x, y] over 1s ease "out"`
+    AnimeMove {
+        target: String,
+        coords: Vec<Expr>,
+        duration: Expr,
+        ease: String,
+    },
+    /// `fade obj to 0 over 0.5s`
+    AnimeFade {
+        target: String,
+        opacity: Expr,
+        duration: Expr,
+    },
 }
 
 // ─── Expressions ─────────────────────────────────────────────────────

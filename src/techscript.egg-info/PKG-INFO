@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: techscript
-Version: 1.0.1
+Version: 1.0.6
 Summary: TechScript — A simple, friendly programming language (.txs)
 Author: TechScript Team
 License: MIT
@@ -26,281 +26,502 @@ Requires-Dist: flake8; extra == "dev"
 Dynamic: license-file
 Dynamic: requires-python
 
-# 🐉 TechScript
+# TechScript v1.0.6
 
 <p align="center">
-  <img src="assets/logo.png" alt="TechScript Logo" width="200">
+  <img src="assets/logo.png" alt="TechScript" width="160">
 </p>
 
 <p align="center">
-  <strong>A simple, friendly programming language that reads like English.</strong><br>
-  Replaces HTML, CSS, JavaScript, React, TypeScript, Tailwind, and more — all in one <code>.txs</code> file.
+  <strong>Plain-English programming language (.txs) — native Rust runtime</strong>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-v2.0.0-7c3aed?style=flat-square">
-  <img src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square">
-  <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-green?style=flat-square">
-  <img src="https://img.shields.io/badge/license-MIT-orange?style=flat-square">
+  <img src="https://img.shields.io/badge/version-1.0.6-7c3aed?style=flat-square">
+  <img src="https://img.shields.io/badge/runtime-Rust-orange?style=flat-square">
+  <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square">
 </p>
 
 ---
 
-## ⚡ What is TechScript?
+## Run in 30 seconds
 
-TechScript is a programming language for everyone — beginners, students, and developers who want to write code that **looks and reads like plain English**.
-
-With TechScript v2, you can now build **full websites** with zero HTML, CSS, or JavaScript files — just one `.txs` file and `tech run`.
-
----
-
-## 🪟 Windows Installation (Easy — No Terminal Needed)
-
-1. **Download** `TechScript-Setup.exe` from the [📥 Releases](../../releases/latest) page  
-2. **Double-click** the installer and follow the steps  
-3. **Open PowerShell** and type:
+**Requires:** [Rust](https://rustup.rs/)
 
 ```powershell
-tech run examples\hello.txs
+# From repo root (double-click run.bat or use terminal):
+.\run.bat build
+.\run.bat examples\hello.txs
 ```
 
-The installer automatically:
-- ✅ Installs TechScript
-- ✅ Adds `tech` command to your PATH
-- ✅ Registers `.txs` files with your OS
-- ✅ Installs the VS Code / Cursor extension
+Or:
+
+```powershell
+.\scripts\setup.ps1
+```
+
+**Expected output:** `Hello, World!` and `Welcome to TechScript 🚀`
 
 ---
 
-## 🐧 Linux / 🍎 macOS Installation (One Command)
+## `tech` CLI — all commands
 
-Open your terminal and paste:
+| Command | What it does |
+|---------|----------------|
+| `tech run file.txs` | Run a script |
+| `tech file.txs` | Same as `run` |
+| `tech build file.txs` | Compile to `file.txbc` |
+| `tech run file.txbc` | Run compiled bytecode |
+| `tech check file.txs` | Parse + compile only |
+| `tech eval "say 1"` | Run inline code |
+| `tech repl` | Interactive REPL |
+| `tech version` | Show version |
+| `tech new myapp` | Create project folder |
+| `tech doctor` | Environment check |
+| `tech test [dir]` | Run `*_test.txs` files |
+| `tech debug file.txs` | Tokens + bytecode + run |
+| `tech run --watch file.txs` | Re-run on file save |
+| `tech run --debug file.txs` | Verbose debug output |
+| `tech pkg init name` | Create `techscript.toml` |
+| `tech pkg install` | Install built-in module deps |
+| `tech pkg list` | List manifest dependencies |
+| `tech update` | Release info |
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/your-org/techscript/main/scripts/install.sh | bash
-```
+**Windows launcher (from repo root):**
 
-Or if you already have Python + pip:
+| `run.bat` | Same as |
+|-----------|---------|
+| `run.bat examples\hello.txs` | `tech run …` |
+| `run.bat repl` | `tech repl` |
+| `run.bat build` | `cargo build --release` |
+| `run.bat test` | `cargo test` |
+| `run.bat smoke` | All example smoke tests |
 
-```bash
-pip install techscript
-```
+Binary path after build:
 
-Test it:
-```bash
-tech run examples/hello.txs
-```
-
----
-
-## 📱 Android (Termux)
-
-```bash
-pkg install python && pip install techscript
-tech run examples/hello.txs
-```
-
----
-
-## ✨ What's New in v2 vs v1
-
-| Feature | v1 | v2 |
-|---|---|---|
-| Basic scripting | ✅ | ✅ |
-| English-like syntax | ✅ | ✅ |
-| 80+ built-in functions | ✅ | ✅ |
-| VS Code extension | ✅ | ✅ (v2.0.0 updated) |
-| Web module (`use web`) | ❌ | ✅ **NEW** |
-| Build websites with `.txs` | ❌ | ✅ **NEW** |
-| Replaces HTML/CSS/JS/React | ❌ | ✅ **NEW** |
-| Browser auto-launch | ❌ | ✅ **NEW** |
-| Auto port selection | ❌ | ✅ **NEW** |
-| Windows auto-installer (.exe) | ❌ | ✅ **NEW** |
-| Mac/Linux one-line install | ❌ | ✅ **NEW** |
-| Auto PATH setup | ❌ | ✅ **NEW** |
+`runtime\target\x86_64-pc-windows-msvc\release\tech.exe`
 
 ---
 
-## 🌐 Build a Website in TechScript (New in v2!)
+## All examples (copy-paste)
 
-No HTML. No CSS. No JavaScript files. Just one `.txs` file:
+```powershell
+$tech = ".\runtime\target\x86_64-pc-windows-msvc\release\tech.exe"
+# Or: .\run.bat examples\hello.txs
+```
+
+| Example | Command |
+|---------|---------|
+| Hello | `& $tech run examples\hello.txs` |
+| Calculator | `& $tech run examples\calc.txs` |
+| Classes | `& $tech run examples\classes.txs` |
+| Syntax aliases | `& $tech run examples\syntax_aliases.txs` |
+| Fibonacci | `& $tech run examples\fibonacci.txs` |
+| FizzBuzz | `& $tech run examples\fizzbuzz.txs` |
+| Guessing game | `& $tech run examples\guessing_game.txs` |
+| Web (full) | `& $tech run examples\web_complete.txs` |
+| Web (framework) | `& $tech run examples\web_app.txs` |
+| Web (simple) | `& $tech run examples\web_app_simple.txs` |
+| GUI | `& $tech run examples\gui_app.txs` |
+| 3D scene | `& $tech run examples\3d_scene.txs` |
+| Anime | `& $tech run examples\anime_demo.txs` |
+| Hot reload demo | `& $tech run --watch examples\hot_reload.txs` |
+| Tutorial 01–06 | `& $tech run runtime_examples\01_basics.txs` (etc.) |
+
+**Non-blocking tests** (web/gui/3d):
+
+```powershell
+$env:TECHSCRIPT_WEB_TEST = "1"
+$env:TECHSCRIPT_GUI_TEST = "1"
+$env:TECHSCRIPT_3D_TEST = "1"
+.\run.bat smoke
+```
+
+Full walkthrough: [docs/WORKTHROUGH.md](docs/WORKTHROUGH.md)
+
+---
+
+## Language syntax (complete)
+
+### Keywords
+
+| Category | Keywords |
+|----------|----------|
+| I/O | `say`, `ask` |
+| Variables | `make`, `keep`, `const`, `mut`, `drop`, `global`, `state` |
+| Functions | `build`, `do`, `send`, `return`, `self`, `base`, `new` |
+| Classes | `model`, `class` |
+| If / loops | `when`, `alt`, `else`, `unless`, `each`, `repeat`, `loop`, `while`, `until`, `in` |
+| Match | `match`, `case` |
+| Jump | `stop`, `break`, `skip`, `continue`, `pass` |
+| Errors | `attempt`, `try`, `rescue`, `catch`, `fail`, `throw`, `always`, `finally` |
+| Modules | `use`, `take`, `share`, `as` |
+| Logic | `and`, `or`, `not`, `true`, `false`, `none` |
+| Types | `is`, `has`, `typeof` |
+| Web DSL | `component`, `page`, `api`, `route`, `render` |
+| GUI DSL | `window`, `button`, `input`, `label`, `placeholder`, `run` |
+| 3D DSL | `scene`, `camera`, `light`, `mesh`, `pos`, `color` |
+| Anime DSL | `timeline`, `move`, `fade`, `over`, `ease`, `to` |
+| Other | `with`, `defer`, `guard`, `end`, `async`, `await`, `yield` |
+
+### Syntax aliases (both work)
+
+| Preferred | Alias |
+|-----------|-------|
+| `make x = 1` | — |
+| `const x = 1` | `keep x = 1` |
+| `do fn()` | `build fn()` |
+| `class Car` | `model Car` |
+| `return x` | `send x` |
+| `try` / `catch` / `throw` | `attempt` / `rescue` / `fail` |
+| `loop` / `while` | `each` / `repeat` |
+
+**Rules:** First variable declaration must use `make` or `const`/`keep`. After that, `x = expr` is reassignment.
+
+---
+
+### Output and input
 
 ```techscript
-use web
-
-make page = WebPage("My First Website")
-
-page.style("body", {
-    "background": "#0f0f11",
-    "color": "#eee",
-    "font-family": "sans-serif",
-    "text-align": "center",
-    "padding": "60px"
-})
-
-page.script("""
-    function greet() {
-        alert('Hello from TechScript!');
-    }
-""")
-
-page.body([
-    page.h1("Welcome to TechScript"),
-    page.p("No HTML. No CSS. No build steps. Just TechScript."),
-    page.button("Say Hello", { "onclick": "greet()" })
-])
-
-page.run()
+say "Hello"
+say "Hi", name, "!"
+say f"Hello {name}!"
+make name = ask "Your name? "
 ```
 
-Run it:
-```bash
-tech run my_site.txs
-```
-
-**Your browser opens automatically!** 🚀
-
----
-
-## 📝 Language at a Glance
+### Variables and types
 
 ```techscript
-# Hello World
-say "Hello, World!"
+make n = 42
+make pi = 3.14
+make ok = true
+make empty = none
+make text = "hello"
+make items = [1, 2, 3]
+make user = {"name": "Ada", "age": 30}
+make const MAX = 100    # or: keep MAX = 100
+```
 
-# Variables
-make name = "Alice"
-keep MAX = 100
+### Operators
 
-# Input
-make answer = ask "What is your name? "
-say f"Hello, {answer}!"
+```techscript
+# Math: +  -  *  /  %  **
+# Compare: ==  !=  <  >  <=  >=
+# Logic: and  or  not
+# Assign: =  +=  -=  *=  /=
+# Other: |>  (pipe)   is   in   typeof
+# Range: 1..10   1..=10  (inclusive)
+```
 
-# Conditions
-when name == "Alice" {
-    say "Welcome, Alice!"
+### Conditions
+
+```techscript
+when age >= 18 {
+    say "adult"
+} or when age >= 13 {
+    say "teen"
 } else {
-    say f"Who are you, {name}?"
+    say "child"
 }
 
-# Loops
+unless done {
+    say "working"
+}
+```
+
+### Loops
+
+```techscript
 each i in 1..5 {
-    say f"Count: {i}"
+    say i
 }
 
-# Functions
-build greet(name, msg = "Hello") {
+each item in [10, 20, 30] {
+    say item
+}
+
+repeat count > 0 {
+    say count
+    count -= 1
+}
+
+loop 3 {          # counted loop (alias sugar)
+    say "tick"
+}
+
+until ready {
+    say "wait"
+}
+```
+
+### Functions
+
+```techscript
+build add(a, b) {
+    send a + b
+}
+# Alias: do add(a, b) { return a + b }
+
+say add(2, 3)
+
+build greet(name, msg = "Hi") {
     say f"{msg}, {name}!"
 }
-greet("Bob")
+```
 
-# Classes
-model Dog {
+### Classes
+
+```techscript
+model Animal {
     build init(self, name) {
         self.name = name
     }
     build speak(self) {
-        say f"{self.name} says Woof!"
+        say f"{self.name} speaks"
     }
 }
-make rex = Dog("Rex")
-rex.speak()
 
-# Error handling
+model Dog(Animal) {
+    build init(self, name) {
+        self.name = name
+    }
+}
+
+make d = Dog("Rex")
+d.speak()
+```
+
+### Error handling
+
+```techscript
 attempt {
-    say 1 / 0
-} catch err {
-    say "Caught error!"
+    make x = 10 / 0
+} rescue err {
+    say f"Error: {err}"
+} always {
+    say "cleanup"
+}
+# Aliases: try / catch / throw / finally
+```
+
+### Match
+
+```techscript
+match value {
+    case 1 { say "one" }
+    case 2 { say "two" }
+    else { say "other" }
+}
+```
+
+### Modules
+
+```techscript
+use web
+use gui
+use 3d      # lexer: use + 3 + d
+use anime
+```
+
+---
+
+## Built-in functions (Rust runtime)
+
+### Core
+
+`print`, `say`, `len`, `type`, `int`, `float`, `str`, `bool`, `list`, `range`, `enumerate`, `zip`, `sorted`, `reversed`, `assert`, `sleep`, `time`, `time_ms`, `exit`, `version`, `format`, `callable`
+
+### Math
+
+`abs`, `round`, `floor`, `ceil`, `sqrt`, `pow`, `min`, `max`, `clamp`, `sum`, `sign`, `is_even`, `is_odd`, `PI`, `E`
+
+Plus namespaces: **`math.*`**, **`fs.*`**, **`os.*`**, **`json.*`**, **`crypto.*`**, **`date.*`**, **`random.*`**
+
+### String helpers
+
+`upper`, `lower`, `trim`, `split`, `join`, `replace`, `replace_all`, `contains`, `starts_with`, `ends_with`, `find`, `repeat`, `reverse`, `chars`
+
+### List methods (on values)
+
+```techscript
+make nums = [3, 1, 2]
+say nums.sort()
+say nums.reverse()
+say nums.map((x) => x * 2)
+say nums.filter((x) => x > 1)
+say nums.reduce((a, x) => a + x, 0)
+say nums.length
+say nums.first
+say nums.last
+```
+
+### String methods (on values)
+
+```techscript
+say "hello".upper()
+say "HELLO".lower()
+say "  hi  ".trim()
+```
+
+---
+
+## Module: `use web`
+
+### WebPage API
+
+```techscript
+use web
+make page = WebPage("My App")
+
+page.style("body", { "background": "#111", "color": "#eee" })
+page.script("console.log('ready')")
+
+page.body([
+    page.h1("Title"),
+    page.p("Paragraph"),
+    page.div([ page.button("Go", { "onclick": "alert(1)" }) ]),
+    page.input({ "type": "text", "placeholder": "Name" }),
+    page.img({ "src": "/logo.png", "alt": "Logo" }),
+    page.raw("<custom html>")
+])
+
+page.run(8080)    # http://127.0.0.1:8080
+```
+
+### Component / route framework
+
+```techscript
+use web
+
+state count = 0
+
+api MyApi {
+    route "/hello" {
+        say "registered"
+    }
+}
+
+component Header {
+    render "header" {
+        render "h1" { say "TechScript" }
+    }
+}
+
+page Home {
+    render "motion.div" {
+        render "Header" {}
+        render "p" { say "Welcome" }
+    }
+}
+
+__web_run_framework()
+```
+
+---
+
+## Module: `use gui`
+
+```techscript
+use gui
+
+window "My App" {
+    label "Hello"
+    button "Click" {
+        say "Button was clicked!"
+    }
+    input name placeholder "Your name"
+}
+# window opens (set TECHSCRIPT_GUI_TEST=1 to skip in CI)
+```
+
+---
+
+## Module: `use 3d`
+
+```techscript
+use 3d
+
+scene world {
+    camera pos [0, 0, 5]
+    light ambient
+    mesh cube color "#7c3aed"
+}
+# 2D preview MVP (set TECHSCRIPT_3D_TEST=1 to skip window)
+```
+
+---
+
+## Module: `use anime`
+
+```techscript
+use anime
+
+timeline intro {
+    move hero to [100, 0] over 1 ease out
+    fade hero to 0 over 0.5
 }
 ```
 
 ---
 
-## 🛠️ All CLI Commands
+## Project layout (clean)
 
-```bash
-tech run <file.txs>          # Run a TechScript file
-tech run <file.txs> --debug  # Run with debug output
-tech check <file.txs>        # Check for syntax errors
-tech repl                    # Interactive REPL shell
-tech transpile <file.txs>    # Convert to Python
-tech version                 # Show version
+```
+techscript/
+├── run.bat              # Quick launcher (Windows)
+├── runtime/             # Rust VM + tech binary  ← main code
+├── examples/            # Runnable demos
+├── runtime_examples/    # Language tutorials
+├── docs/                # WORKTHROUGH, STATUS, REFERENCE
+├── scripts/             # setup, smoke, parity, run_example
+├── vscode-extension/    # VS Code syntax
+├── assets/              # Logo & icons
+├── src/techscript/      # Python reference (optional)
+└── tests/               # Python pytest (optional)
 ```
 
 ---
 
-## 📋 Example Programs
-
-All examples are in the `examples/` folder:
+## Docs
 
 | File | Description |
-|---|---|
-| `hello.txs` | Hello World |
-| `calc.txs` | Calculator |
-| `fibonacci.txs` | Fibonacci sequence |
-| `fizzbuzz.txs` | FizzBuzz in 5 lines |
-| `classes.txs` | Object-oriented programming |
-| `guessing_game.txs` | Interactive number guessing |
-| `web_app_simple.txs` | Simple website |
-| `web_complete.txs` | Full showcase website with interactions, API, forms |
+|------|-------------|
+| [docs/WORKTHROUGH.md](docs/WORKTHROUGH.md) | Step-by-step runnable guide |
+| [docs/V1.0.6_STATUS.md](docs/V1.0.6_STATUS.md) | What's done (print to PDF) |
+| [docs/REFERENCE.md](docs/REFERENCE.md) | Short cheat sheet |
+| [docs/PARITY.md](docs/PARITY.md) | Rust vs Python |
+| [docs/WEB_MODULE.md](docs/WEB_MODULE.md) | Web module details |
+| [CHANGELOG.md](CHANGELOG.md) | Release notes |
 
-Run any of them:
-```bash
-tech run examples/fibonacci.txs
-tech run examples/web_complete.txs
+---
+
+## Build from source
+
+```powershell
+cd runtime
+cargo build --release --bin tech
+cargo test
 ```
 
----
+## VS Code
 
-## 🎨 VS Code / Cursor Extension
-
-The TechScript extension gives you:
-- 🐉 Dragon icon for `.txs` files
-- 🎨 Syntax highlighting
-- 💡 Code snippets
-- 🔤 Language auto-configuration
-
-**Method 1 — One command:**
-```bash
-code --install-extension vscode-extension/techscript-2.0.0.vsix
+```powershell
+cd vscode-extension
+vsce package
+code --install-extension techscript-1.0.6.vsix
 ```
 
-**Method 2 — GUI:**
-1. Open VS Code → Extensions panel (`Ctrl+Shift+X`)
-2. Click `...` → **Install from VSIX...**
-3. Select `vscode-extension/techscript-2.0.0.vsix`
+## Optional: Python reference
+
+```powershell
+pip install -e .
+.\scripts\parity_check.ps1
+```
+
+You do **not** need Python for normal use.
 
 ---
 
-## 📚 Documentation
+## License
 
-| Document | Description |
-|---|---|
-| [Quick Start](docs/QUICKSTART.md) | Step-by-step setup guide for all platforms |
-| [Language Reference](docs/REFERENCE.md) | All syntax, keywords, and built-ins |
-| [Web Module Guide](docs/WEB_MODULE.md) | Build websites with TechScript |
-
----
-
-## 🌍 Platform Support
-
-| Platform | Status |
-|---|---|
-| **Windows 10/11** | ✅ Fully supported (installer EXE available) |
-| **macOS** | ✅ Fully supported (one-line install) |
-| **Linux** (Ubuntu, Debian, Arch, Kali) | ✅ Fully supported (one-line install) |
-| **Android (Termux)** | ✅ Works with Python 3.10+ |
-
-**Requirements:** Python 3.10 or newer.
-
----
-
-## 📄 License
-
-MIT — free to use, modify, and share. See [LICENSE](LICENSE).
-
----
-
-<p align="center">
-  <strong>Made with 🐉 by the TechScript Team</strong>
-</p>
+MIT — see [LICENSE](LICENSE).

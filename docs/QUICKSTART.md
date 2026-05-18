@@ -1,118 +1,42 @@
-# TechScript v2 — Quick Start Guide
+# TechScript v1.0.6 — Quick Start
 
-> **You don't need to be a programmer to use TechScript.**  
-> Just follow the steps below for your operating system!
+## Windows / macOS / Linux (developers)
 
----
+1. Install [Rust](https://rustup.rs/).
+2. Clone this repo and open a terminal in the project folder.
+3. Run:
 
-## 🪟 Windows — Easy Install (Recommended)
-
-1. Download **`TechScript-Setup.exe`** from the [Releases](../../releases) page
-2. Double-click it to run the installer
-3. Follow the on-screen steps (it sets up everything automatically — PATH, file icons, and VS Code extension)
-4. Open **PowerShell** or **Command Prompt** and type:
-
-```
-tech run examples/hello.txs
+```powershell
+cd runtime
+cargo build --release --bin tech
+cargo run --release --bin tech -- run ..\examples\hello.txs
 ```
 
-5. Done! Your first TechScript program just ran. 🎉
+4. Read the full guide: [WORKTHROUGH.md](WORKTHROUGH.md).
 
----
+## One-line helper (Windows)
 
-## 🍎 macOS — Terminal Install
+From repo root:
 
-Open **Terminal** and paste this one command:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/your-org/techscript/main/scripts/install.sh | bash
+```powershell
+.\scripts\run_example.ps1 examples\hello.txs
 ```
 
-After install, test it:
-```bash
-tech run examples/hello.txs
+## Verify install
+
+```powershell
+cd runtime
+cargo run --release --bin tech -- version
+cargo test
 ```
 
----
+## What's implemented?
 
-## 🐧 Linux — Terminal Install
+See [V1.0.6_STATUS.md](V1.0.6_STATUS.md) (export to PDF via Print in your editor).
 
-Open a terminal and paste:
+## Optional: Python parity
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/your-org/techscript/main/scripts/install.sh | bash
+```powershell
+pip install -e .
+.\scripts\parity_check.ps1
 ```
-
-Or if you have `pip`:
-```bash
-pip install techscript
-```
-
-Then:
-```bash
-tech run examples/hello.txs
-```
-
----
-
-## 📱 Android (Termux)
-
-```bash
-pkg install python
-pip install techscript
-tech run examples/hello.txs
-```
-
----
-
-## 🖊️ Writing Your First Program
-
-Create a file called `hello.txs` and write:
-
-```
-say "Hello, World!"
-say "I am learning TechScript!"
-```
-
-Run it with:
-```
-tech run hello.txs
-```
-
----
-
-## 🌐 Building a Website
-
-```
-use web
-
-make page = WebPage("My First Website")
-
-page.style("body", { "background": "#111", "color": "white", "font-family": "sans-serif" })
-
-page.body([
-    page.h1("Welcome to My Website"),
-    page.p("Built 100% in TechScript — no HTML or CSS needed!")
-])
-
-page.run()
-```
-
-Run it:
-```
-tech run my_site.txs
-```
-
-Your browser opens automatically! 🚀
-
----
-
-## 🛠️ Available Commands
-
-| Command | What it does |
-|---|---|
-| `tech run file.txs` | Run a TechScript file |
-| `tech check file.txs` | Check for errors without running |
-| `tech repl` | Interactive coding mode (like a calculator) |
-| `tech version` | Show version |
-| `tech transpile file.txs` | Convert to Python |

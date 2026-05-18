@@ -21,10 +21,17 @@ $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ProjectRoot = Split-Path -Parent $ScriptDir
 $IconPath = Join-Path $ProjectRoot "assets\icons\icon.ico"
 
-# Find tech.exe or python entry point
+# Find tech.exe
 $TechCmd = (Get-Command tech -ErrorAction SilentlyContinue).Source
 if (-not $TechCmd) {
-    $TechCmd = "python -m techscript"
+    # Try local install directory
+    $LocalDir = Join-Path $env:LOCALAPPDATA "TechScript\tech.exe"
+    if (Test-Path $LocalDir) {
+        $TechCmd = $LocalDir
+    } else {
+        Write-Host "[ERROR] tech.exe not found. Run scripts\setup.ps1 first." -ForegroundColor Red
+        exit 1
+    }
 }
 
 # --- Choose registry hive ---

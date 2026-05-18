@@ -1,0 +1,3 @@
+# Hot reload demo — run with: tech run --watch examples/hot_reload.txs
+
+say "Edit this file and save to re-run (watch mode)"

@@ -109,11 +109,11 @@
       "patterns": [
         {
           "name": "keyword.control.techscript",
-          "match": "\\b(if|elif|else|for|while|until|unless|match|case|try|catch|finally|throw|break|skip|pass|return|guard|with|do|defer)\\b"
+          "match": "\\b(when|alt|else|each|repeat|loop|until|unless|match|case|try|catch|rescue|finally|throw|fail|stop|break|skip|continue|pass|return|send|guard|with|do|defer|attempt)\\b"
         },
         {
           "name": "keyword.declaration.techscript",
-          "match": "\\b(fn|class|set|const|mut|del|global|export|import|from|as|new)\\b"
+          "match": "\\b(build|model|class|make|keep|const|mut|drop|global|use|take|share|as|new|state|component|page|api|route|window|scene|timeline)\\b"
         },
         {
           "name": "keyword.operator.logical.techscript",
@@ -121,7 +121,7 @@
         },
         {
           "name": "keyword.other.techscript",
-          "match": "\\b(say|ask|self|super|async|await|yield|each)\\b"
+          "match": "\\b(say|ask|self|base|run|render|button|input|label|placeholder|camera|light|mesh|move|fade)\\b"
         }
       ]
     },

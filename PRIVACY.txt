@@ -1,0 +1,35 @@
+========================================================================
+                      TECHSCRIPT PRIVACY POLICY
+========================================================================
+Last Updated: May 2026
+
+TechScript is designed from the ground up to respect user privacy. As a 
+modern, developer-oriented systems programming platform, we believe that 
+your code, data, and workspace should remain entirely under your control.
+
+1. 100% LOCAL EXECUTION & OFFLINE-FIRST
+---------------------------------------
+All components of the TechScript ecosystem—including the native VM, compiler, 
+interpreter, and the TechScript Studio visual IDE—run 100% locally on your 
+machine. 
+- No telemetry, analytics trackers, or diagnostic reports are collected or 
+  transmitted to external servers.
+- No active internet connection is required to compile, build, run, or edit 
+  your plain-English scripts.
+
+2. WORKSPACE DATA PRESERVATION
+------------------------------
+Your workspace directories, source files (.txs, .tx), and compiled bytecode 
+files (.txbc) are stored solely on your local storage drives. The installer 
+creates registry file associations for your convenience, which can be cleanly 
+removed at any time using the standard Windows Uninstaller.
+
+3. INTEGRITY & SECURITY
+-----------------------
+TechScript installers and binaries are fully compiled from audited open-source 
+Rust repositories. We do not bundle third-party offers, hidden services, 
+adware, or remote update agents.
+
+By installing and using TechScript, you enjoy a highly optimized, state-of-the-art 
+development environment that honors your digital sovereignty.
+========================================================================

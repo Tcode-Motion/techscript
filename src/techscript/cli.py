@@ -136,6 +136,20 @@ def _build_parser() -> argparse.ArgumentParser:
 
 
 def main() -> None:
+    # Check if a native compiled standalone binary is bundled
+    import subprocess
+    
+    package_dir = os.path.dirname(os.path.abspath(__file__))
+    native_exe_name = "tech.exe" if os.name == "nt" else "tech"
+    native_exe_path = os.path.join(package_dir, native_exe_name)
+    
+    if os.path.exists(native_exe_path):
+        try:
+            res = subprocess.run([native_exe_path] + sys.argv[1:])
+            sys.exit(res.returncode)
+        except Exception:
+            pass
+
     argv = sys.argv[1:]
 
     # Quick intercepts BEFORE argparse

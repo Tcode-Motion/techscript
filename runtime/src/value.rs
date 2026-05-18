@@ -26,6 +26,8 @@ pub enum Value {
     Instance(Rc<RefCell<InstanceObj>>),
     Closure(Rc<ClosureObj>),
     BoundMethod(Rc<RefCell<InstanceObj>>, Rc<ClosureObj>),
+    /// Bound list method (receiver captured for `.append()` etc.)
+    ListMethod(Rc<RefCell<Vec<Value>>>, String),
     Iterator(Rc<RefCell<IterState>>),
     Range(i64, i64, bool), // start, end, inclusive
 }
@@ -142,6 +144,7 @@ impl Value {
             Value::Class(_) => "class",
             Value::Instance(_) => "instance",
             Value::BoundMethod(_, _) => "method",
+            Value::ListMethod(_, _) => "method",
             Value::Iterator(_) => "iterator",
             Value::Range(_, _, _) => "range",
         }
@@ -178,6 +181,7 @@ impl Value {
             Value::Class(c) => format!("<class {}>", c.borrow().name),
             Value::Instance(inst) => format!("<{} instance>", inst.borrow().class.borrow().name),
             Value::BoundMethod(_, c) => format!("<method {}>", c.function.name),
+            Value::ListMethod(_, name) => format!("<list method {}>", name),
             Value::Iterator(_) => "<iterator>".to_string(),
             Value::Range(s, e, inc) => {
                 if *inc {

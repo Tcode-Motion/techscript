@@ -48,19 +48,9 @@ def generate_pngs(source: Path) -> dict[int, Path]:
 def generate_ico(png_paths: dict[int, Path]) -> Path:
     """Create a Windows .ico file containing multiple resolutions."""
     out = ICONS_DIR / "icon.ico"
-    # Use Pillow's ICO save — it handles the format natively
-    sizes_for_ico = [16, 32, 48, 64, 128, 256]
-    images = []
     base = Image.open(png_paths[512]).convert("RGBA")
-    for s in sizes_for_ico:
-        images.append(base.resize((s, s), Image.LANCZOS))
-    # Save the first image with appended sizes
-    images[0].save(
-        out,
-        format="ICO",
-        sizes=[(s, s) for s in sizes_for_ico],
-        append_images=images[1:],
-    )
+    sizes_for_ico = [(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)]
+    base.save(out, format="ICO", sizes=sizes_for_ico)
     print(f"  ✓ {out.name}")
     return out
 

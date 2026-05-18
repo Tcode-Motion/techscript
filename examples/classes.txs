@@ -39,8 +39,8 @@ model Cat(Animal) {
 
 # Create instances
 say "=== OOP Demo ==="
-dog = Dog("Rex")
-cat = Cat("Whiskers")
+make dog = Dog("Rex")
+make cat = Cat("Whiskers")
 
 dog.speak()
 dog.fetch("ball")

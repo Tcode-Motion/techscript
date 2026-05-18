@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "techscript"
-version = "1.0.1"
+version = "1.0.6"
 description = "TechScript — A simple, friendly programming language (.txs)"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -31,7 +31,7 @@ tech = "techscript.cli:main"
 dev = ["pytest>=7.0", "pytest-cov", "black", "flake8"]
 
 [tool.setuptools.package-data]
-techscript = ["../assets/icons/*.png", "../assets/icons/*.ico", "../assets/icons/*.icns", "../assets/icons/*.svg"]
+techscript = ["tech.exe", "tech_studio.exe", "../assets/icons/*.png", "../assets/icons/*.ico", "../assets/icons/*.icns", "../assets/icons/*.svg"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

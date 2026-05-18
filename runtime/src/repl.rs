@@ -6,7 +6,7 @@ use crate::compiler::Compiler;
 use crate::vm::VM;
 
 pub fn start_repl() {
-    println!("🐉 TechScript v1.0.2 — Interactive REPL");
+    println!("🐉 TechScript v{} — Interactive REPL", crate::VERSION);
     println!("Type 'exit' or press Ctrl+C to quit.\n");
 
     let mut vm = VM::new();
@@ -35,6 +35,19 @@ pub fn start_repl() {
 fn run_line(vm: &mut VM, input: &str) -> Result<(), String> {
     let tokens = Lexer::new(input, "<repl>").tokenize().map_err(|e| e.to_string())?;
     let program = Parser::new(tokens, "<repl>").parse().map_err(|e| e.to_string())?;
-    let function = Compiler::new().compile(&program).map_err(|e| e.to_string())?;
-    vm.run(function).map_err(|e| e.to_string())
+    
+    let mut compiler = Compiler::new();
+    compiler.is_repl = true;
+    let function = compiler.compile(&program).map_err(|e| e.to_string())?;
+    
+    vm.run(function).map_err(|e| e.to_string())?;
+    
+    let result = vm.pop();
+    vm.clear_stack();
+    
+    if !matches!(result, crate::value::Value::None) {
+        println!("{}", result.display_string());
+    }
+    
+    Ok(())
 }

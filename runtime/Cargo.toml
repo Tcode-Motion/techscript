@@ -1,17 +1,44 @@
 [package]
 name = "techscript"
-version = "1.0.3"
+version = "1.0.6"
 edition = "2021"
 authors = ["Tanmoy"]
 description = "TechScript native runtime"
+
+[[bin]]
+name = "tech"
+path = "src/main.rs"
+
+[[bin]]
+name = "tech_studio"
+path = "src/bin/tech_studio.rs"
 
 [dependencies]
 clap = { version = "4.4", features = ["derive"] }
 rustyline = "13.0"
 colored = "2.1"
+strsim = "0.11"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.8"
+notify = "6"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tiny_http = "0.12"
+eframe = { version = "0.29", default-features = true }
+egui = "0.29"
+rfd = "0.14"
+egui_dock = "0.14"
+image = { version = "0.25", default-features = false, features = ["png"] }
+
+[dev-dependencies]
+tempfile = "3"
 
 [profile.release]
 opt-level = 3
 lto = true
 codegen-units = 1
 panic = "abort"
+
+[build-dependencies]
+winres = "0.1"

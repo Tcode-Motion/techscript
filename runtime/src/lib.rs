@@ -11,3 +11,14 @@ pub mod compiler;
 pub mod vm;
 pub mod builtins;
 pub mod repl;
+pub mod run;
+pub mod disasm;
+pub mod interner;
+pub mod bytecode;
+pub mod scaffold;
+pub mod doctor;
+pub mod pkg;
+pub mod modules;
+pub mod studio;
+
+pub use run::VERSION;

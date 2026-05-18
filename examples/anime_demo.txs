@@ -1,0 +1,8 @@
+# TechScript anime timeline (MVP)
+
+use anime
+
+timeline start {
+    move hero to [100, 0] over 1 ease out
+    fade hero to 0 over 0.5
+}

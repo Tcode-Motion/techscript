@@ -2,7 +2,7 @@
   <img src="techscript-logo.png" alt="TechScript Logo" width="128" height="128" />
 </p>
 
-<h1 align="center">TechScript v1.0.7 Official Public Release</h1>
+<h1 align="center">TechScript v1.0.8 Official Public Release</h1>
 
 <p align="center">
   <strong>A friendly, plain-English programming language and high-performance developer workspace built entirely in Rust.</strong>
@@ -20,11 +20,11 @@
 
 **TechScript** is an elegant, human-centric, high-performance programming language designed to replace confusing syntaxes with friendly, expressive plain-English instructions. Underneath its natural language surface lies a lightning-fast native compiler and Virtual Machine written entirely in pure **Rust**, delivering high stability, robust error handling, and memory efficiency with zero runtime runtime bottlenecks.
 
-This directory contains the **official standalone production release (v1.0.7)**, which includes the full command-line compiler, native VM, and the state-of-the-art **TechScript Studio IDE**.
+This directory contains the **official standalone production release (v1.0.8)**, which includes the full command-line compiler, native VM, and the state-of-the-art **TechScript Studio IDE**.
 
 ---
 
-## 🚀 Version 1.0.7 Feature Highlights
+## 🚀 Version 1.0.8 Feature Highlights
 
 ### 1. The Redesigned TechScript Studio IDE
 * **Resizable Docking Layout (`egui_dock`)**: A state-of-the-art, responsive multi-pane workspace layout. Drag, split, and dock layouts to match your workflow:
@@ -45,7 +45,7 @@ This directory contains the **official standalone production release (v1.0.7)**,
   This ensures your output terminals do not instantly disappear, allowing you to review logs, compile states, or runtime outputs at your own pace!
 
 ### 3. Professional Setup Maintenance Manager
-* Features a single, unified installer `TechScript_v1.0.7_x64.exe` that supports advanced maintenance configurations:
+* Features a single, unified installer `TechScript_v1.0.8_x64.exe` that supports advanced maintenance configurations:
   * ⚙ **Modify**: Customise path environment variables, shortcut folders, and script association options.
   * 🔧 **Repair**: Safely checks for missing components, restores broken registry keys, and reinstalls release binaries.
   * 🗑 **Uninstall**: Cleanly purges path settings, file configurations, and folders in a single click.
@@ -56,7 +56,7 @@ This directory contains the **official standalone production release (v1.0.7)**,
 
 | Asset | Description |
 | :--- | :--- |
-| **`TechScript_v1.0.7_x64.exe`** | The complete graphical installer containing the compiler, virtual machine, and IDE workspace. |
+| **`TechScript_v1.0.8_x64.exe`** | The complete graphical installer containing the compiler, virtual machine, and IDE workspace. |
 | **`techscript-logo.png`** | High-resolution branding logo for visual integration. |
 | **`README.md`** | This setup manual. |
 
@@ -64,7 +64,7 @@ This directory contains the **official standalone production release (v1.0.7)**,
 
 ## 🛠️ Step-by-Step Installation Guide
 
-1. **Launch Setup**: Double-click the `TechScript_v1.0.7_x64.exe` installer executable in this folder.
+1. **Launch Setup**: Double-click the `TechScript_v1.0.8_x64.exe` installer executable in this folder.
 2. **Configure Options**:
    * Tick **Add TechScript to PATH** to run `tech` CLI commands from standard command prompts.
    * Tick **Associate .txs Files** to enable explorer double-click execution.

@@ -1,13 +1,13 @@
 ; ============================================================
-;  TechScript v1.0.6 — Inno Setup Installer Script
+;  TechScript v1.0.7 — Inno Setup Installer Script
 ;  Professional Windows installer for the TechScript ecosystem.
 ;  Bundles: tech.exe (CLI), tech_studio.exe (IDE), VS Code ext,
 ;           examples, documentation, and icon assets.
 ; ============================================================
 
 #define MyAppName "TechScript"
-#define MyAppVersion "1.0.6"
-#define MyAppPublisher "TechScript Team"
+#define MyAppVersion "1.0.7"
+#define MyAppPublisher "Tanmoy Majumder"
 #define MyAppURL "https://github.com/Tcode-Motion/techscript"
 #define MyAppExeName "tech.exe"
 #define MyAppStudioName "tech_studio.exe"
@@ -71,7 +71,7 @@ Source: "..\runtime\target\x86_64-pc-windows-msvc\release\tech_studio.exe"; Dest
 Source: "..\assets\icons\icon.ico"; DestDir: "{app}"; Flags: ignoreversion
 
 ; --- VS Code Extension ---
-Source: "..\vscode-extension\*"; DestDir: "{%USERPROFILE}\.vscode\extensions\techscript-team.techscript-1.0.6"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\vscode-extension\*"; DestDir: "{%USERPROFILE}\.vscode\extensions\tanmoy.techscript-1.0.7"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 ; --- Example Scripts ---
 Source: "..\examples\*"; DestDir: "{app}\examples"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -90,6 +90,9 @@ Type: files; Name: "{commondesktop}\TechScript*.lnk"
 Type: files; Name: "{userdesktop}\TechScript*.lnk"
 Type: files; Name: "{userdesktop}\tech*.lnk"
 ; Clean old VS Code extension versions
+Type: filesandordirs; Name: "{%USERPROFILE}\.vscode\extensions\techscript-team.techscript-1.0.6"
+Type: filesandordirs; Name: "{%USERPROFILE}\.vscode\extensions\tanmoy.techscript-1.0.6.1"
+Type: filesandordirs; Name: "{%USERPROFILE}\.vscode\extensions\tanmoy.techscript-1.0.6"
 Type: filesandordirs; Name: "{%USERPROFILE}\.vscode\extensions\techscript-1.0.6"
 Type: filesandordirs; Name: "{%USERPROFILE}\.vscode\extensions\techscript-team.techscript-1.0.5"
 
@@ -426,7 +429,7 @@ begin
       AddPathToFront();
     end;
     
-    MsgBox('TechScript v1.0.6 Installation Complete!' + #13#10 + #13#10 +
+    MsgBox('TechScript v1.0.7 Installation Complete!' + #13#10 + #13#10 +
            'What''s installed:' + #13#10 +
            '  - tech.exe — CLI runtime & REPL' + #13#10 +
            '  - tech_studio.exe — Visual Studio IDE' + #13#10 +

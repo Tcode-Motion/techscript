@@ -2,8 +2,8 @@
   "name": "techscript",
   "displayName": "TechScript Language",
   "description": "Syntax highlighting, snippets, file icons, and web module support for TechScript (.txs). v2",
-  "version": "1.0.6",
-  "publisher": "techscript-team",
+  "version": "1.0.7",
+  "publisher": "tanmoy",
   "author": "Tanmoy Majumder",
   "repository": {
     "type": "git",

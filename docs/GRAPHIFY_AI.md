@@ -1,19 +1,30 @@
 # Graphify AI Usage Guide
 
-> **Target Audience**: AI Assistants / Compiler Agents
+> **Target Audience**: AI Assistants / Compiler Agents / Core Contributors
 > **Purpose**: Complete guide to Graphify-Labs knowledge graph integration in TechScript.
 > **Parent Link**: [AI_BOOTSTRAP](../AI_BOOTSTRAP.md)
 > **Child Links**: [00_PROJECT](../docs/ai/00_PROJECT.md) · [02_MEMORY](../docs/ai/02_MEMORY.md)
 
 ---
 
-## 1. Installation
+## 1. Requirements & Installation
 
-To install the official `graphifyy` tool globally using `uv`:
+Graphify is designed to be cross-platform, supporting Windows, Linux, macOS, and WSL.
+
+### 1.1 Python & Rust Prerequisites
+- **Python**: Version `3.10`, `3.11`, or `3.12` is required.
+- **Rust Toolchain**: `rustc` and `cargo` should be installed (highly recommended for extracting Rust/Cargo crate dependencies). Download from [https://rustup.rs/](https://rustup.rs/).
+
+### 1.2 Installation
+To install the dependencies for Graphify utilities in this workspace:
 ```bash
-uv tool install graphifyy
+pip install -r requirements.txt
 ```
-To register it as a project-scoped Google Antigravity skill:
+This automatically installs the PyPI package `graphifyy` (using a safe compatible version range `graphifyy>=0.8.0,<1.0.0`), along with helper dependencies like `python-dotenv`, `requests`, and version-conditional `tomli` (for Python versions < 3.11).
+
+*Note: The CLI command registered by the `graphifyy` package is `graphify` (with a single 'y').*
+
+To register the knowledge graph capabilities as a project-scoped Google Antigravity skill:
 ```bash
 graphify antigravity install
 ```
@@ -30,54 +41,55 @@ Exclusions are managed in the `.graphifyignore` configuration file at the root o
 - `graphify-out/` (Graphify output directory itself)
 - Temporary files (`*.tmp`, `*.log`)
 
+Ensure `.graphifyignore` contains `graphify-out/` to avoid recursive indexing during graph generation.
+
 ---
 
-## 3. Update Command
+## 3. CLI Commands
 
-To refresh the index and regenerate all artifacts, run the official wrapper script:
+### 3.1 Update Command (`update_graphify.py`)
+To refresh the index and regenerate all artifacts, run the official wrapper script from anywhere in the workspace:
 ```bash
 python tools/update_graphify.py
 ```
-This script:
-1. Verifies the `graphify` installation.
-2. Refreshes the Graphify index.
-3. Generates `graph.html`.
-4. Generates `graph.json`.
-5. Generates `GRAPH_REPORT.md`.
-6. Validates outputs and exits with `1` if any file is missing or empty.
+This script performs a pre-flight checklist (Python, dependencies, Cargo, Rust, CLI), runs the Graphify extraction/clustering processes, logs details to `logs/graphify.log`, and validates the generated outputs.
+
+#### Dry-Run Mode
+Verify the environment setup and print planned commands without modifying files:
+```bash
+python tools/update_graphify.py --dry-run
+```
+
+### 3.2 Verification Command (`check_graphify.py`)
+Verify the local environment setup, configurations, and validate generated output file structures (JSON schema correctness, HTML headers, non-empty files):
+```bash
+python tools/check_graphify.py
+```
 
 ---
 
-## 4. Generated Files
+## 4. Exit Codes
+
+All Graphify utilities return standardized exit codes to make CI/CD automation and local scripting easier:
+
+| Exit Code | Meaning | Description / Resolution |
+| :--- | :--- | :--- |
+| **`0`** | **Success** | Run completed successfully. |
+| **`1`** | **Validation Failed** | Python environment/check_graphify checks failed. |
+| **`2`** | **Missing Dependency** | A Python package, toolchain element, or the Graphify CLI itself is missing. |
+| **`3`** | **Graphify Execution Failed** | The CLI command returned a non-zero exit code during extraction or clustering. |
+| **`4`** | **Invalid Graph Output** | Generated files are missing, empty, or structurally malformed. |
+| **`5`** | **Configuration Error** | Workspace root not found or `.graphifyignore` configuration missing/invalid. |
+
+---
+
+## 5. Generated Files
 
 All generated outputs reside in the `graphify-out/` directory:
 
 - **`graphify-out/graph.json`**: Machine-readable JSON containing nodes and edges representing code ASTs and Cargo manifests.
 - **`graphify-out/graph.html`**: Interactive D3-based force-directed visualization.
 - **`graphify-out/GRAPH_REPORT.md`**: Textual summary of communities, core abstractions, and god nodes.
-
----
-
-## 5. How to Use Graphify Outputs
-
-### 5.1 How to Use `graph.html`
-- **Interactive Force Graph**: Nodes represent files, crates, structs, or functions. Edges represent contains, depends_on, or calls.
-- **Node Colors**: Colors represent Louvain-detected communities (loosely coupled components).
-- **Search & Filters**: Use the search box to find specific symbols. Toggle checkboxes to filter relationship types.
-- **Zoom & Pan**: Scroll to zoom, drag to pan the viewport.
-- **Click-to-expand**: Click any node to open the inspector pane showing in-degree/out-degree connections, source lines, and community details.
-
-### 5.2 How to Use `graph.json`
-- Parsed directly by LLM agents. Contains:
-  - `nodes`: List of IDs, types, names, file paths, and Louvain community numbers.
-  - `edges`: Source/target pairs with confidence values (`EXTRACTED` for code, `INFERRED` for doc linkages).
-  - `metadata`: Token costs and timestamps.
-
-### 5.3 How to Use `GRAPH_REPORT.md`
-- Core human-readable overview. Look here for:
-  - **God Nodes**: Most connected abstractions (e.g., `main`, `CheckedProgram`).
-  - **Surprising Connections**: Bridging nodes linking different communities.
-  - **Suggested Questions**: Contextual follow-up exploration routes.
 
 ---
 
@@ -88,24 +100,11 @@ Get a detailed summary of a specific concept node:
 ```bash
 graphify explain "main"
 ```
-*Example Output:*
-```
-Node: main()
-  ID:        tools_update_graphify_main
-  Source:    tools/update_graphify.py L38
-  Type:      code
-  Community: Community 0
-```
 
 ### 6.2 `graphify path`
 Determine the shortest path/dependency chain between two concepts:
 ```bash
 graphify path "main" "check_api_keys"
-```
-*Example Output:*
-```
-Shortest path (1 hops):
-  main() --calls [EXTRACTED]--> check_api_keys()
 ```
 
 ### 6.3 `graphify query`
@@ -113,16 +112,27 @@ Perform a BFS traversal to answer natural-language questions about the codebase:
 ```bash
 graphify query "What does check_api_keys do?"
 ```
-*Example Output:*
-```
-NODE check_api_keys() [src=tools/update_graphify.py loc=L11 community=Community 0]
-EDGE check_api_keys() --calls [EXTRACTED context=call]--> main()
-```
 
 ---
 
-## 7. Troubleshooting & Limitations
+## 7. CI/CD Integration
 
-- **Error: No LLM API Key**: If no `GEMINI_API_KEY` is present, scanning doc files will fail.
-  - *Fix*: The update script automatically ignores `.md`/`.pdf` files during AST scanning to run in a code-only fallback mode. To run a full extraction, set the key.
-- **Empty Graph**: If the graph is empty, verify that your files are not matches for patterns in `.graphifyignore`.
+The GitHub Actions workflow is defined in `.github/workflows/graphify.yml`. It ensures the consistency of the knowledge graph across commits:
+1. Runs a matrix test on **Python 3.10, 3.11, and 3.12**.
+2. Pre-installs stable **Rust and Cargo**.
+3. Caches Python dependencies (`pip`) and Cargo registry.
+4. Logs detailed toolchain diagnostics.
+5. Performs graph generation (`update_graphify.py`) and dynamic output validation (`check_graphify.py`).
+6. Verifies that generated graph files have no uncommitted changes (`git diff --exit-code graphify-out/`).
+7. Archives and uploads generated output and logs as workflow artifacts.
+
+---
+
+## 8. Troubleshooting & Limitations
+
+- **Error: No LLM API Key**: If no `GEMINI_API_KEY` (or compatible key) is present, scanning markdown and PDF files will fail.
+  - *Fix*: The update script automatically falls back to AST-only/code-only mode. It temporarily updates `.graphifyignore` to skip non-code files, avoiding LLM calls, and restores the configuration afterward. Set an API key in a `.env` file to enable full semantic extraction.
+- **Missing Python Packages**:
+  - *Fix*: Run `pip install -r requirements.txt` to install all necessary packages automatically without manual setup.
+- **Rust/Cargo Missing Warnings**:
+  - *Fix*: The script will warn if the Rust toolchain is missing and proceed without Cargo dependencies (AST-only code parsing only). Install Rust from [https://rustup.rs/](https://rustup.rs/) to enable full crate-level dependency analysis.

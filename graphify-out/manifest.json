@@ -1,7 +1,222 @@
 {
   "tools/update_graphify.py": {
-    "mtime": 1784105464.4979813,
-    "ast_hash": "2931756511fd82a8d34ce3a8dd8df365",
-    "semantic_hash": "2931756511fd82a8d34ce3a8dd8df365"
+    "mtime": 1784106709.43914,
+    "ast_hash": "41b5567f95275eb46bd66ed7e2ec80eb",
+    "semantic_hash": "41b5567f95275eb46bd66ed7e2ec80eb"
+  },
+  "tools/check_graphify.py": {
+    "mtime": 1784106410.8023362,
+    "ast_hash": "7c3d9a14cff74a6c83d2ee9473339e8d",
+    "semantic_hash": "7c3d9a14cff74a6c83d2ee9473339e8d"
+  },
+  ".agents/rules/graphify.md": {
+    "mtime": 1784105092.422722,
+    "ast_hash": "a0e4d192b9e2e17256124dbfc8e24e6a",
+    "semantic_hash": ""
+  },
+  ".agents/workflows/graphify.md": {
+    "mtime": 1784105092.423898,
+    "ast_hash": "637776aa6f7496d069afe7520c845c8a",
+    "semantic_hash": ""
+  },
+  ".github/workflows/graphify.yml": {
+    "mtime": 1784106362.4959521,
+    "ast_hash": "9143ee42751eaf208de94b97cbb43dfd",
+    "semantic_hash": ""
+  },
+  "AI_BOOTSTRAP.md": {
+    "mtime": 1784105501.2517,
+    "ast_hash": "fffa21b592af877dcb7fad9b788d1066",
+    "semantic_hash": ""
+  },
+  "deep-research-report.md": {
+    "mtime": 1784102341.6235235,
+    "ast_hash": "552f2aa4443cfe4d303604c104584c78",
+    "semantic_hash": ""
+  },
+  "docs/GRAPHIFY_AI.md": {
+    "mtime": 1784106371.4679031,
+    "ast_hash": "2a625732daf4e4cf1f5fca402f8c0863",
+    "semantic_hash": ""
+  },
+  "docs/ai/00_PROJECT.md": {
+    "mtime": 1784104687.6443954,
+    "ast_hash": "907b2d7dba51ba8df55c5c6b082104a3",
+    "semantic_hash": ""
+  },
+  "docs/ai/01_CONTEXT.md": {
+    "mtime": 1784104692.9351313,
+    "ast_hash": "2e7a04b9f29eddcf443aa95668f69335",
+    "semantic_hash": ""
+  },
+  "docs/ai/02_MEMORY.md": {
+    "mtime": 1784104699.2049818,
+    "ast_hash": "aac5f8c3507f4b82fef3e9cc2fbb8518",
+    "semantic_hash": ""
+  },
+  "docs/ai/03_RULES.md": {
+    "mtime": 1784104705.6978786,
+    "ast_hash": "2a46ecd880af1e4a7fe8248feaf31117",
+    "semantic_hash": ""
+  },
+  "docs/ai/04_ARCHITECTURE.md": {
+    "mtime": 1784104711.6372943,
+    "ast_hash": "09509dbffd1d12b6cb8387cb092c7379",
+    "semantic_hash": ""
+  },
+  "docs/ai/05_LANGUAGE.md": {
+    "mtime": 1784104717.4881647,
+    "ast_hash": "cfe78e661cb347045981130eca6b6ada",
+    "semantic_hash": ""
+  },
+  "docs/ai/06_PROGRESS.md": {
+    "mtime": 1784104722.891804,
+    "ast_hash": "675f9022e5acf300045ef56fd3300b9b",
+    "semantic_hash": ""
+  },
+  "docs/ai/07_DECISIONS.md": {
+    "mtime": 1784104728.4180474,
+    "ast_hash": "f4834ca7ea0b4043f1210ec53aa83172",
+    "semantic_hash": ""
+  },
+  "docs/ai/08_REPOSITORY.md": {
+    "mtime": 1784104733.9123626,
+    "ast_hash": "9def7800e6d25368374dccb9d9e3fb56",
+    "semantic_hash": ""
+  },
+  "docs/ai/09_AI_BOOTSTRAP.md": {
+    "mtime": 1784104739.5741937,
+    "ast_hash": "245f61e73f8884266fea06896f1207a9",
+    "semantic_hash": ""
+  },
+  "docs/ai/10_HANDOFF.md": {
+    "mtime": 1784104744.854039,
+    "ast_hash": "4fdcb215f2b52b3ba663739894030f2c",
+    "semantic_hash": ""
+  },
+  "docs/ai/11_GLOSSARY.md": {
+    "mtime": 1784104750.2519886,
+    "ast_hash": "a3e850c6983eef34b2347f467990c3a3",
+    "semantic_hash": ""
+  },
+  "docs/ai/12_INDEX.md": {
+    "mtime": 1784105242.309857,
+    "ast_hash": "4484e2124cda1dd49eb6b5db250021f0",
+    "semantic_hash": ""
+  },
+  "docs/ai/AI_CONTEXT_PACK.md": {
+    "mtime": 1784104762.50324,
+    "ast_hash": "574716e21e5e33f6dc965de08e421993",
+    "semantic_hash": ""
+  },
+  "docs/ai/SESSION_CONTEXT.md": {
+    "mtime": 1784105248.5232408,
+    "ast_hash": "5462a005905c37a8585dd263e8bedf65",
+    "semantic_hash": ""
+  },
+  "docs/engineering/00_master_architecture.md": {
+    "mtime": 1784104451.3625896,
+    "ast_hash": "55822bda01620e737a425fbc202267c2",
+    "semantic_hash": ""
+  },
+  "docs/engineering/01_language_spec_v1.md": {
+    "mtime": 1784104459.6190784,
+    "ast_hash": "9224f9dcc63fde936222e7435f23fda6",
+    "semantic_hash": ""
+  },
+  "docs/engineering/02_folder_structure.md": {
+    "mtime": 1784104467.0779102,
+    "ast_hash": "8777f71bcb7829cc5dbe73908aeba95f",
+    "semantic_hash": ""
+  },
+  "docs/engineering/03_grammar_ebnf.md": {
+    "mtime": 1784104474.2517853,
+    "ast_hash": "0f3314a3b46c10d32e86b41e14cf9d19",
+    "semantic_hash": ""
+  },
+  "docs/engineering/04_compiler_architecture.md": {
+    "mtime": 1784104482.5687463,
+    "ast_hash": "3d46907ad42c6817e86d9daac9c43ab8",
+    "semantic_hash": ""
+  },
+  "docs/engineering/05_ast_design.md": {
+    "mtime": 1784104489.7498052,
+    "ast_hash": "78792afd597da1f38e07cb9959fc04c2",
+    "semantic_hash": ""
+  },
+  "docs/engineering/06_lexer_design.md": {
+    "mtime": 1784104495.4918993,
+    "ast_hash": "26ac6ca63b8ef5e3a90bff8ad6c3f466",
+    "semantic_hash": ""
+  },
+  "docs/engineering/07_parser_design.md": {
+    "mtime": 1784104501.4153986,
+    "ast_hash": "7801652e00ca663cdffdd593cb4b757b",
+    "semantic_hash": ""
+  },
+  "docs/engineering/08_milestones.md": {
+    "mtime": 1784104507.211651,
+    "ast_hash": "dd684e25a1993713665da2dfc6c1a819",
+    "semantic_hash": ""
+  },
+  "docs/engineering/09_runtime_design.md": {
+    "mtime": 1784104513.9588587,
+    "ast_hash": "f377a13a6121f5ed0e02176bc35ca934",
+    "semantic_hash": ""
+  },
+  "docs/engineering/10_semantic_analysis.md": {
+    "mtime": 1784104520.41433,
+    "ast_hash": "1ca152b9578d63f4f72387ca15871887",
+    "semantic_hash": ""
+  },
+  "docs/engineering/11_interpreter_design.md": {
+    "mtime": 1784104525.7689128,
+    "ast_hash": "a1ad068d9764c9b21fb913fe6170e021",
+    "semantic_hash": ""
+  },
+  "docs/engineering/12_stdlib_design.md": {
+    "mtime": 1784104532.1890392,
+    "ast_hash": "ae6f349c01877d78603cf6fa46954530",
+    "semantic_hash": ""
+  },
+  "docs/engineering/13_cli_spec.md": {
+    "mtime": 1784104537.9083047,
+    "ast_hash": "0945f7988fafa344b5cbb1e92ccd136f",
+    "semantic_hash": ""
+  },
+  "docs/engineering/14_error_codes.md": {
+    "mtime": 1784104543.9771328,
+    "ast_hash": "55042cef616bf5ecc5c1fa9dc809981d",
+    "semantic_hash": ""
+  },
+  "docs/engineering/15_testing.md": {
+    "mtime": 1784104549.5384817,
+    "ast_hash": "193d83571d695cf36b2d106507c628bb",
+    "semantic_hash": ""
+  },
+  "docs/engineering/16_coding_standards.md": {
+    "mtime": 1784104554.2413394,
+    "ast_hash": "e92cc4e872ccacbb6d543f98c85e604a",
+    "semantic_hash": ""
+  },
+  "docs/engineering/17_roadmap.md": {
+    "mtime": 1784104560.7059598,
+    "ast_hash": "ec3e535c17fff4b2446cb62d89ecd975",
+    "semantic_hash": ""
+  },
+  "docs/engineering/18_ai_context.md": {
+    "mtime": 1784104567.6928349,
+    "ast_hash": "c89678806dafa78924476db89af17e63",
+    "semantic_hash": ""
+  },
+  "requirements.txt": {
+    "mtime": 1784106313.8929157,
+    "ast_hash": "ac29752dea68322cd6ed6fbd7ce0ca2c",
+    "semantic_hash": ""
+  },
+  "Executive Summary.pdf": {
+    "mtime": 1784102337.8721287,
+    "ast_hash": "6e567943267b29319a3e4d1254e94713",
+    "semantic_hash": ""
   }
 }

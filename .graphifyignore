@@ -1,4 +1,4 @@
-﻿# .graphifyignore
+# .graphifyignore
 # Exclude build and VCS metadata
 target/
 .git/

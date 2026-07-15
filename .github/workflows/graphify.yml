@@ -10,27 +10,71 @@ on:
 jobs:
   check-graph:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11', '3.12']
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
 
-      - name: Install Graphify
+      - name: Setup Rust & Cargo
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo Registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Upgrade Pip & Install Dependencies
         run: |
-          pip install graphifyy
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Run Update Script
+      - name: Print Version Diagnostics
+        run: |
+          echo "=== Version Diagnostics ==="
+          python --version
+          pip --version
+          rustc --version
+          cargo --version
+          graphify --version
+          echo "==========================="
+
+      - name: Run Graphify Update
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           python tools/update_graphify.py
 
+      - name: Run Graphify Output Validation
+        run: |
+          python tools/check_graphify.py
+
       - name: Verify Graph Invariant (No Uncommitted Changes)
         run: |
           # Verify that the generated graph files match the committed files in git.
           # If there is any diff, the CI workflow fails.
+          # We only fail if there are differences to ensure that the developer kept the graph up-to-date.
           git diff --exit-code graphify-out/
+
+      - name: Upload Graphify Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: graphify-artifacts-python-${{ matrix.python-version }}
+          path: |
+            graphify-out/
+            logs/
+          if-no-files-found: warn

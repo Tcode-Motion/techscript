@@ -1,0 +1,174 @@
+[2026-07-15 14:36:21] [INFO] ============================================================
+[2026-07-15 14:36:21] [INFO] Starting Graphify Knowledge Graph Update (dry-run: True)
+[2026-07-15 14:36:21] [INFO] Workspace root detected: C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0
+[2026-07-15 14:36:21] [INFO] Python Version: 3.13.13
+[2026-07-15 14:36:21] [INFO] Graphify Version: 0.8.43 (command: graphify)
+[2026-07-15 14:36:21] [INFO] Rust Version: rustc 1.96.0 (ac68faa20 2026-05-25)
+[2026-07-15 14:36:21] [INFO] Cargo Version: cargo 1.96.0 (30a34c682 2026-05-25)
+[2026-07-15 14:36:21] [INFO] No LLM API key detected. Running in AST-only mode.
+[2026-07-15 14:36:21] [INFO] Temporarily modifying .graphifyignore for AST-only fallback...
+[2026-07-15 14:36:21] [INFO] Executing: graphify extract . --no-cluster --cargo
+[2026-07-15 14:36:21] [INFO] [DRY-RUN] Would run command: graphify extract . --no-cluster --cargo
+[2026-07-15 14:36:21] [INFO] Running clustering and generating reports...
+[2026-07-15 14:36:21] [INFO] Executing: graphify cluster-only . --no-label
+[2026-07-15 14:36:21] [INFO] [DRY-RUN] Would run command: graphify cluster-only . --no-label
+[2026-07-15 14:36:21] [INFO] Graphify update completed successfully in 0.20s.
+[2026-07-15 14:36:21] [INFO] ============================================================
+
+[2026-07-15 14:37:04] [INFO] ============================================================
+[2026-07-15 14:37:04] [INFO] Starting Graphify Knowledge Graph Update (dry-run: False)
+[2026-07-15 14:37:04] [INFO] Workspace root detected: C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0
+[2026-07-15 14:37:04] [INFO] Python Version: 3.13.13
+[2026-07-15 14:37:04] [INFO] Graphify Version: 0.8.43 (command: graphify)
+[2026-07-15 14:37:04] [INFO] Rust Version: rustc 1.96.0 (ac68faa20 2026-05-25)
+[2026-07-15 14:37:04] [INFO] Cargo Version: cargo 1.96.0 (30a34c682 2026-05-25)
+[2026-07-15 14:37:04] [INFO] No LLM API key detected. Running in AST-only mode.
+[2026-07-15 14:37:04] [INFO] Temporarily modifying .graphifyignore for AST-only fallback...
+[2026-07-15 14:37:04] [INFO] Executing: graphify extract . --no-cluster --cargo
+[2026-07-15 14:37:04] [ERROR] Command failed in 0.14s with exit code 1
+[2026-07-15 14:37:04] [ERROR] Error output:
+error: no LLM API key found (1 doc/paper/image file(s) need semantic extraction). Set GEMINI_API_KEY or GOOGLE_API_KEY (gemini), MOONSHOT_API_KEY (kimi), ANTHROPIC_API_KEY (claude), OPENAI_API_KEY (openai), DEEPSEEK_API_KEY (deepseek), or pass --backend. A code-only corpus needs no key.
+[2026-07-15 14:37:04] [INFO] Restored original .graphifyignore
+[2026-07-15 14:37:04] [ERROR] Graphify extraction failed.
+[2026-07-15 14:37:24] [INFO] ============================================================
+[2026-07-15 14:37:24] [INFO] Starting Graphify Knowledge Graph Update (dry-run: False)
+[2026-07-15 14:37:24] [INFO] Workspace root detected: C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0
+[2026-07-15 14:37:24] [INFO] Python Version: 3.13.13
+[2026-07-15 14:37:24] [INFO] Graphify Version: 0.8.43 (command: graphify)
+[2026-07-15 14:37:24] [INFO] Rust Version: rustc 1.96.0 (ac68faa20 2026-05-25)
+[2026-07-15 14:37:24] [INFO] Cargo Version: cargo 1.96.0 (30a34c682 2026-05-25)
+[2026-07-15 14:37:24] [INFO] No LLM API key detected. Running in AST-only mode.
+[2026-07-15 14:37:24] [INFO] Temporarily modifying .graphifyignore for AST-only fallback...
+[2026-07-15 14:37:24] [INFO] Executing: graphify extract . --no-cluster --cargo
+[2026-07-15 14:37:25] [ERROR] Command failed in 0.17s with exit code 1
+[2026-07-15 14:37:25] [ERROR] Error output:
+error: no LLM API key found (1 doc/paper/image file(s) need semantic extraction). Set GEMINI_API_KEY or GOOGLE_API_KEY (gemini), MOONSHOT_API_KEY (kimi), ANTHROPIC_API_KEY (claude), OPENAI_API_KEY (openai), DEEPSEEK_API_KEY (deepseek), or pass --backend. A code-only corpus needs no key.
+[2026-07-15 14:37:25] [INFO] Restored original .graphifyignore
+[2026-07-15 14:37:25] [ERROR] Graphify extraction failed.
+[2026-07-15 14:38:26] [INFO] ============================================================
+[2026-07-15 14:38:26] [INFO] Starting Graphify Knowledge Graph Update (dry-run: False)
+[2026-07-15 14:38:26] [INFO] Workspace root detected: C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0
+[2026-07-15 14:38:26] [INFO] Python Version: 3.13.13
+[2026-07-15 14:38:26] [INFO] Graphify Version: 0.8.43 (command: graphify)
+[2026-07-15 14:38:26] [INFO] Rust Version: rustc 1.96.0 (ac68faa20 2026-05-25)
+[2026-07-15 14:38:26] [INFO] Cargo Version: cargo 1.96.0 (30a34c682 2026-05-25)
+[2026-07-15 14:38:26] [INFO] No LLM API key detected. Running in AST-only mode.
+[2026-07-15 14:38:26] [INFO] Temporarily modifying .graphifyignore for AST-only fallback...
+[2026-07-15 14:38:26] [INFO] Executing: graphify extract . --no-cluster --cargo
+[2026-07-15 14:38:26] [ERROR] Command failed in 0.22s with exit code 1
+[2026-07-15 14:38:26] [ERROR] Error output:
+error: no LLM API key found (2 doc/paper/image file(s) need semantic extraction). Set GEMINI_API_KEY or GOOGLE_API_KEY (gemini), MOONSHOT_API_KEY (kimi), ANTHROPIC_API_KEY (claude), OPENAI_API_KEY (openai), DEEPSEEK_API_KEY (deepseek), or pass --backend. A code-only corpus needs no key.
+[2026-07-15 14:38:26] [INFO] Restored original .graphifyignore
+[2026-07-15 14:38:26] [ERROR] Graphify extraction failed.
+[2026-07-15 14:38:40] [INFO] ============================================================
+[2026-07-15 14:38:40] [INFO] Starting Graphify Knowledge Graph Update (dry-run: False)
+[2026-07-15 14:38:40] [INFO] Workspace root detected: C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0
+[2026-07-15 14:38:40] [INFO] Python Version: 3.13.13
+[2026-07-15 14:38:40] [INFO] Graphify Version: 0.8.43 (command: graphify)
+[2026-07-15 14:38:40] [INFO] Rust Version: rustc 1.96.0 (ac68faa20 2026-05-25)
+[2026-07-15 14:38:40] [INFO] Cargo Version: cargo 1.96.0 (30a34c682 2026-05-25)
+[2026-07-15 14:38:40] [INFO] No LLM API key detected. Running in AST-only mode.
+[2026-07-15 14:38:40] [INFO] Temporarily modifying .graphifyignore for AST-only fallback...
+[2026-07-15 14:38:40] [INFO] Executing: graphify extract . --no-cluster --cargo
+[2026-07-15 14:38:40] [ERROR] Command failed in 0.20s with exit code 1
+[2026-07-15 14:38:40] [ERROR] Error output:
+error: no LLM API key found (2 doc/paper/image file(s) need semantic extraction). Set GEMINI_API_KEY or GOOGLE_API_KEY (gemini), MOONSHOT_API_KEY (kimi), ANTHROPIC_API_KEY (claude), OPENAI_API_KEY (openai), DEEPSEEK_API_KEY (deepseek), or pass --backend. A code-only corpus needs no key.
+[2026-07-15 14:38:40] [INFO] Restored original .graphifyignore
+[2026-07-15 14:38:40] [ERROR] Graphify extraction failed.
+[2026-07-15 14:40:24] [INFO] ============================================================
+[2026-07-15 14:40:24] [INFO] Starting Graphify Knowledge Graph Update (dry-run: False)
+[2026-07-15 14:40:24] [INFO] Workspace root detected: C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0
+[2026-07-15 14:40:24] [INFO] Python Version: 3.13.13
+[2026-07-15 14:40:24] [INFO] Graphify Version: 0.8.43 (command: graphify)
+[2026-07-15 14:40:24] [INFO] Rust Version: rustc 1.96.0 (ac68faa20 2026-05-25)
+[2026-07-15 14:40:24] [INFO] Cargo Version: cargo 1.96.0 (30a34c682 2026-05-25)
+[2026-07-15 14:40:24] [INFO] No LLM API key detected. Running in AST-only mode.
+[2026-07-15 14:40:24] [INFO] Temporarily modifying .graphifyignore for AST-only fallback...
+[2026-07-15 14:40:24] [INFO] Executing: graphify extract . --no-cluster --cargo
+[2026-07-15 14:40:25] [ERROR] Command failed in 0.19s with exit code 1
+[2026-07-15 14:40:25] [ERROR] Error output:
+error: no LLM API key found (2 doc/paper/image file(s) need semantic extraction). Set GEMINI_API_KEY or GOOGLE_API_KEY (gemini), MOONSHOT_API_KEY (kimi), ANTHROPIC_API_KEY (claude), OPENAI_API_KEY (openai), DEEPSEEK_API_KEY (deepseek), or pass --backend. A code-only corpus needs no key.
+[2026-07-15 14:40:25] [INFO] Restored original .graphifyignore
+[2026-07-15 14:40:25] [ERROR] Graphify extraction failed.
+[2026-07-15 14:40:35] [INFO] ============================================================
+[2026-07-15 14:40:35] [INFO] Starting Graphify Knowledge Graph Update (dry-run: False)
+[2026-07-15 14:40:35] [INFO] Workspace root detected: C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0
+[2026-07-15 14:40:35] [INFO] Python Version: 3.13.13
+[2026-07-15 14:40:35] [INFO] Graphify Version: 0.8.43 (command: graphify)
+[2026-07-15 14:40:36] [INFO] Rust Version: rustc 1.96.0 (ac68faa20 2026-05-25)
+[2026-07-15 14:40:36] [INFO] Cargo Version: cargo 1.96.0 (30a34c682 2026-05-25)
+[2026-07-15 14:40:36] [INFO] No LLM API key detected. Running in AST-only mode.
+[2026-07-15 14:40:36] [INFO] Temporarily modifying .graphifyignore for AST-only fallback...
+[2026-07-15 14:40:36] [INFO] Wrote temporary ignore file to C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0\.graphifyignore. Content preview:
+[2026-07-15 14:40:36] [ERROR] Failed to write temporary .graphifyignore: 'charmap' codec can't encode character '\ufeff' in position 29: character maps to <undefined>
+[2026-07-15 14:40:47] [INFO] ============================================================
+[2026-07-15 14:40:47] [INFO] Starting Graphify Knowledge Graph Update (dry-run: False)
+[2026-07-15 14:40:47] [INFO] Workspace root detected: C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0
+[2026-07-15 14:40:47] [INFO] Python Version: 3.13.13
+[2026-07-15 14:40:47] [INFO] Graphify Version: 0.8.43 (command: graphify)
+[2026-07-15 14:40:47] [INFO] Rust Version: rustc 1.96.0 (ac68faa20 2026-05-25)
+[2026-07-15 14:40:47] [INFO] Cargo Version: cargo 1.96.0 (30a34c682 2026-05-25)
+[2026-07-15 14:40:47] [INFO] No LLM API key detected. Running in AST-only mode.
+[2026-07-15 14:40:47] [INFO] Temporarily modifying .graphifyignore for AST-only fallback...
+[2026-07-15 14:40:47] [INFO] Wrote temporary ignore file to C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0\.graphifyignore
+[2026-07-15 14:40:47] [INFO] Executing: graphify extract . --no-cluster --cargo
+[2026-07-15 14:40:48] [ERROR] Command failed in 0.17s with exit code 1
+[2026-07-15 14:40:48] [ERROR] Error output:
+error: no LLM API key found (2 doc/paper/image file(s) need semantic extraction). Set GEMINI_API_KEY or GOOGLE_API_KEY (gemini), MOONSHOT_API_KEY (kimi), ANTHROPIC_API_KEY (claude), OPENAI_API_KEY (openai), DEEPSEEK_API_KEY (deepseek), or pass --backend. A code-only corpus needs no key.
+[2026-07-15 14:40:48] [INFO] Restored original .graphifyignore
+[2026-07-15 14:40:48] [ERROR] Graphify extraction failed.
+[2026-07-15 14:41:21] [INFO] ============================================================
+[2026-07-15 14:41:21] [INFO] Starting Graphify Knowledge Graph Update (dry-run: False)
+[2026-07-15 14:41:21] [INFO] Workspace root detected: C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0
+[2026-07-15 14:41:21] [INFO] Python Version: 3.13.13
+[2026-07-15 14:41:21] [INFO] Graphify Version: 0.8.43 (command: graphify)
+[2026-07-15 14:41:21] [INFO] Rust Version: rustc 1.96.0 (ac68faa20 2026-05-25)
+[2026-07-15 14:41:21] [INFO] Cargo Version: cargo 1.96.0 (30a34c682 2026-05-25)
+[2026-07-15 14:41:21] [INFO] No LLM API key detected. Running in AST-only mode.
+[2026-07-15 14:41:21] [INFO] Temporarily modifying .graphifyignore for AST-only fallback...
+[2026-07-15 14:41:21] [INFO] Wrote temporary ignore file to C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0\.graphifyignore
+[2026-07-15 14:41:21] [INFO] Executing: graphify extract . --no-cluster --cargo
+[2026-07-15 14:41:21] [ERROR] Command failed in 0.18s with exit code 1
+[2026-07-15 14:41:21] [ERROR] Error output:
+error: no LLM API key found (3 doc/paper/image file(s) need semantic extraction). Set GEMINI_API_KEY or GOOGLE_API_KEY (gemini), MOONSHOT_API_KEY (kimi), ANTHROPIC_API_KEY (claude), OPENAI_API_KEY (openai), DEEPSEEK_API_KEY (deepseek), or pass --backend. A code-only corpus needs no key.
+[2026-07-15 14:41:21] [INFO] Restored original .graphifyignore
+[2026-07-15 14:41:21] [ERROR] Graphify extraction failed.
+[2026-07-15 14:41:43] [INFO] ============================================================
+[2026-07-15 14:41:43] [INFO] Starting Graphify Knowledge Graph Update (dry-run: False)
+[2026-07-15 14:41:43] [INFO] Workspace root detected: C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0
+[2026-07-15 14:41:43] [INFO] Python Version: 3.13.13
+[2026-07-15 14:41:43] [INFO] Graphify Version: 0.8.43 (command: graphify)
+[2026-07-15 14:41:43] [INFO] Rust Version: rustc 1.96.0 (ac68faa20 2026-05-25)
+[2026-07-15 14:41:43] [INFO] Cargo Version: cargo 1.96.0 (30a34c682 2026-05-25)
+[2026-07-15 14:41:43] [INFO] No LLM API key detected. Running in AST-only mode.
+[2026-07-15 14:41:43] [INFO] Temporarily modifying .graphifyignore for AST-only fallback...
+[2026-07-15 14:41:43] [INFO] Wrote temporary ignore file to C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0\.graphifyignore
+[2026-07-15 14:41:43] [INFO] Executing: graphify extract . --no-cluster --cargo
+[2026-07-15 14:41:44] [ERROR] Command failed in 0.17s with exit code 1
+[2026-07-15 14:41:44] [ERROR] Error output:
+error: no LLM API key found (2 doc/paper/image file(s) need semantic extraction). Set GEMINI_API_KEY or GOOGLE_API_KEY (gemini), MOONSHOT_API_KEY (kimi), ANTHROPIC_API_KEY (claude), OPENAI_API_KEY (openai), DEEPSEEK_API_KEY (deepseek), or pass --backend. A code-only corpus needs no key.
+[2026-07-15 14:41:44] [INFO] Restored original .graphifyignore
+[2026-07-15 14:41:44] [ERROR] Graphify extraction failed.
+[2026-07-15 14:41:58] [INFO] ============================================================
+[2026-07-15 14:41:58] [INFO] Starting Graphify Knowledge Graph Update (dry-run: False)
+[2026-07-15 14:41:58] [INFO] Workspace root detected: C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0
+[2026-07-15 14:41:58] [INFO] Python Version: 3.13.13
+[2026-07-15 14:41:58] [INFO] Graphify Version: 0.8.43 (command: graphify)
+[2026-07-15 14:41:58] [INFO] Rust Version: rustc 1.96.0 (ac68faa20 2026-05-25)
+[2026-07-15 14:41:58] [INFO] Cargo Version: cargo 1.96.0 (30a34c682 2026-05-25)
+[2026-07-15 14:41:58] [INFO] No LLM API key detected. Running in AST-only mode.
+[2026-07-15 14:41:58] [INFO] Temporarily modifying .graphifyignore for AST-only fallback...
+[2026-07-15 14:41:58] [INFO] Wrote temporary ignore file to C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0\.graphifyignore
+[2026-07-15 14:41:58] [INFO] Executing: graphify extract . --no-cluster --cargo
+[2026-07-15 14:41:58] [INFO] Command completed in 0.47s
+[2026-07-15 14:41:58] [INFO] Restored original .graphifyignore
+[2026-07-15 14:41:58] [INFO] Running clustering and generating reports...
+[2026-07-15 14:41:58] [INFO] Executing: graphify cluster-only . --no-label
+[2026-07-15 14:41:59] [INFO] Command completed in 0.50s
+[2026-07-15 14:41:59] [INFO] Output validation succeeded:
+[2026-07-15 14:41:59] [INFO]   - graph.html: Valid HTML structure (20.67 KB)
+[2026-07-15 14:41:59] [INFO]   - graph.json: Valid JSON with 10 nodes and 18 links (9.43 KB)
+[2026-07-15 14:41:59] [INFO]   - GRAPH_REPORT.md: Valid Markdown with headings (2.26 KB)
+[2026-07-15 14:41:59] [INFO] Graphify update completed successfully in 1.36s.
+[2026-07-15 14:41:59] [INFO] ============================================================
+

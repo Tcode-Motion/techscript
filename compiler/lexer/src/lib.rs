@@ -5,8 +5,8 @@
 
 #![allow(dead_code, unused)]
 
-use techscript_syntax::{Token, TokenKind};
 use techscript_errors::{Diagnostic, DiagnosticReporter};
+use techscript_syntax::{Token, TokenKind};
 
 /// Lexical analyzer that parses source text into a token stream.
 pub struct Lexer<'a> {
@@ -21,15 +21,16 @@ impl<'a> Lexer<'a> {
     }
 
     /// Tokenizes the source string, logging failures to the reporter.
-    pub fn lex(&mut self, _reporter: &mut DiagnosticReporter) -> Result<Vec<Token>, Vec<Diagnostic>> {
+    pub fn lex(
+        &mut self,
+        _reporter: &mut DiagnosticReporter,
+    ) -> Result<Vec<Token>, Vec<Diagnostic>> {
         // Skeletal implementation: returns EOF token
-        let tokens = vec![
-            Token::new(
-                TokenKind::Eof,
-                "".to_string(),
-                techscript_common::Span::new(self.source.len(), self.source.len()),
-            )
-        ];
+        let tokens = vec![Token::new(
+            TokenKind::Eof,
+            "".to_string(),
+            techscript_common::Span::new(self.source.len(), self.source.len()),
+        )];
         Ok(tokens)
     }
 }

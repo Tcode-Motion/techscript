@@ -3,7 +3,7 @@
 //! Handles name resolution, scope checking, type checking, and symbol table generation.
 //! Resolves shadowing and issues warning notes for deprecated keywords.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use techscript_ast::Program;
 use techscript_errors::{Diagnostic, DiagnosticReporter};
@@ -48,7 +48,11 @@ impl SemanticAnalyzer {
     }
 
     /// Performs scope and keyword check passes, returning the CheckedProgram.
-    pub fn analyze(&mut self, program: Program, _reporter: &mut DiagnosticReporter) -> Result<CheckedProgram, Vec<Diagnostic>> {
+    pub fn analyze(
+        &mut self,
+        program: Program,
+        _reporter: &mut DiagnosticReporter,
+    ) -> Result<CheckedProgram, Vec<Diagnostic>> {
         let checked = CheckedProgram {
             program,
             symbols: self.symbols.clone(),
@@ -58,7 +62,10 @@ impl SemanticAnalyzer {
 }
 
 /// Helper function to perform semantic checks.
-pub fn analyze(program: Program, reporter: &mut DiagnosticReporter) -> Result<CheckedProgram, Vec<Diagnostic>> {
+pub fn analyze(
+    program: Program,
+    reporter: &mut DiagnosticReporter,
+) -> Result<CheckedProgram, Vec<Diagnostic>> {
     let mut analyzer = SemanticAnalyzer::new();
     analyzer.analyze(program, reporter)
 }

@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused)]
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use techscript_semantic::CheckedProgram;
 

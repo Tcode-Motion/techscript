@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused)]
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// A package manifest description.
 #[derive(Debug, Clone, Serialize, Deserialize)]

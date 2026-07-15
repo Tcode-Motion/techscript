@@ -5,10 +5,10 @@
 
 #![allow(dead_code, unused)]
 
-use techscript_syntax::Token;
-use techscript_ast::{Program, NodeId};
+use techscript_ast::{NodeId, Program};
 use techscript_common::Span;
 use techscript_errors::{Diagnostic, DiagnosticReporter};
+use techscript_syntax::Token;
 
 /// Parse engine containing token references and state details.
 pub struct Parser<'a> {
@@ -23,7 +23,10 @@ impl<'a> Parser<'a> {
     }
 
     /// Evaluates structural bounds and parses program nodes.
-    pub fn parse(&mut self, _reporter: &mut DiagnosticReporter) -> Result<Program, Vec<Diagnostic>> {
+    pub fn parse(
+        &mut self,
+        _reporter: &mut DiagnosticReporter,
+    ) -> Result<Program, Vec<Diagnostic>> {
         // Skeletal implementation: returns empty program
         let program = Program {
             id: NodeId(0),
@@ -35,7 +38,10 @@ impl<'a> Parser<'a> {
 }
 
 /// Helper function to parse a token list.
-pub fn parse(tokens: &[Token], reporter: &mut DiagnosticReporter) -> Result<Program, Vec<Diagnostic>> {
+pub fn parse(
+    tokens: &[Token],
+    reporter: &mut DiagnosticReporter,
+) -> Result<Program, Vec<Diagnostic>> {
     let mut parser = Parser::new(tokens);
     parser.parse(reporter)
 }

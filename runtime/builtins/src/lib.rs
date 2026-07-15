@@ -4,7 +4,7 @@
 //! Interfaces native Rust operations with interpreter scopes.
 
 use std::collections::HashMap;
-use techscript_interpreter::{Value, RuntimeError};
+use techscript_interpreter::{RuntimeError, Value};
 
 /// Type definition for native built-in functions.
 pub type NativeCallback = fn(args: &[Value]) -> Result<Value, RuntimeError>;
@@ -38,7 +38,10 @@ impl BuiltinRegistry {
     pub fn call(&self, name: &str, args: &[Value]) -> Result<Value, RuntimeError> {
         match self.functions.get(name) {
             Some(callback) => callback(args),
-            None => Err(RuntimeError::MemberNotFound(format!("Built-in function '{}' not found", name))),
+            None => Err(RuntimeError::MemberNotFound(format!(
+                "Built-in function '{}' not found",
+                name
+            ))),
         }
     }
 
@@ -52,12 +55,16 @@ impl BuiltinRegistry {
         });
         self.register("len", |args| {
             if args.len() != 1 {
-                return Err(RuntimeError::MemberNotFound("len requires 1 argument".to_string()));
+                return Err(RuntimeError::MemberNotFound(
+                    "len requires 1 argument".to_string(),
+                ));
             }
             match &args[0] {
                 Value::Str(s) => Ok(Value::Int(s.len() as i64)),
                 Value::List(l) => Ok(Value::Int(l.len() as i64)),
-                _ => Err(RuntimeError::TypeMismatch("len expects Str or List".to_string())),
+                _ => Err(RuntimeError::TypeMismatch(
+                    "len expects Str or List".to_string(),
+                )),
             }
         });
     }

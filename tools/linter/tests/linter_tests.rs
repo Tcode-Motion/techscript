@@ -1,8 +1,8 @@
-use techscript_ast::{Program, NodeId};
+use techscript_ast::{NodeId, Program};
 use techscript_common::Span;
 use techscript_errors::Diagnostic;
+use techscript_linter::{LintRule, Linter};
 use techscript_semantic::{CheckedProgram, SymbolTable};
-use techscript_linter::{Linter, LintRule};
 
 struct DummyRule;
 

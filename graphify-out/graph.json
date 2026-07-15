@@ -4,36 +4,14 @@
   "graph": {},
   "nodes": [
     {
-      "label": "cli_example.rs",
-      "file_type": "code",
-      "source_file": "cli/examples/cli_example.rs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "examples_cli_example",
-      "community": 19,
-      "community_name": "Community 19",
-      "norm_label": "cli_example.rs"
-    },
-    {
-      "label": "main()",
-      "file_type": "code",
-      "source_file": "cli/examples/cli_example.rs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "examples_cli_example_main",
-      "community": 19,
-      "community_name": "Community 19",
-      "norm_label": "main()"
-    },
-    {
       "label": "lib.rs",
       "file_type": "code",
       "source_file": "cli/src/lib.rs",
       "source_location": "L1",
       "_origin": "ast",
       "id": "cli_src_lib_rs_src_lib",
-      "community": 18,
-      "community_name": "Community 18",
+      "community": 14,
+      "community_name": "Community 14",
       "norm_label": "lib.rs"
     },
     {
@@ -43,8 +21,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "src_lib_cli",
-      "community": 18,
-      "community_name": "Community 18",
+      "community": 14,
+      "community_name": "Community 14",
       "norm_label": "cli"
     },
     {
@@ -54,8 +32,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "commands",
-      "community": 18,
-      "community_name": "Community 18",
+      "community": 14,
+      "community_name": "Community 14",
       "norm_label": "commands"
     },
     {
@@ -65,31 +43,9 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "src_lib_commands",
-      "community": 18,
-      "community_name": "Community 18",
+      "community": 14,
+      "community_name": "Community 14",
       "norm_label": "commands"
-    },
-    {
-      "label": "main.rs",
-      "file_type": "code",
-      "source_file": "cli/src/main.rs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "src_main",
-      "community": 23,
-      "community_name": "Community 23",
-      "norm_label": "main.rs"
-    },
-    {
-      "label": "main()",
-      "file_type": "code",
-      "source_file": "cli/src/main.rs",
-      "source_location": "L9",
-      "_origin": "ast",
-      "id": "src_main_main",
-      "community": 23,
-      "community_name": "Community 23",
-      "norm_label": "main()"
     },
     {
       "label": "cli_tests.rs",
@@ -98,8 +54,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_cli_tests",
-      "community": 26,
-      "community_name": "Community 26",
+      "community": 17,
+      "community_name": "Community 17",
       "norm_label": "cli_tests.rs"
     },
     {
@@ -109,8 +65,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "tests_cli_tests_test_cli_parsing",
-      "community": 26,
-      "community_name": "Community 26",
+      "community": 17,
+      "community_name": "Community 17",
       "norm_label": "test_cli_parsing()"
     },
     {
@@ -372,7 +328,7 @@
       "source_file": "compiler/ast/src/lib.rs",
       "source_location": "L118",
       "_origin": "ast",
-      "id": "compiler_ast_src_lib_rs_box",
+      "id": "box",
       "community": 0,
       "community_name": "Community 0",
       "norm_label": "box"
@@ -747,8 +703,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_ast_tests",
-      "community": 24,
-      "community_name": "Community 24",
+      "community": 16,
+      "community_name": "Community 16",
       "norm_label": "ast_tests.rs"
     },
     {
@@ -758,8 +714,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "tests_ast_tests_test_ast_program",
-      "community": 24,
-      "community_name": "Community 24",
+      "community": 16,
+      "community_name": "Community 16",
       "norm_label": "test_ast_program()"
     },
     {
@@ -769,8 +725,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "compiler_common_src_lib_rs_src_lib",
-      "community": 15,
-      "community_name": "Community 15",
+      "community": 12,
+      "community_name": "Community 12",
       "norm_label": "lib.rs"
     },
     {
@@ -780,8 +736,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_lib_span",
-      "community": 15,
-      "community_name": "Community 15",
+      "community": 12,
+      "community_name": "Community 12",
       "norm_label": "span"
     },
     {
@@ -791,8 +747,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "src_lib_span_new",
-      "community": 15,
-      "community_name": "Community 15",
+      "community": 12,
+      "community_name": "Community 12",
       "norm_label": ".new()"
     },
     {
@@ -802,8 +758,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "compiler_common_src_lib_rs_self",
-      "community": 15,
-      "community_name": "Community 15",
+      "community": 12,
+      "community_name": "Community 12",
       "norm_label": "self"
     },
     {
@@ -813,8 +769,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "src_lib_nodeid",
-      "community": 15,
-      "community_name": "Community 15",
+      "community": 12,
+      "community_name": "Community 12",
       "norm_label": "nodeid"
     },
     {
@@ -824,8 +780,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "src_lib_ident",
-      "community": 15,
-      "community_name": "Community 15",
+      "community": 12,
+      "community_name": "Community 12",
       "norm_label": "ident"
     },
     {
@@ -835,8 +791,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "compiler_common_src_lib_rs_string",
-      "community": 15,
-      "community_name": "Community 15",
+      "community": 12,
+      "community_name": "Community 12",
       "norm_label": "string"
     },
     {
@@ -846,8 +802,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "src_lib_ident_new",
-      "community": 15,
-      "community_name": "Community 15",
+      "community": 12,
+      "community_name": "Community 12",
       "norm_label": ".new()"
     },
     {
@@ -857,8 +813,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_common_tests",
-      "community": 27,
-      "community_name": "Community 27",
+      "community": 18,
+      "community_name": "Community 18",
       "norm_label": "common_tests.rs"
     },
     {
@@ -868,8 +824,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "tests_common_tests_test_common_types",
-      "community": 27,
-      "community_name": "Community 27",
+      "community": 18,
+      "community_name": "Community 18",
       "norm_label": "test_common_types()"
     },
     {
@@ -879,8 +835,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "compiler_errors_src_lib_rs_src_lib",
-      "community": 1,
-      "community_name": "Community 1",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": "lib.rs"
     },
     {
@@ -890,8 +846,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_lib_diagnosticlevel",
-      "community": 1,
-      "community_name": "Community 1",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": "diagnosticlevel"
     },
     {
@@ -901,8 +857,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "src_lib_errorcode",
-      "community": 1,
-      "community_name": "Community 1",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": "errorcode"
     },
     {
@@ -912,8 +868,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "src_lib_diagnostic",
-      "community": 1,
-      "community_name": "Community 1",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": "diagnostic"
     },
     {
@@ -923,8 +879,8 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "compiler_errors_src_lib_rs_string",
-      "community": 1,
-      "community_name": "Community 1",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": "string"
     },
     {
@@ -934,8 +890,8 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "compiler_errors_src_lib_rs_span",
-      "community": 1,
-      "community_name": "Community 1",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": "span"
     },
     {
@@ -945,8 +901,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "compiler_errors_src_lib_rs_option",
-      "community": 1,
-      "community_name": "Community 1",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": "option"
     },
     {
@@ -956,8 +912,8 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "src_lib_diagnostic_new",
-      "community": 1,
-      "community_name": "Community 1",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": ".new()"
     },
     {
@@ -967,8 +923,8 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "compiler_errors_src_lib_rs_self",
-      "community": 1,
-      "community_name": "Community 1",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": "self"
     },
     {
@@ -978,8 +934,8 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "src_lib_diagnostic_with_help",
-      "community": 1,
-      "community_name": "Community 1",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": ".with_help()"
     },
     {
@@ -989,8 +945,8 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "src_lib_diagnosticreporter",
-      "community": 1,
-      "community_name": "Community 1",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": "diagnosticreporter"
     },
     {
@@ -1000,8 +956,8 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "compiler_errors_src_lib_rs_vec",
-      "community": 1,
-      "community_name": "Community 1",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": "vec"
     },
     {
@@ -1011,63 +967,63 @@
       "source_location": "L95",
       "_origin": "ast",
       "id": "src_lib_diagnosticreporter_new",
-      "community": 1,
-      "community_name": "Community 1",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": ".new()"
     },
     {
       "label": ".report()",
       "file_type": "code",
       "source_file": "compiler/errors/src/lib.rs",
-      "source_location": "L99",
+      "source_location": "L101",
       "_origin": "ast",
       "id": "src_lib_diagnosticreporter_report",
-      "community": 1,
-      "community_name": "Community 1",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": ".report()"
     },
     {
       "label": ".has_errors()",
       "file_type": "code",
       "source_file": "compiler/errors/src/lib.rs",
-      "source_location": "L103",
+      "source_location": "L105",
       "_origin": "ast",
       "id": "src_lib_diagnosticreporter_has_errors",
-      "community": 1,
-      "community_name": "Community 1",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": ".has_errors()"
     },
     {
       "label": ".clear()",
       "file_type": "code",
       "source_file": "compiler/errors/src/lib.rs",
-      "source_location": "L107",
+      "source_location": "L111",
       "_origin": "ast",
       "id": "src_lib_diagnosticreporter_clear",
-      "community": 1,
-      "community_name": "Community 1",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": ".clear()"
     },
     {
       "label": ".get_diagnostics()",
       "file_type": "code",
       "source_file": "compiler/errors/src/lib.rs",
-      "source_location": "L111",
+      "source_location": "L115",
       "_origin": "ast",
       "id": "src_lib_diagnosticreporter_get_diagnostics",
-      "community": 1,
-      "community_name": "Community 1",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": ".get_diagnostics()"
     },
     {
       "label": ".print_diagnostics()",
       "file_type": "code",
       "source_file": "compiler/errors/src/lib.rs",
-      "source_location": "L116",
+      "source_location": "L120",
       "_origin": "ast",
       "id": "src_lib_diagnosticreporter_print_diagnostics",
-      "community": 1,
-      "community_name": "Community 1",
+      "community": 2,
+      "community_name": "Community 2",
       "norm_label": ".print_diagnostics()"
     },
     {
@@ -1077,8 +1033,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_errors_tests",
-      "community": 28,
-      "community_name": "Community 28",
+      "community": 19,
+      "community_name": "Community 19",
       "norm_label": "errors_tests.rs"
     },
     {
@@ -1088,31 +1044,9 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "tests_errors_tests_test_errors_reporter",
-      "community": 28,
-      "community_name": "Community 28",
+      "community": 19,
+      "community_name": "Community 19",
       "norm_label": "test_errors_reporter()"
-    },
-    {
-      "label": "lexer_example.rs",
-      "file_type": "code",
-      "source_file": "compiler/lexer/examples/lexer_example.rs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "examples_lexer_example",
-      "community": 21,
-      "community_name": "Community 21",
-      "norm_label": "lexer_example.rs"
-    },
-    {
-      "label": "main()",
-      "file_type": "code",
-      "source_file": "compiler/lexer/examples/lexer_example.rs",
-      "source_location": "L4",
-      "_origin": "ast",
-      "id": "examples_lexer_example_main",
-      "community": 21,
-      "community_name": "Community 21",
-      "norm_label": "main()"
     },
     {
       "label": "lib.rs",
@@ -1239,56 +1173,12 @@
       "label": "lex()",
       "file_type": "code",
       "source_file": "compiler/lexer/src/lib.rs",
-      "source_location": "L38",
+      "source_location": "L39",
       "_origin": "ast",
       "id": "src_lib_lex",
       "community": 8,
       "community_name": "Community 8",
       "norm_label": "lex()"
-    },
-    {
-      "label": "lexer_tests.rs",
-      "file_type": "code",
-      "source_file": "compiler/lexer/tests/lexer_tests.rs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "tests_lexer_tests",
-      "community": 32,
-      "community_name": "Community 32",
-      "norm_label": "lexer_tests.rs"
-    },
-    {
-      "label": "test_lexer_eof()",
-      "file_type": "code",
-      "source_file": "compiler/lexer/tests/lexer_tests.rs",
-      "source_location": "L6",
-      "_origin": "ast",
-      "id": "tests_lexer_tests_test_lexer_eof",
-      "community": 32,
-      "community_name": "Community 32",
-      "norm_label": "test_lexer_eof()"
-    },
-    {
-      "label": "parser_example.rs",
-      "file_type": "code",
-      "source_file": "compiler/parser/examples/parser_example.rs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "examples_parser_example",
-      "community": 22,
-      "community_name": "Community 22",
-      "norm_label": "parser_example.rs"
-    },
-    {
-      "label": "main()",
-      "file_type": "code",
-      "source_file": "compiler/parser/examples/parser_example.rs",
-      "source_location": "L5",
-      "_origin": "ast",
-      "id": "examples_parser_example_main",
-      "community": 22,
-      "community_name": "Community 22",
-      "norm_label": "main()"
     },
     {
       "label": "lib.rs",
@@ -1426,34 +1316,12 @@
       "label": "parse()",
       "file_type": "code",
       "source_file": "compiler/parser/src/lib.rs",
-      "source_location": "L38",
+      "source_location": "L41",
       "_origin": "ast",
       "id": "src_lib_parse",
       "community": 5,
       "community_name": "Community 5",
       "norm_label": "parse()"
-    },
-    {
-      "label": "parser_tests.rs",
-      "file_type": "code",
-      "source_file": "compiler/parser/tests/parser_tests.rs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "tests_parser_tests",
-      "community": 35,
-      "community_name": "Community 35",
-      "norm_label": "parser_tests.rs"
-    },
-    {
-      "label": "test_parser_empty()",
-      "file_type": "code",
-      "source_file": "compiler/parser/tests/parser_tests.rs",
-      "source_location": "L5",
-      "_origin": "ast",
-      "id": "tests_parser_tests_test_parser_empty",
-      "community": 35,
-      "community_name": "Community 35",
-      "norm_label": "test_parser_empty()"
     },
     {
       "label": "lib.rs",
@@ -1462,8 +1330,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "compiler_semantic_src_lib_rs_src_lib",
-      "community": 2,
-      "community_name": "Community 2",
+      "community": 3,
+      "community_name": "Community 3",
       "norm_label": "lib.rs"
     },
     {
@@ -1473,8 +1341,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_lib_symbol",
-      "community": 2,
-      "community_name": "Community 2",
+      "community": 3,
+      "community_name": "Community 3",
       "norm_label": "symbol"
     },
     {
@@ -1484,8 +1352,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "compiler_semantic_src_lib_rs_string",
-      "community": 2,
-      "community_name": "Community 2",
+      "community": 3,
+      "community_name": "Community 3",
       "norm_label": "string"
     },
     {
@@ -1495,8 +1363,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "src_lib_scope",
-      "community": 2,
-      "community_name": "Community 2",
+      "community": 3,
+      "community_name": "Community 3",
       "norm_label": "scope"
     },
     {
@@ -1506,8 +1374,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "compiler_semantic_src_lib_rs_hashmap",
-      "community": 2,
-      "community_name": "Community 2",
+      "community": 3,
+      "community_name": "Community 3",
       "norm_label": "hashmap"
     },
     {
@@ -1517,8 +1385,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "src_lib_symboltable",
-      "community": 2,
-      "community_name": "Community 2",
+      "community": 3,
+      "community_name": "Community 3",
       "norm_label": "symboltable"
     },
     {
@@ -1528,8 +1396,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "compiler_semantic_src_lib_rs_vec",
-      "community": 2,
-      "community_name": "Community 2",
+      "community": 3,
+      "community_name": "Community 3",
       "norm_label": "vec"
     },
     {
@@ -1539,8 +1407,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "src_lib_checkedprogram",
-      "community": 2,
-      "community_name": "Community 2",
+      "community": 3,
+      "community_name": "Community 3",
       "norm_label": "checkedprogram"
     },
     {
@@ -1550,8 +1418,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "compiler_semantic_src_lib_rs_program",
-      "community": 2,
-      "community_name": "Community 2",
+      "community": 3,
+      "community_name": "Community 3",
       "norm_label": "program"
     },
     {
@@ -1561,8 +1429,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "src_lib_semanticanalyzer",
-      "community": 2,
-      "community_name": "Community 2",
+      "community": 3,
+      "community_name": "Community 3",
       "norm_label": "semanticanalyzer"
     },
     {
@@ -1572,8 +1440,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "src_lib_semanticanalyzer_new",
-      "community": 2,
-      "community_name": "Community 2",
+      "community": 3,
+      "community_name": "Community 3",
       "norm_label": ".new()"
     },
     {
@@ -1583,8 +1451,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "compiler_semantic_src_lib_rs_self",
-      "community": 2,
-      "community_name": "Community 2",
+      "community": 3,
+      "community_name": "Community 3",
       "norm_label": "self"
     },
     {
@@ -1594,8 +1462,8 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "src_lib_semanticanalyzer_analyze",
-      "community": 2,
-      "community_name": "Community 2",
+      "community": 3,
+      "community_name": "Community 3",
       "norm_label": ".analyze()"
     },
     {
@@ -1605,8 +1473,8 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "compiler_semantic_src_lib_rs_diagnosticreporter",
-      "community": 2,
-      "community_name": "Community 2",
+      "community": 3,
+      "community_name": "Community 3",
       "norm_label": "diagnosticreporter"
     },
     {
@@ -1616,8 +1484,8 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "compiler_semantic_src_lib_rs_result",
-      "community": 2,
-      "community_name": "Community 2",
+      "community": 3,
+      "community_name": "Community 3",
       "norm_label": "result"
     },
     {
@@ -1627,19 +1495,19 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "compiler_semantic_src_lib_rs_diagnostic",
-      "community": 2,
-      "community_name": "Community 2",
+      "community": 3,
+      "community_name": "Community 3",
       "norm_label": "diagnostic"
     },
     {
       "label": "analyze()",
       "file_type": "code",
       "source_file": "compiler/semantic/src/lib.rs",
-      "source_location": "L61",
+      "source_location": "L65",
       "_origin": "ast",
       "id": "src_lib_analyze",
-      "community": 2,
-      "community_name": "Community 2",
+      "community": 3,
+      "community_name": "Community 3",
       "norm_label": "analyze()"
     },
     {
@@ -1649,8 +1517,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_semantic_tests",
-      "community": 36,
-      "community_name": "Community 36",
+      "community": 22,
+      "community_name": "Community 22",
       "norm_label": "semantic_tests.rs"
     },
     {
@@ -1660,8 +1528,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "tests_semantic_tests_test_semantic_empty",
-      "community": 36,
-      "community_name": "Community 36",
+      "community": 22,
+      "community_name": "Community 22",
       "norm_label": "test_semantic_empty()"
     },
     {
@@ -1671,8 +1539,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "compiler_syntax_src_lib_rs_src_lib",
-      "community": 16,
-      "community_name": "Community 16",
+      "community": 13,
+      "community_name": "Community 13",
       "norm_label": "lib.rs"
     },
     {
@@ -1682,8 +1550,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_lib_tokenkind",
-      "community": 16,
-      "community_name": "Community 16",
+      "community": 13,
+      "community_name": "Community 13",
       "norm_label": "tokenkind"
     },
     {
@@ -1693,8 +1561,8 @@
       "source_location": "L119",
       "_origin": "ast",
       "id": "src_lib_token",
-      "community": 16,
-      "community_name": "Community 16",
+      "community": 13,
+      "community_name": "Community 13",
       "norm_label": "token"
     },
     {
@@ -1704,8 +1572,8 @@
       "source_location": "L121",
       "_origin": "ast",
       "id": "compiler_syntax_src_lib_rs_string",
-      "community": 16,
-      "community_name": "Community 16",
+      "community": 13,
+      "community_name": "Community 13",
       "norm_label": "string"
     },
     {
@@ -1715,8 +1583,8 @@
       "source_location": "L122",
       "_origin": "ast",
       "id": "compiler_syntax_src_lib_rs_span",
-      "community": 16,
-      "community_name": "Community 16",
+      "community": 13,
+      "community_name": "Community 13",
       "norm_label": "span"
     },
     {
@@ -1726,8 +1594,8 @@
       "source_location": "L126",
       "_origin": "ast",
       "id": "src_lib_token_new",
-      "community": 16,
-      "community_name": "Community 16",
+      "community": 13,
+      "community_name": "Community 13",
       "norm_label": ".new()"
     },
     {
@@ -1737,8 +1605,8 @@
       "source_location": "L126",
       "_origin": "ast",
       "id": "compiler_syntax_src_lib_rs_self",
-      "community": 16,
-      "community_name": "Community 16",
+      "community": 13,
+      "community_name": "Community 13",
       "norm_label": "self"
     },
     {
@@ -1748,8 +1616,8 @@
       "source_location": "L133",
       "_origin": "ast",
       "id": "src_lib_precedence",
-      "community": 16,
-      "community_name": "Community 16",
+      "community": 13,
+      "community_name": "Community 13",
       "norm_label": "precedence"
     },
     {
@@ -1759,8 +1627,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_syntax_tests",
-      "community": 38,
-      "community_name": "Community 38",
+      "community": 23,
+      "community_name": "Community 23",
       "norm_label": "syntax_tests.rs"
     },
     {
@@ -1770,8 +1638,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "tests_syntax_tests_test_syntax_tokens",
-      "community": 38,
-      "community_name": "Community 38",
+      "community": 23,
+      "community_name": "Community 23",
       "norm_label": "test_syntax_tokens()"
     },
     {
@@ -1781,8 +1649,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "runtime_builtins_src_lib_rs_src_lib",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 1,
+      "community_name": "Community 1",
       "norm_label": "lib.rs"
     },
     {
@@ -1792,8 +1660,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_lib_builtinregistry",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 1,
+      "community_name": "Community 1",
       "norm_label": "builtinregistry"
     },
     {
@@ -1803,8 +1671,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "runtime_builtins_src_lib_rs_hashmap",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 1,
+      "community_name": "Community 1",
       "norm_label": "hashmap"
     },
     {
@@ -1814,8 +1682,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "runtime_builtins_src_lib_rs_string",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 1,
+      "community_name": "Community 1",
       "norm_label": "string"
     },
     {
@@ -1825,8 +1693,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "nativecallback",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 1,
+      "community_name": "Community 1",
       "norm_label": "nativecallback"
     },
     {
@@ -1836,8 +1704,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "src_lib_builtinregistry_new",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 1,
+      "community_name": "Community 1",
       "norm_label": ".new()"
     },
     {
@@ -1847,8 +1715,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "runtime_builtins_src_lib_rs_self",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 1,
+      "community_name": "Community 1",
       "norm_label": "self"
     },
     {
@@ -1858,8 +1726,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "src_lib_builtinregistry_register",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 1,
+      "community_name": "Community 1",
       "norm_label": ".register()"
     },
     {
@@ -1869,8 +1737,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "src_lib_builtinregistry_has_function",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 1,
+      "community_name": "Community 1",
       "norm_label": ".has_function()"
     },
     {
@@ -1880,8 +1748,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "src_lib_builtinregistry_call",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 1,
+      "community_name": "Community 1",
       "norm_label": ".call()"
     },
     {
@@ -1890,9 +1758,9 @@
       "source_file": "runtime/builtins/src/lib.rs",
       "source_location": "L38",
       "_origin": "ast",
-      "id": "runtime_builtins_src_lib_rs_value",
-      "community": 4,
-      "community_name": "Community 4",
+      "id": "value",
+      "community": 1,
+      "community_name": "Community 1",
       "norm_label": "value"
     },
     {
@@ -1902,8 +1770,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "runtime_builtins_src_lib_rs_result",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 1,
+      "community_name": "Community 1",
       "norm_label": "result"
     },
     {
@@ -1913,19 +1781,19 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "runtimeerror",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 1,
+      "community_name": "Community 1",
       "norm_label": "runtimeerror"
     },
     {
       "label": ".register_defaults()",
       "file_type": "code",
       "source_file": "runtime/builtins/src/lib.rs",
-      "source_location": "L45",
+      "source_location": "L48",
       "_origin": "ast",
       "id": "src_lib_builtinregistry_register_defaults",
-      "community": 4,
-      "community_name": "Community 4",
+      "community": 1,
+      "community_name": "Community 1",
       "norm_label": ".register_defaults()"
     },
     {
@@ -1935,8 +1803,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_builtins_tests",
-      "community": 25,
-      "community_name": "Community 25",
+      "community": 1,
+      "community_name": "Community 1",
       "norm_label": "builtins_tests.rs"
     },
     {
@@ -1946,97 +1814,9 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "tests_builtins_tests_test_builtins_len",
-      "community": 25,
-      "community_name": "Community 25",
+      "community": 1,
+      "community_name": "Community 1",
       "norm_label": "test_builtins_len()"
-    },
-    {
-      "label": "lib.rs",
-      "file_type": "code",
-      "source_file": "runtime/gc/src/lib.rs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "runtime_gc_src_lib_rs_src_lib",
-      "community": 17,
-      "community_name": "Community 17",
-      "norm_label": "lib.rs"
-    },
-    {
-      "label": "GarbageCollector",
-      "file_type": "code",
-      "source_file": "runtime/gc/src/lib.rs",
-      "source_location": "L9",
-      "_origin": "ast",
-      "id": "src_lib_garbagecollector",
-      "community": 17,
-      "community_name": "Community 17",
-      "norm_label": "garbagecollector"
-    },
-    {
-      "label": "DummyGC",
-      "file_type": "code",
-      "source_file": "runtime/gc/src/lib.rs",
-      "source_location": "L18",
-      "_origin": "ast",
-      "id": "src_lib_dummygc",
-      "community": 17,
-      "community_name": "Community 17",
-      "norm_label": "dummygc"
-    },
-    {
-      "label": ".new()",
-      "file_type": "code",
-      "source_file": "runtime/gc/src/lib.rs",
-      "source_location": "L23",
-      "_origin": "ast",
-      "id": "src_lib_dummygc_new",
-      "community": 17,
-      "community_name": "Community 17",
-      "norm_label": ".new()"
-    },
-    {
-      "label": "Self",
-      "file_type": "code",
-      "source_file": "runtime/gc/src/lib.rs",
-      "source_location": "L23",
-      "_origin": "ast",
-      "id": "runtime_gc_src_lib_rs_self",
-      "community": 17,
-      "community_name": "Community 17",
-      "norm_label": "self"
-    },
-    {
-      "label": ".allocate()",
-      "file_type": "code",
-      "source_file": "runtime/gc/src/lib.rs",
-      "source_location": "L29",
-      "_origin": "ast",
-      "id": "src_lib_dummygc_allocate",
-      "community": 17,
-      "community_name": "Community 17",
-      "norm_label": ".allocate()"
-    },
-    {
-      "label": "Value",
-      "file_type": "code",
-      "source_file": "runtime/gc/src/lib.rs",
-      "source_location": "L29",
-      "_origin": "ast",
-      "id": "runtime_gc_src_lib_rs_value",
-      "community": 17,
-      "community_name": "Community 17",
-      "norm_label": "value"
-    },
-    {
-      "label": ".collect()",
-      "file_type": "code",
-      "source_file": "runtime/gc/src/lib.rs",
-      "source_location": "L34",
-      "_origin": "ast",
-      "id": "src_lib_dummygc_collect",
-      "community": 17,
-      "community_name": "Community 17",
-      "norm_label": ".collect()"
     },
     {
       "label": "gc_tests.rs",
@@ -2045,8 +1825,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_gc_tests",
-      "community": 30,
-      "community_name": "Community 30",
+      "community": 1,
+      "community_name": "Community 1",
       "norm_label": "gc_tests.rs"
     },
     {
@@ -2056,8 +1836,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "tests_gc_tests_test_gc_allocator",
-      "community": 30,
-      "community_name": "Community 30",
+      "community": 1,
+      "community_name": "Community 1",
       "norm_label": "test_gc_allocator()"
     },
     {
@@ -2067,8 +1847,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "examples_interpreter_example",
-      "community": 20,
-      "community_name": "Community 20",
+      "community": 15,
+      "community_name": "Community 15",
       "norm_label": "interpreter_example.rs"
     },
     {
@@ -2078,8 +1858,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "examples_interpreter_example_main",
-      "community": 20,
-      "community_name": "Community 20",
+      "community": 15,
+      "community_name": "Community 15",
       "norm_label": "main()"
     },
     {
@@ -2232,8 +2012,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_interpreter_tests",
-      "community": 31,
-      "community_name": "Community 31",
+      "community": 20,
+      "community_name": "Community 20",
       "norm_label": "interpreter_tests.rs"
     },
     {
@@ -2243,141 +2023,9 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "tests_interpreter_tests_test_interpreter_empty",
-      "community": 31,
-      "community_name": "Community 31",
+      "community": 20,
+      "community_name": "Community 20",
       "norm_label": "test_interpreter_empty()"
-    },
-    {
-      "label": "lib.rs",
-      "file_type": "code",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "runtime_vm_src_lib_rs_src_lib",
-      "community": 9,
-      "community_name": "Community 9",
-      "norm_label": "lib.rs"
-    },
-    {
-      "label": "OpCode",
-      "file_type": "code",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L12",
-      "_origin": "ast",
-      "id": "src_lib_opcode",
-      "community": 9,
-      "community_name": "Community 9",
-      "norm_label": "opcode"
-    },
-    {
-      "label": "Instruction",
-      "file_type": "code",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L24",
-      "_origin": "ast",
-      "id": "src_lib_instruction",
-      "community": 9,
-      "community_name": "Community 9",
-      "norm_label": "instruction"
-    },
-    {
-      "label": "Option",
-      "file_type": "code",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L26",
-      "_origin": "ast",
-      "id": "runtime_vm_src_lib_rs_option",
-      "community": 9,
-      "community_name": "Community 9",
-      "norm_label": "option"
-    },
-    {
-      "label": "VM",
-      "file_type": "code",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L31",
-      "_origin": "ast",
-      "id": "src_lib_vm",
-      "community": 9,
-      "community_name": "Community 9",
-      "norm_label": "vm"
-    },
-    {
-      "label": "Vec",
-      "file_type": "code",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L32",
-      "_origin": "ast",
-      "id": "runtime_vm_src_lib_rs_vec",
-      "community": 9,
-      "community_name": "Community 9",
-      "norm_label": "vec"
-    },
-    {
-      "label": "Value",
-      "file_type": "code",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L32",
-      "_origin": "ast",
-      "id": "runtime_vm_src_lib_rs_value",
-      "community": 9,
-      "community_name": "Community 9",
-      "norm_label": "value"
-    },
-    {
-      "label": ".new()",
-      "file_type": "code",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L37",
-      "_origin": "ast",
-      "id": "src_lib_vm_new",
-      "community": 9,
-      "community_name": "Community 9",
-      "norm_label": ".new()"
-    },
-    {
-      "label": "Self",
-      "file_type": "code",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L37",
-      "_origin": "ast",
-      "id": "runtime_vm_src_lib_rs_self",
-      "community": 9,
-      "community_name": "Community 9",
-      "norm_label": "self"
-    },
-    {
-      "label": ".execute()",
-      "file_type": "code",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L45",
-      "_origin": "ast",
-      "id": "src_lib_vm_execute",
-      "community": 9,
-      "community_name": "Community 9",
-      "norm_label": ".execute()"
-    },
-    {
-      "label": "Result",
-      "file_type": "code",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L45",
-      "_origin": "ast",
-      "id": "runtime_vm_src_lib_rs_result",
-      "community": 9,
-      "community_name": "Community 9",
-      "norm_label": "result"
-    },
-    {
-      "label": "String",
-      "file_type": "code",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L45",
-      "_origin": "ast",
-      "id": "runtime_vm_src_lib_rs_string",
-      "community": 9,
-      "community_name": "Community 9",
-      "norm_label": "string"
     },
     {
       "label": "vm_tests.rs",
@@ -2386,8 +2034,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_vm_tests",
-      "community": 39,
-      "community_name": "Community 39",
+      "community": 1,
+      "community_name": "Community 1",
       "norm_label": "vm_tests.rs"
     },
     {
@@ -2397,8 +2045,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "tests_vm_tests_test_vm_execution",
-      "community": 39,
-      "community_name": "Community 39",
+      "community": 1,
+      "community_name": "Community 1",
       "norm_label": "test_vm_execution()"
     },
     {
@@ -2551,8 +2199,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_stdlib_tests",
-      "community": 37,
-      "community_name": "Community 37",
+      "community": 1,
+      "community_name": "Community 1",
       "norm_label": "stdlib_tests.rs"
     },
     {
@@ -2562,251 +2210,9 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "tests_stdlib_tests_test_stdlib_math_abs",
-      "community": 37,
-      "community_name": "Community 37",
+      "community": 1,
+      "community_name": "Community 1",
       "norm_label": "test_stdlib_math_abs()"
-    },
-    {
-      "label": "lib.rs",
-      "file_type": "code",
-      "source_file": "tools/formatter/src/lib.rs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "tools_formatter_src_lib_rs_src_lib",
-      "community": 14,
-      "community_name": "Community 14",
-      "norm_label": "lib.rs"
-    },
-    {
-      "label": "Formatter",
-      "file_type": "code",
-      "source_file": "tools/formatter/src/lib.rs",
-      "source_location": "L11",
-      "_origin": "ast",
-      "id": "src_lib_formatter",
-      "community": 14,
-      "community_name": "Community 14",
-      "norm_label": "formatter"
-    },
-    {
-      "label": "DocumentFormatter",
-      "file_type": "code",
-      "source_file": "tools/formatter/src/lib.rs",
-      "source_location": "L17",
-      "_origin": "ast",
-      "id": "src_lib_documentformatter",
-      "community": 14,
-      "community_name": "Community 14",
-      "norm_label": "documentformatter"
-    },
-    {
-      "label": ".new()",
-      "file_type": "code",
-      "source_file": "tools/formatter/src/lib.rs",
-      "source_location": "L22",
-      "_origin": "ast",
-      "id": "src_lib_documentformatter_new",
-      "community": 14,
-      "community_name": "Community 14",
-      "norm_label": ".new()"
-    },
-    {
-      "label": "Self",
-      "file_type": "code",
-      "source_file": "tools/formatter/src/lib.rs",
-      "source_location": "L22",
-      "_origin": "ast",
-      "id": "tools_formatter_src_lib_rs_self",
-      "community": 14,
-      "community_name": "Community 14",
-      "norm_label": "self"
-    },
-    {
-      "label": ".format_source()",
-      "file_type": "code",
-      "source_file": "tools/formatter/src/lib.rs",
-      "source_location": "L27",
-      "_origin": "ast",
-      "id": "src_lib_documentformatter_format_source",
-      "community": 14,
-      "community_name": "Community 14",
-      "norm_label": ".format_source()"
-    },
-    {
-      "label": "String",
-      "file_type": "code",
-      "source_file": "tools/formatter/src/lib.rs",
-      "source_location": "L27",
-      "_origin": "ast",
-      "id": "tools_formatter_src_lib_rs_string",
-      "community": 14,
-      "community_name": "Community 14",
-      "norm_label": "string"
-    },
-    {
-      "label": ".format()",
-      "file_type": "code",
-      "source_file": "tools/formatter/src/lib.rs",
-      "source_location": "L34",
-      "_origin": "ast",
-      "id": "src_lib_documentformatter_format",
-      "community": 14,
-      "community_name": "Community 14",
-      "norm_label": ".format()"
-    },
-    {
-      "label": "Program",
-      "file_type": "code",
-      "source_file": "tools/formatter/src/lib.rs",
-      "source_location": "L34",
-      "_origin": "ast",
-      "id": "tools_formatter_src_lib_rs_program",
-      "community": 14,
-      "community_name": "Community 14",
-      "norm_label": "program"
-    },
-    {
-      "label": "formatter_tests.rs",
-      "file_type": "code",
-      "source_file": "tools/formatter/tests/formatter_tests.rs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "tests_formatter_tests",
-      "community": 29,
-      "community_name": "Community 29",
-      "norm_label": "formatter_tests.rs"
-    },
-    {
-      "label": "test_formatter_instantiation()",
-      "file_type": "code",
-      "source_file": "tools/formatter/tests/formatter_tests.rs",
-      "source_location": "L4",
-      "_origin": "ast",
-      "id": "tests_formatter_tests_test_formatter_instantiation",
-      "community": 29,
-      "community_name": "Community 29",
-      "norm_label": "test_formatter_instantiation()"
-    },
-    {
-      "label": "lib.rs",
-      "file_type": "code",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "tools_linter_src_lib_rs_src_lib",
-      "community": 11,
-      "community_name": "Community 11",
-      "norm_label": "lib.rs"
-    },
-    {
-      "label": "LintRule",
-      "file_type": "code",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L10",
-      "_origin": "ast",
-      "id": "src_lib_lintrule",
-      "community": 11,
-      "community_name": "Community 11",
-      "norm_label": "lintrule"
-    },
-    {
-      "label": "Linter",
-      "file_type": "code",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L17",
-      "_origin": "ast",
-      "id": "src_lib_linter",
-      "community": 11,
-      "community_name": "Community 11",
-      "norm_label": "linter"
-    },
-    {
-      "label": "Vec",
-      "file_type": "code",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L18",
-      "_origin": "ast",
-      "id": "tools_linter_src_lib_rs_vec",
-      "community": 11,
-      "community_name": "Community 11",
-      "norm_label": "vec"
-    },
-    {
-      "label": "Box",
-      "file_type": "code",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L18",
-      "_origin": "ast",
-      "id": "tools_linter_src_lib_rs_box",
-      "community": 11,
-      "community_name": "Community 11",
-      "norm_label": "box"
-    },
-    {
-      "label": ".new()",
-      "file_type": "code",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L22",
-      "_origin": "ast",
-      "id": "src_lib_linter_new",
-      "community": 11,
-      "community_name": "Community 11",
-      "norm_label": ".new()"
-    },
-    {
-      "label": "Self",
-      "file_type": "code",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L22",
-      "_origin": "ast",
-      "id": "tools_linter_src_lib_rs_self",
-      "community": 11,
-      "community_name": "Community 11",
-      "norm_label": "self"
-    },
-    {
-      "label": ".add_rule()",
-      "file_type": "code",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L26",
-      "_origin": "ast",
-      "id": "src_lib_linter_add_rule",
-      "community": 11,
-      "community_name": "Community 11",
-      "norm_label": ".add_rule()"
-    },
-    {
-      "label": ".lint()",
-      "file_type": "code",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L31",
-      "_origin": "ast",
-      "id": "src_lib_linter_lint",
-      "community": 11,
-      "community_name": "Community 11",
-      "norm_label": ".lint()"
-    },
-    {
-      "label": "CheckedProgram",
-      "file_type": "code",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L31",
-      "_origin": "ast",
-      "id": "tools_linter_src_lib_rs_checkedprogram",
-      "community": 11,
-      "community_name": "Community 11",
-      "norm_label": "checkedprogram"
-    },
-    {
-      "label": "Diagnostic",
-      "file_type": "code",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L31",
-      "_origin": "ast",
-      "id": "tools_linter_src_lib_rs_diagnostic",
-      "community": 11,
-      "community_name": "Community 11",
-      "norm_label": "diagnostic"
     },
     {
       "label": "linter_tests.rs",
@@ -2815,8 +2221,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_linter_tests",
-      "community": 12,
-      "community_name": "Community 12",
+      "community": 10,
+      "community_name": "Community 10",
       "norm_label": "linter_tests.rs"
     },
     {
@@ -2826,8 +2232,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "tests_linter_tests_dummyrule",
-      "community": 12,
-      "community_name": "Community 12",
+      "community": 10,
+      "community_name": "Community 10",
       "norm_label": "dummyrule"
     },
     {
@@ -2837,8 +2243,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "lintrule",
-      "community": 12,
-      "community_name": "Community 12",
+      "community": 10,
+      "community_name": "Community 10",
       "norm_label": "lintrule"
     },
     {
@@ -2848,8 +2254,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "tests_linter_tests_dummyrule_name",
-      "community": 12,
-      "community_name": "Community 12",
+      "community": 10,
+      "community_name": "Community 10",
       "norm_label": ".name()"
     },
     {
@@ -2859,8 +2265,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "tests_linter_tests_dummyrule_check",
-      "community": 12,
-      "community_name": "Community 12",
+      "community": 10,
+      "community_name": "Community 10",
       "norm_label": ".check()"
     },
     {
@@ -2870,8 +2276,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "tools_linter_tests_linter_tests_rs_checkedprogram",
-      "community": 12,
-      "community_name": "Community 12",
+      "community": 10,
+      "community_name": "Community 10",
       "norm_label": "checkedprogram"
     },
     {
@@ -2881,8 +2287,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "tools_linter_tests_linter_tests_rs_vec",
-      "community": 12,
-      "community_name": "Community 12",
+      "community": 10,
+      "community_name": "Community 10",
       "norm_label": "vec"
     },
     {
@@ -2892,8 +2298,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "tools_linter_tests_linter_tests_rs_diagnostic",
-      "community": 12,
-      "community_name": "Community 12",
+      "community": 10,
+      "community_name": "Community 10",
       "norm_label": "diagnostic"
     },
     {
@@ -2903,8 +2309,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_linter_tests_test_linter_engine",
-      "community": 12,
-      "community_name": "Community 12",
+      "community": 10,
+      "community_name": "Community 10",
       "norm_label": "test_linter_engine()"
     },
     {
@@ -2914,8 +2320,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tools_lsp_src_lib_rs_src_lib",
-      "community": 10,
-      "community_name": "Community 10",
+      "community": 9,
+      "community_name": "Community 9",
       "norm_label": "lib.rs"
     },
     {
@@ -2925,8 +2331,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_lib_backend",
-      "community": 10,
-      "community_name": "Community 10",
+      "community": 9,
+      "community_name": "Community 9",
       "norm_label": "backend"
     },
     {
@@ -2936,8 +2342,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "client",
-      "community": 10,
-      "community_name": "Community 10",
+      "community": 9,
+      "community_name": "Community 9",
       "norm_label": "client"
     },
     {
@@ -2947,8 +2353,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "src_lib_backend_new",
-      "community": 10,
-      "community_name": "Community 10",
+      "community": 9,
+      "community_name": "Community 9",
       "norm_label": ".new()"
     },
     {
@@ -2958,8 +2364,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "tools_lsp_src_lib_rs_self",
-      "community": 10,
-      "community_name": "Community 10",
+      "community": 9,
+      "community_name": "Community 9",
       "norm_label": "self"
     },
     {
@@ -2969,8 +2375,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "languageserver",
-      "community": 10,
-      "community_name": "Community 10",
+      "community": 9,
+      "community_name": "Community 9",
       "norm_label": "languageserver"
     },
     {
@@ -2980,8 +2386,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "src_lib_backend_initialize",
-      "community": 10,
-      "community_name": "Community 10",
+      "community": 9,
+      "community_name": "Community 9",
       "norm_label": ".initialize()"
     },
     {
@@ -2991,8 +2397,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "initializeparams",
-      "community": 10,
-      "community_name": "Community 10",
+      "community": 9,
+      "community_name": "Community 9",
       "norm_label": "initializeparams"
     },
     {
@@ -3002,8 +2408,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "tools_lsp_src_lib_rs_result",
-      "community": 10,
-      "community_name": "Community 10",
+      "community": 9,
+      "community_name": "Community 9",
       "norm_label": "result"
     },
     {
@@ -3013,8 +2419,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "initializeresult",
-      "community": 10,
-      "community_name": "Community 10",
+      "community": 9,
+      "community_name": "Community 9",
       "norm_label": "initializeresult"
     },
     {
@@ -3024,8 +2430,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "src_lib_backend_shutdown",
-      "community": 10,
-      "community_name": "Community 10",
+      "community": 9,
+      "community_name": "Community 9",
       "norm_label": ".shutdown()"
     },
     {
@@ -3035,8 +2441,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_lsp_tests",
-      "community": 33,
-      "community_name": "Community 33",
+      "community": 21,
+      "community_name": "Community 21",
       "norm_label": "lsp_tests.rs"
     },
     {
@@ -3046,8 +2452,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "tests_lsp_tests_test_lsp_backend_capabilities",
-      "community": 33,
-      "community_name": "Community 33",
+      "community": 21,
+      "community_name": "Community 21",
       "norm_label": "test_lsp_backend_capabilities()"
     },
     {
@@ -3057,8 +2463,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tools_package_manager_src_lib_rs_src_lib",
-      "community": 13,
-      "community_name": "Community 13",
+      "community": 11,
+      "community_name": "Community 11",
       "norm_label": "lib.rs"
     },
     {
@@ -3068,8 +2474,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "src_lib_package",
-      "community": 13,
-      "community_name": "Community 13",
+      "community": 11,
+      "community_name": "Community 11",
       "norm_label": "package"
     },
     {
@@ -3079,8 +2485,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "tools_package_manager_src_lib_rs_string",
-      "community": 13,
-      "community_name": "Community 13",
+      "community": 11,
+      "community_name": "Community 11",
       "norm_label": "string"
     },
     {
@@ -3090,8 +2496,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "tools_package_manager_src_lib_rs_vec",
-      "community": 13,
-      "community_name": "Community 13",
+      "community": 11,
+      "community_name": "Community 11",
       "norm_label": "vec"
     },
     {
@@ -3101,8 +2507,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "src_lib_dependencyresolver",
-      "community": 13,
-      "community_name": "Community 13",
+      "community": 11,
+      "community_name": "Community 11",
       "norm_label": "dependencyresolver"
     },
     {
@@ -3112,8 +2518,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "src_lib_dependencyresolver_new",
-      "community": 13,
-      "community_name": "Community 13",
+      "community": 11,
+      "community_name": "Community 11",
       "norm_label": ".new()"
     },
     {
@@ -3123,8 +2529,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "tools_package_manager_src_lib_rs_self",
-      "community": 13,
-      "community_name": "Community 13",
+      "community": 11,
+      "community_name": "Community 11",
       "norm_label": "self"
     },
     {
@@ -3134,8 +2540,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "src_lib_dependencyresolver_resolve",
-      "community": 13,
-      "community_name": "Community 13",
+      "community": 11,
+      "community_name": "Community 11",
       "norm_label": ".resolve()"
     },
     {
@@ -3145,31 +2551,9 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "tools_package_manager_src_lib_rs_result",
-      "community": 13,
-      "community_name": "Community 13",
+      "community": 11,
+      "community_name": "Community 11",
       "norm_label": "result"
-    },
-    {
-      "label": "package_manager_tests.rs",
-      "file_type": "code",
-      "source_file": "tools/package-manager/tests/package_manager_tests.rs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "tests_package_manager_tests",
-      "community": 34,
-      "community_name": "Community 34",
-      "norm_label": "package_manager_tests.rs"
-    },
-    {
-      "label": "test_package_resolver()",
-      "file_type": "code",
-      "source_file": "tools/package-manager/tests/package_manager_tests.rs",
-      "source_location": "L4",
-      "_origin": "ast",
-      "id": "tests_package_manager_tests_test_package_resolver",
-      "community": 34,
-      "community_name": "Community 34",
-      "norm_label": "test_package_resolver()"
     },
     {
       "label": "techscript_ast",
@@ -3177,8 +2561,8 @@
       "source_location": "L1",
       "file_type": "concept",
       "id": "crate:techscript_ast",
-      "community": 3,
-      "community_name": "Community 3",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "techscript_ast"
     },
     {
@@ -3187,8 +2571,8 @@
       "source_location": "L1",
       "file_type": "concept",
       "id": "crate:techscript_builtins",
-      "community": 3,
-      "community_name": "Community 3",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "techscript_builtins"
     },
     {
@@ -3197,8 +2581,8 @@
       "source_location": "L1",
       "file_type": "concept",
       "id": "crate:techscript_cli",
-      "community": 3,
-      "community_name": "Community 3",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "techscript_cli"
     },
     {
@@ -3207,8 +2591,8 @@
       "source_location": "L1",
       "file_type": "concept",
       "id": "crate:techscript_common",
-      "community": 3,
-      "community_name": "Community 3",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "techscript_common"
     },
     {
@@ -3217,8 +2601,8 @@
       "source_location": "L1",
       "file_type": "concept",
       "id": "crate:techscript_errors",
-      "community": 3,
-      "community_name": "Community 3",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "techscript_errors"
     },
     {
@@ -3227,8 +2611,8 @@
       "source_location": "L1",
       "file_type": "concept",
       "id": "crate:techscript_formatter",
-      "community": 3,
-      "community_name": "Community 3",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "techscript_formatter"
     },
     {
@@ -3237,8 +2621,8 @@
       "source_location": "L1",
       "file_type": "concept",
       "id": "crate:techscript_gc",
-      "community": 3,
-      "community_name": "Community 3",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "techscript_gc"
     },
     {
@@ -3247,8 +2631,8 @@
       "source_location": "L1",
       "file_type": "concept",
       "id": "crate:techscript_interpreter",
-      "community": 3,
-      "community_name": "Community 3",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "techscript_interpreter"
     },
     {
@@ -3257,8 +2641,8 @@
       "source_location": "L1",
       "file_type": "concept",
       "id": "crate:techscript_lexer",
-      "community": 3,
-      "community_name": "Community 3",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "techscript_lexer"
     },
     {
@@ -3267,8 +2651,8 @@
       "source_location": "L1",
       "file_type": "concept",
       "id": "crate:techscript_linter",
-      "community": 3,
-      "community_name": "Community 3",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "techscript_linter"
     },
     {
@@ -3277,8 +2661,8 @@
       "source_location": "L1",
       "file_type": "concept",
       "id": "crate:techscript_lsp",
-      "community": 3,
-      "community_name": "Community 3",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "techscript_lsp"
     },
     {
@@ -3287,8 +2671,8 @@
       "source_location": "L1",
       "file_type": "concept",
       "id": "crate:techscript_package_manager",
-      "community": 40,
-      "community_name": "Community 40",
+      "community": 24,
+      "community_name": "Community 24",
       "norm_label": "techscript_package_manager"
     },
     {
@@ -3297,8 +2681,8 @@
       "source_location": "L1",
       "file_type": "concept",
       "id": "crate:techscript_parser",
-      "community": 3,
-      "community_name": "Community 3",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "techscript_parser"
     },
     {
@@ -3307,8 +2691,8 @@
       "source_location": "L1",
       "file_type": "concept",
       "id": "crate:techscript_semantic",
-      "community": 3,
-      "community_name": "Community 3",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "techscript_semantic"
     },
     {
@@ -3317,8 +2701,8 @@
       "source_location": "L1",
       "file_type": "concept",
       "id": "crate:techscript_stdlib",
-      "community": 3,
-      "community_name": "Community 3",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "techscript_stdlib"
     },
     {
@@ -3327,8 +2711,8 @@
       "source_location": "L1",
       "file_type": "concept",
       "id": "crate:techscript_syntax",
-      "community": 3,
-      "community_name": "Community 3",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "techscript_syntax"
     },
     {
@@ -3337,22 +2721,12 @@
       "source_location": "L1",
       "file_type": "concept",
       "id": "crate:techscript_vm",
-      "community": 3,
-      "community_name": "Community 3",
+      "community": 4,
+      "community_name": "Community 4",
       "norm_label": "techscript_vm"
     }
   ],
   "links": [
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "cli/examples/cli_example.rs",
-      "source_location": "L1",
-      "weight": 1.0,
-      "source": "examples_cli_example",
-      "target": "examples_cli_example_main",
-      "confidence_score": 1.0
-    },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
@@ -3382,16 +2756,6 @@
       "context": "field",
       "source": "src_lib_cli",
       "target": "commands",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "cli/src/main.rs",
-      "source_location": "L9",
-      "weight": 1.0,
-      "source": "src_main",
-      "target": "src_main_main",
       "confidence_score": 1.0
     },
     {
@@ -5251,7 +4615,7 @@
       "weight": 1.0,
       "context": "field",
       "source": "src_lib_exportdecl",
-      "target": "compiler_ast_src_lib_rs_box",
+      "target": "box",
       "confidence_score": 1.0
     },
     {
@@ -5262,7 +4626,7 @@
       "weight": 1.0,
       "context": "field",
       "source": "src_lib_askexpr",
-      "target": "compiler_ast_src_lib_rs_box",
+      "target": "box",
       "confidence_score": 1.0
     },
     {
@@ -5273,7 +4637,7 @@
       "weight": 1.0,
       "context": "field",
       "source": "src_lib_binaryexpr",
-      "target": "compiler_ast_src_lib_rs_box",
+      "target": "box",
       "confidence_score": 1.0
     },
     {
@@ -5284,7 +4648,7 @@
       "weight": 1.0,
       "context": "field",
       "source": "src_lib_callexpr",
-      "target": "compiler_ast_src_lib_rs_box",
+      "target": "box",
       "confidence_score": 1.0
     },
     {
@@ -5295,7 +4659,7 @@
       "weight": 1.0,
       "context": "field",
       "source": "src_lib_indexexpr",
-      "target": "compiler_ast_src_lib_rs_box",
+      "target": "box",
       "confidence_score": 1.0
     },
     {
@@ -5306,7 +4670,7 @@
       "weight": 1.0,
       "context": "field",
       "source": "src_lib_memberexpr",
-      "target": "compiler_ast_src_lib_rs_box",
+      "target": "box",
       "confidence_score": 1.0
     },
     {
@@ -5317,7 +4681,7 @@
       "weight": 1.0,
       "context": "field",
       "source": "src_lib_rangeexpr",
-      "target": "compiler_ast_src_lib_rs_box",
+      "target": "box",
       "confidence_score": 1.0
     },
     {
@@ -5328,7 +4692,7 @@
       "weight": 1.0,
       "context": "field",
       "source": "src_lib_unaryexpr",
-      "target": "compiler_ast_src_lib_rs_box",
+      "target": "box",
       "confidence_score": 1.0
     },
     {
@@ -5806,7 +5170,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "compiler/errors/src/lib.rs",
-      "source_location": "L111",
+      "source_location": "L115",
       "weight": 1.0,
       "context": "return_type",
       "source": "src_lib_diagnosticreporter_get_diagnostics",
@@ -5817,7 +5181,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "compiler/errors/src/lib.rs",
-      "source_location": "L99",
+      "source_location": "L101",
       "weight": 1.0,
       "context": "parameter_type",
       "source": "src_lib_diagnosticreporter_report",
@@ -5905,7 +5269,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "compiler/errors/src/lib.rs",
-      "source_location": "L107",
+      "source_location": "L111",
       "weight": 1.0,
       "source": "src_lib_diagnosticreporter",
       "target": "src_lib_diagnosticreporter_clear",
@@ -5915,7 +5279,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "compiler/errors/src/lib.rs",
-      "source_location": "L111",
+      "source_location": "L115",
       "weight": 1.0,
       "source": "src_lib_diagnosticreporter",
       "target": "src_lib_diagnosticreporter_get_diagnostics",
@@ -5925,7 +5289,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "compiler/errors/src/lib.rs",
-      "source_location": "L103",
+      "source_location": "L105",
       "weight": 1.0,
       "source": "src_lib_diagnosticreporter",
       "target": "src_lib_diagnosticreporter_has_errors",
@@ -5945,7 +5309,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "compiler/errors/src/lib.rs",
-      "source_location": "L116",
+      "source_location": "L120",
       "weight": 1.0,
       "source": "src_lib_diagnosticreporter",
       "target": "src_lib_diagnosticreporter_print_diagnostics",
@@ -5955,7 +5319,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "compiler/errors/src/lib.rs",
-      "source_location": "L99",
+      "source_location": "L101",
       "weight": 1.0,
       "source": "src_lib_diagnosticreporter",
       "target": "src_lib_diagnosticreporter_report",
@@ -5974,18 +5338,8 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "compiler/lexer/examples/lexer_example.rs",
-      "source_location": "L4",
-      "weight": 1.0,
-      "source": "examples_lexer_example",
-      "target": "examples_lexer_example_main",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
       "source_file": "compiler/lexer/src/lib.rs",
-      "source_location": "L38",
+      "source_location": "L39",
       "weight": 1.0,
       "source": "compiler_lexer_src_lib_rs_src_lib",
       "target": "src_lib_lex",
@@ -6026,7 +5380,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "compiler/lexer/src/lib.rs",
-      "source_location": "L39",
+      "source_location": "L40",
       "weight": 1.0,
       "source": "src_lib_lex",
       "target": "src_lib_lexer_a_new",
@@ -6102,7 +5456,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "compiler/lexer/src/lib.rs",
-      "source_location": "L38",
+      "source_location": "L39",
       "weight": 1.0,
       "context": "parameter_type",
       "source": "src_lib_lex",
@@ -6113,7 +5467,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "compiler/lexer/src/lib.rs",
-      "source_location": "L38",
+      "source_location": "L39",
       "weight": 1.0,
       "context": "return_type",
       "source": "src_lib_lex",
@@ -6124,7 +5478,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "compiler/lexer/src/lib.rs",
-      "source_location": "L38",
+      "source_location": "L39",
       "weight": 1.0,
       "context": "generic_arg",
       "source": "src_lib_lex",
@@ -6135,7 +5489,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "compiler/lexer/src/lib.rs",
-      "source_location": "L38",
+      "source_location": "L39",
       "weight": 1.0,
       "context": "generic_arg",
       "source": "src_lib_lex",
@@ -6146,7 +5500,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "compiler/lexer/src/lib.rs",
-      "source_location": "L38",
+      "source_location": "L39",
       "weight": 1.0,
       "context": "generic_arg",
       "source": "src_lib_lex",
@@ -6154,30 +5508,10 @@
       "confidence_score": 1.0
     },
     {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "compiler/lexer/tests/lexer_tests.rs",
-      "source_location": "L6",
-      "weight": 1.0,
-      "source": "tests_lexer_tests",
-      "target": "tests_lexer_tests_test_lexer_eof",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "compiler/parser/examples/parser_example.rs",
-      "source_location": "L5",
-      "weight": 1.0,
-      "source": "examples_parser_example",
-      "target": "examples_parser_example_main",
-      "confidence_score": 1.0
-    },
-    {
       "relation": "imports_from",
       "confidence": "EXTRACTED",
       "source_file": "compiler/parser/src/lib.rs",
-      "source_location": "L8",
+      "source_location": "L11",
       "weight": 1.0,
       "context": "import",
       "source": "compiler_parser_src_lib_rs_src_lib",
@@ -6188,7 +5522,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "compiler/parser/src/lib.rs",
-      "source_location": "L38",
+      "source_location": "L41",
       "weight": 1.0,
       "source": "compiler_parser_src_lib_rs_src_lib",
       "target": "src_lib_parse",
@@ -6219,7 +5553,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "compiler/parser/src/lib.rs",
-      "source_location": "L38",
+      "source_location": "L41",
       "weight": 1.0,
       "context": "parameter_type",
       "source": "src_lib_parse",
@@ -6262,7 +5596,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "compiler/parser/src/lib.rs",
-      "source_location": "L39",
+      "source_location": "L45",
       "weight": 1.0,
       "source": "src_lib_parse",
       "target": "src_lib_parser_a_new",
@@ -6284,7 +5618,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "compiler/parser/src/lib.rs",
-      "source_location": "L31",
+      "source_location": "L34",
       "weight": 1.0,
       "source": "src_lib_parser_a_parse",
       "target": "src_lib_parser_a_new",
@@ -6349,7 +5683,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "compiler/parser/src/lib.rs",
-      "source_location": "L38",
+      "source_location": "L41",
       "weight": 1.0,
       "context": "parameter_type",
       "source": "src_lib_parse",
@@ -6360,7 +5694,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "compiler/parser/src/lib.rs",
-      "source_location": "L38",
+      "source_location": "L41",
       "weight": 1.0,
       "context": "return_type",
       "source": "src_lib_parse",
@@ -6371,7 +5705,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "compiler/parser/src/lib.rs",
-      "source_location": "L38",
+      "source_location": "L41",
       "weight": 1.0,
       "context": "generic_arg",
       "source": "src_lib_parse",
@@ -6382,7 +5716,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "compiler/parser/src/lib.rs",
-      "source_location": "L38",
+      "source_location": "L41",
       "weight": 1.0,
       "context": "generic_arg",
       "source": "src_lib_parse",
@@ -6393,21 +5727,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "compiler/parser/src/lib.rs",
-      "source_location": "L38",
+      "source_location": "L41",
       "weight": 1.0,
       "context": "generic_arg",
       "source": "src_lib_parse",
       "target": "compiler_parser_src_lib_rs_diagnostic",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "compiler/parser/tests/parser_tests.rs",
-      "source_location": "L5",
-      "weight": 1.0,
-      "source": "tests_parser_tests",
-      "target": "tests_parser_tests_test_parser_empty",
       "confidence_score": 1.0
     },
     {
@@ -6436,7 +5760,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "compiler/semantic/src/lib.rs",
-      "source_location": "L61",
+      "source_location": "L65",
       "weight": 1.0,
       "source": "compiler_semantic_src_lib_rs_src_lib",
       "target": "src_lib_analyze",
@@ -6584,7 +5908,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "compiler/semantic/src/lib.rs",
-      "source_location": "L61",
+      "source_location": "L65",
       "weight": 1.0,
       "context": "generic_arg",
       "source": "src_lib_analyze",
@@ -6606,7 +5930,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "compiler/semantic/src/lib.rs",
-      "source_location": "L61",
+      "source_location": "L65",
       "weight": 1.0,
       "context": "generic_arg",
       "source": "src_lib_analyze",
@@ -6639,7 +5963,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "compiler/semantic/src/lib.rs",
-      "source_location": "L61",
+      "source_location": "L65",
       "weight": 1.0,
       "context": "parameter_type",
       "source": "src_lib_analyze",
@@ -6682,7 +6006,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "compiler/semantic/src/lib.rs",
-      "source_location": "L62",
+      "source_location": "L69",
       "weight": 1.0,
       "source": "src_lib_analyze",
       "target": "src_lib_semanticanalyzer_new",
@@ -6736,7 +6060,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "compiler/semantic/src/lib.rs",
-      "source_location": "L61",
+      "source_location": "L65",
       "weight": 1.0,
       "context": "parameter_type",
       "source": "src_lib_analyze",
@@ -6747,7 +6071,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "compiler/semantic/src/lib.rs",
-      "source_location": "L61",
+      "source_location": "L65",
       "weight": 1.0,
       "context": "return_type",
       "source": "src_lib_analyze",
@@ -6758,7 +6082,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "compiler/semantic/src/lib.rs",
-      "source_location": "L61",
+      "source_location": "L65",
       "weight": 1.0,
       "context": "generic_arg",
       "source": "src_lib_analyze",
@@ -7011,7 +6335,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "runtime/builtins/src/lib.rs",
-      "source_location": "L45",
+      "source_location": "L48",
       "weight": 1.0,
       "source": "src_lib_builtinregistry",
       "target": "src_lib_builtinregistry_register_defaults",
@@ -7055,7 +6379,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "runtime/builtins/src/lib.rs",
-      "source_location": "L46",
+      "source_location": "L49",
       "weight": 1.0,
       "source": "src_lib_builtinregistry_register_defaults",
       "target": "src_lib_builtinregistry_register",
@@ -7078,9 +6402,9 @@
       "source_file": "runtime/builtins/src/lib.rs",
       "source_location": "L38",
       "weight": 1.0,
-      "context": "parameter_type",
+      "context": "generic_arg",
       "source": "src_lib_builtinregistry_call",
-      "target": "runtime_builtins_src_lib_rs_value",
+      "target": "runtimeerror",
       "confidence_score": 1.0
     },
     {
@@ -7089,9 +6413,53 @@
       "source_file": "runtime/builtins/src/lib.rs",
       "source_location": "L38",
       "weight": 1.0,
-      "context": "generic_arg",
+      "context": "parameter_type",
       "source": "src_lib_builtinregistry_call",
-      "target": "runtimeerror",
+      "target": "value",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "runtime/builtins/tests/builtins_tests.rs",
+      "source_location": "L2",
+      "weight": 1.0,
+      "context": "import",
+      "source": "tests_builtins_tests",
+      "target": "value",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "runtime/gc/tests/gc_tests.rs",
+      "source_location": "L2",
+      "weight": 1.0,
+      "context": "import",
+      "source": "tests_gc_tests",
+      "target": "value",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "stdlib/tests/stdlib_tests.rs",
+      "source_location": "L1",
+      "weight": 1.0,
+      "context": "import",
+      "source": "tests_stdlib_tests",
+      "target": "value",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "runtime/vm/tests/vm_tests.rs",
+      "source_location": "L1",
+      "weight": 1.0,
+      "context": "import",
+      "source": "tests_vm_tests",
+      "target": "value",
       "confidence_score": 1.0
     },
     {
@@ -7102,99 +6470,6 @@
       "weight": 1.0,
       "source": "tests_builtins_tests",
       "target": "tests_builtins_tests_test_builtins_len",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/gc/src/lib.rs",
-      "source_location": "L6",
-      "weight": 1.0,
-      "context": "import",
-      "source": "runtime_gc_src_lib_rs_src_lib",
-      "target": "runtime_gc_src_lib_rs_value",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/gc/src/lib.rs",
-      "source_location": "L18",
-      "weight": 1.0,
-      "source": "runtime_gc_src_lib_rs_src_lib",
-      "target": "src_lib_dummygc",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/gc/src/lib.rs",
-      "source_location": "L9",
-      "weight": 1.0,
-      "source": "runtime_gc_src_lib_rs_src_lib",
-      "target": "src_lib_garbagecollector",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "implements",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/gc/src/lib.rs",
-      "source_location": "L28",
-      "weight": 1.0,
-      "source": "src_lib_dummygc",
-      "target": "src_lib_garbagecollector",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/gc/src/lib.rs",
-      "source_location": "L29",
-      "weight": 1.0,
-      "source": "src_lib_dummygc",
-      "target": "src_lib_dummygc_allocate",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/gc/src/lib.rs",
-      "source_location": "L34",
-      "weight": 1.0,
-      "source": "src_lib_dummygc",
-      "target": "src_lib_dummygc_collect",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/gc/src/lib.rs",
-      "source_location": "L23",
-      "weight": 1.0,
-      "source": "src_lib_dummygc",
-      "target": "src_lib_dummygc_new",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/gc/src/lib.rs",
-      "source_location": "L23",
-      "weight": 1.0,
-      "context": "return_type",
-      "source": "src_lib_dummygc_new",
-      "target": "runtime_gc_src_lib_rs_self",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/gc/src/lib.rs",
-      "source_location": "L29",
-      "weight": 1.0,
-      "context": "parameter_type",
-      "source": "src_lib_dummygc_allocate",
-      "target": "runtime_gc_src_lib_rs_value",
       "confidence_score": 1.0
     },
     {
@@ -7474,166 +6749,6 @@
       "confidence_score": 1.0
     },
     {
-      "relation": "imports_from",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L8",
-      "weight": 1.0,
-      "context": "import",
-      "source": "runtime_vm_src_lib_rs_src_lib",
-      "target": "runtime_vm_src_lib_rs_value",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L24",
-      "weight": 1.0,
-      "source": "runtime_vm_src_lib_rs_src_lib",
-      "target": "src_lib_instruction",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L12",
-      "weight": 1.0,
-      "source": "runtime_vm_src_lib_rs_src_lib",
-      "target": "src_lib_opcode",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L31",
-      "weight": 1.0,
-      "source": "runtime_vm_src_lib_rs_src_lib",
-      "target": "src_lib_vm",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L25",
-      "weight": 1.0,
-      "context": "field",
-      "source": "src_lib_instruction",
-      "target": "src_lib_opcode",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L26",
-      "weight": 1.0,
-      "context": "field",
-      "source": "src_lib_instruction",
-      "target": "runtime_vm_src_lib_rs_option",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L45",
-      "weight": 1.0,
-      "context": "parameter_type",
-      "source": "src_lib_vm_execute",
-      "target": "src_lib_instruction",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L32",
-      "weight": 1.0,
-      "context": "generic_arg",
-      "source": "src_lib_vm",
-      "target": "runtime_vm_src_lib_rs_value",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L32",
-      "weight": 1.0,
-      "context": "field",
-      "source": "src_lib_vm",
-      "target": "runtime_vm_src_lib_rs_vec",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L45",
-      "weight": 1.0,
-      "source": "src_lib_vm",
-      "target": "src_lib_vm_execute",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L37",
-      "weight": 1.0,
-      "source": "src_lib_vm",
-      "target": "src_lib_vm_new",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L45",
-      "weight": 1.0,
-      "context": "generic_arg",
-      "source": "src_lib_vm_execute",
-      "target": "runtime_vm_src_lib_rs_value",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L37",
-      "weight": 1.0,
-      "context": "return_type",
-      "source": "src_lib_vm_new",
-      "target": "runtime_vm_src_lib_rs_self",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L45",
-      "weight": 1.0,
-      "context": "return_type",
-      "source": "src_lib_vm_execute",
-      "target": "runtime_vm_src_lib_rs_result",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "runtime/vm/src/lib.rs",
-      "source_location": "L45",
-      "weight": 1.0,
-      "context": "generic_arg",
-      "source": "src_lib_vm_execute",
-      "target": "runtime_vm_src_lib_rs_string",
-      "confidence_score": 1.0
-    },
-    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "runtime/vm/tests/vm_tests.rs",
@@ -7864,313 +6979,6 @@
       "weight": 1.0,
       "source": "tests_stdlib_tests",
       "target": "tests_stdlib_tests_test_stdlib_math_abs",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/formatter/src/lib.rs",
-      "source_location": "L17",
-      "weight": 1.0,
-      "source": "tools_formatter_src_lib_rs_src_lib",
-      "target": "src_lib_documentformatter",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/formatter/src/lib.rs",
-      "source_location": "L11",
-      "weight": 1.0,
-      "source": "tools_formatter_src_lib_rs_src_lib",
-      "target": "src_lib_formatter",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/formatter/src/lib.rs",
-      "source_location": "L8",
-      "weight": 1.0,
-      "context": "import",
-      "source": "tools_formatter_src_lib_rs_src_lib",
-      "target": "tools_formatter_src_lib_rs_program",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "implements",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/formatter/src/lib.rs",
-      "source_location": "L33",
-      "weight": 1.0,
-      "source": "src_lib_documentformatter",
-      "target": "src_lib_formatter",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/formatter/src/lib.rs",
-      "source_location": "L34",
-      "weight": 1.0,
-      "source": "src_lib_documentformatter",
-      "target": "src_lib_documentformatter_format",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/formatter/src/lib.rs",
-      "source_location": "L27",
-      "weight": 1.0,
-      "source": "src_lib_documentformatter",
-      "target": "src_lib_documentformatter_format_source",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/formatter/src/lib.rs",
-      "source_location": "L22",
-      "weight": 1.0,
-      "source": "src_lib_documentformatter",
-      "target": "src_lib_documentformatter_new",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/formatter/src/lib.rs",
-      "source_location": "L22",
-      "weight": 1.0,
-      "context": "return_type",
-      "source": "src_lib_documentformatter_new",
-      "target": "tools_formatter_src_lib_rs_self",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/formatter/src/lib.rs",
-      "source_location": "L27",
-      "weight": 1.0,
-      "context": "return_type",
-      "source": "src_lib_documentformatter_format_source",
-      "target": "tools_formatter_src_lib_rs_string",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/formatter/src/lib.rs",
-      "source_location": "L34",
-      "weight": 1.0,
-      "context": "return_type",
-      "source": "src_lib_documentformatter_format",
-      "target": "tools_formatter_src_lib_rs_string",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/formatter/src/lib.rs",
-      "source_location": "L34",
-      "weight": 1.0,
-      "context": "parameter_type",
-      "source": "src_lib_documentformatter_format",
-      "target": "tools_formatter_src_lib_rs_program",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/formatter/tests/formatter_tests.rs",
-      "source_location": "L4",
-      "weight": 1.0,
-      "source": "tests_formatter_tests",
-      "target": "tests_formatter_tests_test_formatter_instantiation",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L17",
-      "weight": 1.0,
-      "source": "tools_linter_src_lib_rs_src_lib",
-      "target": "src_lib_linter",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L10",
-      "weight": 1.0,
-      "source": "tools_linter_src_lib_rs_src_lib",
-      "target": "src_lib_lintrule",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L7",
-      "weight": 1.0,
-      "context": "import",
-      "source": "tools_linter_src_lib_rs_src_lib",
-      "target": "tools_linter_src_lib_rs_checkedprogram",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L6",
-      "weight": 1.0,
-      "context": "import",
-      "source": "tools_linter_src_lib_rs_src_lib",
-      "target": "tools_linter_src_lib_rs_diagnostic",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L18",
-      "weight": 1.0,
-      "context": "generic_arg",
-      "source": "src_lib_linter",
-      "target": "src_lib_lintrule",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L26",
-      "weight": 1.0,
-      "context": "generic_arg",
-      "source": "src_lib_linter_add_rule",
-      "target": "src_lib_lintrule",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L26",
-      "weight": 1.0,
-      "source": "src_lib_linter",
-      "target": "src_lib_linter_add_rule",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L31",
-      "weight": 1.0,
-      "source": "src_lib_linter",
-      "target": "src_lib_linter_lint",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L22",
-      "weight": 1.0,
-      "source": "src_lib_linter",
-      "target": "src_lib_linter_new",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L18",
-      "weight": 1.0,
-      "context": "generic_arg",
-      "source": "src_lib_linter",
-      "target": "tools_linter_src_lib_rs_box",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L18",
-      "weight": 1.0,
-      "context": "field",
-      "source": "src_lib_linter",
-      "target": "tools_linter_src_lib_rs_vec",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L31",
-      "weight": 1.0,
-      "context": "return_type",
-      "source": "src_lib_linter_lint",
-      "target": "tools_linter_src_lib_rs_vec",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L26",
-      "weight": 1.0,
-      "context": "parameter_type",
-      "source": "src_lib_linter_add_rule",
-      "target": "tools_linter_src_lib_rs_box",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L32",
-      "weight": 1.0,
-      "source": "src_lib_linter_lint",
-      "target": "src_lib_linter_new",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L22",
-      "weight": 1.0,
-      "context": "return_type",
-      "source": "src_lib_linter_new",
-      "target": "tools_linter_src_lib_rs_self",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L31",
-      "weight": 1.0,
-      "context": "parameter_type",
-      "source": "src_lib_linter_lint",
-      "target": "tools_linter_src_lib_rs_checkedprogram",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/linter/src/lib.rs",
-      "source_location": "L31",
-      "weight": 1.0,
-      "context": "generic_arg",
-      "source": "src_lib_linter_lint",
-      "target": "tools_linter_src_lib_rs_diagnostic",
       "confidence_score": 1.0
     },
     {
@@ -8552,16 +7360,6 @@
       "context": "return_type",
       "source": "src_lib_dependencyresolver_resolve",
       "target": "tools_package_manager_src_lib_rs_result",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "tools/package-manager/tests/package_manager_tests.rs",
-      "source_location": "L4",
-      "weight": 1.0,
-      "source": "tests_package_manager_tests",
-      "target": "tests_package_manager_tests_test_package_resolver",
       "confidence_score": 1.0
     },
     {
@@ -9094,5 +7892,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "4e1c03366987c4c4c98de84556389ccb7f4c0646"
+  "built_at_commit": "9773cb0b9e614195035c0ab1f63bf447f1ec1914"
 }

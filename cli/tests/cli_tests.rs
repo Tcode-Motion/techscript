@@ -1,5 +1,5 @@
-use techscript_cli::{Cli, Commands};
 use clap::Parser;
+use techscript_cli::{Cli, Commands};
 
 #[test]
 fn test_cli_parsing() {

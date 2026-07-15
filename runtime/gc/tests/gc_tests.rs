@@ -1,5 +1,5 @@
-use techscript_interpreter::Value;
 use techscript_gc::{DummyGC, GarbageCollector};
+use techscript_interpreter::Value;
 
 #[test]
 fn test_gc_allocator() {

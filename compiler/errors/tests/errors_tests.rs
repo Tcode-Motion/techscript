@@ -1,5 +1,5 @@
 use techscript_common::Span;
-use techscript_errors::{DiagnosticReporter, Diagnostic, DiagnosticLevel, ErrorCode};
+use techscript_errors::{Diagnostic, DiagnosticLevel, DiagnosticReporter, ErrorCode};
 
 #[test]
 fn test_errors_reporter() {

@@ -4,7 +4,7 @@
 //! This crate contains primitives like Spans, Node IDs, Identifiers,
 //! and standard Diagnostics representations.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// Represents a source location (byte offset span).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]

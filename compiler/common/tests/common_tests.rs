@@ -1,4 +1,4 @@
-use techscript_common::{Span, NodeId, Ident};
+use techscript_common::{Ident, NodeId, Span};
 
 #[test]
 fn test_common_types() {

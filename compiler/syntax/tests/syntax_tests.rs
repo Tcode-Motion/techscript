@@ -1,5 +1,5 @@
 use techscript_common::Span;
-use techscript_syntax::{Token, TokenKind, Precedence};
+use techscript_syntax::{Precedence, Token, TokenKind};
 
 #[test]
 fn test_syntax_tokens() {

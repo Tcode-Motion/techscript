@@ -4,12 +4,12 @@
 - cluster-only mode — file stats not available
 
 ## Summary
-- 305 nodes · 537 edges · 41 communities (40 shown, 1 thin omitted)
+- 249 nodes · 481 edges · 25 communities (24 shown, 1 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `4e1c0336`
+- Built from commit: `9773cb0b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -29,11 +29,7 @@
 - [[_COMMUNITY_Community 12|Community 12]]
 - [[_COMMUNITY_Community 13|Community 13]]
 - [[_COMMUNITY_Community 14|Community 14]]
-- [[_COMMUNITY_Community 15|Community 15]]
-- [[_COMMUNITY_Community 16|Community 16]]
-- [[_COMMUNITY_Community 17|Community 17]]
-- [[_COMMUNITY_Community 18|Community 18]]
-- [[_COMMUNITY_Community 40|Community 40]]
+- [[_COMMUNITY_Community 24|Community 24]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `Span` - 36 edges
@@ -65,36 +61,32 @@
 - 1-file cycle: `compiler/semantic/src/lib.rs -> compiler/semantic/src/lib.rs`
 - 1-file cycle: `compiler/syntax/src/lib.rs -> compiler/syntax/src/lib.rs`
 - 1-file cycle: `runtime/builtins/src/lib.rs -> runtime/builtins/src/lib.rs`
-- 1-file cycle: `runtime/gc/src/lib.rs -> runtime/gc/src/lib.rs`
 - 1-file cycle: `runtime/interpreter/src/lib.rs -> runtime/interpreter/src/lib.rs`
-- 1-file cycle: `runtime/vm/src/lib.rs -> runtime/vm/src/lib.rs`
 - 1-file cycle: `stdlib/src/lib.rs -> stdlib/src/lib.rs`
-- 1-file cycle: `tools/formatter/src/lib.rs -> tools/formatter/src/lib.rs`
-- 1-file cycle: `tools/linter/src/lib.rs -> tools/linter/src/lib.rs`
 - 1-file cycle: `tools/linter/tests/linter_tests.rs -> tools/linter/tests/linter_tests.rs`
 - 1-file cycle: `tools/lsp/src/lib.rs -> tools/lsp/src/lib.rs`
 
-## Communities (41 total, 1 thin omitted)
+## Communities (25 total, 1 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.12
 Nodes (56): Block, Box, Option, Span, String, Vec, Expression, FieldDecl (+48 more)
 
 ### Community 1 - "Community 1"
+Cohesion: 0.11
+Nodes (8): NativeCallback, HashMap, Result, Self, String, RuntimeError, BuiltinRegistry, Value
+
+### Community 2 - "Community 2"
 Cohesion: 0.20
 Nodes (9): Option, Self, Span, String, Vec, Diagnostic, DiagnosticLevel, DiagnosticReporter (+1 more)
 
-### Community 2 - "Community 2"
+### Community 3 - "Community 3"
 Cohesion: 0.24
 Nodes (14): Diagnostic, DiagnosticReporter, HashMap, Program, Result, Self, String, Vec (+6 more)
 
-### Community 3 - "Community 3"
+### Community 4 - "Community 4"
 Cohesion: 0.40
 Nodes (16): techscript_ast, techscript_builtins, techscript_cli, techscript_common, techscript_errors, techscript_formatter, techscript_gc, techscript_interpreter (+8 more)
-
-### Community 4 - "Community 4"
-Cohesion: 0.19
-Nodes (8): NativeCallback, HashMap, Result, Self, String, Value, RuntimeError, BuiltinRegistry
 
 ### Community 5 - "Community 5"
 Cohesion: 0.27
@@ -113,47 +105,31 @@ Cohesion: 0.24
 Nodes (9): Diagnostic, DiagnosticReporter, Result, Self, Token, Vec, lex(), Lexer (+1 more)
 
 ### Community 9 - "Community 9"
-Cohesion: 0.23
-Nodes (9): Option, Result, Self, String, Value, Vec, Instruction, OpCode (+1 more)
-
-### Community 10 - "Community 10"
 Cohesion: 0.24
 Nodes (7): Client, InitializeParams, InitializeResult, LanguageServer, Backend, Result, Self
 
-### Community 11 - "Community 11"
-Cohesion: 0.31
-Nodes (7): Linter, LintRule, Box, CheckedProgram, Diagnostic, Self, Vec
-
-### Community 12 - "Community 12"
+### Community 10 - "Community 10"
 Cohesion: 0.25
 Nodes (5): LintRule, DummyRule, CheckedProgram, Diagnostic, Vec
 
-### Community 13 - "Community 13"
+### Community 11 - "Community 11"
 Cohesion: 0.36
 Nodes (6): DependencyResolver, Package, Result, Self, String, Vec
 
-### Community 14 - "Community 14"
-Cohesion: 0.31
-Nodes (5): DocumentFormatter, Formatter, Program, Self, String
-
-### Community 15 - "Community 15"
+### Community 12 - "Community 12"
 Cohesion: 0.39
 Nodes (5): Self, String, Ident, NodeId, Span
 
-### Community 16 - "Community 16"
+### Community 13 - "Community 13"
 Cohesion: 0.43
 Nodes (6): Self, Span, String, Precedence, Token, TokenKind
 
-### Community 17 - "Community 17"
-Cohesion: 0.32
-Nodes (4): Self, Value, DummyGC, GarbageCollector
-
-### Community 18 - "Community 18"
+### Community 14 - "Community 14"
 Cohesion: 0.50
 Nodes (3): Commands, Cli, Commands
 
 ## Knowledge Gaps
-- **49 isolated node(s):** `Commands`, `Commands`, `Statement`, `Parameter`, `FieldDecl` (+44 more)
+- **40 isolated node(s):** `Commands`, `Commands`, `Statement`, `Parameter`, `FieldDecl` (+35 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **1 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -161,6 +137,8 @@ Nodes (3): Commands, Cli, Commands
 _Questions this graph is uniquely positioned to answer:_
 
 - **What connects `Commands`, `Commands`, `Statement` to the rest of the system?**
-  _49 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _40 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.12218045112781954 - nodes in this community are weakly interconnected._
+- **Should `Community 1` be split into smaller, more focused modules?**
+  _Cohesion score 0.10822510822510822 - nodes in this community are weakly interconnected._

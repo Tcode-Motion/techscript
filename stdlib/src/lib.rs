@@ -4,7 +4,7 @@
 //! Handles module loading registry mappings and relative imports.
 
 use std::collections::HashMap;
-use techscript_interpreter::{Value, RuntimeError};
+use techscript_interpreter::{RuntimeError, Value};
 
 /// Type definition for module function calls.
 pub type LibraryFunction = fn(args: &[Value]) -> Result<Value, RuntimeError>;
@@ -60,12 +60,16 @@ impl StdlibRegistry {
         let mut math = StdModule::default();
         math.functions.insert("abs".to_string(), |args| {
             if args.len() != 1 {
-                return Err(RuntimeError::MemberNotFound("abs requires 1 argument".to_string()));
+                return Err(RuntimeError::MemberNotFound(
+                    "abs requires 1 argument".to_string(),
+                ));
             }
             match &args[0] {
                 Value::Int(i) => Ok(Value::Int(i.abs())),
                 Value::Float(f) => Ok(Value::Float(f.abs())),
-                _ => Err(RuntimeError::TypeMismatch("abs expects Int or Float".to_string())),
+                _ => Err(RuntimeError::TypeMismatch(
+                    "abs expects Int or Float".to_string(),
+                )),
             }
         });
         self.register_module("math", math);

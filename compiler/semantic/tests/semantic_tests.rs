@@ -1,4 +1,4 @@
-use techscript_ast::{Program, NodeId};
+use techscript_ast::{NodeId, Program};
 use techscript_common::Span;
 use techscript_errors::DiagnosticReporter;
 use techscript_semantic::analyze;

@@ -1,5 +1,5 @@
-use techscript_interpreter::Value;
 use techscript_builtins::BuiltinRegistry;
+use techscript_interpreter::Value;
 
 #[test]
 fn test_builtins_len() {

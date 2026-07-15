@@ -1,8 +1,8 @@
-use techscript_ast::{Program, NodeId};
+use techscript_ast::{NodeId, Program};
 use techscript_common::Span;
+use techscript_interpreter::{interpret, Value};
 use techscript_semantic::CheckedProgram;
 use techscript_semantic::SymbolTable;
-use techscript_interpreter::{interpret, Value};
 
 #[test]
 fn test_interpreter_empty() {

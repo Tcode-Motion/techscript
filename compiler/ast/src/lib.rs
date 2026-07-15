@@ -3,8 +3,8 @@
 //! Node declarations and visitor pattern traits for the TechScript Abstract Syntax Tree.
 //! Fully specifies node schemas for parsing, semantic analysis, and interpretation passes.
 
-use serde::{Serialize, Deserialize};
-pub use techscript_common::{Span, NodeId, Ident};
+use serde::{Deserialize, Serialize};
+pub use techscript_common::{Ident, NodeId, Span};
 
 /// Root node representing a parsed TechScript program.
 #[derive(Debug, Clone, Serialize, Deserialize)]

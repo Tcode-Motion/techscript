@@ -3,7 +3,7 @@
 //! Unified diagnostic management and terminal error reporting.
 //! Implements all ErrorCode registers and levels from specifications.
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use techscript_common::Span;
 
 /// Unified categories of Diagnostic levels.
@@ -93,7 +93,9 @@ pub struct DiagnosticReporter {
 
 impl DiagnosticReporter {
     pub fn new() -> Self {
-        Self { diagnostics: Vec::new() }
+        Self {
+            diagnostics: Vec::new(),
+        }
     }
 
     pub fn report(&mut self, diag: Diagnostic) {
@@ -101,7 +103,9 @@ impl DiagnosticReporter {
     }
 
     pub fn has_errors(&self) -> bool {
-        self.diagnostics.iter().any(|d| d.level == DiagnosticLevel::Error)
+        self.diagnostics
+            .iter()
+            .any(|d| d.level == DiagnosticLevel::Error)
     }
 
     pub fn clear(&mut self) {

@@ -24,13 +24,9 @@ pub enum Commands {
     /// Starts the interactive REPL shell
     Repl,
     /// Runs semantic analysis checks without executing
-    Check {
-        file: String,
-    },
+    Check { file: String },
     /// Formats .txs source files in-place
-    Fmt {
-        file: String,
-    },
+    Fmt { file: String },
     /// Lints source files and optionally fixes deprecated keywords
     Lint {
         file: String,
@@ -38,13 +34,9 @@ pub enum Commands {
         fix: bool,
     },
     /// Discovers and runs integration tests (*_test.txs)
-    Test {
-        dir: Option<String>,
-    },
+    Test { dir: Option<String> },
     /// Prints version details
     Version,
     /// Scaffolds a new project structure
-    New {
-        name: String,
-    },
+    New { name: String },
 }

@@ -80,19 +80,28 @@ Source (.txs) → Lexer (logos) → Parser (Pratt) → AST → Semantic Analyzer
 ```
 
 ### Crate Structure
-- `techscript_errors`: Unified error reporting and span mapping (`E0001`–`E1999`, `W0001`–`W0099`).
-- `techscript_ast`: Holds AST node definitions and the shared AST `Visitor` trait.
-- `techscript_lexer`: Scans UTF-8 source code using `logos` DFA matching.
-- `techscript_parser`: Recursive descent for statements, Pratt parser for expressions.
-- `techscript_sema`: Scopes, name resolution, duplicate checks, and deprecation triggers.
-- `techscript_interpreter`: AST walker, manages local environments and call frames.
-- `techscript_stdlib`: Extended libraries (`io`, `math`, `string`, `file`, `web`, `time`, `random`, `json`, `collections`).
-- `techscript_cli`: CLI main entry point.
+- **`techscript_common`**: Shared primitives: `Span`, `NodeId`, `Ident`, and source locations.
+- **`techscript_syntax`**: Unified keyword lists (31 active, 10 reserved), token enums, and precedence tables.
+- **`techscript_ast`**: AST node structure layouts and visitor traits.
+- **`techscript_errors`**: Diagnostic registers (`E0001`–`E1999`, `W0001`–`W0099`) and rendering formats.
+- **`techscript_lexer`**: Logos-based UTF-8 DFA token scanner.
+- **`techscript_parser`**: Pratt expression and recursive descent parser.
+- **`techscript_semantic`**: Scopes analysis, duplicate checkers, and deprecation lints.
+- **`techscript_interpreter`**: Tree-walking execution engine.
+- **`techscript_builtins`**: Standard pre-registered native helper methods.
+- **`techscript_gc`**: generational mark-and-sweep tracking allocator.
+- **`techscript_vm`**: stack-based bytecode compiler and virtual machine.
+- **`techscript_stdlib`**: Extended modules (`io`, `math`, `string`, `file`, `web`).
+- **`techscript_cli`**: Clap CLI binary launcher.
+- **`techscript_lsp`**: tower-lsp service for IDE support.
+- **`techscript_formatter`**: `tech fmt` AST standard layout manager.
+- **`techscript_linter`**: `tech lint` static code rule checkers.
+- **`techscript_package_manager`**: Registry client and version dependency solver.
 
 ---
 
 ## 5. Development Targets
 
-- **Current Milestone**: Milestone 1 (Lexer & Diagnostics implementation).
-- **Next Task**: Workspace setup. Implement diagnostics printing in `techscript_errors` and DFA token matching inside `techscript_lexer`.
-- **Coding Conventions**: All Rust code must pass `cargo fmt` and `cargo clippy --all-targets -- -D warnings`. Commits use the conventional format (e.g. `feat(lexer): scan integers`).
+- **Current Milestone**: Phase 1 Workspace Scaffolding completed. All 17 crates are successfully configured, compiling, clippy warning-free, and tested.
+- **Next Task**: Implement full Logos parser rules and EBNF syntax bindings under M1 guidelines.
+- **Coding Conventions**: All Rust code must pass `cargo fmt` and `cargo clippy --workspace --all-targets -- -D warnings`. Commits use the conventional format (e.g. `feat(lexer): scan integers`).

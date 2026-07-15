@@ -1,0 +1,12 @@
+[package]
+name = "techscript_linter"
+version = "0.1.0"
+edition = "2021"
+description = "Static analysis rules and lint check suites for TechScript 2.0"
+
+[dependencies]
+techscript_common = { path = "../../compiler/common" }
+techscript_syntax = { path = "../../compiler/syntax" }
+techscript_ast = { path = "../../compiler/ast" }
+techscript_errors = { path = "../../compiler/errors" }
+techscript_semantic = { path = "../../compiler/semantic" }

@@ -1,0 +1,12 @@
+[package]
+name = "techscript_semantic"
+version = "0.1.0"
+edition = "2021"
+description = "Static scope resolution, symbol mapping, and validation passes for TechScript 2.0"
+
+[dependencies]
+techscript_common = { path = "../common" }
+techscript_syntax = { path = "../syntax" }
+techscript_ast = { path = "../ast" }
+techscript_errors = { path = "../errors" }
+serde = { workspace = true }

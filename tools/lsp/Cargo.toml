@@ -1,0 +1,16 @@
+[package]
+name = "techscript_lsp"
+version = "0.1.0"
+edition = "2021"
+description = "Language Server Protocol bindings for TechScript 2.0 compiler IDE features"
+
+[dependencies]
+techscript_common = { path = "../../compiler/common" }
+techscript_syntax = { path = "../../compiler/syntax" }
+techscript_ast = { path = "../../compiler/ast" }
+techscript_errors = { path = "../../compiler/errors" }
+techscript_lexer = { path = "../../compiler/lexer" }
+techscript_parser = { path = "../../compiler/parser" }
+techscript_semantic = { path = "../../compiler/semantic" }
+tower-lsp = { workspace = true }
+serde = { workspace = true }

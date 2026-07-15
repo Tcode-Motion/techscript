@@ -1,0 +1,8 @@
+[package]
+name = "techscript_package_manager"
+version = "0.1.0"
+edition = "2021"
+description = "Dependency resolver and package manager registry client for TechScript 2.0"
+
+[dependencies]
+serde = { workspace = true }

@@ -1,0 +1,18 @@
+# Set default behavior to automatically normalize line endings.
+* text=auto
+
+# Force LF on all source files.
+*.rs text eol=lf
+*.toml text eol=lf
+*.md text eol=lf
+*.txs text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Denote binary files.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.html text eol=lf

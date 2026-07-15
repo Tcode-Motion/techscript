@@ -1,0 +1,21 @@
+[package]
+name = "techscript_cli"
+version = "0.1.0"
+edition = "2021"
+description = "TechScript 2.0 command-line entry point compiler binary (tech)"
+
+[[bin]]
+name = "tech"
+path = "src/main.rs"
+
+[dependencies]
+techscript_common = { path = "../compiler/common" }
+techscript_syntax = { path = "../compiler/syntax" }
+techscript_ast = { path = "../compiler/ast" }
+techscript_errors = { path = "../compiler/errors" }
+techscript_lexer = { path = "../compiler/lexer" }
+techscript_parser = { path = "../compiler/parser" }
+techscript_semantic = { path = "../compiler/semantic" }
+techscript_interpreter = { path = "../runtime/interpreter" }
+techscript_stdlib = { path = "../stdlib" }
+clap = { workspace = true }

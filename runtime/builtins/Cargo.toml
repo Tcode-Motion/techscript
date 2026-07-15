@@ -1,0 +1,8 @@
+[package]
+name = "techscript_builtins"
+version = "0.1.0"
+edition = "2021"
+description = "Pre-registered core functions (say, ask, len) for TechScript 2.0"
+
+[dependencies]
+techscript_interpreter = { path = "../interpreter" }

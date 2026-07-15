@@ -1,0 +1,9 @@
+[package]
+name = "techscript_errors"
+version = "0.1.0"
+edition = "2021"
+description = "Unified error reporting and terminal diagnostics renderer for TechScript 2.0"
+
+[dependencies]
+techscript_common = { path = "../common" }
+serde = { workspace = true }

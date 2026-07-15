@@ -1,0 +1,13 @@
+[package]
+name = "techscript_interpreter"
+version = "0.1.0"
+edition = "2021"
+description = "Tree-walking AST execution engine and REPL shell for TechScript 2.0"
+
+[dependencies]
+techscript_common = { path = "../../compiler/common" }
+techscript_syntax = { path = "../../compiler/syntax" }
+techscript_ast = { path = "../../compiler/ast" }
+techscript_semantic = { path = "../../compiler/semantic" }
+techscript_errors = { path = "../../compiler/errors" }
+serde = { workspace = true }

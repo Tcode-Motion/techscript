@@ -1,0 +1,8 @@
+[package]
+name = "techscript_vm"
+version = "0.1.0"
+edition = "2021"
+description = "Skeletal VM bytecode compiler and execution VM (v2.1 preview) for TechScript 2.0"
+
+[dependencies]
+techscript_interpreter = { path = "../interpreter" }

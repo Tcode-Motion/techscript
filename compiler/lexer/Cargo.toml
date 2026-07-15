@@ -1,0 +1,12 @@
+[package]
+name = "techscript_lexer"
+version = "0.1.0"
+edition = "2021"
+description = "UTF-8 source code tokenizer using logos DFA rules for TechScript 2.0"
+
+[dependencies]
+techscript_common = { path = "../common" }
+techscript_syntax = { path = "../syntax" }
+techscript_errors = { path = "../errors" }
+logos = { workspace = true }
+serde = { workspace = true }

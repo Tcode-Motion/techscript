@@ -2,6 +2,8 @@
 [workspace]
 resolver = "2"
 members = [
+    "compiler/common",
+    "compiler/syntax",
     "compiler/ast",
     "compiler/errors",
     "compiler/lexer",

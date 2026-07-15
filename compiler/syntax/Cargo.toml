@@ -1,0 +1,9 @@
+[package]
+name = "techscript_syntax"
+version = "0.1.0"
+edition = "2021"
+description = "Token definitions, keywords, and operator precedence for TechScript 2.0"
+
+[dependencies]
+techscript_common = { path = "../common" }
+serde = { workspace = true }

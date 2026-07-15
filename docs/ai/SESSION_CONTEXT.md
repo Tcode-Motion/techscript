@@ -9,34 +9,33 @@
 
 ## 1. Active Status
 
-- **Current Goal**: Integrate official Graphify-Labs tool.
-- **Current Branch**: `feat/graphify-labs-integration`
+- **Current Goal**: Complete TechScript 2.0 monorepo workspace scaffolding.
+- **Current Branch**: `feat/workspace-scaffolding`
 - **Current Milestone**: Milestone 1 Preparation.
-- **Current Task**: Completed official Graphify-Labs integration.
+- **Current Task**: Completed monorepo scaffolding for all 17 crates.
 
 ---
 
 ## 2. Recent Changes (This Session)
 
-1. Removed custom homemade graph generation script and folders.
-2. Executed `graphify antigravity install` to register Graphify as a project-scoped Google Antigravity skill, creating `.agents/rules/graphify.md` and `.agents/workflows/graphify.md`.
-3. Created `.graphifyignore` configuration file in the project root.
-4. Created Cargo workspace `Cargo.toml` in the project root to support cargo workspace dependency scans.
-5. Created `tools/update_graphify.py` integration script running the official `graphify extract` commands under code-only fallback if LLM keys are absent.
-6. Created `docs/GRAPHIFY_AI.md` and root `AI_BOOTSTRAP.md` guides.
-7. Updated `.github/workflows/graphify.yml` to automatically run and push graph updates on main push.
+1. Scaffolded all 17 crates across `compiler/`, `runtime/`, `stdlib`, `cli`, and `tools/` workspaces.
+2. Created shared `compiler/common` and `compiler/syntax` crates to hold spans, identifiers, tokens, and precedence rules.
+3. Created `LICENSE`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `CHANGELOG.md`, `.editorconfig`, and `.gitattributes` metadata documents.
+4. Created automated `.github/workflows/ci.yml` and `.github/workflows/release.yml` workflows.
+5. Enabled full cargo test, cargo clippy, and cargo doc checks, verifying green status.
+6. Updated AI context documentation files.
 
 ---
 
 ## 3. Current Problems
 
-- **No Active Problems**: Graphify-Labs integration is functional and checked in.
+- **No Active Problems**: Workspace scaffolding is verified green.
 
 ---
 
 ## 4. Next Step
 
-1. **Start Crate Implementation**: Proceed with Milestone 1 crate implementation:
-   - Create `compiler/errors/src/lib.rs` (diagnostics reporter).
-   - Create `compiler/lexer/src/lib.rs` (DFA logos lexer scanner).
+1. **Implement Lexer Scanner**: Proceed with Milestone 1 Lexer and Diagnostics implementation:
+   - Implement logos-based token matching rules in `techscript_lexer`.
+   - Implement diagnostic printing and formatting in `techscript_errors`.
 

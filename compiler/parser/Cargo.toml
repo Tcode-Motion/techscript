@@ -1,0 +1,12 @@
+[package]
+name = "techscript_parser"
+version = "0.1.0"
+edition = "2021"
+description = "AST builder utilizing recursive descent for statements and Pratt Parser for expressions for TechScript 2.0"
+
+[dependencies]
+techscript_common = { path = "../common" }
+techscript_syntax = { path = "../syntax" }
+techscript_ast = { path = "../ast" }
+techscript_errors = { path = "../errors" }
+serde = { workspace = true }

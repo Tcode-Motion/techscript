@@ -1,0 +1,8 @@
+[package]
+name = "techscript_common"
+version = "0.1.0"
+edition = "2021"
+description = "Common data structures and utilities for TechScript 2.0"
+
+[dependencies]
+serde = { workspace = true }

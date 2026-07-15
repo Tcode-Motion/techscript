@@ -117,5 +117,5 @@ goto MENU
 
 :OPEN
 cls
-start https://github.com/YOUR_USERNAME/TechScript-2.0
+start https://github.com/Tcode-Motion/TechScript-2.0
 goto MENU

@@ -10,6 +10,8 @@ on:
 jobs:
   check-graph:
     runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
     strategy:
       matrix:
         python-version: ['3.10', '3.11', '3.12']
@@ -53,8 +55,6 @@ jobs:
           echo "==========================="
 
       - name: Run Graphify Update
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           python tools/update_graphify.py
 
@@ -63,6 +63,7 @@ jobs:
           python tools/check_graphify.py
 
       - name: Verify Graph Invariant (No Uncommitted Changes)
+        if: env.GEMINI_API_KEY != ''
         run: |
           # Verify that the generated graph files match the committed files in git.
           # If there is any diff, the CI workflow fails.

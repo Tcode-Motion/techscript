@@ -1,0 +1,35 @@
+{
+  "communities": {
+    "0": [
+      "tools_update_graphify",
+      "tools_update_graphify_check_api_keys",
+      "tools_update_graphify_main",
+      "tools_update_graphify_run_command"
+    ]
+  },
+  "cohesion": {
+    "0": 0.8333333333333334
+  },
+  "gods": [
+    {
+      "id": "tools_update_graphify_main",
+      "label": "main()",
+      "degree": 3
+    },
+    {
+      "id": "tools_update_graphify_check_api_keys",
+      "label": "check_api_keys()",
+      "degree": 2
+    },
+    {
+      "id": "tools_update_graphify_run_command",
+      "label": "run_command()",
+      "degree": 2
+    }
+  ],
+  "surprises": [],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}

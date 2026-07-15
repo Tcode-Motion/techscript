@@ -1,0 +1,15 @@
+﻿# .graphifyignore
+# Exclude build and VCS metadata
+target/
+.git/
+node_modules/
+
+# Exclude Graphify output directory itself to avoid recursive indexing
+graphify-out/
+
+# Exclude credentials and temporary files
+.env
+*.tmp
+*.log
+.DS_Store
+Thumbs.db

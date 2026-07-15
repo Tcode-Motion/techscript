@@ -1,0 +1,36 @@
+# .github/workflows/graphify.yml
+name: Graphify Consistency Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  check-graph:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Graphify
+        run: |
+          pip install graphifyy
+
+      - name: Run Update Script
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python tools/update_graphify.py
+
+      - name: Verify Graph Invariant (No Uncommitted Changes)
+        run: |
+          # Verify that the generated graph files match the committed files in git.
+          # If there is any diff, the CI workflow fails.
+          git diff --exit-code graphify-out/

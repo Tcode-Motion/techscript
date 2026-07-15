@@ -1,0 +1,138 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "update_graphify.py",
+      "file_type": "code",
+      "source_file": "tools/update_graphify.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Community 0",
+      "norm_label": "update_graphify.py",
+      "id": "tools_update_graphify"
+    },
+    {
+      "label": "check_graphify_installed()",
+      "file_type": "code",
+      "source_file": "tools/update_graphify.py",
+      "source_location": "L12",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Community 0",
+      "norm_label": "check_graphify_installed()",
+      "id": "tools_update_graphify_check_graphify_installed"
+    },
+    {
+      "label": "check_api_keys()",
+      "file_type": "code",
+      "source_file": "tools/update_graphify.py",
+      "source_location": "L41",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Community 0",
+      "norm_label": "check_api_keys()",
+      "id": "tools_update_graphify_check_api_keys"
+    },
+    {
+      "label": "run_command()",
+      "file_type": "code",
+      "source_file": "tools/update_graphify.py",
+      "source_location": "L56",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Community 0",
+      "norm_label": "run_command()",
+      "id": "tools_update_graphify_run_command"
+    },
+    {
+      "label": "main()",
+      "file_type": "code",
+      "source_file": "tools/update_graphify.py",
+      "source_location": "L66",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Community 0",
+      "norm_label": "main()",
+      "id": "tools_update_graphify_main"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tools/update_graphify.py",
+      "source_location": "L41",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tools_update_graphify",
+      "target": "tools_update_graphify_check_api_keys"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tools/update_graphify.py",
+      "source_location": "L12",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tools_update_graphify",
+      "target": "tools_update_graphify_check_graphify_installed"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tools/update_graphify.py",
+      "source_location": "L66",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tools_update_graphify",
+      "target": "tools_update_graphify_main"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tools/update_graphify.py",
+      "source_location": "L56",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tools_update_graphify",
+      "target": "tools_update_graphify_run_command"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tools/update_graphify.py",
+      "source_location": "L68",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tools_update_graphify_main",
+      "target": "tools_update_graphify_check_graphify_installed"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tools/update_graphify.py",
+      "source_location": "L72",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tools_update_graphify_main",
+      "target": "tools_update_graphify_check_api_keys"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tools/update_graphify.py",
+      "source_location": "L79",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tools_update_graphify_main",
+      "target": "tools_update_graphify_run_command"
+    }
+  ],
+  "hyperedges": []
+}

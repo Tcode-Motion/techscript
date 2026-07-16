@@ -146,7 +146,7 @@ impl ProjectBuildGraph {
         let mut to_resolve = Vec::new();
 
         // 1. Add all entry points to compilation list
-        for (_, pkg) in self.workspace.packages.iter_mut() {
+        for pkg in self.workspace.packages.values_mut() {
             if pkg.entry_file.exists() {
                 if let Ok(source) = std::fs::read_to_string(&pkg.entry_file) {
                     let fid = source_mgr.add_file(pkg.entry_file.clone(), source.clone());

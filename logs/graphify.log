@@ -494,3 +494,14 @@ error: no LLM API key found (2 doc/paper/image file(s) need semantic extraction)
 [2026-07-16 19:27:18] [INFO] Graphify update completed successfully in 53.57s.
 [2026-07-16 19:27:18] [INFO] ============================================================
 
+[2026-07-16 19:36:54] [INFO] ============================================================
+[2026-07-16 19:36:54] [INFO] Starting Graphify Knowledge Graph Update (dry-run: False)
+[2026-07-16 19:36:54] [INFO] Workspace root detected: C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0
+[2026-07-16 19:36:54] [INFO] Python Version: 3.13.13
+[2026-07-16 19:36:54] [INFO] Graphify Version: 0.8.43 (command: graphify)
+[2026-07-16 19:36:54] [INFO] Rust Version: rustc 1.96.0 (ac68faa20 2026-05-25)
+[2026-07-16 19:36:54] [INFO] Cargo Version: cargo 1.96.0 (30a34c682 2026-05-25)
+[2026-07-16 19:36:54] [INFO] No LLM API key detected. Running in AST-only mode.
+[2026-07-16 19:36:54] [INFO] Temporarily modifying .graphifyignore for AST-only fallback...
+[2026-07-16 19:36:54] [INFO] Wrote temporary ignore file to C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0\.graphifyignore
+[2026-07-16 19:36:54] [INFO] Executing: graphify extract . --no-cluster --cargo

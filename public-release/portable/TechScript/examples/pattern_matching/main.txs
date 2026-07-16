@@ -1,0 +1,3 @@
+build main() {
+    say "Pattern matching syntax structure."
+}

@@ -1,47 +1,50 @@
-name: Release Packaging
+name: TechScript 2.0 Release Packaging
 
 on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 jobs:
-  publish:
-    name: Build & Publish Release Binaries
+  build-and-test:
+    name: Build & Test Workspace
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        include:
-          - os: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-            artifact_name: tech
-            asset_name: tech-linux-x64
-          - os: macos-latest
-            target: x86_64-apple-darwin
-            artifact_name: tech
-            asset_name: tech-macos-x64
-          - os: windows-latest
-            target: x86_64-pc-windows-msvc
-            artifact_name: tech.exe
-            asset_name: tech-windows-x64.exe
-
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Setup Rust Toolchain
+      - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.target }}
 
-      - name: Compile Release Binary
-        run: cargo build --release --target ${{ matrix.target }} --bin tech
+      - name: Run workspace tests
+        run: cargo test --workspace --all-targets
 
-      - name: Upload Release Asset
-        uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
+  package-windows:
+    name: Package Windows Release
+    needs: build-and-test
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Inno Setup
+        run: choco install innosetup
+
+      - name: Run Packaging Script
+        run: cargo run -p techscript_packager
+
+      - name: Run Smoke Verification Script
+        run: .\verify_release.bat
+
+      - name: Upload Release Artifacts
+        uses: actions/upload-artifact@v3
         with:
-          files: |
-            target/${{ matrix.target }}/release/${{ matrix.artifact_name }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: TechScript_Windows_Release
+          path: public-release/

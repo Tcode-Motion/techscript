@@ -382,12 +382,56 @@ impl LoweringContext {
                 self.builder.declare_import(path_str);
 
                 if let Some(symbols) = &import_stmt.symbols {
-                    for sym in symbols {
-                        let global_id = self.builder.declare_global(sym.name.clone(), IRType::Any);
-                        self.symbol_map.insert(
-                            sym.name.clone(),
-                            SymbolBinding::Global(global_id, IRType::Any),
-                        );
+                    if import_stmt.path.len() > 1
+                        && symbols.len() == 1
+                        && !symbols[0].name.contains(':')
+                        && symbols[0].name != "*"
+                    {
+                        let alias_name = symbols[0].name.clone();
+                        // For namespace alias, the global variable representing it is the root namespace of the path
+                        let root_name = import_stmt.path[0].name.clone();
+                        let global_id = self.builder.declare_global(root_name, IRType::Any);
+                        self.symbol_map
+                            .insert(alias_name, SymbolBinding::Global(global_id, IRType::Any));
+                    } else {
+                        for sym in symbols {
+                            if sym.name == "*" {
+                                let module_path = import_stmt
+                                    .path
+                                    .iter()
+                                    .map(|i| i.name.clone())
+                                    .collect::<Vec<_>>()
+                                    .join(".");
+                                let registry = techscript_stdlib::StdlibRegistry::new();
+                                if let Some(module) = registry.get_module(&module_path) {
+                                    for func_name in module.exports.keys() {
+                                        let global_id = self
+                                            .builder
+                                            .declare_global(func_name.clone(), IRType::Any);
+                                        self.symbol_map.insert(
+                                            func_name.clone(),
+                                            SymbolBinding::Global(global_id, IRType::Any),
+                                        );
+                                    }
+                                }
+                            } else if sym.name.contains(':') {
+                                let parts: Vec<&str> = sym.name.split(':').collect();
+                                let orig_name = parts[0].to_string();
+                                let alias_name = parts[1].to_string();
+                                let global_id = self.builder.declare_global(orig_name, IRType::Any);
+                                self.symbol_map.insert(
+                                    alias_name,
+                                    SymbolBinding::Global(global_id, IRType::Any),
+                                );
+                            } else {
+                                let global_id =
+                                    self.builder.declare_global(sym.name.clone(), IRType::Any);
+                                self.symbol_map.insert(
+                                    sym.name.clone(),
+                                    SymbolBinding::Global(global_id, IRType::Any),
+                                );
+                            }
+                        }
                     }
                 } else if !import_stmt.path.is_empty() {
                     let root_name = import_stmt.path[0].name.clone();

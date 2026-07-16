@@ -1,16 +1,16 @@
 # Graph Report - TechScript 2.0  (2026-07-16)
 
 ## Corpus Check
-- 688 files · ~87,669 words
+- 1593 files · ~166,807 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2407 nodes · 3827 edges · 199 communities (171 shown, 28 thin omitted)
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 22 edges (avg confidence: 0.8)
+- 3053 nodes · 4839 edges · 257 communities (206 shown, 51 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 25 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `b413f1f4`
+- Built from commit: `33b5588a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -129,7 +129,9 @@
 - [[_COMMUNITY_Community 116|Community 116]]
 - [[_COMMUNITY_Community 117|Community 117]]
 - [[_COMMUNITY_Community 118|Community 118]]
+- [[_COMMUNITY_Community 120|Community 120]]
 - [[_COMMUNITY_Community 122|Community 122]]
+- [[_COMMUNITY_Community 123|Community 123]]
 - [[_COMMUNITY_Community 124|Community 124]]
 - [[_COMMUNITY_Community 125|Community 125]]
 - [[_COMMUNITY_Community 133|Community 133]]
@@ -185,11 +187,65 @@
 - [[_COMMUNITY_Community 191|Community 191]]
 - [[_COMMUNITY_Community 193|Community 193]]
 - [[_COMMUNITY_Community 194|Community 194]]
+- [[_COMMUNITY_Community 195|Community 195]]
+- [[_COMMUNITY_Community 196|Community 196]]
 - [[_COMMUNITY_Community 197|Community 197]]
 - [[_COMMUNITY_Community 198|Community 198]]
 - [[_COMMUNITY_Community 199|Community 199]]
 - [[_COMMUNITY_Community 200|Community 200]]
 - [[_COMMUNITY_Community 201|Community 201]]
+- [[_COMMUNITY_Community 202|Community 202]]
+- [[_COMMUNITY_Community 203|Community 203]]
+- [[_COMMUNITY_Community 204|Community 204]]
+- [[_COMMUNITY_Community 205|Community 205]]
+- [[_COMMUNITY_Community 206|Community 206]]
+- [[_COMMUNITY_Community 207|Community 207]]
+- [[_COMMUNITY_Community 208|Community 208]]
+- [[_COMMUNITY_Community 209|Community 209]]
+- [[_COMMUNITY_Community 210|Community 210]]
+- [[_COMMUNITY_Community 211|Community 211]]
+- [[_COMMUNITY_Community 212|Community 212]]
+- [[_COMMUNITY_Community 213|Community 213]]
+- [[_COMMUNITY_Community 214|Community 214]]
+- [[_COMMUNITY_Community 215|Community 215]]
+- [[_COMMUNITY_Community 216|Community 216]]
+- [[_COMMUNITY_Community 217|Community 217]]
+- [[_COMMUNITY_Community 218|Community 218]]
+- [[_COMMUNITY_Community 219|Community 219]]
+- [[_COMMUNITY_Community 220|Community 220]]
+- [[_COMMUNITY_Community 221|Community 221]]
+- [[_COMMUNITY_Community 222|Community 222]]
+- [[_COMMUNITY_Community 223|Community 223]]
+- [[_COMMUNITY_Community 224|Community 224]]
+- [[_COMMUNITY_Community 225|Community 225]]
+- [[_COMMUNITY_Community 226|Community 226]]
+- [[_COMMUNITY_Community 228|Community 228]]
+- [[_COMMUNITY_Community 229|Community 229]]
+- [[_COMMUNITY_Community 230|Community 230]]
+- [[_COMMUNITY_Community 231|Community 231]]
+- [[_COMMUNITY_Community 232|Community 232]]
+- [[_COMMUNITY_Community 233|Community 233]]
+- [[_COMMUNITY_Community 234|Community 234]]
+- [[_COMMUNITY_Community 235|Community 235]]
+- [[_COMMUNITY_Community 236|Community 236]]
+- [[_COMMUNITY_Community 237|Community 237]]
+- [[_COMMUNITY_Community 238|Community 238]]
+- [[_COMMUNITY_Community 239|Community 239]]
+- [[_COMMUNITY_Community 240|Community 240]]
+- [[_COMMUNITY_Community 241|Community 241]]
+- [[_COMMUNITY_Community 242|Community 242]]
+- [[_COMMUNITY_Community 243|Community 243]]
+- [[_COMMUNITY_Community 244|Community 244]]
+- [[_COMMUNITY_Community 245|Community 245]]
+- [[_COMMUNITY_Community 246|Community 246]]
+- [[_COMMUNITY_Community 247|Community 247]]
+- [[_COMMUNITY_Community 248|Community 248]]
+- [[_COMMUNITY_Community 249|Community 249]]
+- [[_COMMUNITY_Community 250|Community 250]]
+- [[_COMMUNITY_Community 251|Community 251]]
+- [[_COMMUNITY_Community 252|Community 252]]
+- [[_COMMUNITY_Community 253|Community 253]]
+- [[_COMMUNITY_Community 254|Community 254]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `Span` - 82 edges
@@ -216,28 +272,28 @@
   compiler/common/tests/common_tests.rs → compiler/common/src/source.rs
 
 ## Import Cycles
-- 1-file cycle: `compiler/bytecode/src/builder.rs -> compiler/bytecode/src/builder.rs`
-- 1-file cycle: `compiler/bytecode/src/function.rs -> compiler/bytecode/src/function.rs`
-- 1-file cycle: `compiler/bytecode/src/chunk.rs -> compiler/bytecode/src/chunk.rs`
-- 1-file cycle: `compiler/bytecode/src/constant_pool.rs -> compiler/bytecode/src/constant_pool.rs`
-- 1-file cycle: `compiler/bytecode/src/debug.rs -> compiler/bytecode/src/debug.rs`
-- 1-file cycle: `compiler/bytecode/src/disassembler.rs -> compiler/bytecode/src/disassembler.rs`
-- 1-file cycle: `compiler/bytecode/src/lib.rs -> compiler/bytecode/src/lib.rs`
-- 1-file cycle: `compiler/bytecode/src/instruction.rs -> compiler/bytecode/src/instruction.rs`
-- 1-file cycle: `compiler/bytecode/src/lowering.rs -> compiler/bytecode/src/lowering.rs`
-- 1-file cycle: `compiler/bytecode/src/module.rs -> compiler/bytecode/src/module.rs`
-- 1-file cycle: `compiler/bytecode/src/serializer.rs -> compiler/bytecode/src/serializer.rs`
-- 1-file cycle: `compiler/bytecode/src/source_map.rs -> compiler/bytecode/src/source_map.rs`
-- 1-file cycle: `compiler/bytecode/src/validator.rs -> compiler/bytecode/src/validator.rs`
-- 1-file cycle: `compiler/common/src/file_ext.rs -> compiler/common/src/file_ext.rs`
+- 1-file cycle: `cli/src/artifacts.rs -> cli/src/artifacts.rs`
+- 1-file cycle: `cli/src/cache.rs -> cli/src/cache.rs`
 - 1-file cycle: `compiler/common/src/ident.rs -> compiler/common/src/ident.rs`
-- 1-file cycle: `compiler/common/src/source.rs -> compiler/common/src/source.rs`
-- 1-file cycle: `compiler/errors/src/lib.rs -> compiler/errors/src/lib.rs`
-- 1-file cycle: `compiler/ir/src/block.rs -> compiler/ir/src/block.rs`
-- 1-file cycle: `compiler/ir/src/builder.rs -> compiler/ir/src/builder.rs`
-- 1-file cycle: `compiler/ir/src/function.rs -> compiler/ir/src/function.rs`
+- 1-file cycle: `cli/src/commands/build.rs -> cli/src/commands/build.rs`
+- 1-file cycle: `cli/src/pipeline.rs -> cli/src/pipeline.rs`
+- 1-file cycle: `cli/src/commands/check.rs -> cli/src/commands/check.rs`
+- 1-file cycle: `cli/src/commands/clean.rs -> cli/src/commands/clean.rs`
+- 1-file cycle: `cli/src/commands/doc.rs -> cli/src/commands/doc.rs`
+- 1-file cycle: `cli/src/commands/doctor.rs -> cli/src/commands/doctor.rs`
+- 1-file cycle: `cli/src/commands/dump.rs -> cli/src/commands/dump.rs`
+- 1-file cycle: `cli/src/commands/fmt.rs -> cli/src/commands/fmt.rs`
+- 1-file cycle: `cli/src/commands/init.rs -> cli/src/commands/init.rs`
+- 1-file cycle: `cli/src/commands/install.rs -> cli/src/commands/install.rs`
+- 1-file cycle: `cli/src/commands/lint.rs -> cli/src/commands/lint.rs`
+- 1-file cycle: `cli/src/commands/new_cmd.rs -> cli/src/commands/new_cmd.rs`
+- 1-file cycle: `cli/src/commands/publish.rs -> cli/src/commands/publish.rs`
+- 1-file cycle: `cli/src/commands/repl.rs -> cli/src/commands/repl.rs`
+- 1-file cycle: `runtime/interpreter/src/expressions.rs -> runtime/interpreter/src/expressions.rs`
+- 1-file cycle: `runtime/interpreter/src/lib.rs -> runtime/interpreter/src/lib.rs`
+- 1-file cycle: `cli/src/commands/run.rs -> cli/src/commands/run.rs`
 
-## Communities (199 total, 28 thin omitted)
+## Communities (257 total, 51 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.13
@@ -248,7 +304,7 @@ Cohesion: 0.38
 Nodes (17): techscript_ast, techscript_builtins, techscript_cli, techscript_common, techscript_errors, techscript_formatter, techscript_gc, techscript_interpreter (+9 more)
 
 ### Community 2 - "Community 2"
-Cohesion: 0.16
+Cohesion: 0.12
 Nodes (21): EvalResult, ExecResult, Expression, RuntimeValue, Span, Statement, Result, RuntimeError (+13 more)
 
 ### Community 3 - "Community 3"
@@ -272,8 +328,8 @@ Cohesion: 0.08
 Nodes (24): Callable, Default, HashMap, Option, Rc, Result, RuntimeContext, RuntimeError (+16 more)
 
 ### Community 8 - "Community 8"
-Cohesion: 0.06
-Nodes (33): AstVisitor, IndexMap, CheckedProgram, Result, RuntimeError, Value, Block, Callable (+25 more)
+Cohesion: 0.15
+Nodes (8): Callable, FieldSpec, ModelDecl, String, UserFunction, BridgedMethod, ModelConstructor, StructConstructor
 
 ### Community 9 - "Community 9"
 Cohesion: 0.09
@@ -305,7 +361,7 @@ Nodes (11): DiagnosticReporter, ErrorCode, NodeId, ParseResult, Self, Span, Toke
 
 ### Community 17 - "Community 17"
 Cohesion: 0.16
-Nodes (10): Arc, Option, Path, Self, Span, String, Vec, PathBuf (+2 more)
+Nodes (10): Arc, Option, Path, PathBuf, Self, Span, String, Vec (+2 more)
 
 ### Community 18 - "Community 18"
 Cohesion: 0.19
@@ -313,7 +369,7 @@ Nodes (15): Diagnostic, DiagnosticReporter, Result, Self, Span, Token, TokenKind
 
 ### Community 20 - "Community 20"
 Cohesion: 0.14
-Nodes (16): F, CallFrame, Default, Environment, Program, Rc, RefCell, Result (+8 more)
+Nodes (16): CallFrame, Default, Environment, F, Program, Rc, RefCell, Result (+8 more)
 
 ### Community 21 - "Community 21"
 Cohesion: 0.10
@@ -324,8 +380,8 @@ Cohesion: 0.10
 Nodes (21): 03 — TechScript 2.0 EBNF Grammar, 1. Program Structure, 2. Declarations, 3. Statements, 4. Control Flow, 5. Imports, 6.1 Expression Hierarchy, 6.2 Primary Expressions (+13 more)
 
 ### Community 23 - "Community 23"
-Cohesion: 0.15
-Nodes (12): 17 — TechScript 2.0 Development Roadmap, Compatibility & Evolution Analysis, Compatibility Notes, Future Roadmap, Migration Notes, Phase 2 — Standard Library + Tools (Weeks 9–14), Phase 3 — Bytecode VM (Weeks 15–22), Phase 4 — LLVM Backend (Weeks 23–34) (+4 more)
+Cohesion: 0.10
+Nodes (21): 17 — TechScript 2.0 Development Roadmap, Compatibility & Evolution Analysis, Compatibility Notes, Future Roadmap, Migration Notes, Phase 1 — Compiler Frontend (Weeks 1–8), Phase 2 — Standard Library + Tools (Weeks 9–14), Phase 3 — Bytecode VM (Weeks 15–22) (+13 more)
 
 ### Community 24 - "Community 24"
 Cohesion: 0.14
@@ -380,8 +436,8 @@ Cohesion: 0.13
 Nodes (10): BridgedFunction, Callable, Result, RuntimeContext, RuntimeError, RuntimeValue, UserFunction, Vec (+2 more)
 
 ### Community 39 - "Community 39"
-Cohesion: 0.19
-Nodes (10): Display, Formatter, Result, Self, Span, String, H, Hash (+2 more)
+Cohesion: 0.09
+Nodes (25): BytecodeModule, HashMap, Module, OptimizationLevel, Option, Path, PathBuf, Result (+17 more)
 
 ### Community 40 - "Community 40"
 Cohesion: 0.14
@@ -437,7 +493,7 @@ Nodes (13): 14 — TechScript 2.0 Error Code Specification, 16.1 Compatibility N
 
 ### Community 54 - "Community 54"
 Cohesion: 0.12
-Nodes (20): Capability, parse_json_value(), StdFunction, StdlibModule, StdlibRegistry, stringify_value(), StdFnCallback, Callable (+12 more)
+Nodes (20): parse_json_value(), StdFunction, StdlibModule, StdlibRegistry, stringify_value(), StdFnCallback, Callable, Capability (+12 more)
 
 ### Community 55 - "Community 55"
 Cohesion: 0.19
@@ -504,7 +560,7 @@ Cohesion: 0.20
 Nodes (10): SourceFile, make_source_file(), source_file_empty(), source_file_line_col_out_of_bounds(), source_file_line_content_out_of_bounds(), source_file_line_start(), source_file_multi_line(), source_file_single_line() (+2 more)
 
 ### Community 72 - "Community 72"
-Cohesion: 0.17
+Cohesion: 0.22
 Nodes (9): 02 — TechScript 2.0 Monorepo Folder Structure, Cargo Workspace Configuration, Compatibility & Evolution Analysis, Compatibility Notes, Complete Directory Listing, Future Roadmap, Migration Notes, Rationale (+1 more)
 
 ### Community 73 - "Community 73"
@@ -512,8 +568,8 @@ Cohesion: 0.25
 Nodes (5): LintRule, DummyRule, CheckedProgram, Diagnostic, Vec
 
 ### Community 74 - "Community 74"
-Cohesion: 0.36
-Nodes (6): DependencyResolver, Package, Result, Self, String, Vec
+Cohesion: 0.10
+Nodes (30): DependencyConfig, LockedPackage, PackageConfig, CapabilityValidator, DependencyConfig, DependencySolver, DependencySolver<'a>, DocExtractor (+22 more)
 
 ### Community 75 - "Community 75"
 Cohesion: 0.31
@@ -576,11 +632,11 @@ Cohesion: 0.40
 Nodes (5): 07 — DECISIONS, ADR 001 — Rust Implementation Language, ADR 002 — Frozen Extension `.txs`, ADR 003 — Unified `build` Method Syntax, ADR 004 — Standard Library Separation
 
 ### Community 91 - "Community 91"
-Cohesion: 0.40
+Cohesion: 0.50
 Nodes (4): 1. Onboarding Workflow, 2. Invariant Rules to Remember, 3. Querying Codebase, TechScript 2.0 AI Onboarding Bootstrap
 
 ### Community 92 - "Community 92"
-Cohesion: 0.40
+Cohesion: 0.33
 Nodes (5): 1. Active Status, 2. Recent Changes (This Session), 3. Current Problems, 4. Next Step, TechScript 2.0 Session Context
 
 ### Community 93 - "Community 93"
@@ -604,8 +660,8 @@ Cohesion: 0.50
 Nodes (3): [2.0.0] - 2026-07-15, Added, Changelog
 
 ### Community 98 - "Community 98"
-Cohesion: 0.50
-Nodes (3): Commands, Cli, Commands
+Cohesion: 0.29
+Nodes (4): Option, Commands, Cli, Commands
 
 ### Community 99 - "Community 99"
 Cohesion: 0.50
@@ -623,17 +679,25 @@ Nodes (3): Getting Started, Repository Layout, TechScript 2.0
 Cohesion: 0.50
 Nodes (3): Reporting a Vulnerability, Security Policy, Supported Versions
 
+### Community 120 - "Community 120"
+Cohesion: 0.21
+Nodes (7): AstVisitor, Interpreter, CheckedProgram, Result, RuntimeError, Value, interpret()
+
+### Community 123 - "Community 123"
+Cohesion: 0.06
+Nodes (52): ArtifactManager, BuildCache, BuildProfile, ExitCode, Option, ExitCode, Option, ExitCode (+44 more)
+
 ### Community 125 - "Community 125"
 Cohesion: 0.20
 Nodes (7): BuiltinRegistry, Default, Result, RuntimeValue, Self, VMError, NativeBridge
 
 ### Community 133 - "Community 133"
-Cohesion: 0.10
-Nodes (26): Chunk, DebugSymbols, Self, SourceMap, String, BytecodeModule, Module, BytecodeModule (+18 more)
+Cohesion: 0.06
+Nodes (42): Chunk, BytecodeFunction, BytecodeInstruction, ConstantPool, DebugSymbols, HashMap, InstructionId, Opcode (+34 more)
 
 ### Community 139 - "Community 139"
-Cohesion: 0.16
-Nodes (16): BytecodeFunction, BytecodeInstruction, ConstantPool, DebugSymbols, HashMap, InstructionId, Opcode, Operand (+8 more)
+Cohesion: 0.11
+Nodes (20): Diagnostic, Duration, ErrorCode, FileId, Into, Option, Self, SourceManager (+12 more)
 
 ### Community 142 - "Community 142"
 Cohesion: 0.11
@@ -808,12 +872,20 @@ Cohesion: 0.24
 Nodes (8): Default, HashSet, Result, Self, String, DefaultModuleResolver, ModuleResolver, ModuleSource
 
 ### Community 191 - "Community 191"
-Cohesion: 0.22
-Nodes (9): Phase 1 — Compiler Frontend (Weeks 1–8), Week 1: Project Bootstrap, Week 2: Lexer, Week 3: Parser (Statements), Week 4: Parser (Expressions + Functions + Models), Week 5: Semantic Analyzer, Week 6: Interpreter (Core), Week 7: Interpreter (Functions + Models + Errors) (+1 more)
+Cohesion: 0.06
+Nodes (33): Advanced Collections, Async, ✅ Completed Phases, Current Completion Status, Database, Detailed Milestone Roadmap, Developer Tools, Final Goal (+25 more)
 
 ### Community 193 - "Community 193"
 Cohesion: 0.33
 Nodes (5): HeapObject, Rc, Self, Vec, VMHeap
+
+### Community 195 - "Community 195"
+Cohesion: 0.17
+Nodes (20): FileId, HashMap, HashSet, IndexMap, Option, Path, PathBuf, Result (+12 more)
+
+### Community 196 - "Community 196"
+Cohesion: 0.17
+Nodes (22): Capability, Default, HashSet, OptimizationLevel, Option, Path, PathBuf, Result (+14 more)
 
 ### Community 197 - "Community 197"
 Cohesion: 0.33
@@ -827,25 +899,141 @@ Nodes (4): Result, RuntimeValue, VMError, VM
 Cohesion: 0.40
 Nodes (4): Self, Vec, CallFrame, ExceptionHandler
 
+### Community 202 - "Community 202"
+Cohesion: 0.16
+Nodes (12): DebugSymbols, Path, PathBuf, Result, Self, SourceMap, String, Vec (+4 more)
+
+### Community 203 - "Community 203"
+Cohesion: 0.14
+Nodes (15): Option, Path, PathBuf, Result, String, F, HashMap, Path (+7 more)
+
+### Community 204 - "Community 204"
+Cohesion: 0.15
+Nodes (14): CompilationEvent, Default, Duration, EventListener, HashMap, Into, Option, Self (+6 more)
+
+### Community 205 - "Community 205"
+Cohesion: 0.15
+Nodes (10): CompilationEvent, Duration, EventListener, Self, String, format_duration(), LogFormat, Logger (+2 more)
+
+### Community 206 - "Community 206"
+Cohesion: 0.21
+Nodes (9): Default, Path, PathBuf, Result, Self, String, Vec, CompilationDatabase (+1 more)
+
+### Community 207 - "Community 207"
+Cohesion: 0.23
+Nodes (8): Box, Default, Self, Vec, Send, CompilationEvent, EventBus, EventListener
+
+### Community 208 - "Community 208"
+Cohesion: 0.29
+Nodes (7): Box, Default, EventListener, Self, Vec, CompilerPlugin, PluginRegistry
+
+### Community 209 - "Community 209"
+Cohesion: 0.29
+Nodes (7): Block, ConstDecl, ExecResult, Pattern, Statement, VarDecl, Interpreter
+
+### Community 210 - "Community 210"
+Cohesion: 0.20
+Nodes (8): ProjectBuildGraph, Result, Self, Vec, CompilationPipeline, CompilationResult, PipelineOptions, CompilationScheduler
+
+### Community 211 - "Community 211"
+Cohesion: 0.45
+Nodes (7): IndexMap, RuntimeValue, Self, String, ModelInstance, ObjectId, StructInstance
+
+### Community 212 - "Community 212"
+Cohesion: 0.22
+Nodes (7): Option, Path, PathBuf, Result, Self, Vec, ProjectTemplate
+
+### Community 213 - "Community 213"
+Cohesion: 0.42
+Nodes (8): ExitCode, dump_repl_ast(), dump_repl_bytecode(), dump_repl_ir(), eval_code(), evaluate_type(), execute(), print_help()
+
+### Community 214 - "Community 214"
+Cohesion: 0.25
+Nodes (4): Display, Formatter, Result, ExitCode
+
+### Community 215 - "Community 215"
+Cohesion: 0.54
+Nodes (5): Result, RuntimeContext, RuntimeError, RuntimeValue, Vec
+
+### Community 216 - "Community 216"
+Cohesion: 0.53
+Nodes (5): ExitCode, Option, PathBuf, execute(), home_dir()
+
+### Community 217 - "Community 217"
+Cohesion: 0.70
+Nodes (4): ExitCode, dump_ast(), dump_bytecode(), dump_ir()
+
+### Community 218 - "Community 218"
+Cohesion: 0.67
+Nodes (3): ExitCode, Option, execute()
+
+### Community 219 - "Community 219"
+Cohesion: 0.67
+Nodes (3): ExitCode, Option, execute()
+
+### Community 220 - "Community 220"
+Cohesion: 0.67
+Nodes (3): ExitCode, Option, execute()
+
+### Community 221 - "Community 221"
+Cohesion: 0.67
+Nodes (3): ExitCode, Option, execute()
+
+### Community 228 - "Community 228"
+Cohesion: 0.11
+Nodes (20): CodegenContext, Function, Instruction, IRType, LiteralVal, LLVMValueRef, Module, Result (+12 more)
+
+### Community 229 - "Community 229"
+Cohesion: 0.16
+Nodes (12): BlockId, HashMap, LLVMContextRef, LLVMValueRef, Option, Self, ValueId, Drop (+4 more)
+
+### Community 230 - "Community 230"
+Cohesion: 0.31
+Nodes (8): Module, Path, Result, String, LLVMBackend, LLVMBackendOptions, LLVMCodegenError, LLVMCodeGenOptLevel
+
+### Community 231 - "Community 231"
+Cohesion: 0.33
+Nodes (19): compile_binary(), compile_inno_installer(), extract_workspace_version(), generate_checksums(), generate_documentation(), generate_inno_script(), generate_release_manifest(), generate_release_notes() (+11 more)
+
+### Community 232 - "Community 232"
+Cohesion: 0.11
+Nodes (17): patterns, patterns, patterns, name, patterns, patterns, repository, comments (+9 more)
+
+### Community 233 - "Community 233"
+Cohesion: 0.12
+Nodes (15): activationEvents, categories, contributes, grammars, languages, description, displayName, engines (+7 more)
+
+### Community 234 - "Community 234"
+Cohesion: 0.22
+Nodes (8): 1. VS Code Extension (`vscode-extension/`), 2. Windows file association icon — i.e. the icon `.txs` files show in File Explorer (`ico/file-icon.ico`), 3. App / EXE icon (`ico/app-icon.ico`, `windows/installer-icon.ico`), 4. Favicon (`ico/favicon.ico`), 5. Raw PNGs at every common size (`png/`), Quality note, TechScript Logo Package, Where to use each file
+
+### Community 235 - "Community 235"
+Cohesion: 0.29
+Nodes (6): 1. Using the Portable Version, 2. Using the Setup Installer, Installation Methods, Running Examples & Templates, TechScript 2.0 Manual Testing Guide, Testing VS Code Extension
+
+### Community 237 - "Community 237"
+Cohesion: 0.40
+Nodes (4): Extension Settings, Features, Requirements, TechScript 2.0 VS Code Extension
+
 ## Knowledge Gaps
-- **754 isolated node(s):** `Commands`, `Commands`, `Pattern`, `FStringPart`, `Option` (+749 more)
+- **938 isolated node(s):** `Vec`, `Self`, `DebugSymbols`, `SourceMap`, `PathBuf` (+933 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **28 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **51 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `17 — TechScript 2.0 Development Roadmap` connect `Community 23` to `Community 191`?**
-  _High betweenness centrality (0.003) - this node is a cross-community bridge._
-- **Why does `IndexMap` connect `Community 8` to `Community 0`, `Community 54`?**
-  _High betweenness centrality (0.003) - this node is a cross-community bridge._
-- **Why does `10 — TechScript 2.0 Semantic Analysis Specification` connect `Community 52` to `Community 50`?**
-  _High betweenness centrality (0.003) - this node is a cross-community bridge._
-- **What connects `Commands`, `Commands`, `Pattern` to the rest of the system?**
-  _755 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Why does `01 — TechScript v2.0 Language Specification` connect `Community 13` to `Community 50`?**
+  _High betweenness centrality (0.005) - this node is a cross-community bridge._
+- **Why does `17 — TechScript 2.0 Development Roadmap` connect `Community 23` to `Community 50`?**
+  _High betweenness centrality (0.002) - this node is a cross-community bridge._
+- **What connects `Vec`, `Self`, `DebugSymbols` to the rest of the system?**
+  _939 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.13230769230769232 - nodes in this community are weakly interconnected._
+- **Should `Community 2` be split into smaller, more focused modules?**
+  _Cohesion score 0.11587301587301588 - nodes in this community are weakly interconnected._
 - **Should `Community 7` be split into smaller, more focused modules?**
   _Cohesion score 0.07578084997439836 - nodes in this community are weakly interconnected._
-- **Should `Community 8` be split into smaller, more focused modules?**
-  _Cohesion score 0.05628415300546448 - nodes in this community are weakly interconnected._
+- **Should `Community 9` be split into smaller, more focused modules?**
+  _Cohesion score 0.08710985716804796 - nodes in this community are weakly interconnected._

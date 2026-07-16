@@ -1,0 +1,3 @@
+build main() {
+    say "Asynchronous cooperative task loops."
+}

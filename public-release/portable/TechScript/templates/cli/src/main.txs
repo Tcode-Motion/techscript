@@ -1,0 +1,3 @@
+build main() {
+    say "TechScript CLI Tool running."
+}

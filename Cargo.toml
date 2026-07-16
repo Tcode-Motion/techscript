@@ -13,6 +13,7 @@ members = [
     "compiler/ir",
     "compiler/optimizer",
     "compiler/bytecode",
+    "compiler/llvm_backend",
     "runtime/interpreter",
     "runtime/runtime",
     "runtime/builtins",
@@ -24,6 +25,7 @@ members = [
     "tools/formatter",
     "tools/linter",
     "tools/package-manager",
+    "tools/packager",
 ]
 
 [workspace.dependencies]
@@ -36,3 +38,5 @@ thiserror = "2"
 tower-lsp = "0.20"
 rustyline = "14"
 colored = "2"
+toml = "0.8"
+indexmap = "2"

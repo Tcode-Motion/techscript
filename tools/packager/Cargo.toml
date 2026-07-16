@@ -1,0 +1,15 @@
+[package]
+name = "techscript_packager"
+version = "0.1.0"
+edition = "2021"
+description = "TechScript 2.0 release packaging automation tool"
+
+[dependencies]
+anyhow = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+toml = { workspace = true }
+zip = "0.6"
+chrono = "0.4"
+sha2 = "0.10"
+hex = "0.4"

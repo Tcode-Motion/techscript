@@ -4,6 +4,10 @@ version = "0.1.0"
 edition = "2021"
 description = "Language Server Protocol bindings for TechScript 2.0 compiler IDE features"
 
+[[bin]]
+name = "techscript-lsp"
+path = "src/main.rs"
+
 [dependencies]
 techscript_common = { path = "../../compiler/common" }
 techscript_syntax = { path = "../../compiler/syntax" }
@@ -14,3 +18,4 @@ techscript_parser = { path = "../../compiler/parser" }
 techscript_semantic = { path = "../../compiler/semantic" }
 tower-lsp = { workspace = true }
 serde = { workspace = true }
+tokio = { version = "1", features = ["full"] }

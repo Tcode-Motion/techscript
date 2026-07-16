@@ -184,16 +184,67 @@ impl ResolveSymbols {
                 match resolver.resolve(&path_strs) {
                     Ok(_) => {
                         if let Some(symbols) = &stmt.symbols {
-                            for sym in symbols {
-                                let sym_name = sym.name.clone();
+                            if stmt.path.len() > 1
+                                && symbols.len() == 1
+                                && !symbols[0].name.contains(':')
+                                && symbols[0].name != "*"
+                            {
+                                let alias_name = symbols[0].name.clone();
                                 let symbol = Symbol::new(
-                                    sym_name.clone(),
+                                    alias_name.clone(),
                                     false,
                                     true,
                                     false,
                                     context.interner.any(),
                                 );
-                                context.symbol_table.register(sym_name, symbol);
+                                context.symbol_table.register(alias_name, symbol);
+                            } else {
+                                for sym in symbols {
+                                    if sym.name == "*" {
+                                        let module_path = stmt
+                                            .path
+                                            .iter()
+                                            .map(|i| i.name.clone())
+                                            .collect::<Vec<_>>()
+                                            .join(".");
+                                        let registry = techscript_stdlib::StdlibRegistry::new();
+                                        if let Some(module) = registry.get_module(&module_path) {
+                                            for func_name in module.exports.keys() {
+                                                let symbol = Symbol::new(
+                                                    func_name.clone(),
+                                                    false,
+                                                    true,
+                                                    false,
+                                                    context.interner.any(),
+                                                );
+                                                context
+                                                    .symbol_table
+                                                    .register(func_name.clone(), symbol);
+                                            }
+                                        }
+                                    } else if sym.name.contains(':') {
+                                        let parts: Vec<&str> = sym.name.split(':').collect();
+                                        let alias_name = parts[1].to_string();
+                                        let symbol = Symbol::new(
+                                            alias_name.clone(),
+                                            false,
+                                            true,
+                                            false,
+                                            context.interner.any(),
+                                        );
+                                        context.symbol_table.register(alias_name, symbol);
+                                    } else {
+                                        let sym_name = sym.name.clone();
+                                        let symbol = Symbol::new(
+                                            sym_name.clone(),
+                                            false,
+                                            true,
+                                            false,
+                                            context.interner.any(),
+                                        );
+                                        context.symbol_table.register(sym_name, symbol);
+                                    }
+                                }
                             }
                         } else {
                             let root_name = stmt.path[0].name.clone();

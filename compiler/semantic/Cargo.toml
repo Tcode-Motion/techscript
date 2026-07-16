@@ -10,6 +10,7 @@ techscript_syntax = { path = "../syntax" }
 techscript_ast = { path = "../ast" }
 techscript_errors = { path = "../errors" }
 techscript_module_resolver = { path = "../module_resolver" }
+techscript_stdlib = { path = "../../stdlib" }
 serde = { workspace = true }
 
 [dev-dependencies]

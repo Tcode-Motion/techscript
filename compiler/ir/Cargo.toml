@@ -9,6 +9,7 @@ techscript_common = { path = "../common" }
 techscript_syntax = { path = "../syntax" }
 techscript_ast = { path = "../ast" }
 techscript_errors = { path = "../errors" }
+techscript_stdlib = { path = "../../stdlib" }
 serde = { workspace = true }
 
 [dev-dependencies]

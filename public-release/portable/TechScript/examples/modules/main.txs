@@ -1,0 +1,3 @@
+build main() {
+    say "Module loading references."
+}

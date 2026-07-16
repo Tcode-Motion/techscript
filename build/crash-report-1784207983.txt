@@ -1,0 +1,11 @@
+================================================================================
+                        INTERNAL COMPILER ERROR (ICE)                           
+================================================================================
+Compiler Version: 0.1.0
+CLI Command:      C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0\temp_smoke_test\TechScript\bin\tsc.exe run C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0\temp_smoke_test\TechScript\examples\hello_world\main.txs
+Timestamp:        SystemTime { intervals: 134286815839119186 }
+OS Info:          Windows
+--------------------------------------------------------------------------------
+Backtrace:
+<disabled>
+================================================================================

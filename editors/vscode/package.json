@@ -1,0 +1,49 @@
+{
+  "activationEvents": [
+    "onLanguage:techscript"
+  ],
+  "categories": [
+    "Programming Languages",
+    "Formatters",
+    "Linters"
+  ],
+  "contributes": {
+    "grammars": [
+      {
+        "language": "techscript",
+        "path": "./syntaxes/techscript.tmLanguage.json",
+        "scopeName": "source.techscript"
+      }
+    ],
+    "languages": [
+      {
+        "aliases": [
+          "TechScript",
+          "techscript"
+        ],
+        "configuration": "./language-configuration.json",
+        "extensions": [
+          ".txs",
+          ".ts"
+        ],
+        "id": "techscript"
+      }
+    ]
+  },
+  "description": "Official TechScript 2.0 language support, autocomplete, diagnostics, formatting, and debugger integration.",
+  "displayName": "TechScript 2.0",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "icon": "icon.png",
+  "keywords": [
+    "techscript",
+    "compiler",
+    "syntax",
+    "lsp"
+  ],
+  "main": "./extension.js",
+  "name": "techscript",
+  "publisher": "techscript-motion",
+  "version": "2.0.0"
+}

@@ -1,0 +1,12 @@
+{
+  "compiler_version": "0.1.0",
+  "optimization_level": "O2",
+  "source_hash": "",
+  "build_timestamp": "SystemTime { intervals: 134286820542003943 }",
+  "outputs": [],
+  "dependencies": [],
+  "bytecode_version": "1.0.0",
+  "target_backend": "vm",
+  "build_profile": "Debug",
+  "total_duration_ms": 1
+}

@@ -1,0 +1,7 @@
+model User {
+    make id = 1
+    make name = "Alice"
+}
+build main() {
+    say "User model defined."
+}

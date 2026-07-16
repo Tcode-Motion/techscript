@@ -84,12 +84,25 @@ impl VM {
 
                 Opcode::LoadGlobal => {
                     if let Some(Operand::GlobalIndex(g_idx)) = inst.operands.first() {
-                        let name = &self.module.globals[*g_idx as usize].0;
-                        let val = if self.module.functions.iter().any(|f| &f.name == name) {
-                            RuntimeValue::Str(name.clone())
+                        let name = match *g_idx {
+                            999 => "say".to_string(),
+                            998 => "range".to_string(),
+                            997 => "ask".to_string(),
+                            996 => "fstring_concat".to_string(),
+                            idx => {
+                                if idx as usize >= self.module.globals.len() {
+                                    return Err(VMError::RuntimeException(format!("Global index {} out of bounds", idx)));
+                                }
+                                self.module.globals[idx as usize].0.clone()
+                            }
+                        };
+                        let val = if self.module.functions.iter().any(|f| f.name == name)
+                            || self.native_bridge.has_function(&name)
+                        {
+                            RuntimeValue::Str(name)
                         } else {
                             self.globals
-                                .get(name)
+                                .get(&name)
                                 .cloned()
                                 .unwrap_or(RuntimeValue::Null)
                         };
@@ -101,9 +114,20 @@ impl VM {
 
                 Opcode::StoreGlobal => {
                     if let Some(Operand::GlobalIndex(g_idx)) = inst.operands.first() {
-                        let name = &self.module.globals[*g_idx as usize].0;
+                        let name = match *g_idx {
+                            999 => "say".to_string(),
+                            998 => "range".to_string(),
+                            997 => "ask".to_string(),
+                            996 => "fstring_concat".to_string(),
+                            idx => {
+                                if idx as usize >= self.module.globals.len() {
+                                    return Err(VMError::RuntimeException(format!("Global index {} out of bounds", idx)));
+                                }
+                                self.module.globals[idx as usize].0.clone()
+                            }
+                        };
                         let val = self.stack.pop()?;
-                        self.globals.insert(name.clone(), val);
+                        self.globals.insert(name, val);
                     } else {
                         return Err(VMError::InvalidOpcode);
                     }

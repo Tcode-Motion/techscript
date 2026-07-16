@@ -1,0 +1,3 @@
+build main() {
+    say "Enum types defined in module context."
+}

@@ -1,0 +1,5 @@
+build main() {
+    make x = 42
+    x = x + 1
+    say x
+}

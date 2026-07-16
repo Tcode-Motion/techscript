@@ -1,0 +1,10 @@
+build make_counter() {
+    make count = 0
+    return build() {
+        count = count + 1
+        return count
+    }
+}
+build main() {
+    say "Closures and function pointers initialized."
+}

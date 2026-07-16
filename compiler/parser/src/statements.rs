@@ -304,8 +304,8 @@ impl<'a> Parser<'a> {
         ))
     }
 
-    /// import path [symbols]
-    /// from path import symbols
+    /// import path [as alias]
+    /// from path import (symbols | *)
     fn parse_import_stmt(&mut self, reporter: &mut DiagnosticReporter) -> ParseResult<ImportStmt> {
         let start_pos = self.peek().span.start;
 
@@ -315,9 +315,17 @@ impl<'a> Parser<'a> {
             while self.match_token(TokenKind::Dot) {
                 path.push(self.parse_identifier(reporter)?);
             }
+
+            let mut symbols = None;
+            if self.check(TokenKind::Identifier) && self.peek().lexeme == "as" {
+                self.advance(); // consume "as"
+                let alias = self.parse_identifier(reporter)?;
+                symbols = Some(vec![alias]);
+            }
+
             self.consume_terminator(reporter)?;
             let span = Span::new(start_pos, self.previous().span.end);
-            Ok(ImportStmt::new(self.next_id(), path, None, span))
+            Ok(ImportStmt::new(self.next_id(), path, symbols, span))
         } else {
             // from ... import ...
             self.advance(); // consume from
@@ -335,10 +343,21 @@ impl<'a> Parser<'a> {
             )?;
 
             let mut symbols = Vec::new();
-            loop {
-                symbols.push(self.parse_identifier(reporter)?);
-                if !self.match_token(TokenKind::Comma) {
-                    break;
+            if self.match_token(TokenKind::Star) {
+                let star_span = self.previous().span;
+                symbols.push(techscript_ast::Ident::new("*".to_string(), star_span));
+            } else {
+                loop {
+                    let mut sym = self.parse_identifier(reporter)?;
+                    if self.check(TokenKind::Identifier) && self.peek().lexeme == "as" {
+                        self.advance(); // consume "as"
+                        let alias = self.parse_identifier(reporter)?;
+                        sym.name = format!("{}:{}", sym.name, alias.name);
+                    }
+                    symbols.push(sym);
+                    if !self.match_token(TokenKind::Comma) {
+                        break;
+                    }
                 }
             }
             self.consume_terminator(reporter)?;

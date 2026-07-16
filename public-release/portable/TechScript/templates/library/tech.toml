@@ -1,0 +1,4 @@
+[package]
+name = "my_library"
+version = "0.1.0"
+entry = "src/lib.txs"

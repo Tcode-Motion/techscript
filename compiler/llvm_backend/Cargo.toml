@@ -1,0 +1,18 @@
+[package]
+name = "techscript_llvm_backend"
+version = "0.1.0"
+edition = "2021"
+description = "TechScript 2.0 native machine compiler backend utilizing LLVM"
+
+[dependencies]
+techscript_common = { path = "../common" }
+techscript_ir = { path = "../ir" }
+llvm-sys = { version = "180", optional = true }
+serde = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+libc = "0.2"
+
+[features]
+default = []
+llvm = ["dep:llvm-sys"]

@@ -1,11 +1,7 @@
 use std::cell::RefCell;
 use std::collections::HashSet;
 use std::rc::Rc;
-use techscript_runtime::{
-    context::Capability,
-    value::RuntimeValue,
-    RuntimeConfig, RuntimeContext,
-};
+use techscript_runtime::{context::Capability, value::RuntimeValue, RuntimeConfig, RuntimeContext};
 use techscript_stdlib::StdlibRegistry;
 
 #[test]
@@ -17,15 +13,11 @@ fn test_math_module() {
 
     // test abs
     let abs = math.exports.get("abs").unwrap();
-    let res = abs
-        .call(&mut ctx, vec![RuntimeValue::Int(-42)])
-        .unwrap();
+    let res = abs.call(&mut ctx, vec![RuntimeValue::Int(-42)]).unwrap();
     assert_eq!(res.as_int(), Some(42));
 
-    let res = abs
-        .call(&mut ctx, vec![RuntimeValue::Float(-3.14)])
-        .unwrap();
-    assert_eq!(res.as_float(), Some(3.14));
+    let res = abs.call(&mut ctx, vec![RuntimeValue::Float(-3.5)]).unwrap();
+    assert_eq!(res.as_float(), Some(3.5));
 
     // test sqrt
     let sqrt = math.exports.get("sqrt").unwrap();
@@ -52,9 +44,7 @@ fn test_math_module() {
     assert_eq!(res.as_float(), Some(2.0));
 
     let ceil = math.exports.get("ceil").unwrap();
-    let res = ceil
-        .call(&mut ctx, vec![RuntimeValue::Float(2.1)])
-        .unwrap();
+    let res = ceil.call(&mut ctx, vec![RuntimeValue::Float(2.1)]).unwrap();
     assert_eq!(res.as_float(), Some(3.0));
 
     let round = math.exports.get("round").unwrap();
@@ -67,8 +57,8 @@ fn test_math_module() {
     let random = math.exports.get("random").unwrap();
     let r1 = random.call(&mut ctx, vec![]).unwrap().as_float().unwrap();
     let r2 = random.call(&mut ctx, vec![]).unwrap().as_float().unwrap();
-    assert!(r1 >= 0.0 && r1 < 1.0);
-    assert!(r2 >= 0.0 && r2 < 1.0);
+    assert!((0.0..1.0).contains(&r1));
+    assert!((0.0..1.0).contains(&r2));
     assert_ne!(r1, r2); // pseudo-random sequence should advance
 }
 
@@ -192,10 +182,7 @@ fn test_json_module() {
             entries_borrow.get("name").unwrap().as_string(),
             Some("Tanmoy")
         );
-        assert_eq!(
-            entries_borrow.get("age").unwrap().as_int(),
-            Some(25)
-        );
+        assert_eq!(entries_borrow.get("age").unwrap().as_int(), Some(25));
     } else {
         panic!("JSON parse result was not a Map");
     }
@@ -300,10 +287,7 @@ fn test_sys_module_granted() {
     let content = read_file
         .call(&mut ctx, vec![RuntimeValue::Str(temp_file_str.clone())])
         .unwrap();
-    assert_eq!(
-        content.as_string(),
-        Some("Hello TechScript 2.0 stdlib")
-    );
+    assert_eq!(content.as_string(), Some("Hello TechScript 2.0 stdlib"));
 
     // Clean up temporary file
     std::fs::remove_file(temp_file).ok();

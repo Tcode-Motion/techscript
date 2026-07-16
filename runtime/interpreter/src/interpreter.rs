@@ -49,7 +49,9 @@ impl Interpreter {
     fn initialize_stdlib(&mut self) {
         let stdlib = techscript_stdlib::StdlibRegistry::new();
         // Define "std" namespace
-        self.env.borrow_mut().define("std".to_string(), stdlib.construct_std_namespace(), true);
+        self.env
+            .borrow_mut()
+            .define("std".to_string(), stdlib.construct_std_namespace(), true);
         // Define individual exported functions globally
         for module in stdlib.modules.values() {
             for (func_name, func) in &module.exports {

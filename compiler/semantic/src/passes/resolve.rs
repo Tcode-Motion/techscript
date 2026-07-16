@@ -174,7 +174,11 @@ impl ResolveSymbols {
                     return Err(());
                 }
 
-                let path_strs = stmt.path.iter().map(|ident| ident.name.clone()).collect::<Vec<_>>();
+                let path_strs = stmt
+                    .path
+                    .iter()
+                    .map(|ident| ident.name.clone())
+                    .collect::<Vec<_>>();
                 let resolver = techscript_module_resolver::DefaultModuleResolver::new();
                 use techscript_module_resolver::ModuleResolver;
                 match resolver.resolve(&path_strs) {

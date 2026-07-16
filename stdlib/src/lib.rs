@@ -100,10 +100,7 @@ impl StdlibRegistry {
             if let Some(sub_name) = name.strip_prefix("std.") {
                 let mut module_map = IndexMap::new();
                 for (func_name, func) in &module.exports {
-                    module_map.insert(
-                        func_name.clone(),
-                        RuntimeValue::Function(Rc::clone(func)),
-                    );
+                    module_map.insert(func_name.clone(), RuntimeValue::Function(Rc::clone(func)));
                 }
                 std_map.insert(
                     sub_name.to_string(),
@@ -663,17 +660,13 @@ impl StdlibRegistry {
                 arity: 1,
                 callback: |_ctx, args| {
                     let s = args[0].try_into_string()?;
-                    let v: serde_json::Value =
-                        serde_json::from_str(&s).map_err(|e| {
-                            RuntimeError::new(
-                                RuntimeErrorKind::InvalidOperation(format!(
-                                    "JSON parse error: {}",
-                                    e
-                                )),
-                                None,
-                                None,
-                            )
-                        })?;
+                    let v: serde_json::Value = serde_json::from_str(&s).map_err(|e| {
+                        RuntimeError::new(
+                            RuntimeErrorKind::InvalidOperation(format!("JSON parse error: {}", e)),
+                            None,
+                            None,
+                        )
+                    })?;
                     Ok(parse_json_value(v))
                 },
             }),
@@ -1043,7 +1036,11 @@ fn stringify_value(val: &RuntimeValue) -> Result<String, RuntimeError> {
         RuntimeValue::Map { entries, .. } => {
             let mut parts = Vec::new();
             for (k, v) in entries.borrow().iter() {
-                parts.push(format!("\"{}\":{}", k.replace('"', "\\\""), stringify_value(v)?));
+                parts.push(format!(
+                    "\"{}\":{}",
+                    k.replace('"', "\\\""),
+                    stringify_value(v)?
+                ));
             }
             Ok(format!("{{{}}}", parts.join(",")))
         }

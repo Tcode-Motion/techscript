@@ -1,16 +1,16 @@
 # Graph Report - TechScript 2.0  (2026-07-16)
 
 ## Corpus Check
-- 300 files · ~82,397 words
+- 688 files · ~87,669 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2373 nodes · 3749 edges · 198 communities (170 shown, 28 thin omitted)
+- 2407 nodes · 3827 edges · 199 communities (171 shown, 28 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 22 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `47b77370`
+- Built from commit: `b413f1f4`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -182,6 +182,7 @@
 - [[_COMMUNITY_Community 186|Community 186]]
 - [[_COMMUNITY_Community 189|Community 189]]
 - [[_COMMUNITY_Community 190|Community 190]]
+- [[_COMMUNITY_Community 191|Community 191]]
 - [[_COMMUNITY_Community 193|Community 193]]
 - [[_COMMUNITY_Community 194|Community 194]]
 - [[_COMMUNITY_Community 197|Community 197]]
@@ -236,7 +237,7 @@
 - 1-file cycle: `compiler/ir/src/builder.rs -> compiler/ir/src/builder.rs`
 - 1-file cycle: `compiler/ir/src/function.rs -> compiler/ir/src/function.rs`
 
-## Communities (198 total, 28 thin omitted)
+## Communities (199 total, 28 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.13
@@ -247,7 +248,7 @@ Cohesion: 0.38
 Nodes (17): techscript_ast, techscript_builtins, techscript_cli, techscript_common, techscript_errors, techscript_formatter, techscript_gc, techscript_interpreter (+9 more)
 
 ### Community 2 - "Community 2"
-Cohesion: 0.12
+Cohesion: 0.16
 Nodes (21): EvalResult, ExecResult, Expression, RuntimeValue, Span, Statement, Result, RuntimeError (+13 more)
 
 ### Community 3 - "Community 3"
@@ -263,15 +264,15 @@ Cohesion: 0.23
 Nodes (11): Display, Error, ErrorCode, Formatter, Option, Result, Self, Span (+3 more)
 
 ### Community 6 - "Community 6"
-Cohesion: 0.27
-Nodes (8): NativeRegistry, Default, Environment, Rc, RefCell, Self, RuntimeConfig, RuntimeContext
+Cohesion: 0.25
+Nodes (10): NativeRegistry, Default, Environment, HashSet, Rc, RefCell, Self, Capability (+2 more)
 
 ### Community 7 - "Community 7"
 Cohesion: 0.08
 Nodes (24): Callable, Default, HashMap, Option, Rc, Result, RuntimeContext, RuntimeError (+16 more)
 
 ### Community 8 - "Community 8"
-Cohesion: 0.07
+Cohesion: 0.06
 Nodes (33): AstVisitor, IndexMap, CheckedProgram, Result, RuntimeError, Value, Block, Callable (+25 more)
 
 ### Community 9 - "Community 9"
@@ -303,8 +304,8 @@ Cohesion: 0.16
 Nodes (11): DiagnosticReporter, ErrorCode, NodeId, ParseResult, Self, Span, Token, TokenKind (+3 more)
 
 ### Community 17 - "Community 17"
-Cohesion: 0.17
-Nodes (9): Arc, Option, Path, Span, String, Vec, PathBuf, SourceFile (+1 more)
+Cohesion: 0.16
+Nodes (10): Arc, Option, Path, Self, Span, String, Vec, PathBuf (+2 more)
 
 ### Community 18 - "Community 18"
 Cohesion: 0.19
@@ -323,8 +324,8 @@ Cohesion: 0.10
 Nodes (21): 03 — TechScript 2.0 EBNF Grammar, 1. Program Structure, 2. Declarations, 3. Statements, 4. Control Flow, 5. Imports, 6.1 Expression Hierarchy, 6.2 Primary Expressions (+13 more)
 
 ### Community 23 - "Community 23"
-Cohesion: 0.10
-Nodes (21): 17 — TechScript 2.0 Development Roadmap, Compatibility & Evolution Analysis, Compatibility Notes, Future Roadmap, Migration Notes, Phase 1 — Compiler Frontend (Weeks 1–8), Phase 2 — Standard Library + Tools (Weeks 9–14), Phase 3 — Bytecode VM (Weeks 15–22) (+13 more)
+Cohesion: 0.15
+Nodes (12): 17 — TechScript 2.0 Development Roadmap, Compatibility & Evolution Analysis, Compatibility Notes, Future Roadmap, Migration Notes, Phase 2 — Standard Library + Tools (Weeks 9–14), Phase 3 — Bytecode VM (Weeks 15–22), Phase 4 — LLVM Backend (Weeks 23–34) (+4 more)
 
 ### Community 24 - "Community 24"
 Cohesion: 0.14
@@ -359,8 +360,8 @@ Cohesion: 0.11
 Nodes (18): 12 — TechScript 2.0 Standard Library Specification, 1.1 `io`, 1.2 `math`, 1.3 `string`, 1.4 `file`, 1.5 `web` (Optional v2.0), 1.6 `time`, 1.7 `random` (+10 more)
 
 ### Community 33 - "Community 33"
-Cohesion: 0.14
-Nodes (14): Display, Formatter, Result, Self, FileId, Position, file_id_construction(), file_id_hash() (+6 more)
+Cohesion: 0.15
+Nodes (13): Display, Formatter, Result, FileId, Position, file_id_construction(), file_id_hash(), file_id_serde_roundtrip() (+5 more)
 
 ### Community 34 - "Community 34"
 Cohesion: 0.22
@@ -435,8 +436,8 @@ Cohesion: 0.15
 Nodes (13): 14 — TechScript 2.0 Error Code Specification, 16.1 Compatibility Notes, 16.2 Migration Notes, 16.3 Rationale, 16.4 Future Roadmap, Compatibility & Evolution Analysis, Error Code Ranges, Lexer Errors (E0001 – E0099) (+5 more)
 
 ### Community 54 - "Community 54"
-Cohesion: 0.26
-Nodes (7): LibraryFunction, StdlibRegistry, StdModule, HashMap, Option, Self, String
+Cohesion: 0.12
+Nodes (20): Capability, parse_json_value(), StdFunction, StdlibModule, StdlibRegistry, stringify_value(), StdFnCallback, Callable (+12 more)
 
 ### Community 55 - "Community 55"
 Cohesion: 0.19
@@ -451,8 +452,8 @@ Cohesion: 0.17
 Nodes (12): 15 — TechScript 2.0 Testing Strategy, 1. Testing Pyramid, 2.1 Unit Tests, 2.2 Snapshot Tests, 2.3 Integration Tests (End-to-End), 2. Testing Levels, 3. Fuzz Testing & Benchmarking, 4.1 Compatibility Notes (+4 more)
 
 ### Community 58 - "Community 58"
-Cohesion: 0.15
-Nodes (20): NativeBridge, BytecodeModule, Result, RuntimeValue, VMError, BytecodeModule, CallFrame, HashMap (+12 more)
+Cohesion: 0.14
+Nodes (21): NativeBridge, BytecodeModule, Result, RuntimeValue, VMError, BytecodeModule, CallFrame, HashMap (+13 more)
 
 ### Community 59 - "Community 59"
 Cohesion: 0.18
@@ -503,7 +504,7 @@ Cohesion: 0.20
 Nodes (10): SourceFile, make_source_file(), source_file_empty(), source_file_line_col_out_of_bounds(), source_file_line_content_out_of_bounds(), source_file_line_start(), source_file_multi_line(), source_file_single_line() (+2 more)
 
 ### Community 72 - "Community 72"
-Cohesion: 0.18
+Cohesion: 0.17
 Nodes (9): 02 — TechScript 2.0 Monorepo Folder Structure, Cargo Workspace Configuration, Compatibility & Evolution Analysis, Compatibility Notes, Complete Directory Listing, Future Roadmap, Migration Notes, Rationale (+1 more)
 
 ### Community 73 - "Community 73"
@@ -806,6 +807,10 @@ Nodes (7): BytecodeFunction, BytecodeInstruction, Default, HashSet, RuntimeValue
 Cohesion: 0.24
 Nodes (8): Default, HashSet, Result, Self, String, DefaultModuleResolver, ModuleResolver, ModuleSource
 
+### Community 191 - "Community 191"
+Cohesion: 0.22
+Nodes (9): Phase 1 — Compiler Frontend (Weeks 1–8), Week 1: Project Bootstrap, Week 2: Lexer, Week 3: Parser (Statements), Week 4: Parser (Expressions + Functions + Models), Week 5: Semantic Analyzer, Week 6: Interpreter (Core), Week 7: Interpreter (Functions + Models + Errors) (+1 more)
+
 ### Community 193 - "Community 193"
 Cohesion: 0.33
 Nodes (5): HeapObject, Rc, Self, Vec, VMHeap
@@ -823,24 +828,24 @@ Cohesion: 0.40
 Nodes (4): Self, Vec, CallFrame, ExceptionHandler
 
 ## Knowledge Gaps
-- **750 isolated node(s):** `Commands`, `Commands`, `Pattern`, `FStringPart`, `Option` (+745 more)
+- **754 isolated node(s):** `Commands`, `Commands`, `Pattern`, `FStringPart`, `Option` (+749 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **28 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `15 — TechScript 2.0 Testing Strategy` connect `Community 57` to `Community 72`?**
+- **Why does `17 — TechScript 2.0 Development Roadmap` connect `Community 23` to `Community 191`?**
   _High betweenness centrality (0.003) - this node is a cross-community bridge._
-- **Why does `FileId` connect `Community 33` to `Community 17`, `Community 70`?**
+- **Why does `IndexMap` connect `Community 8` to `Community 0`, `Community 54`?**
+  _High betweenness centrality (0.003) - this node is a cross-community bridge._
+- **Why does `10 — TechScript 2.0 Semantic Analysis Specification` connect `Community 52` to `Community 50`?**
   _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **What connects `Commands`, `Commands`, `Pattern` to the rest of the system?**
-  _751 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _755 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.13230769230769232 - nodes in this community are weakly interconnected._
-- **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.11587301587301588 - nodes in this community are weakly interconnected._
 - **Should `Community 7` be split into smaller, more focused modules?**
   _Cohesion score 0.07578084997439836 - nodes in this community are weakly interconnected._
 - **Should `Community 8` be split into smaller, more focused modules?**
-  _Cohesion score 0.06708595387840671 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05628415300546448 - nodes in this community are weakly interconnected._

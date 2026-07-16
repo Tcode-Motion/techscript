@@ -48,14 +48,13 @@ impl VM {
     fn initialize_std(&mut self) {
         let stdlib = techscript_stdlib::StdlibRegistry::new();
         // Register standard namespace map
-        self.globals.insert("std".to_string(), stdlib.construct_std_namespace());
+        self.globals
+            .insert("std".to_string(), stdlib.construct_std_namespace());
         // Register individual function exports globally to resolve individual symbol imports
         for module in stdlib.modules.values() {
             for (func_name, func) in &module.exports {
-                self.globals.insert(
-                    func_name.clone(),
-                    RuntimeValue::Function(Rc::clone(func)),
-                );
+                self.globals
+                    .insert(func_name.clone(), RuntimeValue::Function(Rc::clone(func)));
             }
         }
     }

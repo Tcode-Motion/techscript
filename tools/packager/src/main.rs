@@ -310,7 +310,7 @@ fn write_examples(dest_dir: &Path) -> anyhow::Result<()> {
         fs::write(path.join("main.txs"), content)?;
         fs::write(
             path.join("tech.toml"),
-            &format!(
+            format!(
                 "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nentry = \"main.txs\"\n",
                 name
             ),
@@ -499,7 +499,7 @@ fn generate_release_manifest(
 fn generate_release_notes(dest: &Path) -> anyhow::Result<()> {
     // Run git log to populate RELEASE_NOTES.md
     let output = Command::new("git")
-        .args(&["log", "-n", "15", "--oneline"])
+        .args(["log", "-n", "15", "--oneline"])
         .output()
         .map(|o| String::from_utf8_lossy(&o.stdout).to_string())
         .unwrap_or_else(|_| "Initial Developer Preview commits.\n".to_string());
@@ -514,7 +514,7 @@ fn generate_release_notes(dest: &Path) -> anyhow::Result<()> {
 
 fn get_git_commit() -> String {
     Command::new("git")
-        .args(&["rev-parse", "HEAD"])
+        .args(["rev-parse", "HEAD"])
         .output()
         .map(|o| String::from_utf8_lossy(&o.stdout).trim().to_string())
         .unwrap_or_else(|_| "unknown_commit".to_string())
@@ -599,7 +599,7 @@ fn compile_inno_installer(iss_path: &Path) -> anyhow::Result<()> {
             Command::new("where.exe").arg("iscc").output()
         } else {
             Command::new("cmd")
-                .args(&[
+                .args([
                     "/c",
                     "if",
                     "exist",

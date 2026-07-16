@@ -86,25 +86,29 @@ impl BuiltinRegistry {
             }
             let start = match args[0] {
                 Value::Int(n) => n,
-                _ => return Err(RuntimeError::new(
-                    techscript_interpreter::RuntimeErrorKind::TypeMismatch {
-                        expected: "Int".to_string(),
-                        found: args[0].runtime_type().to_string(),
-                    },
-                    None,
-                    None,
-                )),
+                _ => {
+                    return Err(RuntimeError::new(
+                        techscript_interpreter::RuntimeErrorKind::TypeMismatch {
+                            expected: "Int".to_string(),
+                            found: args[0].runtime_type().to_string(),
+                        },
+                        None,
+                        None,
+                    ))
+                }
             };
             let end = match args[1] {
                 Value::Int(n) => n,
-                _ => return Err(RuntimeError::new(
-                    techscript_interpreter::RuntimeErrorKind::TypeMismatch {
-                        expected: "Int".to_string(),
-                        found: args[1].runtime_type().to_string(),
-                    },
-                    None,
-                    None,
-                )),
+                _ => {
+                    return Err(RuntimeError::new(
+                        techscript_interpreter::RuntimeErrorKind::TypeMismatch {
+                            expected: "Int".to_string(),
+                            found: args[1].runtime_type().to_string(),
+                        },
+                        None,
+                        None,
+                    ))
+                }
             };
             let items: Vec<Value> = (start..end).map(Value::Int).collect();
             Ok(Value::List {

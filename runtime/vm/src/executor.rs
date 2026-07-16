@@ -91,7 +91,10 @@ impl VM {
                             996 => "fstring_concat".to_string(),
                             idx => {
                                 if idx as usize >= self.module.globals.len() {
-                                    return Err(VMError::RuntimeException(format!("Global index {} out of bounds", idx)));
+                                    return Err(VMError::RuntimeException(format!(
+                                        "Global index {} out of bounds",
+                                        idx
+                                    )));
                                 }
                                 self.module.globals[idx as usize].0.clone()
                             }
@@ -121,7 +124,10 @@ impl VM {
                             996 => "fstring_concat".to_string(),
                             idx => {
                                 if idx as usize >= self.module.globals.len() {
-                                    return Err(VMError::RuntimeException(format!("Global index {} out of bounds", idx)));
+                                    return Err(VMError::RuntimeException(format!(
+                                        "Global index {} out of bounds",
+                                        idx
+                                    )));
                                 }
                                 self.module.globals[idx as usize].0.clone()
                             }

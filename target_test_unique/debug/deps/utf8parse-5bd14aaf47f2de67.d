@@ -1,0 +1,8 @@
+C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0\target_test_unique\debug\deps\utf8parse-5bd14aaf47f2de67.d: C:\Users\Tanmoy\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\utf8parse-0.2.2\src\lib.rs C:\Users\Tanmoy\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\utf8parse-0.2.2\src\types.rs
+
+C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0\target_test_unique\debug\deps\libutf8parse-5bd14aaf47f2de67.rlib: C:\Users\Tanmoy\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\utf8parse-0.2.2\src\lib.rs C:\Users\Tanmoy\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\utf8parse-0.2.2\src\types.rs
+
+C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0\target_test_unique\debug\deps\libutf8parse-5bd14aaf47f2de67.rmeta: C:\Users\Tanmoy\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\utf8parse-0.2.2\src\lib.rs C:\Users\Tanmoy\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\utf8parse-0.2.2\src\types.rs
+
+C:\Users\Tanmoy\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\utf8parse-0.2.2\src\lib.rs:
+C:\Users\Tanmoy\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\utf8parse-0.2.2\src\types.rs:

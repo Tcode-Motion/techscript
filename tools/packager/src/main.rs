@@ -4,13 +4,13 @@
 //! packages the VS Code VSIX extension, zips portable releases, generates manifests,
 //! release notes, checksums, Inno Setup scripts, and builds native HTML documentation.
 
+use anyhow::{anyhow, Context};
+use chrono::Local;
+use sha2::{Digest, Sha256};
 use std::fs::{self, File};
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use anyhow::{anyhow, Context};
-use chrono::Local;
-use sha2::{Digest, Sha256};
 use zip::write::FileOptions;
 use zip::ZipWriter;
 
@@ -56,8 +56,11 @@ fn main() -> anyhow::Result<()> {
     fs::create_dir_all(release_dir.join("checksums"))?;
 
     // 5. Copy binaries & logo assets to bin/
-    let target_release = root_dir.join("C:\\Users\\Tanmoy\\.gemini\\antigravity-ide\\target\\release");
-    let target_release = if target_release.exists() { target_release } else {
+    let target_release =
+        root_dir.join("C:\\Users\\Tanmoy\\.gemini\\antigravity-ide\\target\\release");
+    let target_release = if target_release.exists() {
+        target_release
+    } else {
         root_dir.join("target").join("release")
     };
 
@@ -65,13 +68,24 @@ fn main() -> anyhow::Result<()> {
     let lsp_exe = target_release.join("techscript-lsp.exe");
 
     fs::copy(&tsc_exe, portable_dir.join("bin").join("tsc.exe"))?;
-    fs::copy(&lsp_exe, portable_dir.join("bin").join("techscript-lsp.exe"))?;
+    fs::copy(
+        &lsp_exe,
+        portable_dir.join("bin").join("techscript-lsp.exe"),
+    )?;
 
     // Copy logo windows and file icon to bin/
-    let logo_src = root_dir.join("TechScript-Logo-Package").join("logo-package");
+    let logo_src = root_dir
+        .join("TechScript-Logo-Package")
+        .join("logo-package");
     if logo_src.exists() {
-        fs::copy(logo_src.join("ico").join("file-icon.ico"), portable_dir.join("bin").join("file-icon.ico"))?;
-        fs::copy(logo_src.join("windows").join("installer-icon.ico"), portable_dir.join("bin").join("installer-icon.ico"))?;
+        fs::copy(
+            logo_src.join("ico").join("file-icon.ico"),
+            portable_dir.join("bin").join("file-icon.ico"),
+        )?;
+        fs::copy(
+            logo_src.join("windows").join("installer-icon.ico"),
+            portable_dir.join("bin").join("installer-icon.ico"),
+        )?;
     }
 
     // 6. Write standard templates & 20 documented examples
@@ -91,8 +105,15 @@ fn main() -> anyhow::Result<()> {
     generate_documentation(&portable_dir.join("docs"), &version)?;
 
     // 9. Generate VS Code Extension package (VSIX zip archive)
-    package_vsix(&root_dir, &portable_dir.join("vscode").join("techscript.vsix"), &version)?;
-    fs::copy(portable_dir.join("vscode").join("techscript.vsix"), release_dir.join("vscode").join("techscript.vsix"))?;
+    package_vsix(
+        &root_dir,
+        &portable_dir.join("vscode").join("techscript.vsix"),
+        &version,
+    )?;
+    fs::copy(
+        portable_dir.join("vscode").join("techscript.vsix"),
+        release_dir.join("vscode").join("techscript.vsix"),
+    )?;
 
     // 10. Copy compiled executables to public-release/compiler/
     fs::create_dir_all(release_dir.join("compiler"))?;
@@ -106,13 +127,22 @@ fn main() -> anyhow::Result<()> {
     // 12. Generate release.json (Release Manifest)
     let git_commit = get_git_commit();
     let build_date = Local::now().format("%Y-%m-%d").to_string();
-    generate_release_manifest(&release_dir.join("checksums").join("release.json"), &version, &git_commit, &build_date)?;
+    generate_release_manifest(
+        &release_dir.join("checksums").join("release.json"),
+        &version,
+        &git_commit,
+        &build_date,
+    )?;
 
     // 13. Generate RELEASE_NOTES.md
     generate_release_notes(&release_dir.join("release-notes").join("RELEASE_NOTES.md"))?;
 
     // 14. Generate Inno Setup Script (installer.iss)
-    generate_inno_script(&release_dir.join("installer").join("installer.iss"), &version, &root_dir)?;
+    generate_inno_script(
+        &release_dir.join("installer").join("installer.iss"),
+        &version,
+        &root_dir,
+    )?;
 
     // 15. Attempt to build Inno Setup Installer if iscc is present
     compile_inno_installer(&release_dir.join("installer").join("installer.iss"))?;
@@ -131,15 +161,16 @@ fn extract_workspace_version(root_dir: &Path) -> anyhow::Result<String> {
     let cargo_toml_path = root_dir.join("Cargo.toml");
     let content = fs::read_to_string(&cargo_toml_path).context("Failed to read Cargo.toml")?;
     let toml: toml::Value = toml::from_str(&content).context("Failed to parse Cargo.toml")?;
-    
-    let version = toml.get("workspace")
+
+    let version = toml
+        .get("workspace")
         .and_then(|w| w.get("dependencies"))
         .and_then(|d| d.get("techscript_cli"))
         .and_then(|t| t.get("version"))
         .and_then(|v| v.as_str())
         .map(|s| s.to_string())
         .unwrap_or_else(|| "2.0.0".to_string());
-    
+
     Ok(version)
 }
 
@@ -172,7 +203,7 @@ fn compile_binary(root_dir: &Path, package: &str) -> anyhow::Result<()> {
         .env("CARGO_TARGET_DIR", target_dir)
         .current_dir(root_dir)
         .status()?;
-    
+
     if !status.success() {
         return Err(anyhow!("Failed to compile package {}", package));
     }
@@ -183,38 +214,68 @@ fn write_templates(dest_dir: &Path) -> anyhow::Result<()> {
     // 1. console template
     let console_dir = dest_dir.join("console");
     fs::create_dir_all(console_dir.join("src"))?;
-    fs::write(console_dir.join("tech.toml"), "[package]\nname = \"console_app\"\nversion = \"0.1.0\"\nentry = \"src/main.txs\"\n")?;
-    fs::write(console_dir.join("src").join("main.txs"), "build main() {\n    say \"Hello, TechScript Console App!\"\n}\n")?;
+    fs::write(
+        console_dir.join("tech.toml"),
+        "[package]\nname = \"console_app\"\nversion = \"0.1.0\"\nentry = \"src/main.txs\"\n",
+    )?;
+    fs::write(
+        console_dir.join("src").join("main.txs"),
+        "build main() {\n    say \"Hello, TechScript Console App!\"\n}\n",
+    )?;
 
     // 2. library template
     let lib_dir = dest_dir.join("library");
     fs::create_dir_all(lib_dir.join("src"))?;
-    fs::write(lib_dir.join("tech.toml"), "[package]\nname = \"my_library\"\nversion = \"0.1.0\"\nentry = \"src/lib.txs\"\n")?;
-    fs::write(lib_dir.join("src").join("lib.txs"), "export build add(a, b) {\n    return a + b\n}\n")?;
+    fs::write(
+        lib_dir.join("tech.toml"),
+        "[package]\nname = \"my_library\"\nversion = \"0.1.0\"\nentry = \"src/lib.txs\"\n",
+    )?;
+    fs::write(
+        lib_dir.join("src").join("lib.txs"),
+        "export build add(a, b) {\n    return a + b\n}\n",
+    )?;
 
     // 3. empty template
     let empty_dir = dest_dir.join("empty");
     fs::create_dir_all(empty_dir.join("src"))?;
-    fs::write(empty_dir.join("tech.toml"), "[package]\nname = \"empty\"\nversion = \"0.1.0\"\nentry = \"src/main.txs\"\n")?;
+    fs::write(
+        empty_dir.join("tech.toml"),
+        "[package]\nname = \"empty\"\nversion = \"0.1.0\"\nentry = \"src/main.txs\"\n",
+    )?;
     fs::write(empty_dir.join("src").join("main.txs"), "")?;
 
     // 4. package template
     let pkg_dir = dest_dir.join("package");
     fs::create_dir_all(pkg_dir.join("src"))?;
     fs::write(pkg_dir.join("tech.toml"), "[package]\nname = \"package_app\"\nversion = \"0.1.0\"\nentry = \"src/main.txs\"\ncapabilities = [\"Process\", \"FilesystemRead\"]\n")?;
-    fs::write(pkg_dir.join("src").join("main.txs"), "build main() {\n    say \"Package initialized.\"\n}\n")?;
+    fs::write(
+        pkg_dir.join("src").join("main.txs"),
+        "build main() {\n    say \"Package initialized.\"\n}\n",
+    )?;
 
     // 5. cli template
     let cli_dir = dest_dir.join("cli");
     fs::create_dir_all(cli_dir.join("src"))?;
-    fs::write(cli_dir.join("tech.toml"), "[package]\nname = \"cli_tool\"\nversion = \"0.1.0\"\nentry = \"src/main.txs\"\n")?;
-    fs::write(cli_dir.join("src").join("main.txs"), "build main() {\n    say \"TechScript CLI Tool running.\"\n}\n")?;
+    fs::write(
+        cli_dir.join("tech.toml"),
+        "[package]\nname = \"cli_tool\"\nversion = \"0.1.0\"\nentry = \"src/main.txs\"\n",
+    )?;
+    fs::write(
+        cli_dir.join("src").join("main.txs"),
+        "build main() {\n    say \"TechScript CLI Tool running.\"\n}\n",
+    )?;
 
     // 6. minimal template
     let min_dir = dest_dir.join("minimal");
     fs::create_dir_all(min_dir.join("src"))?;
-    fs::write(min_dir.join("tech.toml"), "[package]\nname = \"minimal\"\nversion = \"0.1.0\"\nentry = \"src/main.txs\"\n")?;
-    fs::write(min_dir.join("src").join("main.txs"), "say \"Minimal runtime execution.\"\n")?;
+    fs::write(
+        min_dir.join("tech.toml"),
+        "[package]\nname = \"minimal\"\nversion = \"0.1.0\"\nentry = \"src/main.txs\"\n",
+    )?;
+    fs::write(
+        min_dir.join("src").join("main.txs"),
+        "say \"Minimal runtime execution.\"\n",
+    )?;
 
     Ok(())
 }
@@ -247,7 +308,13 @@ fn write_examples(dest_dir: &Path) -> anyhow::Result<()> {
         let path = dest_dir.join(name);
         fs::create_dir_all(&path)?;
         fs::write(path.join("main.txs"), content)?;
-        fs::write(path.join("tech.toml"), &format!("[package]\nname = \"{}\"\nversion = \"0.1.0\"\nentry = \"main.txs\"\n", name))?;
+        fs::write(
+            path.join("tech.toml"),
+            &format!(
+                "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nentry = \"main.txs\"\n",
+                name
+            ),
+        )?;
     }
     Ok(())
 }
@@ -293,11 +360,10 @@ fn generate_documentation(dest_dir: &Path, version: &str) -> anyhow::Result<()> 
 
 fn package_vsix(root_dir: &Path, dest_vsix: &Path, version: &str) -> anyhow::Result<()> {
     println!("Packaging VS Code extension VSIX: {}", dest_vsix.display());
-    
+
     let file = File::create(dest_vsix)?;
     let mut zip = ZipWriter::new(file);
-    let options = FileOptions::default()
-        .compression_method(zip::CompressionMethod::Deflated);
+    let options = FileOptions::default().compression_method(zip::CompressionMethod::Deflated);
 
     // 1. Write [Content_Types].xml
     zip.start_file("[Content_Types].xml", options)?;
@@ -314,7 +380,8 @@ fn package_vsix(root_dir: &Path, dest_vsix: &Path, version: &str) -> anyhow::Res
 
     // 2. Write extension.vsixmanifest
     zip.start_file("extension.vsixmanifest", options)?;
-    let manifest = format!(r#"<?xml version="1.0" encoding="utf-8"?>
+    let manifest = format!(
+        r#"<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
   <Metadata>
     <Identity Id="techscript" Version="{}" Publisher="techscript-motion" />
@@ -329,7 +396,9 @@ fn package_vsix(root_dir: &Path, dest_vsix: &Path, version: &str) -> anyhow::Res
   <Assets>
     <Asset Type="Microsoft.VisualStudio.Code.Manifest" Path="extension/package.json" />
   </Assets>
-</PackageManifest>"#, version);
+</PackageManifest>"#,
+        version
+    );
     zip.write_all(manifest.as_bytes())?;
 
     // 3. Add files inside extension/ folder in ZIP
@@ -343,7 +412,7 @@ fn package_vsix(root_dir: &Path, dest_vsix: &Path, version: &str) -> anyhow::Res
         "LICENSE",
         "icon.png",
         "icon@2x.png",
-        "syntaxes/techscript.tmLanguage.json"
+        "syntaxes/techscript.tmLanguage.json",
     ];
 
     for file_path in files {
@@ -364,8 +433,7 @@ fn package_vsix(root_dir: &Path, dest_vsix: &Path, version: &str) -> anyhow::Res
 fn zip_directory(src_dir: &Path, dst_zip: &Path) -> anyhow::Result<()> {
     let file = File::create(dst_zip)?;
     let mut zip = ZipWriter::new(file);
-    let options = FileOptions::default()
-        .compression_method(zip::CompressionMethod::Deflated);
+    let options = FileOptions::default().compression_method(zip::CompressionMethod::Deflated);
 
     let walk_dir = |dir: &Path| -> anyhow::Result<Vec<PathBuf>> {
         let mut files = Vec::new();
@@ -389,7 +457,7 @@ fn zip_directory(src_dir: &Path, dst_zip: &Path) -> anyhow::Result<()> {
     for file_path in files {
         let rel_path = file_path.strip_prefix(src_dir.parent().unwrap())?;
         zip.start_file(rel_path.to_string_lossy().replace("\\", "/"), options)?;
-        
+
         let mut f = File::open(&file_path)?;
         let mut buffer = Vec::new();
         f.read_to_end(&mut buffer)?;
@@ -400,7 +468,12 @@ fn zip_directory(src_dir: &Path, dst_zip: &Path) -> anyhow::Result<()> {
     Ok(())
 }
 
-fn generate_release_manifest(dest: &Path, version: &str, commit: &str, date: &str) -> anyhow::Result<()> {
+fn generate_release_manifest(
+    dest: &Path,
+    version: &str,
+    commit: &str,
+    date: &str,
+) -> anyhow::Result<()> {
     let manifest = serde_json::json!({
         "version": version,
         "language_version": "2.0.0",
@@ -448,9 +521,13 @@ fn get_git_commit() -> String {
 }
 
 fn generate_inno_script(dest: &Path, version: &str, root: &Path) -> anyhow::Result<()> {
-    let portable_relative = root.join("public-release").join("portable").join("TechScript");
-    
-    let iss_content = format!(r#"; TechScript 2.0 Installer Script (Inno Setup)
+    let portable_relative = root
+        .join("public-release")
+        .join("portable")
+        .join("TechScript");
+
+    let iss_content = format!(
+        r#"; TechScript 2.0 Installer Script (Inno Setup)
 [Setup]
 AppName=TechScript 2.0
 AppVersion={version}
@@ -495,7 +572,10 @@ begin
 end;
 "#,
         version = version,
-        logo_dir = root.join("TechScript-Logo-Package").join("logo-package").to_string_lossy(),
+        logo_dir = root
+            .join("TechScript-Logo-Package")
+            .join("logo-package")
+            .to_string_lossy(),
         portable_dir = portable_relative.to_string_lossy()
     );
 
@@ -505,7 +585,7 @@ end;
 
 fn compile_inno_installer(iss_path: &Path) -> anyhow::Result<()> {
     println!("Checking for Inno Setup compiler (iscc.exe)...");
-    
+
     // Look up iscc in standard locations or PATH
     let iscc_paths = [
         PathBuf::from("iscc.exe"),
@@ -518,7 +598,16 @@ fn compile_inno_installer(iss_path: &Path) -> anyhow::Result<()> {
         let check_cmd = if path.to_string_lossy() == "iscc.exe" {
             Command::new("where.exe").arg("iscc").output()
         } else {
-            Command::new("cmd").args(&["/c", "if", "exist", &path.to_string_lossy(), "echo", "found"]).output()
+            Command::new("cmd")
+                .args(&[
+                    "/c",
+                    "if",
+                    "exist",
+                    &path.to_string_lossy(),
+                    "echo",
+                    "found",
+                ])
+                .output()
         };
 
         if let Ok(output) = check_cmd {
@@ -531,14 +620,17 @@ fn compile_inno_installer(iss_path: &Path) -> anyhow::Result<()> {
 
     if let Some(compiler) = found_compiler {
         println!("Compiling setup package using: {}", compiler.display());
-        let status = Command::new(compiler)
-            .arg(iss_path)
-            .status()?;
-        
+        let status = Command::new(compiler).arg(iss_path).status()?;
+
         if status.success() {
             // Copy output setup executable to release installer folder
             let generated_setup = iss_path.parent().unwrap().join("TechScript_Setup.exe");
-            let target_dest = iss_path.parent().unwrap().join("..").join("installer").join("TechScript_Setup.exe");
+            let target_dest = iss_path
+                .parent()
+                .unwrap()
+                .join("..")
+                .join("installer")
+                .join("TechScript_Setup.exe");
             if generated_setup.exists() {
                 fs::copy(&generated_setup, &target_dest)?;
                 fs::remove_file(&generated_setup)?;
@@ -549,10 +641,21 @@ fn compile_inno_installer(iss_path: &Path) -> anyhow::Result<()> {
         }
     } else {
         println!("Warning: Inno Setup compiler (iscc.exe) was not found in PATH or standard Program Files locations.");
-        println!("Please compile {} manually using Inno Setup Compiler.", iss_path.display());
+        println!(
+            "Please compile {} manually using Inno Setup Compiler.",
+            iss_path.display()
+        );
         // Write mock installer wrapper for Developer Debug Release if iscc is missing
-        let mock_exe_path = iss_path.parent().unwrap().join("..").join("installer").join("TechScript_Setup.exe");
-        fs::write(&mock_exe_path, "TechScript setup installer placeholder executable (Requires ISCC to build fully).\n")?;
+        let mock_exe_path = iss_path
+            .parent()
+            .unwrap()
+            .join("..")
+            .join("installer")
+            .join("TechScript_Setup.exe");
+        fs::write(
+            &mock_exe_path,
+            "TechScript setup installer placeholder executable (Requires ISCC to build fully).\n",
+        )?;
     }
     Ok(())
 }

@@ -448,3 +448,49 @@ error: no LLM API key found (2 doc/paper/image file(s) need semantic extraction)
 [2026-07-16 13:50:50] [INFO] Graphify update completed successfully in 2.84s.
 [2026-07-16 13:50:50] [INFO] ============================================================
 
+[2026-07-16 19:09:11] [INFO] ============================================================
+[2026-07-16 19:09:11] [INFO] Starting Graphify Knowledge Graph Update (dry-run: False)
+[2026-07-16 19:09:11] [INFO] Workspace root detected: C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0
+[2026-07-16 19:09:11] [INFO] Python Version: 3.13.13
+[2026-07-16 19:09:12] [INFO] Graphify Version: 0.8.43 (command: graphify)
+[2026-07-16 19:09:12] [INFO] Rust Version: rustc 1.96.0 (ac68faa20 2026-05-25)
+[2026-07-16 19:09:12] [INFO] Cargo Version: cargo 1.96.0 (30a34c682 2026-05-25)
+[2026-07-16 19:09:12] [INFO] No LLM API key detected. Running in AST-only mode.
+[2026-07-16 19:09:12] [INFO] Temporarily modifying .graphifyignore for AST-only fallback...
+[2026-07-16 19:09:12] [INFO] Wrote temporary ignore file to C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0\.graphifyignore
+[2026-07-16 19:09:12] [INFO] Executing: graphify extract . --no-cluster --cargo
+[2026-07-16 19:09:35] [INFO] Command completed in 22.82s
+[2026-07-16 19:09:35] [INFO] Restored original .graphifyignore
+[2026-07-16 19:09:35] [INFO] Running clustering and generating reports...
+[2026-07-16 19:09:35] [INFO] Executing: graphify cluster-only . --no-label
+[2026-07-16 19:09:35] [INFO] Command completed in 0.73s
+[2026-07-16 19:09:36] [INFO] Output validation succeeded:
+[2026-07-16 19:09:36] [INFO]   - graph.html: Valid HTML structure (1189.58 KB)
+[2026-07-16 19:09:36] [INFO]   - graph.json: Valid JSON with 1542 nodes and 2531 links (1369.75 KB)
+[2026-07-16 19:09:36] [INFO]   - GRAPH_REPORT.md: Valid Markdown with headings (21.91 KB)
+[2026-07-16 19:09:36] [INFO] Graphify update completed successfully in 24.40s.
+[2026-07-16 19:09:36] [INFO] ============================================================
+
+[2026-07-16 19:26:24] [INFO] ============================================================
+[2026-07-16 19:26:24] [INFO] Starting Graphify Knowledge Graph Update (dry-run: False)
+[2026-07-16 19:26:24] [INFO] Workspace root detected: C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0
+[2026-07-16 19:26:24] [INFO] Python Version: 3.13.13
+[2026-07-16 19:26:25] [INFO] Graphify Version: 0.8.43 (command: graphify)
+[2026-07-16 19:26:25] [INFO] Rust Version: rustc 1.96.0 (ac68faa20 2026-05-25)
+[2026-07-16 19:26:25] [INFO] Cargo Version: cargo 1.96.0 (30a34c682 2026-05-25)
+[2026-07-16 19:26:25] [INFO] No LLM API key detected. Running in AST-only mode.
+[2026-07-16 19:26:25] [INFO] Temporarily modifying .graphifyignore for AST-only fallback...
+[2026-07-16 19:26:25] [INFO] Wrote temporary ignore file to C:\Users\Tanmoy\OneDrive\Documents\TechScript 2.0\.graphifyignore
+[2026-07-16 19:26:25] [INFO] Executing: graphify extract . --no-cluster --cargo
+[2026-07-16 19:27:17] [INFO] Command completed in 52.62s
+[2026-07-16 19:27:17] [INFO] Restored original .graphifyignore
+[2026-07-16 19:27:17] [INFO] Running clustering and generating reports...
+[2026-07-16 19:27:17] [INFO] Executing: graphify cluster-only . --no-label
+[2026-07-16 19:27:18] [INFO] Command completed in 0.42s
+[2026-07-16 19:27:18] [INFO] Output validation succeeded:
+[2026-07-16 19:27:18] [INFO]   - graph.html: Valid HTML structure (91.58 KB)
+[2026-07-16 19:27:18] [INFO]   - graph.json: Valid JSON with 64 nodes and 174 links (77.71 KB)
+[2026-07-16 19:27:18] [INFO]   - GRAPH_REPORT.md: Valid Markdown with headings (4.30 KB)
+[2026-07-16 19:27:18] [INFO] Graphify update completed successfully in 53.57s.
+[2026-07-16 19:27:18] [INFO] ============================================================
+

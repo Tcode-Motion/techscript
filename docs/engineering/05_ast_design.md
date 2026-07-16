@@ -2,7 +2,7 @@
 
 > **Status**: Authoritative Specification
 > **Version**: 2.0.0
-> **Last Updated**: 2026-07-15
+> **Last Updated**: 2026-07-16
 > **Related Documents**: [03 Grammar](./03_grammar_ebnf.md) · [07 Parser](./07_parser_design.md) · [10 Semantic Analysis](./10_semantic_analysis.md) · [11 Interpreter](./11_interpreter_design.md)
 
 ---
@@ -15,7 +15,6 @@ graph TD
     STMT --> DECL["Declaration"]
     STMT --> EXPR_STMT["ExpressionStatement"]
     STMT --> CTRL["Control Flow"]
-    STMT --> ASSIGN["Assignment"]
     STMT --> IO["I/O Statement"]
     STMT --> ERR_STMT["Error Statement"]
     STMT --> JUMP["Jump Statement"]
@@ -24,14 +23,16 @@ graph TD
     DECL --> VAR["VarDecl"]
     DECL --> CONST["ConstDecl"]
     DECL --> FUNC["FuncDecl"]
+    DECL --> STRUCT["StructDecl"]
+    DECL --> ENUM["EnumDecl"]
     DECL --> MODEL["ModelDecl"]
     DECL --> EXPORT["ExportDecl"]
 
-    CTRL --> WHEN["WhenStmt"]
-    CTRL --> EACH["EachStmt"]
+    CTRL --> WHEN["WhenStmt / IfStmt"]
+    CTRL --> EACH["EachStmt / ForStmt"]
     CTRL --> REPEAT["RepeatStmt"]
     CTRL --> WHILE["WhileStmt"]
-    CTRL --> ATTEMPT["AttemptStmt"]
+    CTRL --> ATTEMPT["AttemptStmt / TryStmt"]
 
     IO --> SAY["SayStmt"]
     ERR_STMT --> THROW["ThrowStmt"]
@@ -55,6 +56,7 @@ graph TD
     EXPR --> MAP_EXPR["MapExpr"]
     EXPR --> FSTR["FStringExpr"]
     EXPR --> GROUP["GroupExpr"]
+    EXPR --> ASSIGN["AssignmentExpr"]
 
     style PROGRAM fill:#4a9eff,color:#fff
     style STMT fill:#ff6b6b,color:#fff
@@ -67,7 +69,6 @@ graph TD
 ## 2. Core Types
 
 ### 2.1 Span (Source Location)
-
 ```rust
 /// Byte-offset range in source code. Used by every AST node for error reporting.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -78,7 +79,6 @@ pub struct Span {
 ```
 
 ### 2.2 Node ID
-
 ```rust
 /// Unique identifier for each AST node. Used by the semantic analyzer
 /// to attach resolved information without mutating the AST.
@@ -87,7 +87,6 @@ pub struct NodeId(pub u32);
 ```
 
 ### 2.3 Identifier
-
 ```rust
 /// A named identifier with source location.
 #[derive(Debug, Clone, PartialEq)]
@@ -113,7 +112,7 @@ pub struct Program {
 
 ---
 
-## 4. Statements
+## 4. Statements and Declarations
 
 ```rust
 #[derive(Debug, Clone)]
@@ -122,15 +121,17 @@ pub enum Statement {
     VarDecl(VarDecl),
     ConstDecl(ConstDecl),
     FuncDecl(FuncDecl),
+    StructDecl(StructDecl),
+    EnumDecl(EnumDecl),
     ModelDecl(ModelDecl),
     ExportDecl(ExportDecl),
 
     // Control flow
-    When(WhenStmt),
-    Each(EachStmt),
+    If(IfStmt),
+    For(ForStmt),
     Repeat(RepeatStmt),
     While(WhileStmt),
-    Attempt(AttemptStmt),
+    Try(TryStmt),
 
     // Simple statements
     Say(SayStmt),
@@ -138,7 +139,6 @@ pub enum Statement {
     Throw(ThrowStmt),
     Break(BreakStmt),
     Continue(ContinueStmt),
-    Assignment(AssignmentStmt),
     Import(ImportStmt),
 
     // Expression as statement (result discarded)
@@ -152,58 +152,105 @@ pub enum Statement {
 ### 4.1 Declarations
 
 ```rust
-/// make name = expression
+/// make/let/var name[: type] = expression
 #[derive(Debug, Clone)]
 pub struct VarDecl {
     pub id: NodeId,
-    pub name: Ident,
+    pub pattern: Pattern,
+    pub type_ann: Option<TypeSpec>,
     pub initializer: Expression,
     pub span: Span,
 }
 
-/// const NAME = expression
+/// const NAME[: type] = expression
 #[derive(Debug, Clone)]
 pub struct ConstDecl {
     pub id: NodeId,
-    pub name: Ident,
+    pub pattern: Pattern,
+    pub type_ann: Option<TypeSpec>,
     pub initializer: Expression,
     pub span: Span,
 }
 
-/// build name(params) { body }
+/// Destructuring Pattern
+#[derive(Debug, Clone)]
+pub enum Pattern {
+    Single(Ident),
+    Tuple(Vec<Ident>),
+    List(Vec<Ident>),
+    Struct(Vec<Ident>),
+}
+
+/// Type Signature Specification
+#[derive(Debug, Clone)]
+pub struct TypeSpec {
+    pub name: Ident,
+    pub generic_args: Option<Vec<TypeSpec>>,
+    pub span: Span,
+}
+
+/// build name<T>(params) -> RetType { body }
 #[derive(Debug, Clone)]
 pub struct FuncDecl {
     pub id: NodeId,
+    pub async_kw: bool,
     pub name: Ident,
+    pub generic_params: Option<Vec<Ident>>,
     pub params: Vec<Parameter>,
+    pub return_type: Option<TypeSpec>,
     pub body: Block,
     pub span: Span,
 }
 
-/// A function parameter with optional default value
+/// A function parameter with optional type annotation and default value
 #[derive(Debug, Clone)]
 pub struct Parameter {
     pub name: Ident,
+    pub type_ann: Option<TypeSpec>,
     pub default: Option<Expression>,
     pub span: Span,
 }
 
-/// model Name { fields and methods }
+/// struct Name { fields }
+#[derive(Debug, Clone)]
+pub struct StructDecl {
+    pub id: NodeId,
+    pub name: Ident,
+    pub fields: Vec<FieldSpec>,
+    pub span: Span,
+}
+
+#[derive(Debug, Clone)]
+pub struct FieldSpec {
+    pub name: Ident,
+    pub type_ann: TypeSpec,
+    pub span: Span,
+}
+
+/// enum Name { variants }
+#[derive(Debug, Clone)]
+pub struct EnumDecl {
+    pub id: NodeId,
+    pub name: Ident,
+    pub variants: Vec<EnumVariant>,
+    pub span: Span,
+}
+
+#[derive(Debug, Clone)]
+pub struct EnumVariant {
+    pub name: Ident,
+    pub payload: Option<Vec<TypeSpec>>,
+    pub span: Span,
+}
+
+/// model Name extends ParentName { fields and methods }
 #[derive(Debug, Clone)]
 pub struct ModelDecl {
     pub id: NodeId,
     pub name: Ident,
-    pub fields: Vec<FieldDecl>,
+    pub parent: Option<Ident>,
+    pub fields: Vec<VarDecl>,
     pub methods: Vec<MethodDecl>,
-    pub span: Span,
-}
-
-/// make field_name = default_value (inside a model)
-#[derive(Debug, Clone)]
-pub struct FieldDecl {
-    pub id: NodeId,
-    pub name: Ident,
-    pub default: Expression,
     pub span: Span,
 }
 
@@ -218,9 +265,11 @@ pub enum MethodKeyword {
 #[derive(Debug, Clone)]
 pub struct MethodDecl {
     pub id: NodeId,
-    pub keyword: MethodKeyword, // Tracks if declared with build or fun
+    pub keyword: MethodKeyword,
     pub name: Ident,
+    pub generic_params: Option<Vec<Ident>>,
     pub params: Vec<Parameter>,
+    pub return_type: Option<TypeSpec>,
     pub body: Block,
     pub span: Span,
 }
@@ -229,42 +278,65 @@ pub struct MethodDecl {
 #[derive(Debug, Clone)]
 pub struct ExportDecl {
     pub id: NodeId,
-    pub declaration: Box<Statement>,  // Must be FuncDecl, ConstDecl, or ModelDecl
+    pub declaration: Box<Statement>,
     pub span: Span,
 }
 ```
 
 ---
 
-## 5. Compatibility & Evolution Analysis
+## 5. Expressions
 
-### 5.1 Compatibility Notes
+```rust
+#[derive(Debug, Clone)]
+pub enum Expression {
+    Literal(LiteralExpr),
+    Binary(BinaryExpr),
+    Unary(UnaryExpr),
+    Call(CallExpr),
+    Member(MemberExpr),
+    Index(IndexExpr),
+    Identifier(Ident),
+    Range(RangeExpr),
+    Ask(AskExpr),
+    New(NewExpr),
+    Lambda(LambdaExpr),
+    List(ListExpr),
+    Map(MapExpr),
+    FString(FStringExpr),
+    Group(Box<Expression>),
+    Assignment(AssignmentExpr), // Now an expression
+}
+
+/// target assignment_operator expression
+#[derive(Debug, Clone)]
+pub struct AssignmentExpr {
+    pub id: NodeId,
+    pub target: Box<Expression>, // Ident, Member, or IndexExpr
+    pub op: String,              // "=", "+=", etc.
+    pub value: Box<Expression>,
+    pub span: Span,
+}
+```
+
+---
+
+## 6. Compatibility & Evolution Analysis
+
+### 6.1 Compatibility Notes
 - **AST Node Retention**: Retaining the `MethodKeyword` variant in `MethodDecl` ensures that the AST preserves the exact syntax used in the source `.txs` file.
 - **Unified AST Execution**: For downstream stages (Interpreter, VM), the `MethodKeyword` is ignored, executing methods identically regardless of whether they were declared using `build` or `fun`.
 
-### 5.2 Migration Notes
+### 6.2 Migration Notes
 - Tooling or formatting passes (`tech fmt`) inspect the `keyword` field of `MethodDecl`. If it is `MethodKeyword::Fun`, formatting replaces it with `build` when writing back to the `.txs` file:
   ```rust
   // formatter/src/lib.rs snippet
   fn format_method_decl(&mut self, node: &MethodDecl) {
-      // Version 1 uses "fun", rewrite to "build" under v2.0
       self.write("build ");
       self.format_ident(&node.name);
-      // ...
   }
   ```
 
-### 5.3 Rationale
-- **Preserving Keyword Info**: Storing `MethodKeyword` in the AST node rather than discarding it during parsing allows the Semantic Analyzer to emit precise diagnostics (`W0015` warnings pointing directly to the `fun` token span) while keeping compiler logic clean.
-- **NodeId tracking**: Assigning a unique `NodeId` to every node (including expressions inside f-strings) allows the compilation pipeline to map errors back to the source spans.
-
-### 5.4 Future Roadmap
-- **v2.2**: The `Parameter` struct will be updated to include an optional `param_type` AST field supporting static type annotations:
-  ```rust
-  pub struct Parameter {
-      pub name: Ident,
-      pub param_type: Option<TypeAnnotation>, // Future type annotations
-      pub default: Option<Expression>,
-      pub span: Span,
-  }
-  ```
+### 6.3 Rationale
+- **Assignment as Expression**: Allowing assignment to be parsed as a right-associative expression simplifies Pratt parsing and permits inline assignment expressions, while maintaining context-free parser simplicity.
+- **Generic Angle Brackets**: Utilizing `<...>` for generics matches industry standards and makes integration with syntax highlighting/IDE tools direct. Context-aware parsing is defined to resolve any comparison operator conflicts.

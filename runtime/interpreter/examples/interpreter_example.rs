@@ -14,7 +14,7 @@ fn main() {
         symbols: SymbolTable::default(),
     };
     let mut interpreter = Interpreter::new();
-    if let Ok(val) = interpreter.interpret(checked) {
+    if let Ok(val) = interpreter.interpret(&checked.program) {
         println!("Interpreter exited with value: {:?}", val);
     }
 }

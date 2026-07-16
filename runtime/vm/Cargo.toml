@@ -2,7 +2,26 @@
 name = "techscript_vm"
 version = "0.1.0"
 edition = "2021"
-description = "Skeletal VM bytecode compiler and execution VM (v2.1 preview) for TechScript 2.0"
+description = "Stack-based virtual machine execution engine for TechScript 2.0"
 
 [dependencies]
-techscript_interpreter = { path = "../interpreter" }
+techscript_common = { path = "../../compiler/common" }
+techscript_syntax = { path = "../../compiler/syntax" }
+techscript_ast = { path = "../../compiler/ast" }
+techscript_ir = { path = "../../compiler/ir" }
+techscript_bytecode = { path = "../../compiler/bytecode" }
+techscript_runtime = { path = "../runtime" }
+techscript_builtins = { path = "../builtins" }
+techscript_stdlib = { path = "../../stdlib" }
+serde = { workspace = true }
+bincode = "1.3"
+thiserror = { workspace = true }
+indexmap = "2.0"
+
+[dev-dependencies]
+techscript_errors = { path = "../../compiler/errors" }
+techscript_lexer = { path = "../../compiler/lexer" }
+techscript_parser = { path = "../../compiler/parser" }
+techscript_semantic = { path = "../../compiler/semantic" }
+techscript_optimizer = { path = "../../compiler/optimizer" }
+

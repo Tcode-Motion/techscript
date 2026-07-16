@@ -1,0 +1,23 @@
+pub mod algebraic;
+pub mod branch_simplification;
+pub mod canonicalize;
+pub mod cfg_cleanup;
+pub mod constant_folding;
+pub mod constant_propagation;
+pub mod copy_propagation;
+pub mod dead_code;
+pub mod dead_store;
+pub mod peephole;
+pub mod unreachable;
+
+pub use algebraic::AlgebraicSimplification;
+pub use branch_simplification::BranchSimplification;
+pub use canonicalize::Canonicalize;
+pub use cfg_cleanup::CFGCleanup;
+pub use constant_folding::ConstantFolding;
+pub use constant_propagation::ConstantPropagation;
+pub use copy_propagation::CopyPropagation;
+pub use dead_code::DeadCode;
+pub use dead_store::DeadStore;
+pub use peephole::Peephole;
+pub use unreachable::UnreachableBlockElimination;

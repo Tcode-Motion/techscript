@@ -3,29 +3,21 @@
 //! Handles name resolution, scope checking, type checking, and symbol table generation.
 //! Resolves shadowing and issues warning notes for deprecated keywords.
 
+pub mod context;
+pub mod passes;
+pub mod pipeline;
+pub mod symbol_table;
+pub mod types;
+
+pub use symbol_table::{Scope, Symbol, SymbolTable};
+
+use context::SemanticContext;
+use passes::collect::CollectDecls;
+use passes::resolve::ResolveSymbols;
+use pipeline::PassPipeline;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use techscript_ast::Program;
 use techscript_errors::{Diagnostic, DiagnosticReporter};
-
-/// Information associated with a resolved symbol.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Symbol {
-    pub name: String,
-    pub is_constant: bool,
-}
-
-/// A single lexical scope containing declared symbols.
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-pub struct Scope {
-    pub symbols: HashMap<String, Symbol>,
-}
-
-/// Symbol table tracking scopes and resolution mappings.
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-pub struct SymbolTable {
-    pub scopes: Vec<Scope>,
-}
 
 /// AST program annotated with semantic metadata and resolved scope links.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -37,13 +29,14 @@ pub struct CheckedProgram {
 /// The main semantic validation controller.
 #[derive(Default)]
 pub struct SemanticAnalyzer {
-    symbols: SymbolTable,
+    context: SemanticContext,
 }
 
 impl SemanticAnalyzer {
+    /// Creates a new SemanticAnalyzer instance.
     pub fn new() -> Self {
         Self {
-            symbols: SymbolTable::default(),
+            context: SemanticContext::new(),
         }
     }
 
@@ -51,13 +44,28 @@ impl SemanticAnalyzer {
     pub fn analyze(
         &mut self,
         program: Program,
-        _reporter: &mut DiagnosticReporter,
+        reporter: &mut DiagnosticReporter,
     ) -> Result<CheckedProgram, Vec<Diagnostic>> {
-        let checked = CheckedProgram {
-            program,
-            symbols: self.symbols.clone(),
-        };
-        Ok(checked)
+        let mut pipeline = PassPipeline::new();
+        pipeline.add_pass(Box::new(CollectDecls));
+        pipeline.add_pass(Box::new(ResolveSymbols));
+
+        pipeline.execute(&program, &mut self.context);
+
+        // Copy gathered diagnostics to reporter
+        for diag in &self.context.diagnostics {
+            reporter.report(diag.clone());
+        }
+
+        if reporter.has_errors() {
+            Err(reporter.get_diagnostics().to_vec())
+        } else {
+            let checked = CheckedProgram {
+                program,
+                symbols: self.context.symbol_table.clone(),
+            };
+            Ok(checked)
+        }
     }
 }
 

@@ -1,0 +1,22 @@
+[package]
+name = "techscript_bytecode"
+version = "0.1.0"
+edition = "2021"
+description = "Bytecode generation and VM execution file format support for TechScript 2.0"
+
+[dependencies]
+techscript_common = { path = "../common" }
+techscript_syntax = { path = "../syntax" }
+techscript_ast = { path = "../ast" }
+techscript_ir = { path = "../ir" }
+serde = { workspace = true }
+bincode = "1.3"
+
+[dev-dependencies]
+techscript_errors = { path = "../errors" }
+techscript_lexer = { path = "../lexer" }
+techscript_parser = { path = "../parser" }
+techscript_semantic = { path = "../semantic" }
+techscript_optimizer = { path = "../optimizer" }
+serde = { workspace = true }
+bincode = "1.3"

@@ -3,37 +3,46 @@
 //! Parses token streams and builds an Abstract Syntax Tree (AST).
 //! Combines recursive descent for statements and Pratt parsing for expressions.
 
-#![allow(dead_code, unused)]
+#![allow(clippy::result_unit_err)]
 
-use techscript_ast::{NodeId, Program};
-use techscript_common::Span;
+mod declarations;
+mod expressions;
+mod parser;
+mod statements;
+
+pub use parser::{ParseResult, Parser};
+use techscript_ast::{Program, Span};
 use techscript_errors::{Diagnostic, DiagnosticReporter};
-use techscript_syntax::Token;
-
-/// Parse engine containing token references and state details.
-pub struct Parser<'a> {
-    tokens: &'a [Token],
-    pos: usize,
-}
+use techscript_syntax::{Token, TokenKind};
 
 impl<'a> Parser<'a> {
-    /// Create a new Parser for a stream of tokens.
-    pub fn new(tokens: &'a [Token]) -> Self {
-        Self { tokens, pos: 0 }
-    }
-
     /// Evaluates structural bounds and parses program nodes.
-    pub fn parse(
-        &mut self,
-        _reporter: &mut DiagnosticReporter,
-    ) -> Result<Program, Vec<Diagnostic>> {
-        // Skeletal implementation: returns empty program
-        let program = Program {
-            id: NodeId(0),
-            statements: vec![],
-            span: Span::new(0, 0),
-        };
-        Ok(program)
+    pub fn parse(&mut self, reporter: &mut DiagnosticReporter) -> Result<Program, Vec<Diagnostic>> {
+        let start_pos = self.peek().span.start;
+        let mut statements = Vec::new();
+
+        while !self.is_at_end() {
+            // Skip leading newlines/semicolons before statements
+            while self.match_token(TokenKind::Newline) || self.match_token(TokenKind::Semicolon) {}
+            if self.is_at_end() {
+                break;
+            }
+
+            match self.parse_statement(reporter) {
+                Ok(stmt) => statements.push(stmt),
+                Err(_) => {
+                    self.synchronize();
+                }
+            }
+        }
+
+        if reporter.has_errors() {
+            Err(reporter.get_diagnostics().to_vec())
+        } else {
+            let end_pos = self.peek().span.end;
+            let span = Span::new(start_pos, end_pos);
+            Ok(Program::new(self.next_id(), statements, span))
+        }
     }
 }
 

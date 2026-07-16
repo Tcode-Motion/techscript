@@ -2,9 +2,12 @@
 name = "techscript_ast"
 version = "0.1.0"
 edition = "2021"
-description = "Abstract Syntax Tree representations and Visitor structures for TechScript 2.0"
+description = "Abstract Syntax Tree representations for TechScript 2.0"
 
 [dependencies]
 techscript_common = { path = "../common" }
 techscript_syntax = { path = "../syntax" }
 serde = { workspace = true }
+
+[dev-dependencies]
+serde_json = { workspace = true }

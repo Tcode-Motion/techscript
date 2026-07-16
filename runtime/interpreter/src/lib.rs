@@ -3,62 +3,25 @@
 //! Tree-walking interpreter backend for AST evaluation.
 //! Maintains local environment states and manages execution control signals.
 
-#![allow(dead_code, unused)]
+pub mod control_flow;
+pub mod expressions;
+pub mod functions;
+pub mod interpreter;
+pub mod operations;
+pub mod statements;
+pub mod visitor;
 
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+pub use control_flow::{CallFrame, EvalResult, ExecResult, FlowSignal};
+pub use interpreter::Interpreter;
+pub use visitor::AstVisitor;
+pub type Value = techscript_runtime::RuntimeValue;
+pub type RuntimeError = techscript_runtime::RuntimeError;
+pub use techscript_runtime::RuntimeErrorKind;
+
 use techscript_semantic::CheckedProgram;
-
-/// Primitives represented at runtime.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub enum Value {
-    Int(i64),
-    Float(f64),
-    Str(String),
-    Bool(bool),
-    None,
-    List(Vec<Value>),
-    Map(HashMap<String, Value>),
-}
-
-/// Execution error categories.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum RuntimeError {
-    DivisionByZero,
-    TypeMismatch(String),
-    StackOverflow,
-    IndexOutOfBounds,
-    MemberNotFound(String),
-}
-
-/// Dynamic environment storage.
-#[derive(Debug, Clone, Default)]
-pub struct Environment {
-    variables: HashMap<String, Value>,
-}
-
-/// Evaluator state machine.
-#[derive(Default)]
-pub struct Interpreter {
-    env: Environment,
-}
-
-impl Interpreter {
-    pub fn new() -> Self {
-        Self {
-            env: Environment::default(),
-        }
-    }
-
-    /// Evaluates the Checked AST and returns the final value output.
-    pub fn interpret(&mut self, _checked: CheckedProgram) -> Result<Value, RuntimeError> {
-        // Skeletal implementation
-        Ok(Value::None)
-    }
-}
 
 /// Helper function to evaluate checked programs.
 pub fn interpret(checked: CheckedProgram) -> Result<Value, RuntimeError> {
     let mut interpreter = Interpreter::new();
-    interpreter.interpret(checked)
+    interpreter.interpret(&checked.program)
 }

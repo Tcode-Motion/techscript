@@ -81,6 +81,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3a8241f3ebb85c056b509d4327ad0358fbbba6ffb340bf388f26350aeda225b1"
 
 [[package]]
+name = "bincode"
+version = "1.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b1f45e9417d87227c7a56d22e471c6206462cba514c7590c09aff4cf6d1ddcad"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "bitflags"
 version = "1.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -157,7 +166,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "978747c1d849a7d2ee5e8adc0159961c48fb7e5db2f06af6723b80123bb53856"
 dependencies = [
  "cfg-if",
- "hashbrown",
+ "hashbrown 0.14.5",
  "lock_api",
  "once_cell",
  "parking_lot_core",
@@ -173,6 +182,12 @@ dependencies = [
  "quote",
  "syn",
 ]
+
+[[package]]
+name = "equivalent"
+version = "1.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
 
 [[package]]
 name = "fnv"
@@ -270,6 +285,12 @@ name = "hashbrown"
 version = "0.14.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e5274423e17b7c9fc20b6e7e208532f9b19825d82dfd615708b70edd83df41f1"
+
+[[package]]
+name = "hashbrown"
+version = "0.17.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
 
 [[package]]
 name = "heck"
@@ -384,6 +405,18 @@ checksum = "cb68373c0d6620ef8105e855e7745e18b0d00d3bdb07fb532e434244cdb9a714"
 dependencies = [
  "icu_normalizer",
  "icu_properties",
+]
+
+[[package]]
+name = "indexmap"
+version = "2.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d466e9454f08e4a911e14806c24e16fba1b4c121d1ea474396f396069cf949d9"
+dependencies = [
+ "equivalent",
+ "hashbrown 0.17.1",
+ "serde",
+ "serde_core",
 ]
 
 [[package]]
@@ -687,6 +720,7 @@ name = "techscript_ast"
 version = "0.1.0"
 dependencies = [
  "serde",
+ "serde_json",
  "techscript_common",
  "techscript_syntax",
 ]
@@ -696,6 +730,23 @@ name = "techscript_builtins"
 version = "0.1.0"
 dependencies = [
  "techscript_interpreter",
+]
+
+[[package]]
+name = "techscript_bytecode"
+version = "0.1.0"
+dependencies = [
+ "bincode",
+ "serde",
+ "techscript_ast",
+ "techscript_common",
+ "techscript_errors",
+ "techscript_ir",
+ "techscript_lexer",
+ "techscript_optimizer",
+ "techscript_parser",
+ "techscript_semantic",
+ "techscript_syntax",
 ]
 
 [[package]]
@@ -719,6 +770,7 @@ name = "techscript_common"
 version = "0.1.0"
 dependencies = [
  "serde",
+ "serde_json",
 ]
 
 [[package]]
@@ -749,10 +801,29 @@ dependencies = [
 name = "techscript_interpreter"
 version = "0.1.0"
 dependencies = [
+ "indexmap",
  "serde",
  "techscript_ast",
  "techscript_common",
  "techscript_errors",
+ "techscript_lexer",
+ "techscript_parser",
+ "techscript_runtime",
+ "techscript_semantic",
+ "techscript_stdlib",
+ "techscript_syntax",
+]
+
+[[package]]
+name = "techscript_ir"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "techscript_ast",
+ "techscript_common",
+ "techscript_errors",
+ "techscript_lexer",
+ "techscript_parser",
  "techscript_semantic",
  "techscript_syntax",
 ]
@@ -795,6 +866,29 @@ dependencies = [
 ]
 
 [[package]]
+name = "techscript_module_resolver"
+version = "0.1.0"
+dependencies = [
+ "techscript_common",
+ "techscript_errors",
+]
+
+[[package]]
+name = "techscript_optimizer"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "techscript_ast",
+ "techscript_common",
+ "techscript_errors",
+ "techscript_ir",
+ "techscript_lexer",
+ "techscript_parser",
+ "techscript_semantic",
+ "techscript_syntax",
+]
+
+[[package]]
 name = "techscript_package_manager"
 version = "0.1.0"
 dependencies = [
@@ -805,6 +899,19 @@ dependencies = [
 name = "techscript_parser"
 version = "0.1.0"
 dependencies = [
+ "serde",
+ "techscript_ast",
+ "techscript_common",
+ "techscript_errors",
+ "techscript_lexer",
+ "techscript_syntax",
+]
+
+[[package]]
+name = "techscript_runtime"
+version = "0.1.0"
+dependencies = [
+ "indexmap",
  "serde",
  "techscript_ast",
  "techscript_common",
@@ -820,6 +927,9 @@ dependencies = [
  "techscript_ast",
  "techscript_common",
  "techscript_errors",
+ "techscript_lexer",
+ "techscript_module_resolver",
+ "techscript_parser",
  "techscript_syntax",
 ]
 
@@ -827,7 +937,10 @@ dependencies = [
 name = "techscript_stdlib"
 version = "0.1.0"
 dependencies = [
- "techscript_interpreter",
+ "indexmap",
+ "serde",
+ "serde_json",
+ "techscript_runtime",
 ]
 
 [[package]]
@@ -835,6 +948,7 @@ name = "techscript_syntax"
 version = "0.1.0"
 dependencies = [
  "serde",
+ "serde_json",
  "techscript_common",
 ]
 
@@ -842,7 +956,43 @@ dependencies = [
 name = "techscript_vm"
 version = "0.1.0"
 dependencies = [
- "techscript_interpreter",
+ "bincode",
+ "indexmap",
+ "serde",
+ "techscript_ast",
+ "techscript_builtins",
+ "techscript_bytecode",
+ "techscript_common",
+ "techscript_errors",
+ "techscript_ir",
+ "techscript_lexer",
+ "techscript_optimizer",
+ "techscript_parser",
+ "techscript_runtime",
+ "techscript_semantic",
+ "techscript_stdlib",
+ "techscript_syntax",
+ "thiserror",
+]
+
+[[package]]
+name = "thiserror"
+version = "2.0.18"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4288b5bcbc7920c07a1149a35cf9590a2aa808e0bc1eafaade0b80947865fbc4"
+dependencies = [
+ "thiserror-impl",
+]
+
+[[package]]
+name = "thiserror-impl"
+version = "2.0.18"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ebc4ee7f67670e9b64d05fa4253e753e016c6c95ff35b89b7941d6b856dec1d5"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]

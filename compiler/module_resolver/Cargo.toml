@@ -1,0 +1,9 @@
+[package]
+name = "techscript_module_resolver"
+version = "0.1.0"
+edition = "2021"
+description = "decoupled module resolver interface and stdlib-aware resolution paths"
+
+[dependencies]
+techscript_common = { path = "../common" }
+techscript_errors = { path = "../errors" }

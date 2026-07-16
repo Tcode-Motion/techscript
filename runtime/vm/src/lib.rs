@@ -1,49 +1,34 @@
 //! # TechScript VM Crate
 //!
-//! Stack-based bytecode compiler and virtual execution machine (v2.1 future architecture).
-//! Defers actual VM compilation passes while establishing instruction structures.
+//! Stack-based bytecode execution machine for TechScript 2.0.
 
-#![allow(dead_code, unused)]
+pub mod bytecode_loader;
+pub mod debugger;
+pub mod diagnostics;
+pub mod error;
+pub mod executor;
+pub mod frame;
+pub mod gc;
+pub mod heap;
+pub mod native;
+pub mod stack;
+pub mod vm;
 
-use techscript_interpreter::Value;
+pub use bytecode_loader::BytecodeLoader;
+pub use debugger::VMDebugger;
+pub use diagnostics::VMProfiler;
+pub use error::VMError;
+pub use frame::{CallFrame, ExceptionHandler};
+pub use gc::{GarbageCollector, HeapObject};
+pub use heap::VMHeap;
+pub use native::NativeBridge;
+pub use stack::ValueStack;
+pub use vm::VM;
 
-/// Bytecode OpCodes for VM execution.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum OpCode {
-    LoadConst,
-    StoreVar,
-    LoadVar,
-    Add,
-    Subtract,
-    Call,
-    Return,
-}
-
-/// A flat bytecode instruction representation.
-#[derive(Debug, Clone)]
-pub struct Instruction {
-    pub op: OpCode,
-    pub operand: Option<usize>,
-}
-
-/// Bytecode VM stack frame tracker.
-#[derive(Default)]
-pub struct VM {
-    stack: Vec<Value>,
-    ip: usize,
-}
-
-impl VM {
-    pub fn new() -> Self {
-        Self {
-            stack: Vec::new(),
-            ip: 0,
-        }
-    }
-
-    /// Evaluates compiled instruction sets sequentially.
-    pub fn execute(&mut self, _instructions: &[Instruction]) -> Result<Value, String> {
-        // Skeletal implementation
-        Ok(Value::None)
-    }
+/// Direct execution helper evaluating compiled bytecode module to final result.
+pub fn run(
+    module: techscript_bytecode::BytecodeModule,
+) -> Result<techscript_runtime::RuntimeValue, VMError> {
+    let mut vm = VM::new(module);
+    vm.run()
 }

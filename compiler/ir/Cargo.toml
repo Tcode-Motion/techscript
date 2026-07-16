@@ -1,0 +1,17 @@
+[package]
+name = "techscript_ir"
+version = "0.1.0"
+edition = "2021"
+description = "Typed intermediate representation (IR) and AST lowering for TechScript 2.0"
+
+[dependencies]
+techscript_common = { path = "../common" }
+techscript_syntax = { path = "../syntax" }
+techscript_ast = { path = "../ast" }
+techscript_errors = { path = "../errors" }
+serde = { workspace = true }
+
+[dev-dependencies]
+techscript_lexer = { path = "../lexer" }
+techscript_parser = { path = "../parser" }
+techscript_semantic = { path = "../semantic" }

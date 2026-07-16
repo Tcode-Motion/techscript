@@ -10,4 +10,11 @@ techscript_syntax = { path = "../../compiler/syntax" }
 techscript_ast = { path = "../../compiler/ast" }
 techscript_semantic = { path = "../../compiler/semantic" }
 techscript_errors = { path = "../../compiler/errors" }
+techscript_runtime = { path = "../runtime" }
+techscript_stdlib = { path = "../../stdlib" }
 serde = { workspace = true }
+indexmap = { version = "2", features = ["serde"] }
+
+[dev-dependencies]
+techscript_lexer = { path = "../../compiler/lexer" }
+techscript_parser = { path = "../../compiler/parser" }

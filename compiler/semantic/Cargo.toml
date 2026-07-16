@@ -9,4 +9,9 @@ techscript_common = { path = "../common" }
 techscript_syntax = { path = "../syntax" }
 techscript_ast = { path = "../ast" }
 techscript_errors = { path = "../errors" }
+techscript_module_resolver = { path = "../module_resolver" }
 serde = { workspace = true }
+
+[dev-dependencies]
+techscript_lexer = { path = "../lexer" }
+techscript_parser = { path = "../parser" }

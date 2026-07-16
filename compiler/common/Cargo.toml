@@ -6,3 +6,6 @@ description = "Common data structures and utilities for TechScript 2.0"
 
 [dependencies]
 serde = { workspace = true }
+
+[dev-dependencies]
+serde_json = { workspace = true }

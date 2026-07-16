@@ -38,10 +38,11 @@ impl BuiltinRegistry {
     pub fn call(&self, name: &str, args: &[Value]) -> Result<Value, RuntimeError> {
         match self.functions.get(name) {
             Some(callback) => callback(args),
-            None => Err(RuntimeError::MemberNotFound(format!(
-                "Built-in function '{}' not found",
-                name
-            ))),
+            None => Err(RuntimeError::new(
+                techscript_interpreter::RuntimeErrorKind::MemberNotFound(name.to_string()),
+                None,
+                None,
+            )),
         }
     }
 
@@ -51,19 +52,28 @@ impl BuiltinRegistry {
                 print!("{:?} ", arg);
             }
             println!();
-            Ok(Value::None)
+            Ok(Value::Null)
         });
         self.register("len", |args| {
             if args.len() != 1 {
-                return Err(RuntimeError::MemberNotFound(
-                    "len requires 1 argument".to_string(),
+                return Err(RuntimeError::new(
+                    techscript_interpreter::RuntimeErrorKind::InvalidOperation(
+                        "len requires 1 argument".to_string(),
+                    ),
+                    None,
+                    None,
                 ));
             }
             match &args[0] {
                 Value::Str(s) => Ok(Value::Int(s.len() as i64)),
-                Value::List(l) => Ok(Value::Int(l.len() as i64)),
-                _ => Err(RuntimeError::TypeMismatch(
-                    "len expects Str or List".to_string(),
+                Value::List { items, .. } => Ok(Value::Int(items.borrow().len() as i64)),
+                other => Err(RuntimeError::new(
+                    techscript_interpreter::RuntimeErrorKind::TypeMismatch {
+                        expected: "Str or List".to_string(),
+                        found: other.runtime_type().to_string(),
+                    },
+                    None,
+                    None,
                 )),
             }
         });

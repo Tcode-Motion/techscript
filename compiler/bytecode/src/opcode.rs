@@ -27,6 +27,7 @@ pub enum Opcode {
     // ── Unary Operations ────────────────────────────────────────────────────
     Neg,
     Not,
+    Await,
 
     // ── Logical Operations ──────────────────────────────────────────────────
     And,
@@ -98,7 +99,7 @@ impl Opcode {
             | Opcode::Mod
             | Opcode::Pow => -1, // Pops 2, pushes 1
 
-            Opcode::Neg | Opcode::Not => 0, // Pops 1, pushes 1
+            Opcode::Neg | Opcode::Not | Opcode::Await => 0, // Pops 1, pushes 1
 
             Opcode::And | Opcode::Or => -1,
 

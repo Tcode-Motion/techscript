@@ -1,0 +1,13 @@
+{
+    "name": "TechScript 2.0 Dev Environment",
+    "image": "mcr.microsoft.com/devcontainers/rust:latest",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "rust-lang.rust-analyzer",
+                "tcode-motion.techscript"
+            ]
+        }
+    },
+    "postCreateCommand": "cargo check"
+}

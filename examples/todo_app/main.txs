@@ -1,0 +1,8 @@
+struct Todo {
+    task: String
+    done: Bool
+}
+build main() {
+    make todo = new Todo()
+    say "Todo initialized"
+}

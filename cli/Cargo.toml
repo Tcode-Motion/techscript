@@ -26,7 +26,10 @@ techscript_stdlib = { path = "../stdlib" }
 techscript_package_manager = { path = "../tools/package-manager" }
 techscript_formatter = { path = "../tools/formatter" }
 techscript_linter = { path = "../tools/linter" }
+techscript_llvm_backend = { path = "../compiler/llvm_backend" }
+techscript_native_runtime = { path = "../runtime/native_runtime" }
 clap = { workspace = true }
+clap_complete = { workspace = true }
 colored = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
@@ -37,3 +40,7 @@ indexmap = { workspace = true }
 bincode = "1.3"
 dirs = "5.0"
 num_cpus = "1.15"
+
+[features]
+default = []
+llvm = ["techscript_llvm_backend/llvm"]

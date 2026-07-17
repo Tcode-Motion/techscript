@@ -111,6 +111,7 @@ impl UseDefAnalysis {
                 }
             }
             techscript_ir::Op::Cast { value, .. } => add_val(value),
+            techscript_ir::Op::Try { .. } | techscript_ir::Op::EndTry => {}
             techscript_ir::Op::NoOp => {}
         }
         result

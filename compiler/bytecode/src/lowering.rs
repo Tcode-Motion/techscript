@@ -14,6 +14,7 @@ pub struct BytecodeLowerer {
     block_labels: HashMap<BlockId, Label>,
     local_map: HashMap<LocalId, u32>,
     temp_map: HashMap<ValueId, u32>,
+    catch_vars: HashMap<BlockId, LocalId>,
 }
 
 impl BytecodeLowerer {
@@ -24,6 +25,7 @@ impl BytecodeLowerer {
             block_labels: HashMap::new(),
             local_map: HashMap::new(),
             temp_map: HashMap::new(),
+            catch_vars: HashMap::new(),
         }
     }
 
@@ -59,10 +61,29 @@ impl BytecodeLowerer {
             self.block_labels.insert(block.id, label);
         }
 
+        // Pre-populate catch_vars
+        for block in &func.blocks {
+            for inst in &block.instructions {
+                if let Op::Try { catch_block, catch_var } = &inst.op {
+                    self.catch_vars.insert(*catch_block, *catch_var);
+                }
+            }
+        }
+
         // Lower blocks sequentially
         for block in &func.blocks {
             let label = self.block_labels[&block.id];
             self.builder.mark_label(label);
+
+            if let Some(catch_var) = self.catch_vars.get(&block.id).cloned() {
+                let slot = self.get_or_allocate_local(catch_var);
+                self.builder.emit(
+                    Opcode::StoreLocal,
+                    vec![Operand::LocalIndex(slot)],
+                    techscript_common::Span::dummy(),
+                    techscript_ir::types::InstructionId(9999),
+                );
+            }
 
             for inst in &block.instructions {
                 self.lower_instruction(inst);
@@ -175,6 +196,7 @@ impl BytecodeLowerer {
                 let opcode = match op {
                     techscript_syntax::TokenKind::Minus => Opcode::Neg,
                     techscript_syntax::TokenKind::Not => Opcode::Not,
+                    techscript_syntax::TokenKind::Await => Opcode::Await,
                     _ => Opcode::Not,
                 };
                 self.builder.emit(opcode, Vec::new(), inst.span, inst.id);
@@ -275,6 +297,26 @@ impl BytecodeLowerer {
                     inst.id,
                 );
                 self.store_result(inst);
+            }
+            Op::Try {
+                catch_block,
+                catch_var: _,
+            } => {
+                let catch_lbl = self.block_labels[catch_block];
+                self.builder.emit_jump(
+                    Opcode::Try,
+                    catch_lbl,
+                    inst.span,
+                    inst.id,
+                );
+            }
+            Op::EndTry => {
+                self.builder.emit(
+                    Opcode::EndTry,
+                    Vec::new(),
+                    inst.span,
+                    inst.id,
+                );
             }
             _ => {
                 // Default NoOp for unimplemented placeholders

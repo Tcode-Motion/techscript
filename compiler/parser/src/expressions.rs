@@ -97,7 +97,7 @@ impl<'a> Parser<'a> {
                 };
                 Ok(Expression::Identifier(ident))
             }
-            TokenKind::Minus | TokenKind::Plus | TokenKind::Not => {
+            TokenKind::Minus | TokenKind::Plus | TokenKind::Not | TokenKind::Await => {
                 let right = self.parse_expression(Precedence::Unary, reporter)?;
                 let span = Span::new(token.span.start, right.span().end);
                 Ok(Expression::Unary(techscript_ast::UnaryExpr::new(

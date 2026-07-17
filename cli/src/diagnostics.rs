@@ -344,6 +344,22 @@ impl<'a> DiagnosticRenderer<'a> {
             }
         }
 
+        // Documentation link if code is present
+        if let Some(code) = diag.code {
+            if self.output == DiagnosticOutput::Colored {
+                out.push_str(&format!(
+                    "  {}: For more details see: {}\n",
+                    "note".cyan().bold(),
+                    format!("https://github.com/Tcode-Motion/TechScript-2.0/docs/errors#{:?}", code).underline()
+                ));
+            } else {
+                out.push_str(&format!(
+                    "  note: For more details see: https://github.com/Tcode-Motion/TechScript-2.0/docs/errors#{:?}\n",
+                    code
+                ));
+            }
+        }
+
         out
     }
 

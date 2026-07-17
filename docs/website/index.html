@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechScript 2.0 — Developer Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --sidebar-bg: rgba(15, 23, 42, 0.6);
+            --content-bg: rgba(30, 41, 59, 0.4);
+            --accent-color: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.3);
+            --text-color: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --card-glow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .light-mode {
+            --bg-color: #f8fafc;
+            --sidebar-bg: rgba(241, 245, 249, 0.85);
+            --content-bg: #ffffff;
+            --accent-color: #0284c7;
+            --accent-glow: rgba(2, 132, 199, 0.15);
+            --text-color: #0f172a;
+            --text-muted: #64748b;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --card-glow: 0 4px 20px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar styling */
+        aside {
+            width: 320px;
+            background-color: var(--sidebar-bg);
+            backdrop-filter: blur(16px);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-color), #818cf8);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #0b0f19;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #ffffff, var(--accent-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            padding-left: 2.5rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--text-color);
+            font-family: inherit;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .sidebar-menu li a {
+            display: block;
+            padding: 0.4rem 0.8rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .sidebar-menu li a:hover, .sidebar-menu li.active a {
+            color: var(--text-color);
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 3px solid var(--accent-color);
+        }
+
+        /* Main Content Panel */
+        main {
+            margin-left: 320px;
+            flex-grow: 1;
+            padding: 3rem 4rem;
+            max-width: 1000px;
+        }
+
+        header {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 2rem;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            color: var(--text-color);
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-btn:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        section {
+            display: none;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 40%, var(--accent-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p, ul, ol {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        ul, ol {
+            padding-left: 2rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+
+        pre {
+            background-color: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--card-glow);
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: #38bdf8;
+        }
+
+        .info-card {
+            background: var(--content-bg);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(12px);
+        }
+
+        @media(max-width: 900px) {
+            body {
+                flex-direction: column;
+            }
+            aside {
+                width: 100%;
+                position: relative;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+            main {
+                margin-left: 0;
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <div class="logo-area">
+            <div class="logo-icon">TS</div>
+            <div class="logo-text">TechScript 2.0</div>
+        </div>
+
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-input" placeholder="Search documentation...">
+        </div>
+
+        <ul class="sidebar-menu">
+            <li class="menu-item active" data-target="docs-intro"><a href="#intro">Introduction</a></li>
+            <li class="menu-item" data-target="docs-install"><a href="#install">1. Installation</a></li>
+            <li class="menu-item" data-target="docs-syntax"><a href="#syntax">2. Language Syntax</a></li>
+            <li class="menu-item" data-target="docs-vars"><a href="#vars">3. Variables & Constants</a></li>
+            <li class="menu-item" data-target="docs-funcs"><a href="#funcs">4. Functions & Closures</a></li>
+            <li class="menu-item" data-target="docs-structs"><a href="#structs">5. Structs & Enums</a></li>
+            <li class="menu-item" data-target="docs-traits"><a href="#traits">6. Traits & Interfaces</a></li>
+            <li class="menu-item" data-target="docs-collections"><a href="#collections">7. Collections & Lists</a></li>
+            <li class="menu-item" data-target="docs-loops"><a href="#loops">8. Loops & Control Flow</a></li>
+            <li class="menu-item" data-target="docs-pattern"><a href="#pattern">9. Pattern Matching</a></li>
+            <li class="menu-item" data-target="docs-modules"><a href="#modules">10. Modules & Exports</a></li>
+            <li class="menu-item" data-target="docs-packages"><a href="#packages">11. Packages & Workspaces</a></li>
+            <li class="menu-item" data-target="docs-errors"><a href="#errors">12. Error Safety & Exceptions</a></li>
+            <li class="menu-item" data-target="docs-generics"><a href="#generics">13. Generics & Types</a></li>
+            <li class="menu-item" data-target="docs-memory"><a href="#memory">14. Memory Model & GC</a></li>
+            <li class="menu-item" data-target="docs-compiler"><a href="#compiler">15. Compiler Architecture</a></li>
+            <li class="menu-item" data-target="docs-bytecode"><a href="#bytecode">16. Bytecode Format</a></li>
+            <li class="menu-item" data-target="docs-vm"><a href="#vm">17. Virtual Machine</a></li>
+            <li class="menu-item" data-target="docs-llvm"><a href="#llvm">18. LLVM Backend</a></li>
+            <li class="menu-item" data-target="docs-pm"><a href="#pm">19. Package Manager</a></li>
+            <li class="menu-item" data-target="docs-cli"><a href="#cli">20. CLI Reference</a></li>
+            <li class="menu-item" data-target="docs-vscode"><a href="#vscode">21. VS Code Integration</a></li>
+            <li class="menu-item" data-target="docs-lsp"><a href="#lsp">22. LSP Daemon</a></li>
+            <li class="menu-item" data-target="docs-examples"><a href="#examples">23. Examples Showcase</a></li>
+            <li class="menu-item" data-target="docs-contributing"><a href="#contributing">24. Contributing</a></li>
+            <li class="menu-item" data-target="docs-roadmap"><a href="#roadmap">25. Roadmap & FAQ</a></li>
+            <li class="menu-item" data-target="docs-api"><a href="#api">26. API Reference</a></li>
+        </ul>
+    </aside>
+
+    <main>
+        <header>
+            <button class="toggle-btn" id="theme-toggle">🌓 Toggle Theme</button>
+        </header>
+
+        <!-- Intro Section -->
+        <section id="docs-intro" class="active">
+            <h1>Introduction & Getting Started</h1>
+            <p>Welcome to the TechScript 2.0 developer guide. TechScript is a general-purpose, strongly typed programming language built for speed, safety, and modern developer ergonomics. It compiles down to native binary code via an optimized LLVM backend or can be executed dynamically inside a lightweight stack virtual machine.</p>
+            <div class="info-card">
+                <h3>🚀 Core Strengths:</h3>
+                <ul>
+                    <li>High-performance LLVM compilation to native x86_64 binaries.</li>
+                    <li>Resilient, syntax-error-recovering parsing.</li>
+                    <li>Built-in cooperatively scheduled async event loop runtime.</li>
+                    <li>Integrated Package Manager & LSP daemon out-of-the-box.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Installation -->
+        <section id="docs-install">
+            <h1>Installation Guide</h1>
+            <p>Get TechScript 2.0 running on your system in minutes.</p>
+            <h2>Windows Installer</h2>
+            <p>Download the installer executable <code>TechScript_Setup.exe</code>. Run the installer to configure binaries under <code>Program Files\TechScript\bin</code> and automatically append it to your environment <code>PATH</code> variable.</p>
+            <h2>Verify Installation</h2>
+            <pre><code>tsc --version
+tsc doctor</code></pre>
+        </section>
+
+        <!-- Syntax -->
+        <section id="docs-syntax">
+            <h1>Language Syntax</h1>
+            <p>TechScript uses clean syntax inspired by modern structural languages.</p>
+            <h2>Quick Hello World</h2>
+            <pre><code>build main() {
+    say "Hello, World!";
+}</code></pre>
+            <p>The compiler uses the <code>say</code> keyword for formatted printing to stdout. Semicolons are optional.</p>
+        </section>
+
+        <!-- Variables -->
+        <section id="docs-vars">
+            <h1>Variables & Constants</h1>
+            <p>Variables are declared using the <code>make</code> keyword, while constants are declared using <code>const</code>.</p>
+            <h2>Mutable Variables</h2>
+            <pre><code>make age = 30;
+age = 31; // reassignment allowed</code></pre>
+            <h2>Immutable Constants</h2>
+            <pre><code>const gravity = 9.81;
+// gravity = 10.0; -- Compile-time Error!</code></pre>
+        </section>
+
+        <!-- Functions -->
+        <section id="docs-funcs">
+            <h1>Functions & Closures</h1>
+            <p>Functions are declared with the <code>build</code> keyword and are first-class values.</p>
+            <h2>Standard Declaration</h2>
+            <pre><code>build multiply(a, b) {
+    return a * b;
+}</code></pre>
+            <h2>Anonymous Closures</h2>
+            <pre><code>build adder(x) {
+    return build(y) {
+        return x + y;
+    };
+}</code></pre>
+        </section>
+
+        <!-- Structs -->
+        <section id="docs-structs">
+            <h1>Structs & Enums</h1>
+            <p>Organize data cleanly using structs and enums.</p>
+            <h2>Structs</h2>
+            <pre><code>struct Point {
+    x,
+    y
+}
+
+make pt = new Point { x: 1, y: 2 };
+say pt.x;</code></pre>
+            <h2>Enums</h2>
+            <pre><code>enum Option {
+    Some(val),
+    None
+}</code></pre>
+        </section>
+
+        <!-- Traits -->
+        <section id="docs-traits">
+            <h1>Traits & Interfaces</h1>
+            <p>Traits allow defining shared behavior for structs and models in TechScript.</p>
+            <pre><code>trait Printable {
+    build format();
+}
+
+model User implements Printable {
+    make name = "Alice";
+    build format() {
+        return "User: " + self.name;
+    }
+}</code></pre>
+        </section>
+
+        <!-- Collections -->
+        <section id="docs-collections">
+            <h1>Collections & Lists</h1>
+            <p>Lists and Maps are core primitives inside the TechScript runtime.</p>
+            <pre><code>make list = [1, 2, 3];
+list.push(4);
+say list[0]; // prints 1
+
+make map = { "a": 1, "b": 2 };
+say map["a"]; // prints 1</code></pre>
+        </section>
+
+        <!-- Loops -->
+        <section id="docs-loops">
+            <h1>Loops & Control Flow</h1>
+            <p>Standard loop structures are simple and direct.</p>
+            <pre><code>make i = 0;
+while i < 5 {
+    say i;
+    i = i + 1;
+}</code></pre>
+        </section>
+
+        <!-- Pattern Matching -->
+        <section id="docs-pattern">
+            <h1>Pattern Matching</h1>
+            <p>Destructure variables, struct values, and enum fields using match blocks.</p>
+            <pre><code>make opt = Option::Some(42);
+match opt {
+    Option::Some(val) => { say val; },
+    Option::None => { say "Empty"; }
+}</code></pre>
+        </section>
+
+        <!-- Modules -->
+        <section id="docs-modules">
+            <h1>Modules & Exports</h1>
+            <p>Manage code scopes cleanly across files.</p>
+            <h2>Exporting Symbols</h2>
+            <pre><code>export const version = "2.0";
+export build greet(name) {
+    return "Hello " + name;
+}</code></pre>
+            <h2>Importing</h2>
+            <pre><code>import { greet, version } from "./helper.txs";</code></pre>
+        </section>
+
+        <!-- Packages -->
+        <section id="docs-packages">
+            <h1>Packages & Workspaces</h1>
+            <p>TechScript projects are governed by <code>tech.toml</code> packages. Multi-crate setups can be managed via workspaces.</p>
+            <pre><code>[workspace]
+members = [
+    "packages/core",
+    "packages/app"
+]</code></pre>
+        </section>
+
+        <!-- Errors -->
+        <section id="docs-errors">
+            <h1>Error Safety & Exceptions</h1>
+            <p>Exceptions are handled natively using cooperative try/catch scopes.</p>
+            <pre><code>attempt {
+    make data = read_file("missing.txt");
+} catch err {
+    say "Failed to read file: " + err;
+}</code></pre>
+        </section>
+
+        <!-- Generics -->
+        <section id="docs-generics">
+            <h1>Generics & Types</h1>
+            <p>Type parameters allow writing generic structs and functions checked by the semantic resolver.</p>
+            <pre><code>struct Wrapper&lt;T&gt; {
+    value: T
+}</code></pre>
+        </section>
+
+        <!-- Memory -->
+        <section id="docs-memory">
+            <h1>Memory Model & GC</h1>
+            <p>TechScript uses a mark-and-sweep garbage collector in its VM runtime. Objects, lists, and maps are allocated on the VM heap and tracked automatically.</p>
+        </section>
+
+        <!-- Compiler -->
+        <section id="docs-compiler">
+            <h1>Compiler Architecture & Stages</h1>
+            <p>The <code>tsc</code> compiler stages are:</p>
+            <ol>
+                <li><strong>Lexer</strong>: Tokens extraction from raw text.</li>
+                <li><strong>Parser</strong>: Resilient AST construction.</li>
+                <li><strong>Semantic</strong>: Type checking and symbol binding.</li>
+                <li><strong>SSA IR</strong>: Lowering to Static Single Assignment forms.</li>
+                <li><strong>Optimizer</strong>: Constant folding and dead code elimination.</li>
+                <li><strong>Bytecode</strong>: Generating flat VM instructions.</li>
+            </ol>
+        </section>
+
+        <!-- Bytecode -->
+        <section id="docs-bytecode">
+            <h1>SSA Bytecode Format</h1>
+            <p>The compiler generates highly dense binary instructions. Subcommands like <code>tsc dump-bytecode</code> disassemble files into readable VM codes.</p>
+        </section>
+
+        <!-- VM -->
+        <section id="docs-vm">
+            <h1>Stack Virtual Machine</h1>
+            <p>The virtual machine uses a lightweight stack-based executor with dedicated stack frames, instruction pointer, and native calling interfaces.</p>
+        </section>
+
+        <!-- LLVM -->
+        <section id="docs-llvm">
+            <h1>LLVM Backend & Native Build</h1>
+            <p>Compiling with the native compiler driver leverages LLVM to translate SSA IR into target machine code, producing optimized native executables.</p>
+        </section>
+
+        <!-- PM -->
+        <section id="docs-pm">
+            <h1>Package Manager</h1>
+            <p>Manage project manifests (<code>tech.toml</code>) and dependencies dynamically.</p>
+            <pre><code>tsc install</code></pre>
+            <p>Resolves dependency trees, fetches binaries, validates checksums, and updates <code>tech.lock</code>.</p>
+        </section>
+
+        <!-- CLI -->
+        <section id="docs-cli">
+            <h1>CLI Reference</h1>
+            <ul>
+                <li><code>tsc run &lt;file&gt;</code>: Runs a script file using VM or Interpreter</li>
+                <li><code>tsc build &lt;file&gt;</code>: Compiles code to native binary using LLVM</li>
+                <li><code>tsc fmt</code>: Formats code style rules</li>
+                <li><code>tsc lint</code>: Verifies static analysis guidelines</li>
+                <li><code>tsc repl</code>: Starts interactive terminal environment</li>
+            </ul>
+        </section>
+
+        <!-- VS Code -->
+        <section id="docs-vscode">
+            <h1>VS Code Integration</h1>
+            <p>Install the packaged extension <code>techscript.vsix</code> into VS Code to enjoy full language support, syntax highlights, task definitions, and debugger integration.</p>
+        </section>
+
+        <!-- LSP -->
+        <section id="docs-lsp">
+            <h1>LSP Daemon</h1>
+            <p>The language server daemon provides auto-completion, active diagnostics, format-on-save, and rename symbols features using the Language Server Protocol.</p>
+        </section>
+
+        <!-- Examples -->
+        <section id="docs-examples">
+            <h1>Examples Showcase</h1>
+            <p>TechScript ships with 33 complete functional examples covering basic loops, calculator builders, and sandboxed directory scanners.</p>
+        </section>
+
+        <!-- Contributing -->
+        <section id="docs-contributing">
+            <h1>Contributing Guidelines</h1>
+            <p>Contributors must format code with <code>cargo fmt</code> and ensure <code>cargo clippy</code> contains no warnings or errors.</p>
+        </section>
+
+        <!-- Roadmap -->
+        <section id="docs-roadmap">
+            <h1>Roadmap & FAQ</h1>
+            <p>Future releases will target advanced macro programming systems and native FFI pointer capabilities.</p>
+        </section>
+
+        <!-- API Reference -->
+        <section id="docs-api">
+            <h1>API Reference</h1>
+            <p>Standard library methods exposed inside the <code>std</code> namespace include: <code>std.io.print</code>, <code>std.json.parse</code>, and <code>std.fs.write_file</code>.</p>
+        </section>
+
+    </main>
+
+    <script>
+        // Sidebar navigation handler
+        const menuItems = document.querySelectorAll('.sidebar-menu li');
+        const sections = document.querySelectorAll('section');
+
+        menuItems.forEach(item => {
+            item.addEventListener('click', () => {
+                menuItems.forEach(i => i.classList.remove('active'));
+                sections.forEach(s => s.classList.remove('active'));
+
+                item.classList.add('active');
+                const targetId = item.getAttribute('data-target');
+                document.getElementById(targetId).classList.add('active');
+            });
+        });
+
+        // Theme Toggle handler
+        const themeBtn = document.getElementById('theme-toggle');
+        themeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+        });
+
+        // Search functionality
+        const searchInput = document.getElementById('search-input');
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            if (!query) {
+                menuItems.forEach(item => item.style.display = 'block');
+                return;
+            }
+
+            menuItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+build main() {
+    make x = 42
+    const y = 10
+    x = x + y
+    say x
+}

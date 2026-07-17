@@ -14,6 +14,37 @@ pub struct ResolveSymbols;
 
 impl Pass for ResolveSymbols {
     fn run(&mut self, program: &Program, context: &mut SemanticContext) {
+        let has_explicit_main = program.statements.iter().any(|stmt| {
+            if let Statement::FuncDecl(decl) = stmt {
+                decl.name.name == "main"
+            } else {
+                false
+            }
+        });
+
+        if has_explicit_main {
+            for stmt in &program.statements {
+                let is_decl = matches!(
+                    stmt,
+                    Statement::FuncDecl(_)
+                        | Statement::StructDecl(_)
+                        | Statement::EnumDecl(_)
+                        | Statement::ModelDecl(_)
+                        | Statement::ExportDecl(_)
+                        | Statement::Import(_)
+                );
+                if !is_decl {
+                    let diag = Diagnostic::new(
+                        DiagnosticLevel::Error,
+                        ErrorCode::E0313,
+                        "Cannot mix top-level execution statements with an explicit build main() function.".to_string(),
+                        stmt.span(),
+                    );
+                    context.diagnostics.push(diag);
+                }
+            }
+        }
+
         for stmt in &program.statements {
             let _ = self.resolve_statement(stmt, context);
         }

@@ -1,0 +1,5 @@
+[package]
+name = "web_server"
+version = "0.1.0"
+entry = "src/main.txs"
+capabilities = ["Network"]

@@ -1,4 +1,0 @@
-build main() {
-    make list = [1, 2, 3]
-    say list
-}

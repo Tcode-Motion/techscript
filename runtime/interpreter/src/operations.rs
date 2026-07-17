@@ -27,6 +27,44 @@ pub fn eval_unary(op: &str, right: RuntimeValue) -> Result<RuntimeValue, Runtime
             )),
         },
         "not" | "!" => Ok(RuntimeValue::Bool(!right.is_truthy())),
+        "await" => {
+            if let RuntimeValue::Map { entries, .. } = &right {
+                let mut is_future = false;
+                {
+                    let entries_borrow = entries.borrow();
+                    if entries_borrow.contains_key("state") && entries_borrow.contains_key("value") {
+                        is_future = true;
+                    }
+                }
+                if is_future {
+                    loop {
+                        let state = {
+                            let entries_borrow = entries.borrow();
+                            entries_borrow.get("state").cloned().unwrap_or(RuntimeValue::Null)
+                        };
+                        if let RuntimeValue::Str(s) = &state {
+                            if s == "pending" {
+                                techscript_stdlib::async_runtime::tick();
+                                std::thread::sleep(std::time::Duration::from_millis(1));
+                                continue;
+                            } else if s == "resolved" {
+                                let val = entries.borrow().get("value").cloned().unwrap_or(RuntimeValue::Null);
+                                return Ok(val);
+                            } else if s == "rejected" {
+                                let err_val = entries.borrow().get("value").cloned().unwrap_or(RuntimeValue::Null);
+                                return Err(RuntimeError::new(
+                                    RuntimeErrorKind::InvalidOperation(format!("Awaited future was rejected: {:?}", err_val)),
+                                    None,
+                                    None,
+                                ));
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+            Ok(right)
+        }
         _ => Err(RuntimeError::new(
             RuntimeErrorKind::InvalidOperation(format!("Unknown unary operator '{}'", op)),
             None,

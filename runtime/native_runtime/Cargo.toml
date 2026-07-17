@@ -1,0 +1,11 @@
+[package]
+name = "techscript_native_runtime"
+version = "0.1.0"
+edition = "2021"
+description = "Native execution runtime for TechScript 2.0 compiled LLVM binaries"
+
+[lib]
+crate-type = ["staticlib", "rlib"]
+
+[dependencies]
+libc = "0.2"

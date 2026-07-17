@@ -1,18 +1,141 @@
 {
-  "activationEvents": [
-    "onLanguage:techscript"
-  ],
   "categories": [
     "Programming Languages",
     "Formatters",
-    "Linters"
+    "Linters",
+    "Debuggers"
   ],
   "contributes": {
+    "commands": [
+      {
+        "command": "techscript.run",
+        "icon": {
+          "dark": "./icon.png",
+          "light": "./icon.png"
+        },
+        "title": "TechScript: Run File"
+      },
+      {
+        "command": "techscript.build",
+        "title": "TechScript: Build Project"
+      },
+      {
+        "command": "techscript.check",
+        "title": "TechScript: Check Code"
+      },
+      {
+        "command": "techscript.test",
+        "title": "TechScript: Test Project"
+      },
+      {
+        "command": "techscript.format",
+        "title": "TechScript: Format File"
+      },
+      {
+        "command": "techscript.lint",
+        "title": "TechScript: Lint File"
+      },
+      {
+        "command": "techscript.clean",
+        "title": "TechScript: Clean Project"
+      },
+      {
+        "command": "techscript.generateDocs",
+        "title": "TechScript: Generate Docs"
+      },
+      {
+        "command": "techscript.openRepl",
+        "title": "TechScript: Open REPL"
+      },
+      {
+        "command": "techscript.packageProject",
+        "title": "TechScript: Package Project"
+      },
+      {
+        "command": "techscript.showVersion",
+        "title": "TechScript: Show Compiler Version"
+      },
+      {
+        "command": "techscript.showEnv",
+        "title": "TechScript: Show Environment"
+      },
+      {
+        "command": "techscript.openExamples",
+        "title": "TechScript: Open Examples"
+      },
+      {
+        "command": "techscript.openDocumentation",
+        "title": "TechScript: Open Documentation"
+      },
+      {
+        "command": "techscript.clearCache",
+        "title": "TechScript: Clear Cache"
+      },
+      {
+        "command": "techscript.restartLsp",
+        "title": "TechScript: Restart Language Server"
+      },
+      {
+        "command": "techscript.showAst",
+        "title": "TechScript: Show AST"
+      },
+      {
+        "command": "techscript.showIr",
+        "title": "TechScript: Show IR"
+      },
+      {
+        "command": "techscript.showBytecode",
+        "title": "TechScript: Show Bytecode"
+      }
+    ],
+    "debuggers": [
+      {
+        "configurationAttributes": {
+          "launch": {
+            "properties": {
+              "program": {
+                "default": "${file}",
+                "description": "Path to the TechScript file to debug.",
+                "type": "string"
+              },
+              "stopOnEntry": {
+                "default": true,
+                "description": "Automatically stop after launch.",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "program"
+            ]
+          }
+        },
+        "initialConfigurations": [
+          {
+            "name": "Debug TechScript File",
+            "program": "${file}",
+            "request": "launch",
+            "stopOnEntry": true,
+            "type": "techscript"
+          }
+        ],
+        "label": "TechScript Debug",
+        "program": "./extension.js",
+        "runtime": "node",
+        "type": "techscript"
+      }
+    ],
     "grammars": [
       {
         "language": "techscript",
         "path": "./syntaxes/techscript.tmLanguage.json",
         "scopeName": "source.techscript"
+      }
+    ],
+    "iconThemes": [
+      {
+        "id": "techscript-icons",
+        "label": "TechScript Icon Theme",
+        "path": "./icons/theme.json"
       }
     ],
     "languages": [
@@ -24,23 +147,98 @@
         "configuration": "./language-configuration.json",
         "extensions": [
           ".txs",
-          ".ts"
+          ".tsx",
+          ".tech",
+          ".tspkg"
         ],
         "id": "techscript"
       }
-    ]
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "techscript.run",
+          "group": "navigation",
+          "when": "resourceLangId == techscript"
+        }
+      ]
+    },
+    "snippets": [
+      {
+        "language": "techscript",
+        "path": "./snippets.json"
+      }
+    ],
+    "taskDefinitions": [
+      {
+        "properties": {
+          "task": {
+            "description": "The tsc task to run (build, check, run, test)",
+            "type": "string"
+          }
+        },
+        "required": [
+          "task"
+        ],
+        "type": "techscript"
+      }
+    ],
+    "views": {
+      "techscript-sidebar": [
+        {
+          "icon": "icons/explorer.svg",
+          "id": "techscript-explorer",
+          "name": "Project Explorer"
+        },
+        {
+          "icon": "icons/pm.svg",
+          "id": "techscript-pm",
+          "name": "Package Manager"
+        },
+        {
+          "icon": "icons/examples.svg",
+          "id": "techscript-examples",
+          "name": "Examples"
+        },
+        {
+          "icon": "icons/templates.svg",
+          "id": "techscript-templates",
+          "name": "Templates"
+        },
+        {
+          "icon": "icons/docs.svg",
+          "id": "techscript-docs",
+          "name": "Documentation",
+          "type": "webview"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "icon": "icon.png",
+          "id": "techscript-sidebar",
+          "title": "TechScript"
+        }
+      ]
+    }
   },
   "description": "Official TechScript 2.0 language support, autocomplete, diagnostics, formatting, and debugger integration.",
   "displayName": "TechScript 2.0",
   "engines": {
     "vscode": "^1.75.0"
   },
+  "galleryBanner": {
+    "color": "#1e1e24",
+    "theme": "dark"
+  },
   "icon": "icon.png",
   "keywords": [
     "techscript",
     "compiler",
     "syntax",
-    "lsp"
+    "lsp",
+    "debug"
   ],
   "main": "./extension.js",
   "name": "techscript",

@@ -70,5 +70,15 @@
       "'",
       "'"
     ]
-  ]
+  ],
+  "indentationRules": {
+    "increaseIndentPattern": "^\\s*(build|model|if|else|while|each|repeat|attempt|catch)\\b.*{\\s*$",
+    "decreaseIndentPattern": "^\\s*}\\s*$"
+  },
+  "folding": {
+    "markers": {
+      "start": "^\\s*//\\s*#region\\b",
+      "end": "^\\s*//\\s*#endregion\\b"
+    }
+  }
 }

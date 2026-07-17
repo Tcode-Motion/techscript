@@ -635,3 +635,108 @@ pub fn lex(source: &str, reporter: &mut DiagnosticReporter) -> Result<Vec<Token>
     let mut lexer = Lexer::new(source);
     lexer.lex(reporter)
 }
+
+impl<'a> Lexer<'a> {
+    /// Tokenizes the source string, recovering from error states instead of failing.
+    pub fn lex_recovered(
+        &mut self,
+        reporter: &mut DiagnosticReporter,
+    ) -> Vec<Token> {
+        let mut tokens = Vec::new();
+
+        while self.pos < self.source.len() || !self.token_queue.is_empty() {
+            if !self.token_queue.is_empty() {
+                tokens.push(self.token_queue.remove(0));
+                continue;
+            }
+
+            let remaining = &self.source[self.pos..];
+            let ws_len = remaining
+                .chars()
+                .take_while(|c| *c == ' ' || *c == '\t' || *c == '\r')
+                .map(|c| c.len_utf8())
+                .sum::<usize>();
+
+            if ws_len > 0 {
+                self.pos += ws_len;
+                continue;
+            }
+
+            if self.pos >= self.source.len() {
+                break;
+            }
+
+            let remaining = &self.source[self.pos..];
+
+            if remaining.starts_with('#') {
+                let len = remaining.find('\n').unwrap_or(remaining.len());
+                self.pos += len;
+                continue;
+            }
+            if remaining.starts_with("//") && is_comment_start(remaining) {
+                let len = remaining.find('\n').unwrap_or(remaining.len());
+                self.pos += len;
+                continue;
+            }
+
+            if remaining.starts_with("f\"") {
+                if self.scan_string(true, reporter).is_err() {
+                    self.pos += 2; // skip start of f-string
+                }
+                continue;
+            } else if remaining.starts_with('"') {
+                if self.scan_string(false, reporter).is_err() {
+                    self.pos += 1; // skip start of string
+                }
+                continue;
+            }
+
+            let mut logos_lexer = LogosToken::lexer(remaining);
+            if let Some(token_res) = logos_lexer.next() {
+                let matched_text = logos_lexer.slice();
+                let matched_span = Span::new(
+                    self.pos + logos_lexer.span().start,
+                    self.pos + logos_lexer.span().end,
+                );
+
+                self.pos += logos_lexer.span().end;
+
+                match token_res {
+                    Ok(logos_token) => {
+                        let kind =
+                            self.map_logos_token(logos_token, matched_text, matched_span, reporter);
+                        if logos_token != LogosToken::BlockComment {
+                            tokens.push(Token::new(kind, matched_text.to_string(), matched_span));
+                        }
+                    }
+                    Err(_) => {
+                        let span = Span::new(self.pos - matched_text.len(), self.pos);
+                        let diag = Diagnostic::new(
+                            DiagnosticLevel::Error,
+                            ErrorCode::E0001,
+                            format!("Unexpected character: '{}'", matched_text),
+                            span,
+                        );
+                        reporter.report(diag);
+                    }
+                }
+            } else {
+                self.pos += 1;
+            }
+        }
+
+        tokens.push(Token::new(
+            TokenKind::Eof,
+            String::new(),
+            Span::new(self.source.len(), self.source.len()),
+        ));
+
+        tokens
+    }
+}
+
+pub fn lex_recovered(source: &str, reporter: &mut DiagnosticReporter) -> Vec<Token> {
+    let mut lexer = Lexer::new(source);
+    lexer.lex_recovered(reporter)
+}
+

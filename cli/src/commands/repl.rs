@@ -1,4 +1,4 @@
-//! # tsc repl Command
+//! # tsc REPL Command
 //!
 //! Interactive Read-Eval-Print Loop shell.
 //! Maintains persistent interpreter environments and exposes metacommands.
@@ -6,13 +6,14 @@
 use crate::exit_code::ExitCode;
 use rustyline::error::ReadlineError;
 use rustyline::DefaultEditor;
+use colored::Colorize;
 
 pub fn execute() -> ExitCode {
-    println!(
-        "Welcome to TechScript v{} REPL shell!",
-        techscript_common::TECHSCRIPT_VERSION
-    );
-    println!("Type ':help' for assistance or ':quit' to exit.");
+    println!("{}", "=========================================================".cyan().bold());
+    println!("{}", "                 TechScript v2.0 REPL                    ".cyan().bold());
+    println!("{}", "=========================================================".cyan().bold());
+    println!("Type ':help' or ':h' for metacommands assistance.");
+    println!("Type ':quit' or ':q' to exit the shell.\n");
 
     let mut rl = match DefaultEditor::new() {
         Ok(r) => r,
@@ -22,8 +23,15 @@ pub fn execute() -> ExitCode {
         }
     };
 
+    // Load persistent history
+    let history_path = dirs::home_dir().map(|h| h.join(".techscript").join("repl_history"));
+    if let Some(ref path) = history_path {
+        std::fs::create_dir_all(path.parent().unwrap()).ok();
+        rl.load_history(path).ok();
+    }
+
     let mut interpreter = techscript_interpreter::Interpreter::new();
-    let mut history = Vec::new();
+    let mut session_history = Vec::new();
 
     loop {
         let readline = rl.readline(">>> ");
@@ -34,7 +42,12 @@ pub fn execute() -> ExitCode {
                     continue;
                 }
                 let _ = rl.add_history_entry(trimmed);
-                history.push(trimmed.to_string());
+                session_history.push(trimmed.to_string());
+                
+                // Save history incrementally
+                if let Some(ref path) = history_path {
+                    rl.save_history(path).ok();
+                }
 
                 if trimmed.starts_with(':') {
                     // Process REPL Metacommand
@@ -53,7 +66,7 @@ pub fn execute() -> ExitCode {
                             println!("REPL environment state cleared.");
                         }
                         ":history" => {
-                            for (i, h) in history.iter().enumerate() {
+                            for (i, h) in session_history.iter().enumerate() {
                                 println!("{:>4}: {}", i + 1, h);
                             }
                         }
@@ -106,7 +119,7 @@ pub fn execute() -> ExitCode {
                                 println!("Usage: :save <file>");
                             } else {
                                 let file = parts[1];
-                                let session_data = history.join("\n");
+                                let session_data = session_history.join("\n");
                                 if std::fs::write(file, session_data).is_ok() {
                                     println!("Session history saved to '{}'.", file);
                                 } else {
@@ -229,5 +242,13 @@ fn dump_repl_bytecode(expr: &str) {
                 println!("Bytecode function: {:?}", bc.functions);
             }
         }
+    }
+}
+
+mod dirs {
+    use std::path::PathBuf;
+    pub fn home_dir() -> Option<PathBuf> {
+        #[allow(deprecated)]
+        std::env::home_dir()
     }
 }

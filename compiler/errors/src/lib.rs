@@ -39,6 +39,7 @@ pub enum ErrorCode {
     E0310, // Arity low
     E0311, // Arity high
     E0312, // Return outside function
+    E0313, // Mixed top-level statements with explicit main
     E0320, // Self outside method
     E0340, // Module not found
     E0350, // Non-exportable declaration

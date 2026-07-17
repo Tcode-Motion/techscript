@@ -202,6 +202,10 @@ impl EventListener for Logger {
     fn on_event(&mut self, event: &CompilationEvent) {
         match event {
             CompilationEvent::BeforeLex { path } => {
+                if self.level >= LogLevel::Normal && self.format == LogFormat::Human {
+                    let pb = crate::progress::ProgressBar::new();
+                    pb.update(10, "Lexing");
+                }
                 self.stage(&format!("Lexing {}", path.display()), StageStatus::Started);
             }
             CompilationEvent::AfterLex {
@@ -218,6 +222,10 @@ impl EventListener for Logger {
                 );
             }
             CompilationEvent::BeforeParse { path } => {
+                if self.level >= LogLevel::Normal && self.format == LogFormat::Human {
+                    let pb = crate::progress::ProgressBar::new();
+                    pb.update(30, "Parsing");
+                }
                 self.stage(&format!("Parsing {}", path.display()), StageStatus::Started);
             }
             CompilationEvent::AfterParse {
@@ -234,6 +242,10 @@ impl EventListener for Logger {
                 );
             }
             CompilationEvent::BeforeSemantic { path } => {
+                if self.level >= LogLevel::Normal && self.format == LogFormat::Human {
+                    let pb = crate::progress::ProgressBar::new();
+                    pb.update(50, "Semantic Analysis");
+                }
                 self.stage(
                     &format!("Semantic analysis {}", path.display()),
                     StageStatus::Started,
@@ -253,6 +265,10 @@ impl EventListener for Logger {
                 );
             }
             CompilationEvent::BeforeLowering { path } => {
+                if self.level >= LogLevel::Normal && self.format == LogFormat::Human {
+                    let pb = crate::progress::ProgressBar::new();
+                    pb.update(70, "IR Lowering");
+                }
                 self.stage(
                     &format!("IR lowering {}", path.display()),
                     StageStatus::Started,
@@ -276,6 +292,10 @@ impl EventListener for Logger {
                 );
             }
             CompilationEvent::BeforeOptimize { path } => {
+                if self.level >= LogLevel::Normal && self.format == LogFormat::Human {
+                    let pb = crate::progress::ProgressBar::new();
+                    pb.update(85, "Optimization");
+                }
                 self.stage(
                     &format!("Optimization {}", path.display()),
                     StageStatus::Started,
@@ -299,6 +319,10 @@ impl EventListener for Logger {
                 );
             }
             CompilationEvent::BeforeBytecode { path } => {
+                if self.level >= LogLevel::Normal && self.format == LogFormat::Human {
+                    let pb = crate::progress::ProgressBar::new();
+                    pb.update(95, "Bytecode Compilation");
+                }
                 self.stage(
                     &format!("Bytecode generation {}", path.display()),
                     StageStatus::Started,
@@ -322,6 +346,9 @@ impl EventListener for Logger {
                 );
             }
             CompilationEvent::BuildStarted { unit_count } => {
+                if self.level >= LogLevel::Normal && self.format == LogFormat::Human {
+                    println!("Compiling...");
+                }
                 self.info(&format!(
                     "Compiling {} compilation unit{}",
                     unit_count,
@@ -329,6 +356,10 @@ impl EventListener for Logger {
                 ));
             }
             CompilationEvent::BuildFinished { stats } => {
+                if self.level >= LogLevel::Normal && self.format == LogFormat::Human {
+                    let pb = crate::progress::ProgressBar::new();
+                    pb.clear();
+                }
                 if self.level >= LogLevel::Normal && self.format == LogFormat::Human {
                     println!("{}", stats.render_human());
                 }

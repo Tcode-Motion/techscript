@@ -21,6 +21,9 @@ pub fn execute(
     watch: bool,
     time: bool,
     verbose: bool,
+    native: bool,
+    show_return: bool,
+    debug: bool,
 ) -> ExitCode {
     let path = PathBuf::from(file_path);
     if !path.exists() {
@@ -39,9 +42,14 @@ pub fn execute(
     };
 
     // Resolve execution backend
-    let backend = match backend_str.unwrap_or("vm").to_lowercase().as_str() {
-        "interpreter" | "interp" => ExecutionBackend::Interpreter,
-        _ => ExecutionBackend::Vm,
+    let backend = if native {
+        ExecutionBackend::Native
+    } else {
+        match backend_str.unwrap_or("vm").to_lowercase().as_str() {
+            "interpreter" | "interp" => ExecutionBackend::Interpreter,
+            "native" => ExecutionBackend::Native,
+            _ => ExecutionBackend::Vm,
+        }
     };
 
     if watch {
@@ -52,13 +60,13 @@ pub fn execute(
                 "\n[tsc watch] Change detected in: {:?}. Re-running...",
                 changed
             );
-            if let Err(e) = run_once(&path, &current_dir, profile, backend, time, verbose) {
+            if let Err(e) = run_once(&path, &current_dir, profile, backend, time, verbose, show_return, debug) {
                 eprintln!("Run failed: {}", e);
             }
         });
         ExitCode::Success
     } else {
-        match run_once(&path, &current_dir, profile, backend, time, verbose) {
+        match run_once(&path, &current_dir, profile, backend, time, verbose, show_return, debug) {
             Ok(_) => ExitCode::Success,
             Err(e) => {
                 eprintln!("Run failed: {}", e);
@@ -75,9 +83,13 @@ fn run_once(
     backend: ExecutionBackend,
     time: bool,
     verbose: bool,
+    show_return: bool,
+    debug: bool,
 ) -> Result<(), anyhow::Error> {
     let cli_cfg = CliConfig {
-        log_level: Some(if verbose {
+        log_level: Some(if debug {
+            LogLevel::Trace
+        } else if verbose {
             LogLevel::Verbose
         } else {
             LogLevel::Normal
@@ -119,12 +131,14 @@ fn run_once(
         renderer.emit(diag);
     }
 
-    if res.bytecode.is_none() {
+    if res.bytecode.is_none() && opts.backend != ExecutionBackend::Native {
         return Err(anyhow::anyhow!("Compilation failed"));
     }
 
     // Execute
+    let start_time = std::time::Instant::now();
     let eval_val = pipeline.execute(&res, &opts)?;
+    let run_duration = start_time.elapsed();
 
     // If timing profiler is requested, print table
     if time {
@@ -132,7 +146,16 @@ fn run_once(
     }
 
     // Print final return value
-    println!("Execution finished with value: {:?}", eval_val);
+    let is_null = eval_val == techscript_runtime::RuntimeValue::Null;
+    if show_return || verbose || debug || !is_null {
+        if verbose || debug {
+            println!("\n✓ Program completed successfully");
+            println!("Time: {:.1?}", run_duration);
+            println!("Return value: {:?}", eval_val);
+        } else {
+            println!("Execution finished with value: {:?}", eval_val);
+        }
+    }
 
     Ok(())
 }

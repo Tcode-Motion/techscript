@@ -1,3 +1,0 @@
-build main() {
-    say "Verification test harness."
-}

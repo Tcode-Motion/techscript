@@ -1,4 +1,4 @@
-use crate::types::{BlockId, IRType, InstructionId, ValueId};
+use crate::types::{BlockId, IRType, InstructionId, ValueId, LocalId};
 use crate::value::Value;
 use serde::{Deserialize, Serialize};
 use techscript_ast::LiteralVal;
@@ -93,6 +93,10 @@ pub enum Op {
     MakeMap(Vec<(Value, Value)>),
     /// Conversions.
     Cast { value: Value, target_type: IRType },
+    /// Setup try/catch handler
+    Try { catch_block: BlockId, catch_var: LocalId },
+    /// Pop try/catch handler
+    EndTry,
     /// No operation.
     NoOp,
 }

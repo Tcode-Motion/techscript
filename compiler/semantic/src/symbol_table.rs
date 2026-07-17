@@ -52,8 +52,25 @@ pub struct SymbolTable {
 
 impl SymbolTable {
     pub fn new() -> Self {
+        let mut global_scope = Scope::new();
+        let any_type = TypeId(0);
+        global_scope.symbols.insert("len".to_string(), Symbol::new("len".to_string(), true, true, false, any_type));
+        global_scope.symbols.insert("range".to_string(), Symbol::new("range".to_string(), true, true, false, any_type));
+        global_scope.symbols.insert("ask".to_string(), Symbol::new("ask".to_string(), true, true, false, any_type));
+        global_scope.symbols.insert("push".to_string(), Symbol::new("push".to_string(), true, true, false, any_type));
+        global_scope.symbols.insert("insert".to_string(), Symbol::new("insert".to_string(), true, true, false, any_type));
+        global_scope.symbols.insert("parse".to_string(), Symbol::new("parse".to_string(), true, true, false, any_type));
+        global_scope.symbols.insert("write_file".to_string(), Symbol::new("write_file".to_string(), true, true, false, any_type));
+        global_scope.symbols.insert("read_file".to_string(), Symbol::new("read_file".to_string(), true, true, false, any_type));
+        global_scope.symbols.insert("spawn_async".to_string(), Symbol::new("spawn_async".to_string(), true, true, false, any_type));
+        global_scope.symbols.insert("print".to_string(), Symbol::new("print".to_string(), true, true, false, any_type));
+        global_scope.symbols.insert("println".to_string(), Symbol::new("println".to_string(), true, true, false, any_type));
+        global_scope.symbols.insert("std".to_string(), Symbol::new("std".to_string(), true, true, false, any_type));
+        global_scope.symbols.insert("get".to_string(), Symbol::new("get".to_string(), true, true, false, any_type));
+        global_scope.symbols.insert("set".to_string(), Symbol::new("set".to_string(), true, true, false, any_type));
+
         Self {
-            scopes: vec![Scope::new()], // Always start with a global scope
+            scopes: vec![global_scope],
         }
     }
 

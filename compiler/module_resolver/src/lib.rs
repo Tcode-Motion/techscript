@@ -24,15 +24,16 @@ impl Default for DefaultModuleResolver {
 impl DefaultModuleResolver {
     pub fn new() -> Self {
         let mut stdlib_modules = std::collections::HashSet::new();
-        stdlib_modules.insert("std/collections".to_string());
-        stdlib_modules.insert("std/strings".to_string());
-        stdlib_modules.insert("std/math".to_string());
-        stdlib_modules.insert("std/json".to_string());
-        stdlib_modules.insert("std/io".to_string());
-        stdlib_modules.insert("std/fs".to_string());
-        stdlib_modules.insert("std/time".to_string());
-        stdlib_modules.insert("std/env".to_string());
-        stdlib_modules.insert("std/process".to_string());
+        let modules = [
+            "std/io", "std/fs", "std/net", "std/http", "std/json", "std/xml", "std/csv", "std/yaml",
+            "std/time", "std/datetime", "std/env", "std/process", "std/crypto", "std/hash", "std/random",
+            "std/math", "std/collections", "std/string", "std/strings", "std/regex", "std/path", "std/thread", "std/sync",
+            "std/async", "std/future", "std/channel", "std/testing", "std/logging", "std/compress",
+            "std/encoding", "std/base64", "std/hex", "std/uuid", "std/url", "std/system"
+        ];
+        for m in &modules {
+            stdlib_modules.insert(m.to_string());
+        }
         Self { stdlib_modules }
     }
 }

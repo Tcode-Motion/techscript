@@ -8,6 +8,7 @@ use std::time::{Duration, Instant};
 use techscript_bytecode::BytecodeModule;
 use techscript_common::{FileId, SourceManager};
 use techscript_runtime::RuntimeValue;
+use colored::Colorize;
 
 use crate::artifacts::{ArtifactManager, BuildManifest, BuildOutput};
 use crate::cache::BuildCache;
@@ -30,6 +31,23 @@ pub enum BuildProfile {
 pub enum ExecutionBackend {
     Interpreter,
     Vm,
+    Native,
+}
+
+/// Helper to resolve target triple.
+pub fn get_host_target_triple() -> String {
+    #[cfg(feature = "llvm")]
+    unsafe {
+        let raw = llvm_sys::target_machine::LLVMGetDefaultTargetTriple();
+        let cstr = std::ffi::CStr::from_ptr(raw);
+        let s = cstr.to_string_lossy().into_owned();
+        llvm_sys::core::LLVMDisposeMessage(raw);
+        s
+    }
+    #[cfg(not(feature = "llvm"))]
+    {
+        "x86_64-pc-windows-msvc".to_string()
+    }
 }
 
 /// Compilation pipeline options.
@@ -249,6 +267,40 @@ impl CompilationPipeline {
                 duration: bc_dur,
             });
 
+        // Stage 7: LLVM Native Compilation (if requested)
+        if opts.backend == ExecutionBackend::Native {
+            #[cfg(not(feature = "llvm"))]
+            {
+                eprintln!("{}", "Warning: Native compilation requires system LLVM toolchain dependencies (clang/LLVM). This compiler driver was compiled without LLVM features. Fallback VM bytecode execution is recommended.".yellow().bold());
+                return Err(anyhow::anyhow!("Native compilation is unavailable because compiler LLVM features are disabled."));
+            }
+
+            #[cfg(feature = "llvm")]
+            {
+                let opt_level = match opts.profile {
+                    BuildProfile::Debug => techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelNone,
+                    BuildProfile::Release => techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelDefault,
+                    BuildProfile::ReleaseFast => techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelAggressive,
+                    BuildProfile::ReleaseSmall => techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelDefault,
+                };
+
+                let llvm_opts = techscript_llvm_backend::LLVMBackendOptions {
+                    target_triple: get_host_target_triple(),
+                    opt_level,
+                    debug_symbols: opts.emit_debug_symbols,
+                };
+
+                let name = path.file_stem().unwrap_or_default().to_string_lossy();
+                let out_dir = path.parent().unwrap_or(path).join("build");
+                std::fs::create_dir_all(&out_dir)?;
+                let obj_ext = if cfg!(windows) { "obj" } else { "o" };
+                let obj_path = out_dir.join(format!("{}.{}", name, obj_ext));
+
+                techscript_llvm_backend::LLVMBackend::compile(&module, &llvm_opts, &obj_path)
+                    .map_err(|e| anyhow::anyhow!("LLVM Native Compilation failed: {}", e))?;
+            }
+        }
+
         let duration = start.elapsed();
         let rich_diags = reporter
             .get_diagnostics()
@@ -299,22 +351,21 @@ impl CompilationPipeline {
         Ok(results)
     }
 
-    /// Executes compiled result via interpreter or VM.
+    /// Executes compiled result via interpreter, VM, or LLVM JIT.
     pub fn execute(
         &self,
         result: &CompilationResult,
         opts: &PipelineOptions,
     ) -> anyhow::Result<RuntimeValue> {
-        let bytecode = result
-            .bytecode
-            .as_ref()
-            .ok_or_else(|| anyhow::anyhow!("Cannot execute compiled unit: Compilation failed."))?;
-
         match opts.backend {
             ExecutionBackend::Vm => {
-                let res = techscript_vm::run(bytecode.clone())
-                    .map_err(|e| anyhow::anyhow!("VM Runtime Error: {:?}", e))?;
-                Ok(res)
+                let bytecode = result
+                    .bytecode
+                    .as_ref()
+                    .ok_or_else(|| anyhow::anyhow!("Cannot execute compiled unit: Compilation failed."))?;
+                // Run using VM
+                techscript_vm::run(bytecode.clone())
+                    .map_err(|e| anyhow::anyhow!("VM Runtime Error: {:?}", e))
             }
             ExecutionBackend::Interpreter => {
                 // Bridge to tree-walking interpreter
@@ -329,6 +380,48 @@ impl CompilationPipeline {
                 let res = techscript_interpreter::interpret(checked)
                     .map_err(|e| anyhow::anyhow!("Interpreter Runtime Error: {:?}", e))?;
                 Ok(res)
+            }
+            ExecutionBackend::Native => {
+                #[cfg(feature = "llvm")]
+                {
+                    let content = std::fs::read_to_string(&result.path)?;
+                    let mut reporter = techscript_errors::DiagnosticReporter::new();
+                    let tokens = techscript_lexer::lex(&content, &mut reporter)
+                        .map_err(|e| anyhow::anyhow!("Lexer error: {:?}", e))?;
+                    let program = techscript_parser::parse(&tokens, &mut reporter)
+                        .map_err(|e| anyhow::anyhow!("Parser error: {:?}", e))?;
+                    let checked = techscript_semantic::analyze(program, &mut reporter)
+                        .map_err(|e| anyhow::anyhow!("Semantic error: {:?}", e))?;
+                    let lowered = techscript_ir::lower(&checked.program, "main");
+                    let mut module = lowered.module;
+                    
+                    let opt_level = match opts.profile {
+                        BuildProfile::Debug => techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelNone,
+                        BuildProfile::Release => techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelDefault,
+                        BuildProfile::ReleaseFast => techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelAggressive,
+                        BuildProfile::ReleaseSmall => techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelDefault,
+                    };
+                    
+                    let llvm_opts = techscript_llvm_backend::LLVMBackendOptions {
+                        target_triple: get_host_target_triple(),
+                        opt_level,
+                        debug_symbols: false,
+                    };
+                    
+                    unsafe {
+                        let mut jit = techscript_llvm_backend::jit::LLVMJitEngine::new()
+                            .map_err(|e| anyhow::anyhow!("Failed to init JIT: {}", e))?;
+                        jit.compile(&module, &llvm_opts)
+                            .map_err(|e| anyhow::anyhow!("JIT Compile Error: {}", e))?;
+                        let res_code = jit.execute("main")
+                            .map_err(|e| anyhow::anyhow!("JIT Execution Error: {}", e))?;
+                        Ok(RuntimeValue::Int(res_code))
+                    }
+                }
+                #[cfg(not(feature = "llvm"))]
+                {
+                    Err(anyhow::anyhow!("JIT execution requires LLVM feature enabled."))
+                }
             }
         }
     }

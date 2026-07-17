@@ -1,0 +1,7 @@
+model Person {
+    make name = "Person"
+}
+build main() {
+    make p = new Person()
+    say p.name
+}

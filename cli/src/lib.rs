@@ -21,6 +21,8 @@ pub mod project;
 pub mod scheduler;
 pub mod templates;
 pub mod watch;
+pub mod progress;
+pub mod theme;
 
 use clap::{Parser as ClapParser, Subcommand};
 
@@ -55,6 +57,7 @@ pub struct Cli {
 #[derive(Subcommand, Debug, Clone)]
 pub enum Commands {
     /// Executes a TechScript source file (.txs)
+    #[command(alias = "r")]
     Run {
         /// Source file path ending in .txs or .ts
         file: String,
@@ -78,9 +81,22 @@ pub enum Commands {
         /// Verbose execution details
         #[arg(short, long)]
         verbose: bool,
+
+        /// Run native compiled version (via JIT)
+        #[arg(long)]
+        native: bool,
+
+        /// Show program return value even if Null
+        #[arg(long = "show-return")]
+        show_return: bool,
+
+        /// Show debug execution steps
+        #[arg(long)]
+        debug: bool,
     },
 
     /// Compiles project sources to a bytecode bundle
+    #[command(alias = "b")]
     Build {
         /// Optional input file path (defaults to project entry file)
         file: Option<String>,
@@ -96,9 +112,14 @@ pub enum Commands {
         /// Enable timing profiling outputs
         #[arg(long)]
         time: bool,
+
+        /// Target compilation backend: vm, native
+        #[arg(long, default_value = "vm")]
+        target: String,
     },
 
     /// Runs semantic analysis checks without compiling or executing
+    #[command(alias = "c")]
     Check {
         /// Optional input file path
         file: Option<String>,
@@ -125,7 +146,11 @@ pub enum Commands {
     },
 
     /// Cleans build outputs and incremental caches
-    Clean,
+    Clean {
+        /// Remove all caches, log files, and build folders
+        #[arg(long)]
+        all: bool,
+    },
 
     /// Initializes a new project in the current directory
     Init {
@@ -137,7 +162,7 @@ pub enum Commands {
     /// Scaffolds a new project structure in a new directory
     New {
         /// Name of the new project directory
-        name: String,
+        name: Option<String>,
 
         /// Project template: console, library, package, workspace, empty
         #[arg(short, long)]
@@ -151,6 +176,7 @@ pub enum Commands {
     },
 
     /// Discovers and runs integration tests (*_test.txs)
+    #[command(alias = "t")]
     Test {
         /// Directory containing tests (defaults to current directory)
         dir: Option<String>,
@@ -175,6 +201,7 @@ pub enum Commands {
     Publish,
 
     /// Installs a package from the registry
+    #[command(alias = "i")]
     Install {
         /// Package name to install
         package: String,
@@ -187,12 +214,19 @@ pub enum Commands {
     },
 
     /// Updates declared dependencies in manifest
+    #[command(alias = "u")]
     Update,
 
     /// Evaluates toolchain installation and environment health
-    Doctor,
+    #[command(alias = "dr")]
+    Doctor {
+        /// Automatically repair common installation and environment issues
+        #[arg(long)]
+        fix: bool,
+    },
 
     /// Prints detailed version and environment information
+    #[command(alias = "v")]
     Version,
 
     /// Parses file and dumps AST representation
@@ -220,5 +254,55 @@ pub enum Commands {
         /// Format output as JSON
         #[arg(long)]
         json: bool,
+    },
+
+    /// Emit lowered IR representation (.ir)
+    EmitIr {
+        file: String,
+    },
+
+    /// Emit LLVM IR representation (.ll)
+    EmitLlvm {
+        file: String,
+    },
+
+    /// Emit assembly representation (.s)
+    EmitAsm {
+        file: String,
+    },
+
+    /// Emit object file representation (.o or .obj)
+    EmitObj {
+        file: String,
+    },
+
+    /// Runs benchmark suite comparing VM, native, and JIT
+    Benchmark,
+
+    /// Generates shell completion scripts
+    Completion {
+        /// The shell to generate completions for: bash, elvish, fish, powershell, zsh
+        shell: String,
+    },
+
+    /// Lists all installed language examples
+    Examples,
+
+    /// Opens offline language documentation in the browser
+    Docs {
+        /// Section to open: std, compiler, guide
+        section: Option<String>,
+    },
+
+    /// Displays or edits project configurations
+    Config {
+        /// Config subcommand: show, edit, reset
+        subcommand: Option<String>,
+    },
+
+    /// Controls self-update, uninstall, and repairs
+    SelfCmd {
+        /// Self-management subcommand: update, uninstall, repair
+        subcommand: Option<String>,
     },
 }

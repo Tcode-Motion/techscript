@@ -25,6 +25,8 @@ pub enum ExitCode {
     LintFailure = 5,
     /// Internal compiler error (panic / ICE).
     InternalError = 10,
+    /// General command execution failure.
+    Failure = 11,
     /// Invalid command-line usage.
     InvalidUsage = 64,
 }
@@ -45,6 +47,7 @@ impl ExitCode {
             Self::TestFailure => "Tests failed",
             Self::LintFailure => "Lint violations found",
             Self::InternalError => "Internal compiler error",
+            Self::Failure => "Command execution failed",
             Self::InvalidUsage => "Invalid command usage",
         }
     }

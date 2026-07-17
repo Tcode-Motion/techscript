@@ -1,0 +1,25 @@
+# Rust
+target/
+target*/
+build/
+logs/
+graphify-out/
+public-release/
+releases/current/
+releases/latest
+
+# VS Code / JS
+node_modules/
+out/
+dist/
+*.vsix
+
+# Python
+__pycache__/
+*.pyc
+
+# Local Environment / Temporary
+.env
+.DS_Store
+research/temp/
+docs/build/

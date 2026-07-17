@@ -1,0 +1,8 @@
+build async_task() {
+    return 100
+}
+build main() {
+    make fut = spawn_async(async_task)
+    make res = await fut
+    say res
+}

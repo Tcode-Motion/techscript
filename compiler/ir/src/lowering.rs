@@ -325,23 +325,33 @@ impl LoweringContext {
                 let catch_block = self.builder.new_block("catch_body".to_string());
                 let merge_block = self.builder.new_block("try_merge".to_string());
 
+                let catch_var = self.builder.allocate_local(IRType::String);
+                self.symbol_map.insert(
+                    try_stmt.catch_var.name.clone(),
+                    SymbolBinding::Local(catch_var, IRType::String),
+                );
+
+                self.builder.emit_effect(
+                    Op::Try {
+                        catch_block,
+                        catch_var,
+                    },
+                    try_stmt.span,
+                );
+
                 self.builder
                     .emit_terminator(TerminatorKind::Jump(try_block), try_stmt.span);
 
                 // Try Body
                 self.builder.enter_block(try_block, "try_body".to_string());
                 self.lower_block(&try_stmt.body);
+                self.builder.emit_effect(Op::EndTry, try_stmt.span);
                 self.builder
                     .emit_terminator(TerminatorKind::Jump(merge_block), try_stmt.span);
 
                 // Catch Body
                 self.builder
                     .enter_block(catch_block, "catch_body".to_string());
-                let catch_var = self.builder.allocate_local(IRType::String);
-                self.symbol_map.insert(
-                    try_stmt.catch_var.name.clone(),
-                    SymbolBinding::Local(catch_var, IRType::String),
-                );
                 self.lower_block(&try_stmt.catch_body);
                 self.builder
                     .emit_terminator(TerminatorKind::Jump(merge_block), try_stmt.span);
@@ -604,7 +614,18 @@ impl LoweringContext {
                         }
                     }
                 } else {
-                    Value::Null
+                    let ty = IRType::Any;
+                    let global_id = self.builder.declare_global(ident.name.clone(), ty.clone());
+                    self.symbol_map.insert(
+                        ident.name.clone(),
+                        SymbolBinding::Global(global_id, ty.clone()),
+                    );
+                    let temp = self.builder.emit_instruction(
+                        Op::Load(Value::Global(global_id)),
+                        ty,
+                        ident.span,
+                    );
+                    Value::Temp(temp)
                 }
             }
             Expression::Binary(bin) => self.lower_binary(bin),

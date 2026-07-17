@@ -7,6 +7,8 @@ description = "TechScript 2.0 native machine compiler backend utilizing LLVM"
 [dependencies]
 techscript_common = { path = "../common" }
 techscript_ir = { path = "../ir" }
+techscript_ast = { path = "../ast" }
+techscript_syntax = { path = "../syntax" }
 llvm-sys = { version = "180", optional = true }
 serde = { workspace = true }
 anyhow = { workspace = true }

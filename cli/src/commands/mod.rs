@@ -20,3 +20,11 @@ pub mod test;
 pub mod uninstall;
 pub mod update;
 pub mod version;
+pub mod emit;
+pub mod benchmark;
+pub mod completion;
+pub mod examples;
+pub mod docs;
+pub mod config;
+pub mod self_cmd;
+

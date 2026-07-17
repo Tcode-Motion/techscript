@@ -1,0 +1,22 @@
+{
+    "search.exclude": {
+        "**/target": true,
+        "**/target_*": true,
+        "**/build": true,
+        "**/logs": true,
+        "**/graphify-out": true,
+        "**/public-release": true,
+        "**/releases": true,
+        "**/*.vsix": true
+    },
+    "files.exclude": {
+        "**/target": true,
+        "**/target_*": true,
+        "**/build": true,
+        "**/logs": true,
+        "**/graphify-out": true,
+        "**/public-release": true,
+        "**/releases": true,
+        "**/*.vsix": true
+    }
+}

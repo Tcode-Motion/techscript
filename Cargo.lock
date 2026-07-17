@@ -262,6 +262,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "clap_complete"
+version = "4.6.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "db8b397918185f0161ff3d6fcaa9e4bfc09b8367caf6e1d4a2848e5477ed027b"
+dependencies = [
+ "clap",
+]
+
+[[package]]
 name = "clap_derive"
 version = "4.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1458,6 +1467,7 @@ dependencies = [
  "anyhow",
  "bincode",
  "clap",
+ "clap_complete",
  "colored",
  "dirs",
  "indexmap",
@@ -1474,6 +1484,8 @@ dependencies = [
  "techscript_ir",
  "techscript_lexer",
  "techscript_linter",
+ "techscript_llvm_backend",
+ "techscript_native_runtime",
  "techscript_optimizer",
  "techscript_package_manager",
  "techscript_parser",
@@ -1579,8 +1591,10 @@ dependencies = [
  "libc",
  "llvm-sys",
  "serde",
+ "techscript_ast",
  "techscript_common",
  "techscript_ir",
+ "techscript_syntax",
  "thiserror 2.0.18",
 ]
 
@@ -1589,6 +1603,7 @@ name = "techscript_lsp"
 version = "0.1.0"
 dependencies = [
  "serde",
+ "serde_json",
  "techscript_ast",
  "techscript_common",
  "techscript_errors",
@@ -1606,6 +1621,13 @@ version = "0.1.0"
 dependencies = [
  "techscript_common",
  "techscript_errors",
+]
+
+[[package]]
+name = "techscript_native_runtime"
+version = "0.1.0"
+dependencies = [
+ "libc",
 ]
 
 [[package]]

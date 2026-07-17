@@ -58,9 +58,15 @@ impl CodegenContext {
 impl Drop for CodegenContext {
     fn drop(&mut self) {
         unsafe {
-            LLVMDisposeBuilder(self.builder);
-            LLVMDisposeModule(self.module);
-            LLVMContextDispose(self.context);
+            if !self.builder.is_null() {
+                LLVMDisposeBuilder(self.builder);
+            }
+            if !self.module.is_null() {
+                LLVMDisposeModule(self.module);
+            }
+            if !self.context.is_null() {
+                LLVMContextDispose(self.context);
+            }
         }
     }
 }

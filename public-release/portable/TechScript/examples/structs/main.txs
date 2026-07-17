@@ -1,7 +1,0 @@
-model Point {
-    make x = 10
-    make y = 20
-}
-build main() {
-    say "Point model defined."
-}

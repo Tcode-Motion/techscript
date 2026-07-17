@@ -267,6 +267,47 @@ impl VM {
                     self.stack.push(RuntimeValue::Bool(!val.is_truthy()))?;
                 }
 
+                Opcode::Await => {
+                    let val = self.stack.pop()?;
+                    if let RuntimeValue::Map { entries, .. } = &val {
+                        let mut is_future = false;
+                        {
+                            let entries_borrow = entries.borrow();
+                            if entries_borrow.contains_key("state") && entries_borrow.contains_key("value") {
+                                is_future = true;
+                            }
+                        }
+                        if is_future {
+                            loop {
+                                let state = {
+                                    let entries_borrow = entries.borrow();
+                                    entries_borrow.get("state").cloned().unwrap_or(RuntimeValue::Null)
+                                };
+                                if let RuntimeValue::Str(s) = &state {
+                                    if s == "pending" {
+                                        techscript_stdlib::async_runtime::tick();
+                                        std::thread::sleep(std::time::Duration::from_millis(1));
+                                        continue;
+                                    } else if s == "resolved" {
+                                        let resolved_val = entries.borrow().get("value").cloned().unwrap_or(RuntimeValue::Null);
+                                        self.stack.push(resolved_val)?;
+                                        break;
+                                    } else if s == "rejected" {
+                                        let err_val = entries.borrow().get("value").cloned().unwrap_or(RuntimeValue::Null);
+                                        return Err(VMError::RuntimeException(format!("Awaited future was rejected: {:?}", err_val)));
+                                    }
+                                }
+                                self.stack.push(val.clone())?;
+                                break;
+                            }
+                        } else {
+                            self.stack.push(val)?;
+                        }
+                    } else {
+                        self.stack.push(val)?;
+                    }
+                }
+
                 Opcode::Equal => {
                     let right = self.stack.pop()?;
                     let left = self.stack.pop()?;
@@ -443,9 +484,55 @@ impl VM {
                                 self.profiler.record_call();
                             }
                             RuntimeValue::Function(func) => {
-                                let ret = func
-                                    .call(&mut self.ctx, args)
-                                    .map_err(|e| VMError::RuntimeException(e.to_string()))?;
+                                if func.name() == "spawn_async" {
+                                    if let Some(RuntimeValue::Str(func_name)) = args.first().cloned() {
+                                        let target_idx = self
+                                            .module
+                                            .functions
+                                            .iter()
+                                            .position(|f| f.name == func_name)
+                                            .ok_or(VMError::InvalidFunction(0))?;
+                                        
+                                        let mut sub_vm = VM::new(self.module.clone());
+                                        sub_vm.ctx.config.capabilities = self.ctx.config.capabilities.clone();
+                                        sub_vm.frames.push(CallFrame::new(target_idx as u32, 0));
+                                        sub_vm.running = true;
+                                        let val = sub_vm.execute_loop()?;
+                                        
+                                        let mut fut_map = indexmap::IndexMap::new();
+                                        fut_map.insert("state".to_string(), RuntimeValue::Str("resolved".to_string()));
+                                        fut_map.insert("value".to_string(), val);
+                                        let future = RuntimeValue::Map {
+                                            entries: Rc::new(RefCell::new(fut_map)),
+                                            is_const: false,
+                                        };
+                                        self.stack.push(future)?;
+                                        continue;
+                                    }
+                                }
+                                let ret = match func.call(&mut self.ctx, args) {
+                                    Ok(val) => val,
+                                    Err(err) => {
+                                        let msg = err.to_string();
+                                        let mut handler_found = false;
+                                        while let Some(frame) = self.frames.last_mut() {
+                                            if let Some(handler) = frame.handlers.pop() {
+                                                self.stack.truncate(handler.stack_depth);
+                                                self.stack.push(RuntimeValue::Str(msg.clone()))?;
+                                                frame.ip = handler.catch_ip;
+                                                handler_found = true;
+                                                break;
+                                            }
+                                            self.frames.pop();
+                                        }
+                                        if handler_found {
+                                            continue;
+                                        } else {
+                                            self.running = false;
+                                            return Err(VMError::RuntimeException(msg));
+                                        }
+                                    }
+                                };
                                 self.stack.push(ret)?;
                             }
                             _ => {

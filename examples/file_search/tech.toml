@@ -1,0 +1,4 @@
+[package]
+name = "file_search"
+version = "0.1.0"
+entry = "main.txs"

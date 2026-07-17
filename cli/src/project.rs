@@ -240,6 +240,30 @@ impl ProjectBuildGraph {
                     import_file = relative_path.with_extension("ts");
                 }
 
+                if !import_file.exists() {
+                    let mut pkg_path = self.workspace.root.join("packages");
+                    for part in &imp {
+                        pkg_path.push(part);
+                    }
+                    let mut try_file = pkg_path.with_extension("txs");
+                    if !try_file.exists() {
+                        try_file = pkg_path.with_extension("ts");
+                    }
+                    if !try_file.exists() {
+                        let manifest_toml = pkg_path.join("tech.toml");
+                        if manifest_toml.exists() {
+                            if let Ok(toml_content) = std::fs::read_to_string(&manifest_toml) {
+                                if let Ok(manifest) = toml::from_str::<techscript_package_manager::Manifest>(&toml_content) {
+                                    try_file = pkg_path.join(manifest.package.entry);
+                                }
+                            }
+                        }
+                    }
+                    if try_file.exists() {
+                        import_file = try_file;
+                    }
+                }
+
                 if import_file.exists() {
                     if let Ok(source) = std::fs::read_to_string(&import_file) {
                         let dep_fid = source_mgr.add_file(import_file.clone(), source);

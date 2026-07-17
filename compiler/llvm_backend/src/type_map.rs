@@ -22,32 +22,9 @@ pub unsafe fn to_llvm_type(context: LLVMContextRef, ty: &IRType) -> LLVMTypeRef 
         IRType::Map => LLVMPointerType(LLVMInt8TypeInContext(context), 0),
         IRType::Pointer => LLVMPointerType(LLVMInt8TypeInContext(context), 0),
 
-        IRType::Struct(name) => {
-            let struct_ty = LLVMStructCreateNamed(
-                context,
-                std::ffi::CString::new(name.as_str()).unwrap().as_ptr(),
-            );
-            // Struct body would be set dynamically or treated as opaque pointer
-            LLVMPointerType(struct_ty, 0)
-        }
-        IRType::Enum(name) => {
-            let struct_ty = LLVMStructCreateNamed(
-                context,
-                std::ffi::CString::new(name.as_str()).unwrap().as_ptr(),
-            );
-            LLVMPointerType(struct_ty, 0)
-        }
-        IRType::Model(name) => {
-            let struct_ty = LLVMStructCreateNamed(
-                context,
-                std::ffi::CString::new(name.as_str()).unwrap().as_ptr(),
-            );
-            LLVMPointerType(struct_ty, 0)
-        }
-
-        IRType::Any => {
-            // Dynamically-typed values are boxed as opaque pointers
-            LLVMPointerType(LLVMInt8TypeInContext(context), 0)
-        }
+        IRType::Struct(_) => LLVMPointerType(LLVMInt8TypeInContext(context), 0),
+        IRType::Enum(_) => LLVMPointerType(LLVMInt8TypeInContext(context), 0),
+        IRType::Model(_) => LLVMPointerType(LLVMInt8TypeInContext(context), 0),
+        IRType::Any => LLVMPointerType(LLVMInt8TypeInContext(context), 0),
     }
 }

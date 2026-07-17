@@ -1,0 +1,6 @@
+build square(n) {
+    return n * n
+}
+build main() {
+    say square(9)
+}

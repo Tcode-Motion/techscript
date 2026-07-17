@@ -1,0 +1,12 @@
+{
+  "iconDefinitions": {
+    "techscript_file": {
+      "iconPath": "../icon.png"
+    }
+  },
+  "file": "techscript_file",
+  "fileExtensions": {
+    "txs": "techscript_file",
+    "tsx": "techscript_file"
+  }
+}

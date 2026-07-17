@@ -54,3 +54,39 @@ pub fn parse(
     let mut parser = Parser::new(tokens);
     parser.parse(reporter)
 }
+
+impl<'a> Parser<'a> {
+    /// Parses the token stream and returns the program AST even if errors are found,
+    /// by employing compiler statement synchronization.
+    pub fn parse_recovered(&mut self, reporter: &mut DiagnosticReporter) -> Program {
+        let start_pos = self.peek().span.start;
+        let mut statements = Vec::new();
+
+        while !self.is_at_end() {
+            while self.match_token(TokenKind::Newline) || self.match_token(TokenKind::Semicolon) {}
+            if self.is_at_end() {
+                break;
+            }
+
+            match self.parse_statement(reporter) {
+                Ok(stmt) => statements.push(stmt),
+                Err(_) => {
+                    self.synchronize();
+                }
+            }
+        }
+
+        let end_pos = self.peek().span.end;
+        let span = Span::new(start_pos, end_pos);
+        Program::new(self.next_id(), statements, span)
+    }
+}
+
+pub fn parse_recovered(
+    tokens: &[Token],
+    reporter: &mut DiagnosticReporter,
+) -> Program {
+    let mut parser = Parser::new(tokens);
+    parser.parse_recovered(reporter)
+}
+

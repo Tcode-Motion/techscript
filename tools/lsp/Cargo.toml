@@ -18,4 +18,5 @@ techscript_parser = { path = "../../compiler/parser" }
 techscript_semantic = { path = "../../compiler/semantic" }
 tower-lsp = { workspace = true }
 serde = { workspace = true }
+serde_json = { workspace = true }
 tokio = { version = "1", features = ["full"] }

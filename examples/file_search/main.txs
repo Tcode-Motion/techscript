@@ -1,0 +1,3 @@
+build main() {
+    say "Search scanner done"
+}

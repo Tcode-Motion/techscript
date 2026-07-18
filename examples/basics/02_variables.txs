@@ -1,0 +1,8 @@
+# 02_variables.txs
+# Variables example.
+# Demonstrates declaring mutable variables and constants.
+
+make x = 42;
+const y = 10;
+x = x + y;
+std.io.println("Value of x: " + std.strings.from_int(x));

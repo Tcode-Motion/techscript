@@ -182,13 +182,59 @@ impl Interpreter {
                 Ok(FlowSignal::Normal)
             }
             Statement::EnumDecl(decl) => {
-                // Register variants as constructors or constant values
-                let _name = decl.name.name.clone();
+                let enum_name = decl.name.name.clone();
+                let mut entries = IndexMap::new();
+
                 for variant in &decl.variants {
-                    let _variant_name = variant.name.name.clone();
-                    // In TechScript 2.0 enums are accessed via .Variant, resolved dynamically
-                    // We can register variant constructors under enum name namespaces if needed
+                    let var_name = variant.name.name.clone();
+                    if variant.payload.is_some() {
+                        #[derive(Clone)]
+                        struct VariantConstructor {
+                            name: String,
+                            arity: usize,
+                        }
+                        impl Callable for VariantConstructor {
+                            fn name(&self) -> &str {
+                                &self.name
+                            }
+                            fn arity(&self) -> usize {
+                                self.arity
+                            }
+                            fn call(
+                                &self,
+                                _ctx: &mut techscript_runtime::RuntimeContext,
+                                args: Vec<RuntimeValue>,
+                            ) -> Result<RuntimeValue, RuntimeError> {
+                                Ok(RuntimeValue::EnumVariant {
+                                    name: self.name.clone(),
+                                    payload: Some(args),
+                                })
+                            }
+                        }
+                        let arity = variant.payload.as_ref().unwrap().len();
+                        entries.insert(
+                            var_name.clone(),
+                            RuntimeValue::Function(Rc::new(VariantConstructor {
+                                name: var_name,
+                                arity,
+                            })),
+                        );
+                    } else {
+                        entries.insert(
+                            var_name.clone(),
+                            RuntimeValue::EnumVariant {
+                                name: var_name,
+                                payload: None,
+                            },
+                        );
+                    }
                 }
+
+                let enum_val = RuntimeValue::Map {
+                    entries: Rc::new(RefCell::new(entries)),
+                    is_const: true,
+                };
+                self.env.borrow_mut().define(enum_name, enum_val, true);
                 Ok(FlowSignal::Normal)
             }
             Statement::ModelDecl(decl) => {
@@ -465,6 +511,7 @@ impl Callable for BridgedMethod {
                 config: ctx.config.clone(),
                 global_env: Rc::clone(&ctx.global_env),
                 registry: techscript_runtime::NativeRegistry::new(),
+                resources: Rc::clone(&ctx.resources),
             },
             env: Rc::clone(&self.user_func.closure),
             call_stack: Vec::new(),

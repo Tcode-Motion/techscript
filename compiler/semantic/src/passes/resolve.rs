@@ -32,6 +32,8 @@ impl Pass for ResolveSymbols {
                         | Statement::ModelDecl(_)
                         | Statement::ExportDecl(_)
                         | Statement::Import(_)
+                        | Statement::VarDecl(_)
+                        | Statement::ConstDecl(_)
                 );
                 if !is_decl {
                     let diag = Diagnostic::new(

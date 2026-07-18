@@ -1,7 +1,0 @@
-build main() {
-    attempt {
-        make x = 10 / 0
-    } catch err {
-        say "Exception handled"
-    }
-}

@@ -41,7 +41,8 @@ impl<'a> Parser<'a> {
         } else {
             let end_pos = self.peek().span.end;
             let span = Span::new(start_pos, end_pos);
-            Ok(Program::new(self.next_id(), statements, span))
+            let final_statements = statements;
+            Ok(Program::new(self.next_id(), final_statements, span))
         }
     }
 }
@@ -78,7 +79,78 @@ impl<'a> Parser<'a> {
 
         let end_pos = self.peek().span.end;
         let span = Span::new(start_pos, end_pos);
-        Program::new(self.next_id(), statements, span)
+        let final_statements = statements;
+        Program::new(self.next_id(), final_statements, span)
+    }
+
+    /// Wraps all top-level execution statements into a synthetic `main` function.
+    fn wrap_top_level_statements(&mut self, statements: Vec<techscript_ast::Statement>) -> Vec<techscript_ast::Statement> {
+        use techscript_ast::{Statement, FuncDecl, Block, Ident, Span};
+
+        let mut has_explicit_main = false;
+        for stmt in &statements {
+            if let Statement::FuncDecl(f) = stmt {
+                if f.name.name == "main" {
+                    has_explicit_main = true;
+                    break;
+                }
+            }
+        }
+
+        // If there is an explicit main, DO NOT WRAP.
+        // The semantic resolver (resolve.rs) will iterate over the AST and correctly emit E0313
+        // when it finds top-level execution statements alongside an explicit main.
+        if has_explicit_main {
+            return statements;
+        }
+
+        let mut executable_stmts = Vec::new();
+        let mut declarations = Vec::new();
+
+        for stmt in statements {
+            match &stmt {
+                Statement::FuncDecl(_)
+                | Statement::StructDecl(_)
+                | Statement::EnumDecl(_)
+                | Statement::ModelDecl(_)
+                | Statement::ExportDecl(_) => {
+                    // These are definitive declarations that stay at the top level
+                    declarations.push(stmt);
+                }
+                Statement::VarDecl(_) | Statement::ConstDecl(_) => {
+                    // We keep global variables at the top level so they can be accessed globally
+                    declarations.push(stmt);
+                }
+                _ => {
+                    // All other statements (If, For, Expression, Say, etc.) are executed as script logic
+                    executable_stmts.push(stmt);
+                }
+            }
+        }
+
+        if executable_stmts.is_empty() {
+            return declarations;
+        }
+
+        // We have top-level executable statements. Wrap them into a synthetic main() function.
+        let start = executable_stmts.first().unwrap().span().start;
+        let end = executable_stmts.last().unwrap().span().end;
+        let span = Span::new(start, end);
+
+        let main_body = Block::new(self.next_id(), executable_stmts, span);
+        let main_func = FuncDecl::new(
+            self.next_id(),
+            false,
+            Ident::new("main".to_string(), span),
+            None,
+            vec![],
+            None,
+            main_body,
+            span,
+        );
+
+        declarations.push(Statement::FuncDecl(main_func));
+        declarations
     }
 }
 

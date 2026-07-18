@@ -777,7 +777,7 @@ pub unsafe extern "C" fn ts_await(val: *mut TsValue) -> *mut TsValue {
                         if !state_str_ptr.is_null() {
                             let state_str = &*state_str_ptr;
                             if state_str == "pending" {
-                                std::thread::sleep(std::time::Duration::from_millis(1));
+                                std::thread::yield_now();
                                 continue;
                             } else if state_str == "resolved" {
                                 let res = map.get("value").cloned().unwrap_or(std::ptr::null_mut());

@@ -1,0 +1,7 @@
+# 07_yaml.txs
+# YAML parsing example.
+# Demonstrates parsing YAML data.
+
+make yaml = "port: 8080";
+make data = std.yaml.parse(yaml);
+std.io.println(std.strings.from_int(data.port));

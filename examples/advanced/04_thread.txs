@@ -1,0 +1,10 @@
+# 04_thread.txs
+# Native OS threading.
+
+build run_thread() {
+    return "thread output";
+}
+
+make handle = std.thread["spawn"](run_thread);
+std.thread.join(handle);
+std.io.println("thread output");

@@ -1,6 +1,0 @@
-build add(a, b) {
-    return a + b
-}
-build main() {
-    say add(5, 7)
-}

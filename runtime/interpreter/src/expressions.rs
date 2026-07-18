@@ -124,6 +124,12 @@ impl AstVisitor for Interpreter {
                     if args.len() != func.arity()
                         && func.name() != "assert"
                         && func.name() != "exit"
+                        && func.name() != "print"
+                        && func.name() != "println"
+                        && func.name() != "info"
+                        && func.name() != "warn"
+                        && func.name() != "error"
+                        && func.name() != "debug"
                     {
                         return Err(RuntimeError::new(
                             RuntimeErrorKind::ArityMismatch {

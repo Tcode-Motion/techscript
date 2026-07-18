@@ -286,7 +286,7 @@ impl VM {
                                 if let RuntimeValue::Str(s) = &state {
                                     if s == "pending" {
                                         techscript_stdlib::async_runtime::tick();
-                                        std::thread::sleep(std::time::Duration::from_millis(1));
+                                        std::thread::yield_now();
                                         continue;
                                     } else if s == "resolved" {
                                         let resolved_val = entries.borrow().get("value").cloned().unwrap_or(RuntimeValue::Null);
@@ -348,6 +348,18 @@ impl VM {
                         _ => true,
                     };
                     self.stack.push(RuntimeValue::Bool(res))?;
+                }
+
+                Opcode::Or => {
+                    let right = self.stack.pop()?;
+                    let left = self.stack.pop()?;
+                    self.stack.push(RuntimeValue::Bool(left.is_truthy() || right.is_truthy()))?;
+                }
+
+                Opcode::And => {
+                    let right = self.stack.pop()?;
+                    let left = self.stack.pop()?;
+                    self.stack.push(RuntimeValue::Bool(left.is_truthy() && right.is_truthy()))?;
                 }
 
                 Opcode::Less => {
@@ -507,6 +519,29 @@ impl VM {
                                             is_const: false,
                                         };
                                         self.stack.push(future)?;
+                                        continue;
+                                    }
+                                }
+                                if func.name() == "spawn" {
+                                    if let Some(RuntimeValue::Str(func_name)) = args.first().cloned() {
+                                        let target_idx = self
+                                            .module
+                                            .functions
+                                            .iter()
+                                            .position(|f| f.name == func_name)
+                                            .ok_or(VMError::InvalidFunction(0))?;
+                                        
+                                        let module_clone = self.module.clone();
+                                        let capabilities_clone = self.ctx.config.capabilities.clone();
+                                        let handle = std::thread::spawn(move || {
+                                            let mut sub_vm = VM::new(module_clone);
+                                            sub_vm.ctx.config.capabilities = capabilities_clone;
+                                            sub_vm.frames.push(CallFrame::new(target_idx as u32, 0));
+                                            sub_vm.running = true;
+                                            sub_vm.execute_loop().ok();
+                                        });
+                                        let handle_id = self.ctx.resources.borrow_mut().insert(handle);
+                                        self.stack.push(RuntimeValue::Int(handle_id as i64))?;
                                         continue;
                                     }
                                 }

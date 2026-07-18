@@ -1,0 +1,6 @@
+# 03_collections.txs
+# Collections module example.
+# Demonstrates getting list length and pushing elements.
+
+make list = [1, 2];
+std.io.println(std.strings.from_int(std.collections.len(list)));

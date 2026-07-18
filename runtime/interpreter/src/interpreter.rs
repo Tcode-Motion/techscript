@@ -92,6 +92,19 @@ impl Interpreter {
                 FlowSignal::Throw(err) => return Err(err),
             }
         }
+        
+        // Auto-execute main function if defined in environment
+        let main_val = self.env.borrow().lookup("main");
+        if let Ok(RuntimeValue::Function(main_func)) = main_val {
+            self.call_stack.push(crate::control_flow::CallFrame::new(
+                "main".to_string(),
+                None,
+            ));
+            let res = main_func.call(&mut self.ctx, vec![]);
+            self.call_stack.pop();
+            return res;
+        }
+
         Ok(RuntimeValue::Null)
     }
 

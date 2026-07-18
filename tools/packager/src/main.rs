@@ -101,8 +101,8 @@ fn main() -> anyhow::Result<()> {
 
     // 6. Write standard templates & 20 documented examples
     write_templates(&portable_dir.join("templates"))?;
-    write_examples(&portable_dir.join("examples"))?;
-    write_examples(&release_dir.join("examples"))?;
+    write_examples(&portable_dir.join("examples"), &root_dir)?;
+    write_examples(&release_dir.join("examples"), &root_dir)?;
 
     // 7. Copy licenses
     let license_dest = release_dir.join("licenses").join("LICENSE");
@@ -352,54 +352,10 @@ fn write_templates(dest_dir: &Path) -> anyhow::Result<()> {
     Ok(())
 }
 
-fn write_examples(dest_dir: &Path) -> anyhow::Result<()> {
-    let examples = vec![
-        ("hello_world", "build main() {\n    say \"Hello, World!\"\n}\n"),
-        ("variables", "build main() {\n    make x = 42\n    const y = 10\n    x = x + y\n    say x\n}\n"),
-        ("functions", "build add(a, b) {\n    return a + b\n}\nbuild main() {\n    say add(5, 7)\n}\n"),
-        ("classes", "model User {\n    make id = 1\n    make name = \"Bob\"\n}\nbuild main() {\n    make u = new User()\n    say u.name\n}\n"),
-        ("enums", "enum Color {\n    Red\n    Green\n    Blue\n}\nbuild main() {\n    say \"Color enum initialized\"\n}\n"),
-        ("structs", "struct Point {\n    x: Int\n    y: Int\n}\nbuild main() {\n    make p = new Point()\n    say \"Point struct initialized\"\n}\n"),
-        ("traits", "build main() {\n    say \"Traits verified\"\n}\n"),
-        ("interfaces", "build main() {\n    say \"Interfaces verified\"\n}\n"),
-        ("collections", "build main() {\n    make list = [1, 2, 3]\n    list.push(4)\n    say list[0]\n}\n"),
-        ("loops", "build main() {\n    make i = 0\n    while i < 3 {\n        say i\n        i = i + 1\n    }\n}\n"),
-        ("pattern_matching", "build main() {\n    say \"Pattern matching and destructuring checks completed\"\n}\n"),
-        ("modules", "build main() {\n    say \"Modules imported\"\n}\n"),
-        ("packages", "build main() {\n    say \"Packages verified\"\n}\n"),
-        ("json", "build main() {\n    make data = std.json.parse(\"[1, 2]\")\n    say data\n}\n"),
-        ("filesystem", "build main() {\n    say \"Filesystem sandboxing verified\"\n}\n"),
-        ("threads", "build async_task() {\n    return 100\n}\nbuild main() {\n    make fut = spawn_async(async_task)\n    make res = await fut\n    say res\n}\n"),
-        ("errors", "build main() {\n    attempt {\n        make x = 10 / 0\n    } catch err {\n        say \"Exception handled\"\n    }\n}\n"),
-        ("recursion", "build fib(n) {\n    if n <= 1 { return n }\n    return fib(n - 1) + fib(n - 2)\n}\nbuild main() {\n    say fib(5)\n}\n"),
-        ("async", "build run_async() {\n    return \"async done\"\n}\nbuild main() {\n    make fut = spawn_async(run_async)\n    make val = await fut\n    say val\n}\n"),
-        ("generics", "build main() {\n    say \"Generics types resolved\"\n}\n"),
-        ("http", "build main() {\n    say \"HTTP event loops initialized\"\n}\n"),
-        ("cli_app", "build main() {\n    say \"CLI flags parsed\"\n}\n"),
-        ("calculator", "build eval(op, a, b) {\n    return a + b\n}\nbuild main() {\n    say eval(\"+\", 5, 10)\n}\n"),
-        ("todo_app", "struct Todo {\n    task: String\n    done: Bool\n}\nbuild main() {\n    make todo = new Todo()\n    say \"Todo initialized\"\n}\n"),
-        ("mini_game", "build main() {\n    say \"Guess number game verified\"\n}\n"),
-        ("interpreter_demo", "build main() {\n    say \"Interpreter loop verified\"\n}\n"),
-        ("compiler_plugin", "build main() {\n    say \"Compiler plugin verified\"\n}\n"),
-        ("package_example", "build main() {\n    say \"Package entry point\"\n}\n"),
-        ("workspace_example", "build main() {\n    say \"Workspace member verified\"\n}\n"),
-        ("complete_project", "build main() {\n    say \"Complete project executed\"\n}\n"),
-        ("hello_classes", "model Person {\n    make name = \"Person\"\n}\nbuild main() {\n    make p = new Person()\n    say p.name\n}\n"),
-        ("math_utilities", "build square(n) {\n    return n * n\n}\nbuild main() {\n    say square(9)\n}\n"),
-        ("file_search", "build main() {\n    say \"Search scanner done\"\n}\n"),
-    ];
-
-    for (name, content) in &examples {
-        let path = dest_dir.join(name);
-        fs::create_dir_all(&path)?;
-        fs::write(path.join("main.txs"), content)?;
-        fs::write(
-            path.join("tech.toml"),
-            format!(
-                "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nentry = \"main.txs\"\n",
-                name
-            ),
-        )?;
+fn write_examples(dest_dir: &Path, root_dir: &Path) -> anyhow::Result<()> {
+    let src_examples = root_dir.join("examples");
+    if src_examples.exists() {
+        copy_dir_all(&src_examples, dest_dir)?;
     }
     Ok(())
 }
@@ -625,6 +581,7 @@ fn generate_inno_script(dest: &Path, version: &str, root: &Path) -> anyhow::Resu
     let iss_content = format!(
         r#"; TechScript 2.0 Installer Script (Inno Setup)
 [Setup]
+AppId={{{{TechScript-Compiler-Environment-2-0}}
 AppName=TechScript 2.0
 AppVersion={version}
 AppPublisher=techscript-motion
@@ -635,6 +592,7 @@ VersionInfoCompany=techscript-motion
 VersionInfoDescription=TechScript 2.0 Language Environment
 DefaultDirName={{autopf}}\TechScript
 DefaultGroupName=TechScript 2.0
+ChangesAssociations=yes
 UninstallDisplayIcon={{app}}\bin\tsc.exe
 Compression=lzma2
 SolidCompression=yes
@@ -643,10 +601,14 @@ OutputBaseFilename=TechScript_Setup
 SetupIconFile={logo_dir}\windows\installer-icon.ico
 WizardImageFile={logo_dir}\source\logo-black-bg-1254.png
 WizardSmallImageFile={logo_dir}\png\icon-256.png
-PrivilegesRequiredOverridesAllowed=commandline dialog
+PrivilegesRequired=admin
 DisableWelcomePage=no
 LicenseFile={root_dir}\LICENSE
 InfoBeforeFile=PRIVACY_POLICY.txt
+
+[InstallDelete]
+Type: filesandordirs; Name: "{{commonpf64}}\TechScript"
+Type: filesandordirs; Name: "{{commonpf32}}\TechScript"
 
 [Types]
 Name: "full"; Description: "Full installation (Recommended)"
@@ -702,16 +664,21 @@ Root: HKA; Subkey: "Software\Classes\TechScript.File"; ValueType: string; ValueN
 Root: HKA; Subkey: "Software\Classes\TechScript.File"; ValueType: string; ValueName: "Content Type"; ValueData: "text/x-techscript"; Flags: uninsdeletekey; Tasks: associate
 Root: HKA; Subkey: "Software\Classes\TechScript.File\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{{app}}\bin\file-icon.ico"; Flags: uninsdeletekey; Tasks: associate
 
-; Double-click open action (Default: open in VS Code if installed, otherwise open in notepad)
-Root: HKA; Subkey: "Software\Classes\TechScript.File\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{{app}}\bin\tsc.exe"" run ""%1"""; Flags: uninsdeletekey; Tasks: associate; Check: NotVSCodeInstalled
-Root: HKA; Subkey: "Software\Classes\TechScript.File\shell\open\command"; ValueType: string; ValueName: ""; ValueData: "code ""%1"""; Flags: uninsdeletekey; Tasks: associate; Check: IsVSCodeInstalled
+; Double-click open action (Always run the script in a console and keep it open so output can be read)
+Root: HKA; Subkey: "Software\Classes\TechScript.File\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{{app}}\bin\tsc.exe"" ""%1"" --double-click"; Flags: uninsdeletekey; Tasks: associate
+
+; Fallback registrations for the legacy ProgID (TechScript.Script) to support cached user associations
+Root: HKA; Subkey: "Software\Classes\TechScript.Script"; ValueType: string; ValueName: ""; ValueData: "TechScript Source File"; Flags: uninsdeletekey; Tasks: associate
+Root: HKA; Subkey: "Software\Classes\TechScript.Script"; ValueType: string; ValueName: "Content Type"; ValueData: "text/x-techscript"; Flags: uninsdeletekey; Tasks: associate
+Root: HKA; Subkey: "Software\Classes\TechScript.Script\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{{app}}\bin\file-icon.ico"; Flags: uninsdeletekey; Tasks: associate
+Root: HKA; Subkey: "Software\Classes\TechScript.Script\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{{app}}\bin\tsc.exe"" ""%1"" --double-click"; Flags: uninsdeletekey; Tasks: associate
 
 ; Context Menu items
 Root: HKA; Subkey: "Software\Classes\TechScript.File\shell\Compile"; ValueType: string; ValueName: ""; ValueData: "Compile with TechScript"; Tasks: contextmenu
 Root: HKA; Subkey: "Software\Classes\TechScript.File\shell\Compile\command"; ValueType: string; ValueName: ""; ValueData: """{{app}}\bin\tsc.exe"" build ""%1"""; Tasks: contextmenu
 
 Root: HKA; Subkey: "Software\Classes\TechScript.File\shell\Run"; ValueType: string; ValueName: ""; ValueData: "Run with TechScript"; Tasks: contextmenu
-Root: HKA; Subkey: "Software\Classes\TechScript.File\shell\Run\command"; ValueType: string; ValueName: ""; ValueData: """{{app}}\bin\tsc.exe"" run ""%1"""; Tasks: contextmenu
+Root: HKA; Subkey: "Software\Classes\TechScript.File\shell\Run\command"; ValueType: string; ValueName: ""; ValueData: """{{app}}\bin\tsc.exe"" ""%1"" --double-click"; Tasks: contextmenu
 
 Root: HKA; Subkey: "Software\Classes\TechScript.File\shell\OpenVSCode"; ValueType: string; ValueName: ""; ValueData: "Open in VS Code"; Tasks: contextmenu; Check: IsVSCodeInstalled
 Root: HKA; Subkey: "Software\Classes\TechScript.File\shell\OpenVSCode"; ValueType: string; ValueName: "Icon"; ValueData: "code.exe"; Tasks: contextmenu; Check: IsVSCodeInstalled
@@ -720,6 +687,18 @@ Root: HKA; Subkey: "Software\Classes\TechScript.File\shell\OpenVSCode\command"; 
 Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\TechScriptTerminal"; ValueType: string; ValueName: ""; ValueData: "Open TechScript Terminal Here"; Tasks: contextmenu
 Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\TechScriptTerminal"; ValueType: string; ValueName: "Icon"; ValueData: """{{app}}\bin\tsc.exe"""; Tasks: contextmenu
 Root: HKA; Subkey: "Software\Classes\Directory\Background\shell\TechScriptTerminal\command"; ValueType: string; ValueName: ""; ValueData: "cmd.exe /K ""cd /d ""%V"" && SET PATH={{app}}\bin;%PATH%"""; Tasks: contextmenu
+
+; Applications registration for tsc.exe
+Root: HKA; Subkey: "Software\Classes\Applications\tsc.exe"; ValueType: string; ValueName: "FriendlyAppName"; ValueData: "TechScript Compiler Driver"; Flags: uninsdeletekey; Tasks: associate
+Root: HKA; Subkey: "Software\Classes\Applications\tsc.exe\SupportedTypes"; ValueType: string; ValueName: ".txs"; ValueData: ""; Flags: uninsdeletekey; Tasks: associate
+Root: HKA; Subkey: "Software\Classes\Applications\tsc.exe\SupportedTypes"; ValueType: string; ValueName: ".tsx"; ValueData: ""; Flags: uninsdeletekey; Tasks: associate
+Root: HKA; Subkey: "Software\Classes\Applications\tsc.exe\SupportedTypes"; ValueType: string; ValueName: ".tech"; ValueData: ""; Flags: uninsdeletekey; Tasks: associate
+Root: HKA; Subkey: "Software\Classes\Applications\tsc.exe\SupportedTypes"; ValueType: string; ValueName: ".tspkg"; ValueData: ""; Flags: uninsdeletekey; Tasks: associate
+Root: HKA; Subkey: "Software\Classes\Applications\tsc.exe\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{{app}}\bin\tsc.exe"" ""%1"" --double-click"; Flags: uninsdeletekey; Tasks: associate
+
+; App Paths registration for tsc.exe
+Root: HKA; Subkey: "Software\Microsoft\Windows\CurrentVersion\App Paths\tsc.exe"; ValueType: string; ValueName: ""; ValueData: "{{app}}\bin\tsc.exe"; Flags: uninsdeletekey; Tasks: associate
+Root: HKA; Subkey: "Software\Microsoft\Windows\CurrentVersion\App Paths\tsc.exe"; ValueType: string; ValueName: "Path"; ValueData: "{{app}}\bin"; Flags: uninsdeletekey; Tasks: associate
 
 ; User Environment Variables
 Root: HKCU; Subkey: "Environment"; ValueType: string; ValueName: "TECHSCRIPT_HOME"; ValueData: "{{app}}"; Flags: preservestringtype uninsdeletevalue; Tasks: userpath
@@ -776,9 +755,38 @@ begin
   Result := not IsVSCodeInstalled();
 end;
 
+function GetUninstallString(): String;
+var
+  sUnInstPath: String;
+  sUnInstallString: String;
+begin
+  sUnInstPath := 'Software\Microsoft\Windows\CurrentVersion\Uninstall\TechScript 2.0_is1';
+  sUnInstallString := '';
+  if not RegQueryStringValue(HKEY_LOCAL_MACHINE, sUnInstPath, 'UninstallString', sUnInstallString) then
+    RegQueryStringValue(HKEY_CURRENT_USER, sUnInstPath, 'UninstallString', sUnInstallString);
+  Result := sUnInstallString;
+end;
+
 function InitializeSetup(): Boolean;
+var
+  V: Integer;
+  sUnInstallString: String;
+  sUnInstallParams: String;
 begin
   Result := True;
+  sUnInstallString := GetUninstallString();
+  if sUnInstallString <> '' then begin
+    sUnInstallString := RemoveQuotes(sUnInstallString);
+    if MsgBox('A previous version of TechScript is already installed on your system. Do you want to uninstall it first?', mbConfirmation, MB_YESNO) = IDYES then begin
+      sUnInstallParams := '/SILENT /NORESTART /SUPPRESSMSGBOXES';
+      if Exec(sUnInstallString, sUnInstallParams, '', SW_SHOW, ewWaitUntilTerminated, V) then begin
+        Result := True;
+      end else begin
+        MsgBox('Failed to uninstall the previous version. Installation will abort.', mbError, MB_OK);
+        Result := False;
+      end;
+    end;
+  end;
 end;
 
 procedure AddToPath(PathToAdd: String; IsSystem: Boolean);

@@ -116,6 +116,7 @@ impl ProjectBuildGraph {
                         requires_compiler: None,
                         capabilities: None,
                         allow_capability_elevation: None,
+                        network_allow: None,
                     },
                     dependencies: None,
                     workspace: None,

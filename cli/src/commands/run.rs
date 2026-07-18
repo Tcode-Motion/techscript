@@ -24,10 +24,16 @@ pub fn execute(
     native: bool,
     show_return: bool,
     debug: bool,
+    double_click: bool,
 ) -> ExitCode {
     let path = PathBuf::from(file_path);
     if !path.exists() {
         eprintln!("Error: Source file does not exist: {}", file_path);
+        if double_click {
+            println!("\n[Process completed. Press Enter to exit...]");
+            let mut buffer = String::new();
+            let _ = std::io::stdin().read_line(&mut buffer);
+        }
         return ExitCode::IoError;
     }
 
@@ -66,7 +72,13 @@ pub fn execute(
         });
         ExitCode::Success
     } else {
-        match run_once(&path, &current_dir, profile, backend, time, verbose, show_return, debug) {
+        let res = run_once(&path, &current_dir, profile, backend, time, verbose, show_return, debug);
+        if double_click {
+            println!("\n[Process completed. Press Enter to exit...]");
+            let mut buffer = String::new();
+            let _ = std::io::stdin().read_line(&mut buffer);
+        }
+        match res {
             Ok(_) => ExitCode::Success,
             Err(e) => {
                 eprintln!("Run failed: {}", e);

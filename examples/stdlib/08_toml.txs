@@ -1,0 +1,7 @@
+# 08_toml.txs
+# TOML parsing example.
+# Demonstrates parsing TOML data.
+
+make toml = "host = \"localhost\"";
+make data = std.toml.parse(toml);
+std.io.println(data.host);

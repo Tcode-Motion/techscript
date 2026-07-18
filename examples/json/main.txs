@@ -1,4 +1,0 @@
-build main() {
-    make data = std.json.parse("[1, 2]")
-    say data
-}

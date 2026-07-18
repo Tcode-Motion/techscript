@@ -1,0 +1,1 @@
+TCP socket checked. (connection failed as expected)

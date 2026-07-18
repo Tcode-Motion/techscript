@@ -1,0 +1,13 @@
+# 07_structs.txs
+# Structs example.
+# Demonstrates defining and instantiating a struct.
+
+struct Point {
+    x: Int
+    y: Int
+}
+
+make p = new Point();
+p.x = 10;
+p.y = 20;
+std.io.println("Point coordinates set.");

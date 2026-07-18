@@ -1,0 +1,5 @@
+# 01_hello.txs
+# Hello World example.
+# Demonstrates printing a message to the console.
+
+std.io.println("Hello, World!");

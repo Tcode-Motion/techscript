@@ -1,0 +1,8 @@
+# 01_file.txs
+# Filesystem example.
+# Demonstrates safe chrooted file operations.
+
+make filename = "data.txt";
+std.fs.write_file(filename, "TechScript 2.0");
+make content = std.fs.read_file(filename);
+std.io.println(content);

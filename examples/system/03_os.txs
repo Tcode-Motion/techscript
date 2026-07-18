@@ -1,0 +1,5 @@
+# 03_os.txs
+# Environment variables example.
+
+std.env.set("TS_OS_TEST", "verified");
+std.io.println(std.env.get("TS_OS_TEST"));

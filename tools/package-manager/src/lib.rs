@@ -111,6 +111,7 @@ pub struct PackageConfig {
     pub requires_compiler: Option<String>,
     pub capabilities: Option<Vec<String>>,
     pub allow_capability_elevation: Option<Vec<String>>,
+    pub network_allow: Option<Vec<String>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -175,6 +176,44 @@ impl Registry {
 
     pub fn register(&mut self, ver: RegistryPackageVersion) {
         self.packages.entry(ver.name.clone()).or_default().push(ver);
+    }
+
+    pub fn fetch_package_index(&mut self, url: &str) -> Result<()> {
+        let response = ureq::get(url).call().map_err(|e| anyhow!("Failed to download registry index: {}", e))?;
+        let json_str = response.into_string().map_err(|e| anyhow!("Failed to read registry index: {}", e))?;
+        
+        #[derive(Deserialize)]
+        struct RegistryIndexEntry {
+            name: String,
+            version: String,
+            dependencies: HashMap<String, String>,
+            required_capabilities: Vec<String>,
+            checksum: String,
+            signature: String,
+        }
+        
+        let entries: Vec<RegistryIndexEntry> = serde_json::from_str(&json_str)
+            .map_err(|e| anyhow!("Failed to parse registry index JSON: {}", e))?;
+            
+        for entry in entries {
+            let mut resolved_deps = HashMap::new();
+            for (dep_name, dep_constraint) in entry.dependencies {
+                if let Ok(c) = VersionConstraint::parse(&dep_constraint) {
+                    resolved_deps.insert(dep_name, c);
+                }
+            }
+            if let Ok(ver) = Version::parse(&entry.version) {
+                self.register(RegistryPackageVersion {
+                    name: entry.name,
+                    version: ver,
+                    dependencies: resolved_deps,
+                    required_capabilities: entry.required_capabilities,
+                    checksum: entry.checksum,
+                    signature: entry.signature,
+                });
+            }
+        }
+        Ok(())
     }
 }
 
@@ -303,6 +342,25 @@ impl CapabilityValidator {
                     "Security validation failed: Dependency '{}' requests capability '{}' which is not granted to the parent package.",
                     dep_name,
                     cap
+                ));
+            }
+        }
+        Ok(())
+    }
+
+    pub fn validate_network_whitelist(
+        root_hosts: &[String],
+        dependency_hosts: &[String],
+        dep_name: &str,
+    ) -> Result<()> {
+        let root_set: HashSet<&String> = root_hosts.iter().collect();
+        let allows_all = root_set.contains(&&"*".to_string());
+        for host in dependency_hosts {
+            if !allows_all && !root_set.contains(host) {
+                return Err(anyhow!(
+                    "Security validation failed: Dependency '{}' requests network domain permission for '{}' which is not whitelisted by the parent package.",
+                    dep_name,
+                    host
                 ));
             }
         }

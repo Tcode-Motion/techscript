@@ -1,0 +1,7 @@
+# 04_system_info.txs
+# System details diagnostic checker.
+
+make count = std.system.cpucount();
+if count > 0 {
+    std.io.println("System OK");
+}

@@ -136,6 +136,57 @@ pub fn execute(fix: bool) -> ExitCode {
         println!("     Note: TECHSCRIPT_HOME or .techscript binary directories not explicitly defined in PATH.");
     }
 
+    // 9. Windows-specific user-level file associations check
+    #[cfg(windows)]
+    {
+        let mut association_ok = true;
+        let extensions = [".txs", ".tsx", ".tech", ".tspkg"];
+        for ext in &extensions {
+            let output = std::process::Command::new("powershell")
+                .args([
+                    "-Command",
+                    &format!(
+                        "Get-ItemProperty -Path 'HKCU:\\Software\\Classes\\{}' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty '(default)' -ErrorAction SilentlyContinue",
+                        ext
+                    )
+                ])
+                .output();
+
+            let current_val = output
+                .ok()
+                .map(|o| String::from_utf8_lossy(&o.stdout).trim().to_string())
+                .unwrap_or_default();
+
+            if current_val != "TechScript.File" {
+                association_ok = false;
+                break;
+            }
+        }
+
+        if association_ok {
+            print_status("User file associations", "OK", "green");
+        } else {
+            print_status("User file associations", "WARN", "yellow");
+            warnings += 1;
+            println!("     Note: User file associations (.txs, .tsx) are missing or misconfigured.");
+            if fix {
+                println!("     Repairing user file associations...");
+                for ext in &extensions {
+                    let _ = std::process::Command::new("powershell")
+                        .args([
+                            "-Command",
+                            &format!(
+                                "New-Item -Path 'HKCU:\\Software\\Classes\\{}' -Force -ErrorAction SilentlyContinue; Set-Item -Path 'HKCU:\\Software\\Classes\\{}' -Value 'TechScript.File'",
+                                ext, ext
+                            )
+                        ])
+                        .output();
+                }
+                println!("     ✓ Associations updated to TechScript.File.");
+            }
+        }
+    }
+
     println!("------------------------------------------------------------");
     
     if fix && !overall_success {

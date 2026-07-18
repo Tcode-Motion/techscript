@@ -1,8 +1,0 @@
-build run_async() {
-    return "async done"
-}
-build main() {
-    make fut = spawn_async(run_async)
-    make val = await fut
-    say val
-}

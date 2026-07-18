@@ -151,6 +151,10 @@
           ".tech",
           ".tspkg"
         ],
+        "icon": {
+          "dark": "./icon.png",
+          "light": "./icon.png"
+        },
         "id": "techscript"
       }
     ],

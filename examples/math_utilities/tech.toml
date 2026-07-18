@@ -1,4 +1,0 @@
-[package]
-name = "math_utilities"
-version = "0.1.0"
-entry = "main.txs"

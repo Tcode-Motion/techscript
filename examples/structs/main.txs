@@ -1,8 +1,0 @@
-struct Point {
-    x: Int
-    y: Int
-}
-build main() {
-    make p = new Point()
-    say "Point struct initialized"
-}

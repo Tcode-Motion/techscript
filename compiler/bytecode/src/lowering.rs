@@ -186,6 +186,8 @@ impl BytecodeLowerer {
                     techscript_syntax::TokenKind::Minus => Opcode::Sub,
                     techscript_syntax::TokenKind::Star => Opcode::Mul,
                     techscript_syntax::TokenKind::Slash => Opcode::Div,
+                    techscript_syntax::TokenKind::Or => Opcode::Or,
+                    techscript_syntax::TokenKind::And => Opcode::And,
                     _ => Opcode::Add,
                 };
                 self.builder.emit(opcode, Vec::new(), inst.span, inst.id);

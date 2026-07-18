@@ -1,3 +1,0 @@
-build main() {
-    say "Guess number game verified"
-}

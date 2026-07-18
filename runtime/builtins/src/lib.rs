@@ -66,7 +66,12 @@ impl BuiltinRegistry {
             }
             Ok(Value::Str(res))
         });
-        self.register("ask", |_args| {
+        self.register("ask", |args| {
+            use std::io::{self, Write};
+            if let Some(prompt) = args.first() {
+                print!("{}", prompt);
+                let _ = io::stdout().flush();
+            }
             let mut input = String::new();
             if std::io::stdin().read_line(&mut input).is_ok() {
                 Ok(Value::Str(input.trim_end().to_string()))

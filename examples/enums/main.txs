@@ -1,8 +1,0 @@
-enum Color {
-    Red
-    Green
-    Blue
-}
-build main() {
-    say "Color enum initialized"
-}

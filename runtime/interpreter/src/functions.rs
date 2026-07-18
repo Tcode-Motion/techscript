@@ -35,6 +35,7 @@ impl Callable for BridgedFunction {
                 config: ctx.config.clone(),
                 global_env: Rc::clone(&ctx.global_env),
                 registry: techscript_runtime::NativeRegistry::new(),
+                resources: Rc::clone(&ctx.resources),
             },
             env: Rc::clone(&self.user_func.closure),
             call_stack: Vec::new(),

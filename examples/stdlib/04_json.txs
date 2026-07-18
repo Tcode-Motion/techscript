@@ -1,0 +1,6 @@
+# 04_json.txs
+# JSON parsing example.
+# Demonstrates parsing a JSON string to retrieve its properties.
+
+make data = std.json.parse("{\"success\": true}");
+std.io.println(std.strings.from_bool(data.success));

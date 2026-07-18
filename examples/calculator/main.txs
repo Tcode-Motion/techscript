@@ -1,6 +1,0 @@
-build eval(op, a, b) {
-    return a + b
-}
-build main() {
-    say eval("+", 5, 10)
-}

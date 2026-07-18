@@ -1,8 +1,0 @@
-model User {
-    make id = 1
-    make name = "Bob"
-}
-build main() {
-    make u = new User()
-    say u.name
-}

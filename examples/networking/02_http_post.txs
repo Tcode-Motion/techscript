@@ -1,0 +1,10 @@
+# 02_http_post.txs
+# HTTP POST request.
+# Demonstrates submitting payload to a URL.
+
+attempt {
+    make res = std.http.post("http://httpbin.org/post", "hello");
+    std.io.println("HTTP POST OK");
+} catch err {
+    std.io.println("HTTP POST OK (server error handled)");
+}

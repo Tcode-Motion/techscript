@@ -9,3 +9,4 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 toml = "0.8"
 anyhow = { workspace = true }
+ureq = { version = "2.9" }

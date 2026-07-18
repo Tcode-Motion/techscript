@@ -1,0 +1,9 @@
+# 01_async.txs
+# Async task spawning.
+
+build background() {
+    return "done";
+}
+
+make fut = spawn_async(background);
+std.io.println("Async Task Spawned");

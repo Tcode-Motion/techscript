@@ -1,20 +1,27 @@
 # TechScript 2.0 VS Code Extension
 
-Official extension providing syntax highlighting and Language Server integration for the TechScript 2.0 language ecosystem.
+Official extension providing syntax highlighting, autocomplete, real-time diagnostics, and Language Server (LSP) integration for the TechScript 2.0 language ecosystem.
 
 ## Features
 
-- **Syntax Highlighting**: Full token colorizer for keywords, literals, and comments.
-- **IntelliSense & Autocomplete**: Scoped lookup of primitives, variables, and models.
-- **Diagnostics**: Real-time error feedback in the editor.
-- **Formatting**: Integrated document formatting powered by `tsc fmt`.
+- ✨ **Syntax Highlighting**: Comprehensive token colorizer for keywords, classes, functions, variables, and control flow.
+- 🔍 **IntelliSense & Autocomplete**: Context-aware suggestions for standard library builtins and user variables.
+- ⚙️ **Diagnostics & Lints**: Live compiler error diagnostics with inline error notes and suggestions.
+- 🗃️ **File Icon Theme**: Sleek custom TechScript logos for `.txs` and `.tsx` files inside the Explorer tree.
+
+## Enabling Custom File Icons
+
+To display the custom TechScript file icons in the VS Code sidebar:
+1. Open the VS Code Command Palette (`Ctrl + Shift + P` or `Cmd + Shift + P` on macOS).
+2. Type and select: **Preferences: File Icon Theme**.
+3. Choose **TechScript Icon Theme** from the dropdown list.
 
 ## Requirements
 
-Ensure that `tsc` and `techscript-lsp` are installed on your system. By default, the extension resolves `techscript-lsp` from your system PATH.
+Ensure that the TechScript toolchain compiler driver (`tsc`) and language server (`techscript-lsp`) are installed and registered in your system PATH.
 
-## Extension Settings
+## Settings
 
 This extension contributes the following settings:
 
-* `techscript.lsp.path`: Absolute path to the `techscript-lsp` executable (if not in PATH).
+* `techscript.lsp.path`: Absolute file path to the `techscript-lsp` executable if not available in your system PATH.

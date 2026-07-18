@@ -93,6 +93,10 @@ pub enum Commands {
         /// Show debug execution steps
         #[arg(long)]
         debug: bool,
+
+        /// Flag to indicate double-click execution from file manager
+        #[arg(long = "double-click")]
+        double_click: bool,
     },
 
     /// Compiles project sources to a bytecode bundle

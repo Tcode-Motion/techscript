@@ -9,7 +9,7 @@ let outputChannel;
 function activate(context) {
     outputChannel = vscode.window.createOutputChannel('TechScript');
 
-    // 1. Language Server Client Setup
+    // Language Server Client Setup
     let config = vscode.workspace.getConfiguration('techscript');
     let lspPath = config.get('lsp.path') || 'techscript-lsp';
 

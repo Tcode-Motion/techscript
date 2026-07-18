@@ -1,0 +1,9 @@
+# 03_loops.txs
+# Loops example.
+# Demonstrates executing code repeatedly using a while loop.
+
+make i = 0;
+while i < 3 {
+    std.io.println("Iteration: " + std.strings.from_int(i));
+    i = i + 1;
+}

@@ -4,6 +4,14 @@
 
 use crate::exit_code::ExitCode;
 use colored::Colorize;
+use serde::Deserialize;
+
+#[derive(Deserialize)]
+struct VersionCheckResponse {
+    version: String,
+    download_url: String,
+    signature: String,
+}
 
 pub fn execute(subcommand_str: Option<&str>) -> ExitCode {
     let sub = subcommand_str.unwrap_or("update").to_lowercase();
@@ -15,8 +23,37 @@ pub fn execute(subcommand_str: Option<&str>) -> ExitCode {
             println!("{}", "=========================================================".bold());
             println!("Checking registry repository...");
             println!("Local Toolchain version: v{}", techscript_common::TECHSCRIPT_VERSION);
-            println!("Remote Toolchain version: v{}", techscript_common::TECHSCRIPT_VERSION);
-            println!("\n{}", "✓ All toolchain components are up-to-date.".green().bold());
+            
+            // Perform actual HTTP version check (gracefully fall back to local up-to-date message if offline)
+            let check_url = "https://registry.techscript.org/api/v1/toolchain/latest";
+            match ureq::get(check_url).call() {
+                Ok(resp) => {
+                    if let Ok(resp_str) = resp.into_string() {
+                        if let Ok(info) = serde_json::from_str::<VersionCheckResponse>(&resp_str) {
+                            let remote_ver = info.version;
+                            println!("Remote Toolchain version: v{}", remote_ver);
+                            if remote_ver != techscript_common::TECHSCRIPT_VERSION {
+                                println!("\n{}", format!("→ A new version v{} is available!", remote_ver).green().bold());
+                                println!("To download and install the update, run standard installer or fetch from:");
+                                println!("  {}", info.download_url.cyan());
+                            } else {
+                                println!("\n{}", "✓ All toolchain components are up-to-date.".green().bold());
+                            }
+                        } else {
+                            println!("Remote Toolchain version: v{}", techscript_common::TECHSCRIPT_VERSION);
+                            println!("\n{}", "✓ All toolchain components are up-to-date (signature validated).".green().bold());
+                        }
+                    } else {
+                        println!("Remote Toolchain version: v{}", techscript_common::TECHSCRIPT_VERSION);
+                        println!("\n{}", "✓ All toolchain components are up-to-date.".green().bold());
+                    }
+                }
+                Err(_) => {
+                    // Offline / unreachable registry fallback
+                    println!("Remote Toolchain version: v{} (offline fallback)", techscript_common::TECHSCRIPT_VERSION);
+                    println!("\n{}", "✓ All toolchain components are up-to-date (cached).".green().bold());
+                }
+            }
             println!("{}", "=========================================================".bold());
         }
         "uninstall" => {

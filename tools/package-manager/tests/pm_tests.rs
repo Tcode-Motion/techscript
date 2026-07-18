@@ -200,3 +200,84 @@ make y = 42;
         "This is a test function.\nIt performs a math operation."
     );
 }
+
+#[test]
+fn test_network_whitelist_validation() {
+    let root_hosts = vec!["api.example.com".to_string(), "localhost".to_string()];
+    let dep_hosts = vec!["api.example.com".to_string(), "malicious.com".to_string()];
+
+    // 1. Should fail because malicious.com is not whitelisted by the parent
+    let res = CapabilityValidator::validate_network_whitelist(
+        &root_hosts,
+        &dep_hosts,
+        "malicious_dep",
+    );
+    assert!(res.is_err());
+    assert!(res
+        .unwrap_err()
+        .to_string()
+        .contains("requests network domain permission for 'malicious.com'"));
+
+    // 2. Should pass if root_hosts matches all dependencies
+    let safe_hosts = vec!["api.example.com".to_string()];
+    let safe_res = CapabilityValidator::validate_network_whitelist(
+        &root_hosts,
+        &safe_hosts,
+        "safe_dep",
+    );
+    assert!(safe_res.is_ok());
+
+    // 3. Should pass if root allows wildcard *
+    let wildcard_hosts = vec!["*".to_string()];
+    let wildcard_res = CapabilityValidator::validate_network_whitelist(
+        &wildcard_hosts,
+        &dep_hosts,
+        "malicious_dep",
+    );
+    assert!(wildcard_res.is_ok());
+}
+
+#[test]
+fn test_fetch_package_index() {
+    use std::io::{Read, Write};
+    use std::net::TcpListener;
+    use std::thread;
+
+    // Start a local mock HTTP server that returns a JSON list of packages
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let port = listener.local_addr().unwrap().port();
+
+    thread::spawn(move || {
+        if let Ok((mut stream, _)) = listener.accept() {
+            let mut buf = [0; 1024];
+            let _ = stream.read(&mut buf);
+            let json_response = r#"[
+                {
+                    "name": "log",
+                    "version": "1.0.0",
+                    "dependencies": {},
+                    "required_capabilities": ["FileSystem"],
+                    "checksum": "sha_log_100",
+                    "signature": "log:sha_log_100:pubkey"
+                }
+            ]"#;
+            let response = format!(
+                "HTTP/1.1 200 OK\r\nContent-Length: {}\r\nContent-Type: application/json\r\n\r\n{}",
+                json_response.len(),
+                json_response
+            );
+            stream.write_all(response.as_bytes()).ok();
+        }
+    });
+
+    let mut registry = Registry::new();
+    let res = registry.fetch_package_index(&format!("http://127.0.0.1:{}", port));
+    assert!(res.is_ok(), "Expected Ok, got error: {:?}", res.err());
+
+    let log_pkg = registry.packages.get("log").unwrap();
+    assert_eq!(log_pkg.len(), 1);
+    assert_eq!(log_pkg[0].version.to_string(), "1.0.0");
+    assert_eq!(log_pkg[0].checksum, "sha_log_100");
+}
+
+

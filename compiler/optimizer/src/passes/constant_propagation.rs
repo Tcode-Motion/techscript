@@ -22,9 +22,8 @@ impl OptimizationPass for ConstantPropagation {
         let mut changed = false;
 
         for func in &mut module.functions {
-            let mut local_constants: HashMap<LocalId, LiteralVal> = HashMap::new();
-
             for block in &mut func.blocks {
+                let mut local_constants: HashMap<LocalId, LiteralVal> = HashMap::new();
                 for inst in &mut block.instructions {
                     // Update loaded variables if they are known constants
                     if let Op::Load(Value::Local(local_id)) = &inst.op {

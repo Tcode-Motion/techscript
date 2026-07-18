@@ -40,6 +40,25 @@ fn main() {
         std::process::exit(0);
     }
 
+    // Intercept raw file path executions (e.g. tsc file.txs -> tsc run file.txs)
+    if parsed_args.len() >= 2 {
+        let first_arg = &parsed_args[1];
+        let subcommands = [
+            "run", "build", "check", "fmt", "lint", "clean", "init", "new",
+            "doc", "test", "repl", "publish", "install", "uninstall", "update", "doctor",
+            "dump-ast", "dump-ir", "dump-bytecode", "emit-ir", "emit-llvm", "emit-asm", "emit-obj",
+            "benchmark", "completion", "examples", "docs", "config", "self", "help"
+        ];
+        if !subcommands.contains(&first_arg.as_str()) && !first_arg.starts_with('-') {
+            let path = std::path::Path::new(first_arg);
+            let ext = path.extension().and_then(|e| e.to_str()).unwrap_or("");
+            let is_script_ext = ext == "txs" || ext == "tsx" || ext == "tech" || ext == "tspkg";
+            if is_script_ext || path.exists() {
+                parsed_args.insert(1, "run".to_string());
+            }
+        }
+    }
+
     // 2. Parse arguments with try_parse to support custom help, interactive welcomes, and fuzzy matching
     let cli = match Cli::try_parse_from(&parsed_args) {
         Ok(parsed) => parsed,
@@ -82,6 +101,7 @@ fn main() {
             native,
             show_return,
             debug,
+            double_click,
         } => crate::commands::run::execute(
             file,
             profile.as_deref(),
@@ -92,6 +112,7 @@ fn main() {
             *native,
             *show_return,
             *debug,
+            *double_click,
         ),
         Commands::Build {
             file,

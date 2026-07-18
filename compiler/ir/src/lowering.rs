@@ -96,15 +96,37 @@ impl LoweringContext {
             }
         }
 
+        // If there is an AST main function (explicit or synthetic), append its body to this main function
+        if let Some(main_decl) = program.statements.iter().find_map(|s| {
+            if let Statement::FuncDecl(decl) = s {
+                if decl.name.name == "main" {
+                    return Some(decl);
+                }
+            }
+            None
+        }) {
+            for param in &main_decl.params {
+                let ty = self.map_type_spec(&param.type_ann);
+                let local_id = self
+                    .builder
+                    .add_parameter(param.name.name.clone(), ty.clone());
+                self.symbol_map
+                    .insert(param.name.name.clone(), SymbolBinding::Local(local_id, ty));
+            }
+            self.lower_block(&main_decl.body);
+        }
+
         // Emit final unreachable/return terminator if main has no terminator
         self.builder
             .emit_terminator(TerminatorKind::Return(None), program.span);
         self.builder.seal_function();
 
-        // Lower function declarations separately at the module level
+        // Lower function declarations separately at the module level (skipping main)
         for stmt in &program.statements {
             if let Statement::FuncDecl(decl) = stmt {
-                self.lower_func_decl(decl);
+                if decl.name.name != "main" {
+                    self.lower_func_decl(decl);
+                }
             }
         }
 
@@ -695,11 +717,15 @@ impl LoweringContext {
                 for arg in &new_expr.args {
                     args.push(self.lower_expression(arg));
                 }
+                let callee = if let Some(SymbolBinding::Global(global_id, _)) =
+                    self.symbol_map.get(&new_expr.class_name.name)
+                {
+                    Value::Global(*global_id)
+                } else {
+                    Value::Global(crate::types::GlobalId(1))
+                };
                 let temp = self.builder.emit_instruction(
-                    Op::Call {
-                        callee: Value::Global(crate::types::GlobalId(1)), // Simplified constructor binding ID
-                        args,
-                    },
+                    Op::Call { callee, args },
                     IRType::Model(new_expr.class_name.name.clone()),
                     new_expr.span,
                 );
@@ -998,7 +1024,9 @@ fn lookup_operator(op: &str) -> techscript_syntax::TokenKind {
         "==" => techscript_syntax::TokenKind::EqualEqual,
         "!=" => techscript_syntax::TokenKind::BangEqual,
         "===" => techscript_syntax::TokenKind::TripleEqual,
-        "!" => techscript_syntax::TokenKind::Not,
+        "&&" | "and" => techscript_syntax::TokenKind::And,
+        "||" | "or" => techscript_syntax::TokenKind::Or,
+        "!" | "not" => techscript_syntax::TokenKind::Not,
         _ => techscript_syntax::lookup_keyword(op).unwrap_or(techscript_syntax::TokenKind::Plus),
     }
 }

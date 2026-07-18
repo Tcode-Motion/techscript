@@ -1,0 +1,7 @@
+# 03_channels.txs
+# Channels sync communication.
+
+make chan = std.channel.make_channel();
+std.channel.send_channel(chan, "ping");
+make msg = std.channel.recv_channel(chan);
+std.io.println(msg);

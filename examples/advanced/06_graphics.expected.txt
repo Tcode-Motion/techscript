@@ -1,0 +1,1 @@
+Graphics render OK

@@ -1,0 +1,12 @@
+# 06_enums.txs
+# Enums example.
+# Demonstrates declaring enums.
+
+enum Color {
+    Red
+    Green
+    Blue
+}
+
+make c = Color.Green;
+std.io.println("Enum initialized successfully.");

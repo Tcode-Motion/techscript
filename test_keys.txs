@@ -1,0 +1,11 @@
+model User {
+    make id = 1;
+    make name = "Alice";
+    
+    build greet() {
+        return "Hello from " + self.name;
+    }
+}
+
+make u = new User(1, "Alice");
+say u.greet();

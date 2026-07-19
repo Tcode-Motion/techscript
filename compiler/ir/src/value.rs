@@ -13,6 +13,8 @@ pub enum Value {
     Local(LocalId),
     /// Global symbol reference ID.
     Global(GlobalId),
+    /// DSL block reference ID.
+    DslBlock { kind: String, block_id: u32 },
     /// Null/None representation.
     Null,
 }

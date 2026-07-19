@@ -111,3 +111,62 @@ make y = x ?? 100
     assert!(block_labels.contains(&"coal_not_null".to_string()));
     assert!(block_labels.contains(&"coal_merge".to_string()));
 }
+
+#[test]
+fn test_ir_dsl_block_empty() {
+    let source = r#"
+use web
+hero
+  title "Empty"
+end
+"#;
+    let module = lower_source(source);
+    // Should have a DslBlockIR entry
+    assert_eq!(module.dsl_blocks.len(), 1);
+    assert_eq!(module.dsl_blocks[0].kind, "hero");
+    assert!(module.dsl_blocks[0].args.is_empty());
+    assert_eq!(module.dsl_blocks[0].properties.len(), 1);
+    assert!(module.dsl_blocks[0].children.is_empty());
+}
+
+#[test]
+fn test_ir_dsl_block_with_properties() {
+    let source = r#"
+use canvas
+logo "TS"
+  text "My Logo"
+  color "hash333"
+end
+"#;
+    let module = lower_source(source);
+    assert_eq!(module.dsl_blocks.len(), 1);
+    let block = &module.dsl_blocks[0];
+    assert_eq!(block.kind, "logo");
+    assert_eq!(block.args.len(), 1);
+    assert_eq!(block.properties.len(), 2);
+}
+
+#[test]
+fn test_ir_dsl_block_nested() {
+    let source = r#"
+use web
+website
+  title "My Site"
+  page "/"
+    title "Home"
+    hero
+      title "Welcome"
+    end
+  end
+end
+"#;
+    let module = lower_source(source);
+    assert!(module.dsl_blocks.len() >= 3);
+    let dsl_blocks = &module.dsl_blocks;
+    // Children are traversed first, so the first block registered is "hero" (innermost)
+    assert_eq!(dsl_blocks[0].kind, "hero");
+    assert_eq!(dsl_blocks[1].kind, "page");
+    assert_eq!(dsl_blocks[2].kind, "website");
+    assert_eq!(dsl_blocks[2].children.len(), 1);
+    assert_eq!(dsl_blocks[2].children[0].1, "page");
+}

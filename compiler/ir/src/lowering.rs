@@ -1,12 +1,12 @@
 use crate::builder::IRBuilder;
 use crate::instruction::{Op, TerminatorKind};
-use crate::module::Module;
-use crate::types::{BlockId, IRType, LocalId};
+use crate::module::{DslBlockIR, Module};
+use crate::types::{BlockId, DslBlockId, IRType, LocalId};
 use crate::value::Value;
 use std::collections::HashMap;
 use techscript_ast::{
-    AssignmentExpr, BinaryExpr, Block, Expression, FuncDecl, LiteralVal, ModelDecl, Pattern,
-    Program, Statement, StructDecl, UnaryExpr, VarDecl,
+    AssignmentExpr, BinaryExpr, Block, DSLBlock, DSLChild, DSLProperty, Expression, FuncDecl,
+    LiteralVal, ModelDecl, Pattern, Program, Statement, StructDecl, UnaryExpr, VarDecl,
 };
 use techscript_common::Span;
 use techscript_errors::Diagnostic;
@@ -592,16 +592,12 @@ impl LoweringContext {
                     .declare_global(decl.name.name.clone(), IRType::Enum(decl.name.name.clone()));
             }
             Statement::DSL(block) => {
-                // DSL blocks are declarative scene/world definitions.
-                // At the IR level, lower them as opaque globals to preserve the
-                // structure for the framework runtime.
-                let global_id = self
+                // Lower DSL blocks to structured IR with properties, children, and args.
+                // Emit a MakeDslBlock instruction and store the DSL block in the module.
+                let dsl_id = self.lower_dsl_block(block);
+                let _ = self
                     .builder
-                    .declare_global(block.kind.clone(), IRType::Any);
-                self.symbol_map.insert(
-                    block.kind.clone(),
-                    SymbolBinding::Global(global_id, IRType::Any),
-                );
+                    .declare_global(block.kind.clone(), IRType::DslBlock(block.kind.clone()));
             }
         }
     }
@@ -730,6 +726,86 @@ impl LoweringContext {
             decl.name.name.clone(),
             IRType::Model(decl.name.name.clone()),
         );
+    }
+
+    /// Lower a DSL block recursively, returning its DSL block ID.
+    fn lower_dsl_block(&mut self, block: &DSLBlock) -> DslBlockId {
+        let id = self.builder.next_dsl_block_id();
+
+        // Lower args: try to extract as LiteralVal constants
+        let mut lowered_args: Vec<LiteralVal> = Vec::new();
+        for expr in &block.args {
+            if let Expression::Literal(lit) = expr {
+                lowered_args.push(lit.value.clone());
+            } else {
+                lowered_args.push(LiteralVal::Str(self.expr_to_debug_string(expr)));
+            }
+        }
+
+        // Lower properties: name -> (name, optional literal value)
+        let mut lowered_props: Vec<(String, Option<LiteralVal>)> = Vec::new();
+        for prop in &block.properties {
+            let val = prop.value.as_ref().and_then(|expr| {
+                if let Expression::Literal(lit) = expr {
+                    Some(lit.value.clone())
+                } else {
+                    Some(LiteralVal::Str(self.expr_to_debug_string(expr)))
+                }
+            });
+            lowered_props.push((prop.name.clone(), val));
+        }
+
+        // Lower children recursively, building a mapping of child_id -> child_kind
+        let mut lowered_children: Vec<(DslBlockId, String)> = Vec::new();
+        for child in &block.children {
+            match child {
+                DSLChild::Block(sub_block) => {
+                    let child_id = self.lower_dsl_block(sub_block);
+                    lowered_children.push((child_id, sub_block.kind.clone()));
+                }
+                DSLChild::Code(code_block) => {
+                    // Lower code blocks inline
+                    for stmt in &code_block.statements {
+                        self.lower_statement(stmt);
+                    }
+                }
+                DSLChild::Property(prop) => {
+                    let val = prop.value.as_ref().and_then(|expr| {
+                        if let Expression::Literal(lit) = expr {
+                            Some(lit.value.clone())
+                        } else {
+                            Some(LiteralVal::Str(self.expr_to_debug_string(expr)))
+                        }
+                    });
+                    lowered_props.push((prop.name.clone(), val));
+                }
+            }
+        }
+
+        // Emit the DSL block instruction
+        let span_start = block.span.start;
+        let span_end = block.span.end;
+
+        let dsl_ir = DslBlockIR {
+            id,
+            kind: block.kind.clone(),
+            args: lowered_args,
+            properties: lowered_props,
+            children: lowered_children,
+            span: (span_start as u32, span_end as u32),
+        };
+        self.builder.declare_dsl_block(dsl_ir);
+
+        id
+    }
+
+    /// Convert an expression to a debug string for IR fallback.
+    fn expr_to_debug_string(&self, expr: &Expression) -> String {
+        match expr {
+            Expression::Literal(lit) => literal_val_to_string(&lit.value),
+            Expression::Identifier(ident) => ident.name.clone(),
+            _ => "<expr>".to_string(),
+        }
     }
 
     fn lower_expression(&mut self, expr: &Expression) -> Value {
@@ -1151,5 +1227,15 @@ fn lookup_operator(op: &str) -> techscript_syntax::TokenKind {
         "||" | "or" => techscript_syntax::TokenKind::Or,
         "!" | "not" => techscript_syntax::TokenKind::Not,
         _ => techscript_syntax::lookup_keyword(op).unwrap_or(techscript_syntax::TokenKind::Plus),
+    }
+}
+
+fn literal_val_to_string(lv: &LiteralVal) -> String {
+    match lv {
+        LiteralVal::Str(s) => s.clone(),
+        LiteralVal::Int(i) => i.to_string(),
+        LiteralVal::Float(f) => f.to_string(),
+        LiteralVal::Bool(b) => b.to_string(),
+        LiteralVal::None => "none".to_string(),
     }
 }

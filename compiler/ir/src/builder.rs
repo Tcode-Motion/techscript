@@ -1,8 +1,8 @@
 use crate::block::BasicBlock;
 use crate::function::Function;
 use crate::instruction::{Instruction, InstructionMetadata, Op, Terminator, TerminatorKind};
-use crate::module::Module;
-use crate::types::{BlockId, FunctionId, GlobalId, IRType, InstructionId, LocalId, ValueId};
+use crate::module::{DslBlockIR, Module};
+use crate::types::{BlockId, DslBlockId, FunctionId, GlobalId, IRType, InstructionId, LocalId, ValueId};
 
 use std::collections::HashMap;
 use techscript_ast::LiteralVal;
@@ -16,9 +16,11 @@ pub struct IRBuilder {
     block_counter: u32,
     func_counter: u32,
     inst_counter: u32,
+    dsl_block_counter: u32,
 
     functions: Vec<Function>,
     globals: Vec<(GlobalId, String, IRType)>,
+    dsl_blocks: Vec<DslBlockIR>,
     constants: Vec<(ValueId, LiteralVal)>,
     imports: Vec<String>,
     exports: Vec<String>,
@@ -44,8 +46,10 @@ impl IRBuilder {
             block_counter: 0,
             func_counter: 0,
             inst_counter: 0,
+            dsl_block_counter: 0,
             functions: Vec::new(),
             globals: Vec::new(),
+            dsl_blocks: Vec::new(),
             constants: Vec::new(),
             imports: Vec::new(),
             exports: Vec::new(),
@@ -73,6 +77,20 @@ impl IRBuilder {
     pub fn next_global_id(&mut self) -> GlobalId {
         let id = GlobalId(self.global_counter);
         self.global_counter += 1;
+        id
+    }
+
+    /// Generates a new unique DSL block identifier.
+    pub fn next_dsl_block_id(&mut self) -> DslBlockId {
+        let id = DslBlockId(self.dsl_block_counter);
+        self.dsl_block_counter += 1;
+        id
+    }
+
+    /// Declares a DSL block in the module.
+    pub fn declare_dsl_block(&mut self, block: DslBlockIR) -> DslBlockId {
+        let id = block.id;
+        self.dsl_blocks.push(block);
         id
     }
 
@@ -264,6 +282,7 @@ impl IRBuilder {
         let mut module = Module::new(module_name);
         module.functions = std::mem::take(&mut self.functions);
         module.globals = std::mem::take(&mut self.globals);
+        module.dsl_blocks = std::mem::take(&mut self.dsl_blocks);
         module.constants = std::mem::take(&mut self.constants);
         module.imports = std::mem::take(&mut self.imports);
         module.exports = std::mem::take(&mut self.exports);

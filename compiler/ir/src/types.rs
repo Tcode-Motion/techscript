@@ -12,6 +12,7 @@ pub enum IRType {
     Struct(String),
     Enum(String),
     Model(String),
+    DslBlock(String),
     Pointer,
     Void,
     Any,
@@ -29,6 +30,7 @@ impl std::fmt::Display for IRType {
             IRType::Struct(name) => write!(f, "struct {}", name),
             IRType::Enum(name) => write!(f, "enum {}", name),
             IRType::Model(name) => write!(f, "model {}", name),
+            IRType::DslBlock(name) => write!(f, "dsl_block {}", name),
             IRType::Pointer => write!(f, "ptr"),
             IRType::Void => write!(f, "void"),
             IRType::Any => write!(f, "any"),
@@ -59,3 +61,7 @@ pub struct FunctionId(pub u32);
 /// Type-safe identifier for instructions.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct InstructionId(pub u32);
+
+/// Type-safe identifier for DSL blocks in the module.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
+pub struct DslBlockId(pub u32);

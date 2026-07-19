@@ -196,6 +196,42 @@ fn collect_local_decls(prog: &techscript_ast::Program) -> Vec<LocalDecl> {
     decls
 }
 
+/// DSL block keyword definitions for completions.
+fn dsl_block_completions() -> Vec<(&'static str, &'static str)> {
+    vec![
+        ("website", "DSL Block: Declares a complete website root"),
+        ("page", "DSL Block: Declares a page route"),
+        ("hero", "DSL Block: Declares a hero banner section"),
+        ("section", "DSL Block: Declares a content section"),
+        ("card", "DSL Block: Declares a card component"),
+        ("footer", "DSL Block: Declares a footer section"),
+        ("button", "DSL Block: Declares a button element"),
+        ("link", "DSL Block: Declares a hyperlink"),
+        ("input", "DSL Block: Declares an input element"),
+        ("form", "DSL Block: Declares a form container"),
+        ("nav", "DSL Block: Declares a navigation bar"),
+        ("header", "DSL Block: Declares a header region"),
+        ("main", "DSL Block: Declares the main content area"),
+        ("aside", "DSL Block: Declares a sidebar region"),
+        ("start", "DSL Block: Declares a call-to-action button"),
+        ("logo", "DSL Block: Declares a logo component"),
+        ("rings", "DSL Block: Declares ring shapes"),
+        ("emblem", "DSL Block: Declares an emblem/badge"),
+        ("core", "DSL Block: Declares a core shape"),
+        ("letter", "DSL Block: Declares a letter character"),
+        ("circuits", "DSL Block: Declares circuit board pattern"),
+        ("title", "DSL Block: Declares a title text"),
+        ("subtitle", "DSL Block: Declares a subtitle text"),
+        ("tagline", "DSL Block: Declares a tagline"),
+        ("theme", "DSL Block: Declares theme settings"),
+        ("animation", "DSL Block: Declares animation parameters"),
+        ("export", "DSL Block: Declares export configuration"),
+        ("window", "DSL Block: Declares a window frame"),
+        ("dialog", "DSL Block: Declares a dialog box"),
+        ("menu", "DSL Block: Declares a menu component"),
+    ]
+}
+
 fn collect_stmt_decls(stmt: &techscript_ast::Statement, decls: &mut Vec<LocalDecl>) {
     use techscript_ast::Statement::*;
     match stmt {
@@ -322,7 +358,7 @@ fn is_keyword_kind(kind: TokenKind) -> bool {
         TokenKind::Export | TokenKind::True | TokenKind::False | TokenKind::None |
         TokenKind::Null | TokenKind::And | TokenKind::Or | TokenKind::Not |
         TokenKind::Is | TokenKind::Let | TokenKind::Var | TokenKind::Function |
-        TokenKind::Class | TokenKind::Async | TokenKind::Await => true,
+        TokenKind::Class | TokenKind::Async | TokenKind::Await | TokenKind::Use => true,
         _ => false,
     }
 }
@@ -459,6 +495,40 @@ impl LanguageServer for Backend {
             return Ok(None);
         }
 
+        let dsl_hover = match word.as_str() {
+            "website" => Some("### DSL Block: `website`  \nRoot container for a complete website.  \n*Properties:* title, description, lang, base_url  \n*Children:* page, header, footer, nav"),
+            "page" => Some("### DSL Block: `page`  \nDefines a page route.  \n*Usage:* `page \"/path\" ... end`  \n*Properties:* title, description, icon, theme  \n*Children:* hero, section, card, nav, header, main, aside, form, start"),
+            "hero" => Some("### DSL Block: `hero`  \nHero banner section.  \n*Properties:* title, subtitle, tagline, background, color, image, align, size  \n*Children:* button, link, input"),
+            "section" => Some("### DSL Block: `section`  \nContent section.  \n*Properties:* title, subtitle, background, color, padding, width, align, divider, id  \n*Children:* card, button, link, form, hero, section"),
+            "card" => Some("### DSL Block: `card`  \nCard component.  \n*Properties:* title, subtitle, text, icon, image, color, background, width, height, shadow, rounded, border  \n*Children:* button, link, input"),
+            "footer" => Some("### DSL Block: `footer`  \nFooter section.  \n*Properties:* text, color, background, align, padding  \n*Children:* link, nav, section"),
+            "button" => Some("### DSL Block: `button`  \nButton element.  \n*Properties:* label (required), color, background, size, rounded, border, icon, width, action"),
+            "link" => Some("### DSL Block: `link`  \nHyperlink.  \n*Properties:* label (required), url, color, size, icon, target"),
+            "input" => Some("### DSL Block: `input`  \nInput element.  \n*Properties:* label, placeholder, type, value, required, name"),
+            "form" => Some("### DSL Block: `form`  \nForm container.  \n*Properties:* action, method, name  \n*Children:* input, button"),
+            "nav" => Some("### DSL Block: `nav`  \nNavigation bar.  \n*Properties:* title, align, background, color  \n*Children:* link, button"),
+            "header" => Some("### DSL Block: `header`  \nHeader region.  \n*Properties:* title, subtitle, background, color, align, size  \n*Children:* nav, button, link"),
+            "main" => Some("### DSL Block: `main`  \nMain content area.  \n*Children:* hero, section, card, aside"),
+            "aside" => Some("### DSL Block: `aside`  \nSidebar region.  \n*Properties:* title, background, color, width  \n*Children:* link, nav, card"),
+            "start" => Some("### DSL Block: `start`  \nCall-to-action button.  \n*Properties:* label (required), url, color, background, size"),
+            "logo" => Some("### DSL Block: `logo`  \nLogo component.  \n*Properties:* text (required), color, font, size, background, rounded, shadow, padding"),
+            "rings" => Some("### DSL Block: `rings`  \nDecorative ring shapes.  \n*Properties:* count, color, size, thickness, spacing, rotation"),
+            "emblem" => Some("### DSL Block: `emblem`  \nEmblem/badge shape.  \n*Properties:* icon, color, size, background, shape, border, shadow"),
+            "core" => Some("### DSL Block: `core`  \nCore shape element.  \n*Properties:* color, size, shape, glow, pulse"),
+            "letter" => Some("### DSL Block: `letter`  \nLetter character.  \n*Properties:* char (required), color, font, size, weight, style, transform"),
+            "circuits" => Some("### DSL Block: `circuits`  \nCircuit board pattern.  \n*Properties:* color, density, width, animated, complexity"),
+            "title" => Some("### DSL Block: `title`  \nTitle text.  \n*Properties:* text (required), color, font, size, align, weight"),
+            "subtitle" => Some("### DSL Block: `subtitle`  \nSubtitle text.  \n*Properties:* text, color, font, size, align"),
+            "tagline" => Some("### DSL Block: `tagline`  \nTagline text.  \n*Properties:* text, color, font, size"),
+            "theme" => Some("### DSL Block: `theme`  \nTheme color/settings.  \n*Properties:* primary, secondary, background, text, accent, font, rounded, shadow"),
+            "animation" => Some("### DSL Block: `animation`  \nAnimation parameters.  \n*Properties:* type, duration, delay, repeat, easing"),
+            "export" => Some("### DSL Block: `export`  \nExport configuration.  \n*Properties:* format (required), path, quality, width, height"),
+            "window" => Some("### DSL Block: `window`  \nWindow frame.  \n*Properties:* title (required), width, height, resizable, position"),
+            "dialog" => Some("### DSL Block: `dialog`  \nDialog box.  \n*Properties:* title (required), message (required), buttons, width, height  \n*Children:* button, input"),
+            "menu" => Some("### DSL Block: `menu`  \nDropdown menu.  \n*Properties:* title, align, background, color  \n*Children:* link, button"),
+            _ => None,
+        };
+
         let hover_text = match word.as_str() {
             "say" => "### Built-in function: `say`  \nPrints the evaluated value to standard output, followed by a newline.",
             "ask" => "### Built-in expression: `ask`  \nPrompts the user for text input via standard input.",
@@ -474,7 +544,7 @@ impl LanguageServer for Backend {
             "throw" => "### Keyword: `throw`  \nThrows a runtime exception error value.",
             "each" => "### Keyword: `each`  \nIterates over elements in a collection loop.  \n*Example:* `each item in list { ... }`",
             "repeat" => "### Keyword: `repeat`  \nRepeats a block of code a set number of times.  \n*Example:* `repeat 5 { ... }`",
-            _ => "",
+            _ => dsl_hover.unwrap_or(""),
         };
 
         if !hover_text.is_empty() {
@@ -783,7 +853,7 @@ impl LanguageServer for Backend {
         let keywords = vec![
             "make", "const", "say", "ask", "build", "return", "fun", "model", "self", "new",
             "when", "else", "each", "in", "repeat", "while", "break", "continue", "attempt",
-            "catch", "throw", "import", "from", "export", "true", "false", "none", "and", "or",
+            "catch", "throw", "import", "from", "export", "use", "true", "false", "none", "and", "or",
             "not", "is"
         ];
         for kw in keywords {
@@ -791,6 +861,18 @@ impl LanguageServer for Backend {
                 label: kw.to_string(),
                 kind: Some(CompletionItemKind::KEYWORD),
                 detail: Some("Keyword".to_string()),
+                ..Default::default()
+            });
+        }
+
+        // DSL block keywords for web and canvas
+        for (name, detail) in dsl_block_completions() {
+            items.push(CompletionItem {
+                label: name.to_string(),
+                kind: Some(CompletionItemKind::SNIPPET),
+                detail: Some(detail.to_string()),
+                insert_text: Some(format!("{} $0\n  \nend", name)),
+                insert_text_format: Some(InsertTextFormat::SNIPPET),
                 ..Default::default()
             });
         }
@@ -862,22 +944,26 @@ impl LanguageServer for Backend {
         };
 
         let mut ranges = Vec::new();
-        let mut brace_stack = Vec::new();
+        let mut brace_stack: Vec<(u32, FoldingRangeKind)> = Vec::new();
 
         for (line_idx, line) in content.lines().enumerate() {
             let line_u32 = line_idx as u32;
-            if line.contains('{') {
-                brace_stack.push(line_u32);
+            let trimmed = line.trim();
+            if trimmed.contains('{') {
+                brace_stack.push((line_u32, FoldingRangeKind::Region));
             }
-            if line.contains('}') {
-                if let Some(start) = brace_stack.pop() {
+            if trimmed.starts_with("code") {
+                brace_stack.push((line_u32, FoldingRangeKind::Region));
+            }
+            if trimmed == "}" || trimmed == "end" {
+                if let Some((start, kind)) = brace_stack.pop() {
                     if start < line_u32 {
                         ranges.push(FoldingRange {
                             start_line: start,
                             start_character: None,
                             end_line: line_u32,
                             end_character: None,
-                            kind: Some(FoldingRangeKind::Region),
+                            kind: Some(kind),
                             collapsed_text: None,
                         });
                     }

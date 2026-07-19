@@ -20,6 +20,7 @@ pub enum RuntimeType {
     Enum,
     Model,
     Function,
+    DslBlock,
     Null,
 }
 
@@ -37,10 +38,27 @@ impl fmt::Display for RuntimeType {
             Self::Enum => "enum",
             Self::Model => "model",
             Self::Function => "function",
+            Self::DslBlock => "dsl_block",
             Self::Null => "null",
         };
         write!(f, "{}", name)
     }
+}
+
+/// A named property in a DSL block.
+#[derive(Debug, Clone, PartialEq)]
+pub struct DslProperty {
+    pub name: String,
+    pub value: Option<RuntimeValue>,
+}
+
+/// A DSL block value — declarative scene/world definition.
+#[derive(Debug, Clone)]
+pub struct DslBlockValue {
+    pub kind: String,
+    pub args: Vec<RuntimeValue>,
+    pub properties: Vec<DslProperty>,
+    pub children: Vec<DslBlockValue>,
 }
 
 /// The universal runtime value representing any dynamic object in the language.
@@ -67,6 +85,7 @@ pub enum RuntimeValue {
     },
     ModelInstance(Rc<RefCell<ModelInstance>>),
     Function(Rc<dyn Callable>),
+    DslBlock(Rc<DslBlockValue>),
 }
 
 impl RuntimeValue {
@@ -94,6 +113,7 @@ impl RuntimeValue {
             Self::EnumVariant { .. } => RuntimeType::Enum,
             Self::ModelInstance(_) => RuntimeType::Model,
             Self::Function(_) => RuntimeType::Function,
+            Self::DslBlock(_) => RuntimeType::DslBlock,
         }
     }
 
@@ -239,6 +259,7 @@ impl PartialEq for RuntimeValue {
                 m1.borrow().name == m2.borrow().name && m1.borrow().fields == m2.borrow().fields
             }
             (Self::Function(f1), Self::Function(f2)) => Rc::ptr_eq(f1, f2),
+            (Self::DslBlock(d1), Self::DslBlock(d2)) => Rc::ptr_eq(d1, d2),
             _ => false,
         }
     }
@@ -275,6 +296,7 @@ impl fmt::Debug for RuntimeValue {
                 m.borrow().fields
             ),
             Self::Function(func) => write!(f, "Function({})", func.name()),
+            Self::DslBlock(dsl) => write!(f, "DslBlock({}, {} args, {} props, {} children)", dsl.kind, dsl.args.len(), dsl.properties.len(), dsl.children.len()),
         }
     }
 }
@@ -337,6 +359,7 @@ impl fmt::Display for RuntimeValue {
             }
             Self::ModelInstance(m) => write!(f, "instance of model {}", m.borrow().name),
             Self::Function(func) => write!(f, "<function {}>", func.name()),
+            Self::DslBlock(dsl) => write!(f, "<dsl_block {}>", dsl.kind),
         }
     }
 }

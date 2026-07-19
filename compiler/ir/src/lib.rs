@@ -16,8 +16,8 @@ pub use builder::IRBuilder;
 pub use function::Function;
 pub use instruction::{Instruction, Op, Terminator, TerminatorKind};
 pub use lowering::{LoweringContext, LoweringResult, SymbolBinding};
-pub use module::Module;
-pub use types::{BlockId, FunctionId, GlobalId, IRType, InstructionId, LocalId, ValueId};
+pub use module::{DslBlockIR, Module};
+pub use types::{BlockId, DslBlockId, FunctionId, GlobalId, IRType, InstructionId, LocalId, ValueId};
 pub use value::Value;
 
 /// Lower AST program into intermediate representation (IR) module.

@@ -44,6 +44,12 @@ pub enum ErrorCode {
     E0340, // Module not found
     E0350, // Non-exportable declaration
 
+    // DSL validation (E0400 - E0499)
+    E0400, // Duplicate property in DSL block
+    E0401, // Unknown property for DSL block
+    E0402, // Missing required property in DSL block
+    E0403, // Invalid nested DSL block
+
     // Runtime (E1000 - E1999)
     E1010, // Div by zero
     E1011, // Type mismatch

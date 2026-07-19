@@ -95,3 +95,90 @@ fn test_semantic_self_outside_model() {
     assert!(res.is_err());
     assert_eq!(diags[0].code, ErrorCode::E0320); // Self outside model context
 }
+
+// ── DSL semantic validation tests ─────────────────────────────────────
+
+#[test]
+fn test_dsl_semantic_valid_block() {
+    let (res, diags) = check_source("logo \"MyApp\"\n  text \"TS\"\n  color \"#333\"\nend");
+    assert!(res.is_ok(), "DSL block should pass semantic: {:?}", diags);
+    let dsl_errors: Vec<_> = diags.iter().filter(|d| matches!(d.code, ErrorCode::E0400 | ErrorCode::E0401 | ErrorCode::E0402 | ErrorCode::E0403)).collect();
+    assert!(dsl_errors.is_empty(), "No DSL validation errors: {:?}", dsl_errors);
+}
+
+#[test]
+fn test_dsl_semantic_unknown_property_warning() {
+    let (res, diags) = check_source("logo \"MyApp\"\n  text \"TS\"\n  unknown_prop \"value\"\nend");
+    assert!(res.is_ok(), "Unknown property should be warning only: {:?}", diags);
+    let warnings: Vec<_> = diags.iter().filter(|d| d.code == ErrorCode::E0401).collect();
+    assert_eq!(warnings.len(), 1);
+    assert_eq!(warnings[0].level, DiagnosticLevel::Warning);
+    assert!(warnings[0].message.contains("unknown_prop"));
+}
+
+#[test]
+fn test_dsl_semantic_duplicate_property_error() {
+    let (res, diags) = check_source("button \"Click\"\n  label \"OK\"\n  label \"Cancel\"\nend");
+    assert!(res.is_err(), "Duplicate property should be error");
+    let errors: Vec<_> = diags.iter().filter(|d| d.code == ErrorCode::E0400).collect();
+    assert_eq!(errors.len(), 1);
+    assert!(errors[0].message.contains("Duplicate property 'label'"));
+}
+
+#[test]
+fn test_dsl_semantic_missing_required_property() {
+    let (res, diags) = check_source("button \"Click\"\n  color \"red\"\nend");
+    assert!(res.is_err(), "Missing required property should be error");
+    let errors: Vec<_> = diags.iter().filter(|d| d.code == ErrorCode::E0402).collect();
+    assert_eq!(errors.len(), 1);
+    assert!(errors[0].message.contains("missing required property 'label'") ||
+            errors[0].message.contains("Missing required property 'label'"));
+}
+
+#[test]
+fn test_dsl_semantic_invalid_nested_block_warning() {
+    // `page` is a valid sub-block within a `page` parent (nested pages allowed by schema),
+    // but `page` is NOT listed in `card`'s `allowed_children`.
+    let (res, diags) = check_source("card\n  title \"Test\"\n  page \"/nested\"\n    title \"Nested\"\n  end\nend");
+    assert!(res.is_ok(), "Invalid nest should be warning only: {:?}", diags);
+    let warnings: Vec<_> = diags.iter().filter(|d| d.code == ErrorCode::E0403).collect();
+    assert_eq!(warnings.len(), 1);
+    assert!(warnings[0].message.contains("page"));
+    assert!(warnings[0].message.contains("not allowed inside 'card'"));
+}
+
+#[test]
+fn test_dsl_semantic_nested_valid_block() {
+    let (res, diags) = check_source("website \"Portal\"\n  title \"Portal\"\n  page \"/\"\n    title \"Home\"\n  end\nend");
+    assert!(res.is_ok(), "Valid nested DSL should pass: {:?}", diags);
+    let dsl_errors: Vec<_> = diags.iter().filter(|d| matches!(d.code, ErrorCode::E0400 | ErrorCode::E0401 | ErrorCode::E0402 | ErrorCode::E0403)).collect();
+    assert!(dsl_errors.is_empty(), "No DSL validation errors: {:?}", dsl_errors);
+}
+
+#[test]
+fn test_dsl_semantic_full_web_page() {
+    let source = r#"
+use web
+website "My Site"
+  title "My Site"
+  page "/"
+    title "Home"
+    hero
+      title "Welcome"
+      subtitle "Hello World"
+    end
+    section
+      title "Features"
+      card
+        title "Fast"
+        text "Lightning"
+      end
+    end
+  end
+end
+"#;
+    let (res, diags) = check_source(source);
+    assert!(res.is_ok(), "Full web DSL should pass: {:?}", diags);
+    let dsl_errors: Vec<_> = diags.iter().filter(|d| matches!(d.code, ErrorCode::E0400 | ErrorCode::E0401 | ErrorCode::E0402 | ErrorCode::E0403)).collect();
+    assert!(dsl_errors.is_empty(), "No DSL validation errors: {:?}", dsl_errors);
+}

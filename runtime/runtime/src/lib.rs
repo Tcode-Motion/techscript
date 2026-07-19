@@ -19,4 +19,4 @@ pub use error::{RuntimeError, RuntimeErrorKind};
 pub use function::{Callable, FunctionBody, UserFunction};
 pub use native_function::NativeRegistry;
 pub use object::{ModelInstance, ObjectId, StructInstance};
-pub use value::{RuntimeType, RuntimeValue};
+pub use value::{DslBlockValue, DslProperty, RuntimeType, RuntimeValue};

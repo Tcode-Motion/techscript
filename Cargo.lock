@@ -2749,6 +2749,9 @@ version = "2.0.0"
 dependencies = [
  "techscript_ast",
  "techscript_common",
+ "techscript_errors",
+ "techscript_lexer",
+ "techscript_parser",
  "techscript_syntax",
 ]
 

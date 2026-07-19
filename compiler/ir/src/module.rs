@@ -1,8 +1,19 @@
 use crate::function::Function;
-use crate::types::{BlockId, FunctionId, GlobalId, IRType, ValueId};
+use crate::types::{BlockId, FunctionId, GlobalId, IRType, ValueId, DslBlockId};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use techscript_ast::LiteralVal;
+
+/// A lowered DSL block stored in the IR module.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DslBlockIR {
+    pub id: DslBlockId,
+    pub kind: String,
+    pub args: Vec<LiteralVal>,
+    pub properties: Vec<(String, Option<LiteralVal>)>,
+    pub children: Vec<(DslBlockId, String)>,
+    pub span: (u32, u32),
+}
 
 /// A top-level compiler module holding functions, globals, constants, and optimization hooks.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -10,6 +21,7 @@ pub struct Module {
     pub name: String,
     pub functions: Vec<Function>,
     pub globals: Vec<(GlobalId, String, IRType)>,
+    pub dsl_blocks: Vec<DslBlockIR>,
     pub constants: Vec<(ValueId, LiteralVal)>,
     pub imports: Vec<String>,
     pub exports: Vec<String>,
@@ -28,6 +40,7 @@ impl Module {
             name,
             functions: Vec::new(),
             globals: Vec::new(),
+            dsl_blocks: Vec::new(),
             constants: Vec::new(),
             imports: Vec::new(),
             exports: Vec::new(),

@@ -384,6 +384,15 @@ impl BytecodeLowerer {
                     techscript_ir::types::InstructionId(9999),
                 );
             }
+            _ => {
+                let const_idx = self.builder.constants.add(techscript_ast::LiteralVal::None);
+                self.builder.emit(
+                    Opcode::LoadConst,
+                    vec![Operand::ConstantIndex(const_idx)],
+                    span,
+                    techscript_ir::types::InstructionId(9999),
+                );
+            }
         }
     }
 

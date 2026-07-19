@@ -1,52 +1,51 @@
-# TechScript Logo Design
+# TechScript Logo Design — DSL Block Syntax
 # Run: tsc run examples/graphics/logo_design.txs
-# Generates techscript_logo.svg in the current directory
+# Uses canvas DSL blocks to generate techscript_logo.svg
 
 use canvas
 
-canvas.create(600, 600)
-canvas.background("#0a0e27")
+# Build the TechScript logo from DSL blocks
+# Each block becomes a DslBlockValue and is rendered to SVG
+logo "TS"
+  text "TechScript"
+  color "#00d4ff"
+  size 64
+end
 
-# Outer glowing rings (stroke with varying widths and opacity)
-canvas.stroke(300, 280, 220, "#00d4ff", "3", "0.15")
-canvas.stroke(300, 280, 205, "#00d4ff", "1.5", "0.25")
-canvas.stroke(300, 280, 190, "#00d4ff", "1", "0.35")
-canvas.stroke(300, 280, 175, "#00d4ff", "0.5", "0.45")
+rings
+  count 4
+  color "#00d4ff"
+  size 40
+  thickness 3
+end
 
-# TechScript emblem -- diamond/hexagon shape
-canvas.polygon("300,150 360,190 360,270 300,230", "#00d4ff")
-canvas.polygon("300,150 240,190 240,270 300,230", "#0088cc")
-canvas.polygon("300,230 360,270 300,410 240,270", "#00aaff")
+emblem
+  shape "diamond"
+  color "#0088cc"
+  size 120
+end
 
-# Center core
-canvas.circle(300, 260, 35, "#66e0ff")
-canvas.circle(300, 260, 20, "#aaeeff")
+core
+  size 35
+  color "#66e0ff"
+end
 
-# "T" in center
-canvas.append("<text x='300' y='270' text-anchor='middle' font-size='28' font-weight='bold' font-family='Arial' fill='#0a0e27'>T</text>")
+core
+  size 20
+  color "#aaeeff"
+end
 
-# Ornamental circuit dots
-canvas.circle(300, 120, 4, "#00d4ff")
-canvas.circle(200, 180, 3, "#0088cc")
-canvas.circle(400, 180, 3, "#0088cc")
-canvas.circle(160, 290, 4, "#00aaff")
-canvas.circle(440, 290, 4, "#00aaff")
-canvas.circle(300, 450, 5, "#00d4ff")
+letter "T"
+  color "#0a0e27"
+  size 28
+end
 
-# Circuit connection lines
-canvas.line(300, 124, 300, 148, "#00d4ff")
-canvas.line(197, 183, 238, 192, "#0088cc")
-canvas.line(403, 183, 362, 192, "#0088cc")
-canvas.line(158, 293, 238, 272, "#00aaff")
-canvas.line(442, 293, 362, 272, "#00aaff")
-canvas.append("<line x1='442' y1='293' x2='362' y2='272' stroke='#00aaff' stroke-width='1' opacity='0.5'/>")
+circuits
+  color "#00d4ff"
+end
 
-# Title text
-canvas.append("<text x='300' y='510' text-anchor='middle' font-size='42' font-weight='800' font-family='Segoe UI, Arial' fill='#00d4ff' letter-spacing='4'>TECHSCRIPT</text>")
-canvas.append("<text x='300' y='545' text-anchor='middle' font-size='16' font-weight='400' font-family='Segoe UI, Arial' fill='#6688aa' letter-spacing='8'>2.0</text>")
-canvas.append("<text x='300' y='575' text-anchor='middle' font-size='12' font-weight='300' font-family='Segoe UI, Arial' fill='#445566'>MODERN PROGRAMMING LANGUAGE</text>")
-
-canvas.close()
-canvas.save("techscript_logo.svg")
+# Render all DSL blocks to SVG and save
+make svg = canvas.render_blocks()
+canvas.save("techscript_logo.svg", svg)
 
 std.io.println("Done! Saved techscript_logo.svg")

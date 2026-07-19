@@ -229,3 +229,54 @@ attempt {
     assert_eq!(interpreter.env.borrow().lookup("greeting").unwrap(), RuntimeValue::Str("Hello TechScript".to_string()));
     assert_eq!(interpreter.env.borrow().lookup("caught").unwrap(), RuntimeValue::Str("division by zero".to_string()));
 }
+
+#[test]
+fn test_interpreter_dsl_block_produces_value() {
+    let source = r#"
+page "/"
+  title "Home"
+  hero
+    title "Welcome"
+  end
+end
+"#;
+    let res = run_source(source);
+    assert!(res.is_ok(), "DSL block interpretation should succeed");
+    // Check that _dsl_blocks list was populated
+    let mut reporter = DiagnosticReporter::new();
+    let tokens = lex(source, &mut reporter).unwrap();
+    let program = parse(&tokens, &mut reporter).unwrap();
+    let checked = analyze(program, &mut reporter).unwrap();
+    let mut interpreter = Interpreter::new();
+    interpreter.interpret(&checked.program).unwrap();
+    let blocks = interpreter.env.borrow().lookup("_dsl_blocks").unwrap();
+    if let RuntimeValue::List { items, .. } = blocks {
+        let list = items.borrow();
+        assert_eq!(list.len(), 1);
+        if let RuntimeValue::DslBlock(dsl) = &list[0] {
+            assert_eq!(dsl.kind, "page");
+            assert_eq!(dsl.args.len(), 1);
+            assert_eq!(dsl.properties.len(), 1); // title "Home"
+            assert_eq!(dsl.children.len(), 1);    // hero sub-block
+            assert_eq!(dsl.children[0].kind, "hero");
+        } else {
+            panic!("Expected DslBlock value");
+        }
+    } else {
+        panic!("Expected List value");
+    }
+}
+
+#[test]
+fn test_interpreter_dsl_block_with_code() {
+    let source = r#"
+button "Click Me"
+  label "Click Me"
+  code
+    say "Button clicked!"
+  end
+end
+"#;
+    let res = run_source(source);
+    assert!(res.is_ok());
+}

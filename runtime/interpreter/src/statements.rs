@@ -6,8 +6,8 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use techscript_ast::{Block, ConstDecl, ModelDecl, Pattern, Statement, VarDecl};
 use techscript_runtime::{
-    Callable, Environment, ModelInstance, RuntimeError, RuntimeErrorKind, RuntimeValue,
-    StructInstance,
+    Callable, DslBlockValue, DslProperty, Environment, ModelInstance, RuntimeError,
+    RuntimeErrorKind, RuntimeValue, StructInstance,
 };
 
 impl Interpreter {
@@ -262,9 +262,25 @@ impl Interpreter {
                 Ok(FlowSignal::Normal)
             }
             Statement::ExportDecl(decl) => self.execute_statement(&decl.declaration),
-            Statement::DSL(_dsl) => {
-                // DSL blocks are declarative scene definitions for the framework runtime.
-                // The interpreter skips them — they are pre-processed at compile time.
+            Statement::DSL(dsl) => {
+                let block_val = self.eval_dsl_block(dsl)?;
+                let blocks_list_key = "_dsl_blocks".to_string();
+                let has_list = self.env.borrow().lookup(&blocks_list_key).is_ok();
+                if has_list {
+                    let env = self.env.borrow();
+                    if let Ok(RuntimeValue::List { items, .. }) = env.lookup(&blocks_list_key) {
+                        items.borrow_mut().push(block_val);
+                    }
+                } else {
+                    self.env.borrow_mut().define(
+                        blocks_list_key,
+                        RuntimeValue::List {
+                            items: Rc::new(RefCell::new(vec![block_val])),
+                            is_const: true,
+                        },
+                        true,
+                    );
+                }
                 Ok(FlowSignal::Normal)
             }
             Statement::Import(import) => {
@@ -279,6 +295,60 @@ impl Interpreter {
                 Ok(FlowSignal::Normal)
             }
         }
+    }
+
+    /// Evaluate a DSL block to a DslBlockValue at runtime.
+    pub fn eval_dsl_block(&mut self, dsl: &techscript_ast::DSLBlock) -> Result<RuntimeValue, RuntimeError> {
+        let mut args = Vec::new();
+        for expr in &dsl.args {
+            args.push(self.visit_expression(expr)?);
+        }
+
+        let mut properties = Vec::new();
+        for prop in &dsl.properties {
+            let val = match &prop.value {
+                Some(expr) => Some(self.visit_expression(expr)?),
+                None => None,
+            };
+            properties.push(DslProperty {
+                name: prop.name.clone(),
+                value: val,
+            });
+        }
+
+        let mut children = Vec::new();
+        for child in &dsl.children {
+            match child {
+                techscript_ast::DSLChild::Block(sub_block) => {
+                    let child_val = self.eval_dsl_block(sub_block)?;
+                    if let RuntimeValue::DslBlock(dsl_val) = child_val {
+                        children.push((*dsl_val).clone());
+                    }
+                }
+                techscript_ast::DSLChild::Code(code_block) => {
+                    for stmt in &code_block.statements {
+                        self.execute_statement(stmt)?;
+                    }
+                }
+                techscript_ast::DSLChild::Property(prop) => {
+                    let val = match &prop.value {
+                        Some(expr) => Some(self.visit_expression(expr)?),
+                        None => None,
+                    };
+                    properties.push(DslProperty {
+                        name: prop.name.clone(),
+                        value: val,
+                    });
+                }
+            }
+        }
+
+        Ok(RuntimeValue::DslBlock(Rc::new(DslBlockValue {
+            kind: dsl.kind.clone(),
+            args,
+            properties,
+            children,
+        })))
     }
 
     pub fn execute_block(&mut self, block: &Block) -> ExecResult {

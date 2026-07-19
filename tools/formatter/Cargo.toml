@@ -8,3 +8,6 @@ description = "Code formatter (fmt) implementing layout specs for TechScript 2.0
 techscript_common = { path = "../../compiler/common" }
 techscript_syntax = { path = "../../compiler/syntax" }
 techscript_ast = { path = "../../compiler/ast" }
+techscript_errors = { path = "../../compiler/errors" }
+techscript_lexer = { path = "../../compiler/lexer" }
+techscript_parser = { path = "../../compiler/parser" }

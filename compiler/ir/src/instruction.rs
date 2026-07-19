@@ -97,6 +97,13 @@ pub enum Op {
     Try { catch_block: BlockId, catch_var: LocalId },
     /// Pop try/catch handler
     EndTry,
+    /// Construct a DSL block value with its kind, args, properties, and children refs.
+    MakeDslBlock {
+        kind: String,
+        args: Vec<Value>,
+        properties: Vec<(String, Option<Value>)>,
+        children: Vec<Value>,
+    },
     /// No operation.
     NoOp,
 }

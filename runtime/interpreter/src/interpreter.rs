@@ -1,5 +1,6 @@
 use crate::control_flow::{CallFrame, FlowSignal};
 use crate::visitor::AstVisitor;
+use indexmap::IndexMap;
 use std::cell::RefCell;
 use std::rc::Rc;
 use techscript_ast::Program;
@@ -48,11 +49,11 @@ impl Interpreter {
 
     fn initialize_stdlib(&mut self) {
         let stdlib = techscript_stdlib::StdlibRegistry::new();
-        // Define "std" namespace
+        // Define "std" namespace (std.math.sqrt(), etc.)
         self.env
             .borrow_mut()
             .define("std".to_string(), stdlib.construct_std_namespace(), true);
-        // Define individual exported functions globally
+        // Define individual exported functions globally (sqrt(), randint(), etc.)
         for module in stdlib.modules.values() {
             for (func_name, func) in &module.exports {
                 self.env.borrow_mut().define(
@@ -61,6 +62,42 @@ impl Interpreter {
                     true,
                 );
             }
+        }
+        // v1.0.8: also bind each module as a top-level namespace so that
+        // `math.sqrt(x)` and `random.randint(1,10)` work without `import`.
+        for (mod_key, module) in &stdlib.modules {
+            let short_name = mod_key.strip_prefix("std.").unwrap_or(mod_key.as_str());
+            let mut module_map = IndexMap::new();
+            for (func_name, func) in &module.exports {
+                module_map.insert(
+                    func_name.clone(),
+                    RuntimeValue::Function(Rc::clone(func)),
+                );
+            }
+            self.env.borrow_mut().define(
+                short_name.to_string(),
+                RuntimeValue::Map {
+                    entries: Rc::new(RefCell::new(module_map)),
+                    is_const: true,
+                },
+                true,
+            );
+        }
+        // Bridge native-registry built-ins (type_of, len, range, to_int,
+        // to_str, to_bool, to_float, assert, exit) into the global env so
+        // they are callable as plain identifiers in TechScript code.
+        // We collect into a Vec first to avoid holding an immutable borrow
+        // on `self.ctx` while mutably borrowing `self.env`.
+        let natives: Vec<(String, Rc<dyn techscript_runtime::Callable>)> = self
+            .ctx
+            .registry
+            .iter()
+            .map(|(name, func)| (name.to_string(), Rc::clone(func)))
+            .collect();
+        for (name, func) in natives {
+            self.env
+                .borrow_mut()
+                .define(name, RuntimeValue::Function(func), true);
         }
     }
 

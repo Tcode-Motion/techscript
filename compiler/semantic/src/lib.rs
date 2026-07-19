@@ -4,6 +4,7 @@
 //! Resolves shadowing and issues warning notes for deprecated keywords.
 
 pub mod context;
+pub mod dsl_schema;
 pub mod passes;
 pub mod pipeline;
 pub mod symbol_table;
@@ -14,6 +15,7 @@ pub use symbol_table::{Scope, Symbol, SymbolTable};
 use context::SemanticContext;
 use passes::collect::CollectDecls;
 use passes::resolve::ResolveSymbols;
+use passes::validate_dsl::ValidateDSL;
 use pipeline::PassPipeline;
 use serde::{Deserialize, Serialize};
 use techscript_ast::Program;
@@ -49,6 +51,7 @@ impl SemanticAnalyzer {
         let mut pipeline = PassPipeline::new();
         pipeline.add_pass(Box::new(CollectDecls));
         pipeline.add_pass(Box::new(ResolveSymbols));
+        pipeline.add_pass(Box::new(ValidateDSL));
 
         pipeline.execute(&program, &mut self.context);
 

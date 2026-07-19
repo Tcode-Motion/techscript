@@ -136,6 +136,32 @@ pub enum TokenKind {
     None,
     /// `class` alias for `model`
     Class,
+    /// `keep` alias for `const`
+    Keep,
+    /// `give` alias for `return`
+    Give,
+    /// `stop` alias for `break`
+    Stop,
+    /// `skip` alias for `continue`
+    Skip,
+    /// `each` alias/keyword for loop iteration
+    Each,
+
+    // ── New-Dialect Keywords ──
+    /// `be` alias for assignment `=`
+    Be,
+    /// `equals` alias for comparison `==`
+    Equals,
+    /// `then` block delimiter
+    Then,
+    /// `end` block delimiter
+    End,
+    /// `with` block keyword
+    With,
+    /// `typeof` type evaluation operator
+    Typeof,
+    /// `use` imports a v1 compatibility module
+    Use,
 
     // ── Future Reserved Keywords ────────────────────────────────────────────
     /// `async` keyword
@@ -338,6 +364,14 @@ impl TokenKind {
                 | TokenKind::Attempt
                 | TokenKind::None
                 | TokenKind::Class
+                | TokenKind::Keep
+                | TokenKind::Give
+                | TokenKind::Stop
+                | TokenKind::Skip
+                | TokenKind::Each
+                | TokenKind::Be
+                | TokenKind::Equals
+                | TokenKind::Use
         )
     }
 
@@ -382,6 +416,13 @@ impl TokenKind {
             TokenKind::Attempt => Some(TokenKind::Try),
             TokenKind::None => Some(TokenKind::Null),
             TokenKind::Class => Some(TokenKind::Model),
+            TokenKind::Keep => Some(TokenKind::Const),
+            TokenKind::Give => Some(TokenKind::Return),
+            TokenKind::Stop => Some(TokenKind::Break),
+            TokenKind::Skip => Some(TokenKind::Continue),
+            TokenKind::Each => Some(TokenKind::For),
+            TokenKind::Be => Some(TokenKind::Equal),
+            TokenKind::Equals => Some(TokenKind::EqualEqual),
             _ => None,
         }
     }
@@ -455,6 +496,7 @@ impl TokenKind {
                 | TokenKind::GreaterEqual
                 | TokenKind::Is
                 | TokenKind::In
+                | TokenKind::Equals
         )
     }
 
@@ -523,6 +565,18 @@ impl TokenKind {
             TokenKind::Attempt => Some("attempt"),
             TokenKind::None => Some("none"),
             TokenKind::Class => Some("class"),
+            TokenKind::Keep => Some("keep"),
+            TokenKind::Give => Some("give"),
+            TokenKind::Stop => Some("stop"),
+            TokenKind::Skip => Some("skip"),
+            TokenKind::Each => Some("each"),
+            TokenKind::Be => Some("be"),
+            TokenKind::Equals => Some("equals"),
+            TokenKind::Then => Some("then"),
+            TokenKind::End => Some("end"),
+            TokenKind::With => Some("with"),
+            TokenKind::Typeof => Some("typeof"),
+            TokenKind::Use => Some("use"),
 
             TokenKind::Async => Some("async"),
             TokenKind::Await => Some("await"),
@@ -612,7 +666,8 @@ impl TokenKind {
             TokenKind::EqualEqual
             | TokenKind::BangEqual
             | TokenKind::TripleEqual
-            | TokenKind::BangEqualEqual => Precedence::Equality,
+            | TokenKind::BangEqualEqual
+            | TokenKind::Equals => Precedence::Equality,
             TokenKind::Less
             | TokenKind::Greater
             | TokenKind::LessEqual
@@ -666,6 +721,7 @@ impl TokenKind {
             | TokenKind::BangEqual
             | TokenKind::TripleEqual
             | TokenKind::BangEqualEqual
+            | TokenKind::Equals
             | TokenKind::Less
             | TokenKind::Greater
             | TokenKind::LessEqual
@@ -758,6 +814,20 @@ pub fn lookup_keyword(lexeme: &str) -> Option<TokenKind> {
         "attempt" => Some(TokenKind::Attempt),
         "none" => Some(TokenKind::None),
         "class" => Some(TokenKind::Class),
+        // TechScript v1.0.8 compatibility keywords.  These deliberately
+        // remain distinct tokens so the parser can preserve the source dialect.
+        "keep" => Some(TokenKind::Keep),
+        "give" => Some(TokenKind::Give),
+        "stop" => Some(TokenKind::Stop),
+        "skip" => Some(TokenKind::Skip),
+        "each" => Some(TokenKind::Each),
+        "be" => Some(TokenKind::Be),
+        "equals" => Some(TokenKind::Equals),
+        "then" => Some(TokenKind::Then),
+        "end" => Some(TokenKind::End),
+        "with" => Some(TokenKind::With),
+        "typeof" => Some(TokenKind::Typeof),
+        "use" => Some(TokenKind::Use),
 
         // Future Reserved Keywords
         "async" => Some(TokenKind::Async),

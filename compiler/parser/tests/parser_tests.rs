@@ -1,4 +1,4 @@
-use techscript_ast::{Expression, LiteralVal, Pattern, Statement};
+use techscript_ast::{DSLChild, Expression, LiteralVal, Pattern, Statement};
 use techscript_errors::DiagnosticReporter;
 use techscript_lexer::lex;
 use techscript_parser::parse;
@@ -215,4 +215,179 @@ fn test_parser_error_recovery() {
     // The parser should recover after semicolon and parse `say 42` successfully, but return Err because reporter has errors.
     assert!(reporter.has_errors());
     assert_eq!(reporter.get_diagnostics().len(), 1);
+}
+
+#[test]
+fn test_v108_classic_and_sentence_dialects_can_mix() {
+    let program = parse_source(r#"
+keep PI be 3
+make numbers be [1, 2, 3]
+when 1 equals 1 then
+  each item in numbers then
+    say item
+  end
+end
+build greet with name then
+  give f"Hello {name}"
+end
+use math
+"#);
+    assert_eq!(program.statements.len(), 5);
+    assert!(matches!(program.statements[0], Statement::ConstDecl(_)));
+    assert!(matches!(program.statements[2], Statement::If(_)));
+    assert!(matches!(program.statements[3], Statement::FuncDecl(_)));
+    assert!(matches!(program.statements[4], Statement::Import(_)));
+}
+
+// ── DSL block parser tests ──────────────────────────────────────────────
+
+#[test]
+fn test_dsl_block_empty() {
+    let program = parse_source("page \"/\"\nend");
+    assert_eq!(program.statements.len(), 1);
+    if let Statement::DSL(ref block) = program.statements[0] {
+        assert_eq!(block.kind, "page");
+        assert_eq!(block.args.len(), 1);
+        assert_eq!(block.properties.len(), 0);
+        assert_eq!(block.children.len(), 0);
+    } else {
+        panic!("Expected Statement::DSL");
+    }
+}
+
+#[test]
+fn test_dsl_block_with_properties() {
+    let program = parse_source("logo \"TechScript\"\n  text \"TS\"\n  color \"#333\"\nend");
+    assert_eq!(program.statements.len(), 1);
+    if let Statement::DSL(ref block) = program.statements[0] {
+        assert_eq!(block.kind, "logo");
+        assert_eq!(block.args.len(), 1);
+        assert_eq!(block.properties.len(), 2);
+        assert_eq!(block.properties[0].name, "text");
+        assert_eq!(block.properties[1].name, "color");
+        assert_eq!(block.children.len(), 0);
+    } else {
+        panic!("Expected Statement::DSL");
+    }
+}
+
+#[test]
+fn test_dsl_block_with_nested_sub_blocks() {
+    let program = parse_source("website \"My Site\"\n  page \"/\"\n    title \"Home\"\n  end\n  page \"/about\"\n    title \"About Us\"\n  end\nend");
+    assert_eq!(program.statements.len(), 1);
+    if let Statement::DSL(ref block) = program.statements[0] {
+        assert_eq!(block.kind, "website");
+        assert_eq!(block.children.len(), 2);
+        if let DSLChild::Block(ref page1) = block.children[0] {
+            assert_eq!(page1.kind, "page");
+            assert_eq!(page1.args.len(), 1);
+            assert_eq!(page1.properties.len(), 1);
+            assert_eq!(page1.properties[0].name, "title");
+        } else {
+            panic!("Expected DSLChild::Block for first page");
+        }
+        if let DSLChild::Block(ref page2) = block.children[1] {
+            assert_eq!(page2.kind, "page");
+            assert_eq!(page2.args.len(), 1);
+            assert_eq!(page2.properties.len(), 1);
+        } else {
+            panic!("Expected DSLChild::Block for second page");
+        }
+    } else {
+        panic!("Expected Statement::DSL");
+    }
+}
+
+#[test]
+fn test_dsl_block_with_inline_code() {
+    let program = parse_source("button \"Click Me\"\n  color \"red\"\n  code\n    say \"clicked!\"\n  end\nend");
+    assert_eq!(program.statements.len(), 1);
+    if let Statement::DSL(ref block) = program.statements[0] {
+        assert_eq!(block.kind, "button");
+        assert_eq!(block.properties.len(), 1);
+        assert_eq!(block.properties[0].name, "color");
+        assert_eq!(block.children.len(), 1);
+        assert!(matches!(block.children[0], DSLChild::Code(_)));
+        if let DSLChild::Code(ref code_block) = block.children[0] {
+            assert_eq!(code_block.statements.len(), 1);
+        }
+    } else {
+        panic!("Expected Statement::DSL");
+    }
+}
+
+#[test]
+fn test_dsl_block_no_args() {
+    let program = parse_source("hero\n  title \"Welcome\"\n  subtitle \"hello\"\nend");
+    assert_eq!(program.statements.len(), 1);
+    if let Statement::DSL(ref block) = program.statements[0] {
+        assert_eq!(block.kind, "hero");
+        assert_eq!(block.args.len(), 0);
+        assert_eq!(block.properties.len(), 2);
+        assert_eq!(block.properties[0].name, "title");
+        assert_eq!(block.properties[1].name, "subtitle");
+    } else {
+        panic!("Expected Statement::DSL");
+    }
+}
+
+#[test]
+fn test_dsl_block_deeply_nested() {
+    let program = parse_source("website \"Portal\"\n  header\n    nav\n      link \"/home\"\n        label \"Home\"\n      end\n    end\n  end\nend");
+    assert_eq!(program.statements.len(), 1);
+    if let Statement::DSL(ref website) = program.statements[0] {
+        assert_eq!(website.kind, "website");
+        if let DSLChild::Block(ref header) = website.children[0] {
+            assert_eq!(header.kind, "header");
+            if let DSLChild::Block(ref nav) = header.children[0] {
+                assert_eq!(nav.kind, "nav");
+                if let DSLChild::Block(ref link) = nav.children[0] {
+                    assert_eq!(link.kind, "link");
+                    assert_eq!(link.args.len(), 1);
+                    assert_eq!(link.properties.len(), 1);
+                } else {
+                    panic!("Expected DSLChild::Block for link");
+                }
+            } else {
+                panic!("Expected DSLChild::Block for nav");
+            }
+        } else {
+            panic!("Expected DSLChild::Block for header");
+        }
+    } else {
+        panic!("Expected Statement::DSL");
+    }
+}
+
+#[test]
+fn test_dsl_block_with_property_no_value() {
+    let program = parse_source("section\n  divider\n  title \"Section Title\"\nend");
+    assert_eq!(program.statements.len(), 1);
+    if let Statement::DSL(ref block) = program.statements[0] {
+        assert_eq!(block.kind, "section");
+        assert_eq!(block.properties.len(), 2);
+        // divider has no value
+        assert_eq!(block.properties[0].name, "divider");
+        assert!(block.properties[0].value.is_none());
+        // title has a value
+        assert_eq!(block.properties[1].name, "title");
+        assert!(block.properties[1].value.is_some());
+    } else {
+        panic!("Expected Statement::DSL");
+    }
+}
+
+#[test]
+fn test_dsl_expression_value() {
+    let program = parse_source("card\n  width 300 + 50\n  visible true and false\nend");
+    assert_eq!(program.statements.len(), 1);
+    if let Statement::DSL(ref block) = program.statements[0] {
+        assert_eq!(block.properties.len(), 2);
+        // width: 300 + 50
+        assert!(matches!(block.properties[0].value.as_ref().unwrap(), Expression::Binary(_)));
+        // visible: true and false
+        assert!(matches!(block.properties[1].value.as_ref().unwrap(), Expression::Binary(_)));
+    } else {
+        panic!("Expected Statement::DSL");
+    }
 }

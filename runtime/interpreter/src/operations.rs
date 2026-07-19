@@ -266,6 +266,28 @@ pub fn eval_binary(
         "==" => Ok(RuntimeValue::Bool(left == right)),
         "!=" => Ok(RuntimeValue::Bool(left != right)),
         "===" => Ok(RuntimeValue::Bool(left.physical_eq(&right))),
+        "in" => match (left, right) {
+            (RuntimeValue::Str(needle), RuntimeValue::Str(haystack)) => {
+                Ok(RuntimeValue::Bool(haystack.contains(&needle)))
+            }
+            (val, RuntimeValue::List { items, .. }) => {
+                Ok(RuntimeValue::Bool(items.borrow().contains(&val)))
+            }
+            (val, RuntimeValue::Tuple(elements)) => {
+                Ok(RuntimeValue::Bool(elements.contains(&val)))
+            }
+            (RuntimeValue::Str(key), RuntimeValue::Map { entries, .. }) => {
+                Ok(RuntimeValue::Bool(entries.borrow().contains_key(&key)))
+            }
+            (_, other) => Err(RuntimeError::new(
+                RuntimeErrorKind::TypeMismatch {
+                    expected: "string, list, tuple, or map".to_string(),
+                    found: other.runtime_type().to_string(),
+                },
+                None,
+                None,
+            )),
+        },
         _ => Err(RuntimeError::new(
             RuntimeErrorKind::InvalidOperation(format!("Unknown binary operator '{}'", op)),
             None,

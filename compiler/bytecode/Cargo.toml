@@ -1,6 +1,6 @@
 [package]
 name = "techscript_bytecode"
-version = "0.1.0"
+version = "2.0.0"
 edition = "2021"
 description = "Bytecode generation and VM execution file format support for TechScript 2.0"
 

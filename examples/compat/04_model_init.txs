@@ -1,0 +1,17 @@
+# compat/04_model_init.txs — v1.0.8 model with `init` constructor
+# 2.0: use a function that returns a map instead of model/class.
+
+build Person with name, age then
+  give { "name": name, "age": age }
+end
+
+make p be Person("Alice", 30)
+say p.name    # expected: Alice
+say p.age     # expected: 30
+
+build Point with x, y then
+  give { "x": x, "y": y }
+end
+
+make pt be Point(null, null)
+say pt.x   # expected: null

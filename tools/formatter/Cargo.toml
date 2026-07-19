@@ -1,6 +1,6 @@
 [package]
 name = "techscript_formatter"
-version = "0.1.0"
+version = "2.0.0"
 edition = "2021"
 description = "Code formatter (fmt) implementing layout specs for TechScript 2.0"
 

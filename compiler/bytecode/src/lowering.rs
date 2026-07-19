@@ -133,6 +133,15 @@ impl BytecodeLowerer {
                             techscript_ir::types::InstructionId(9999),
                         );
                     }
+                    TerminatorKind::Throw(val) => {
+                        self.emit_load(&val, term.span);
+                        self.builder.emit(
+                            Opcode::Throw,
+                            Vec::new(),
+                            term.span,
+                            techscript_ir::types::InstructionId(9999),
+                        );
+                    }
                     TerminatorKind::Unreachable => {
                         self.builder.emit(
                             Opcode::Throw,

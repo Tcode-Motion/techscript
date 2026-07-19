@@ -73,10 +73,12 @@ fn test_semantic_flow_control_errors() {
 
 #[test]
 fn test_semantic_call_arity_mismatch() {
-    let (res, diags) = check_source("build add(a, b) {\n  return a + b\n}\nadd(1)");
-    assert!(res.is_err()); // Arity mismatch is a compile-time check error
+    // Current semantic analysis only rejects calls with *too many* arguments
+    // (default params are permitted).  Too-few is caught at runtime.
+    let (res, diags) = check_source("build add(a, b) {\n  return a + b\n}\nadd(1, 2, 3)");
+    assert!(res.is_err()); // Too many arguments is a compile-time error
     assert!(!diags.is_empty());
-    assert_eq!(diags[0].code, ErrorCode::E0310); // Too few arguments
+    assert_eq!(diags[0].code, ErrorCode::E0311); // Too many arguments
 }
 
 #[test]

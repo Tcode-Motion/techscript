@@ -50,9 +50,29 @@ impl VM {
         // Register standard namespace map
         self.globals
             .insert("std".to_string(), stdlib.construct_std_namespace());
-        // Register individual function exports globally to resolve individual symbol imports
+        // Collect all module short names so we can avoid name collisions
+        let mut module_names = std::collections::HashSet::new();
+        for module in stdlib.modules.values() {
+            let short_name = module.name.strip_prefix("std.").unwrap_or(&module.name).to_string();
+            module_names.insert(short_name.clone());
+            let mut entries = indexmap::IndexMap::new();
+            for (func_name, func) in &module.exports {
+                entries.insert(func_name.clone(), RuntimeValue::Function(Rc::clone(func)));
+            }
+            self.globals.insert(
+                short_name,
+                RuntimeValue::Map {
+                    entries: std::rc::Rc::new(std::cell::RefCell::new(entries)),
+                    is_const: true,
+                },
+            );
+        }
+        // Register individual function exports globally, skipping names that shadow module maps
         for module in stdlib.modules.values() {
             for (func_name, func) in &module.exports {
+                if module_names.contains(func_name) {
+                    continue;
+                }
                 self.globals
                     .insert(func_name.clone(), RuntimeValue::Function(Rc::clone(func)));
             }

@@ -1,0 +1,83 @@
+# TechScript Landing Page
+# Run: tsc run examples/web/landing_page.txs
+# Open browser to http://localhost:8080
+
+use web
+use scheduler
+
+make page_content = "<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='UTF-8'>
+<title>TechScript 2.0</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:#0a0e27;color:#fff;overflow-x:hidden}
+  .bg{position:fixed;top:0;left:0;width:100%;height:100%;
+    background:linear-gradient(135deg,#0a0e27,#1a1f4e,#0a0e27);background-size:400% 400%;
+    animation:grad 15s ease infinite;z-index:-1}
+  @keyframes grad{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem}
+  .hero h1{font-size:5rem;font-weight:800;background:linear-gradient(135deg,#00d4ff,#0088cc);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:1rem;animation:glow 3s ease-in-out infinite alternate}
+  @keyframes glow{0%{filter:drop-shadow(0 0 20px rgba(0,212,255,0.3))}100%{filter:drop-shadow(0 0 40px rgba(0,212,255,0.6))}}
+  .hero p{color:#8899bb;font-size:1.2rem;max-width:600px;line-height:1.8;margin-bottom:2rem}
+  .btn{display:inline-block;padding:1rem 2.5rem;border-radius:50px;font-size:1rem;font-weight:600;text-decoration:none;margin:0.5rem;border:2px solid}
+  .btn-p{background:linear-gradient(135deg,#00d4ff,#0088cc);color:#fff;border-color:transparent;box-shadow:0 4px 20px rgba(0,212,255,0.3)}
+  .btn-s{background:transparent;border-color:rgba(0,212,255,0.3);color:#00d4ff}
+  .features{padding:4rem 2rem;max-width:1000px;margin:0 auto}
+  .features h2{text-align:center;font-size:2rem;margin-bottom:2rem;color:#00d4ff}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem}
+  .card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:1.5rem;transition:all 0.3s}
+  .card:hover{border-color:rgba(0,212,255,0.3);transform:translateY(-3px)}
+  .card h3{color:#eef;margin-bottom:0.5rem}
+  .card p{color:#7788aa;font-size:0.9rem;line-height:1.5}
+  .code{background:rgba(0,0,0,0.4);border-radius:8px;padding:1rem;font-family:monospace;color:#88bbdd;max-width:500px;margin:2rem auto;text-align:left}
+  .k{color:#00d4ff}.s{color:#66e0aa}
+  footer{text-align:center;padding:2rem;color:#445577}
+</style>
+</head>
+<body>
+<div class='bg'></div>
+<section class='hero'>
+  <h1>TechScript</h1>
+  <p>A modern, expressive programming language.<br>Fast, safe, built for real-world applications.</p>
+  <div>
+    <span class='btn btn-p'>Get Started</span>
+    <span class='btn btn-s'>View on GitHub</span>
+  </div>
+  <div class='code'>
+    <span class='k'>use</span> web<br>
+    <span class='k'>use</span> sqlite<br>
+    <span class='k'>use</span> canvas<br>
+    <span class='k'>use</span> cache<br><br>
+    <span class='k'>make</span> server = web.start(8080);<br>
+    <span class='k'>make</span> db = sqlite.open(<span class='s'>'app.db'</span>);<br>
+    server.start();
+  </div>
+</section>
+<section class='features'>
+  <h2>Built-in Modules</h2>
+  <div class='grid'>
+    <div class='card'><h3>Web</h3><p>HTTP server with routing, middleware, and static files.</p></div>
+    <div class='card'><h3>SQLite</h3><p>Native database with prepared statements and migrations.</p></div>
+    <div class='card'><h3>Canvas</h3><p>SVG-based graphics, image processing, and animations.</p></div>
+    <div class='card'><h3>Security</h3><p>Crypto, hashing, random generation, and JWT support.</p></div>
+    <div class='card'><h3>Cache</h3><p>In-memory cache with TTL, LRU eviction.</p></div>
+    <div class='card'><h3>Parallel</h3><p>Multi-threaded execution and async support.</p></div>
+    <div class='card'><h3>Notifications</h3><p>Desktop alerts and system tray integration.</p></div>
+    <div class='card'><h3>Debug</h3><p>Inspect, trace, and benchmark your code.</p></div>
+  </div>
+</section>
+<footer>
+  TechScript 2.0 &mdash; MIT License<br>
+  <a href='#' style='color:#00d4ff;text-decoration:none'>Documentation</a>
+</footer>
+</body>
+</html>"
+
+web.page("/", page_content)
+web.serve(8080)
+
+std.io.println("Landing page server running at http://localhost:8080")
+
+scheduler.sleep(60000)

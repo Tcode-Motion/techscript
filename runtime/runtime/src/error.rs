@@ -23,7 +23,7 @@ impl fmt::Display for RuntimeErrorKind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::UndefinedVariable(name) => write!(f, "Undefined variable '{}'", name),
-            Self::DivisionByZero => write!(f, "Division by zero"),
+            Self::DivisionByZero => write!(f, "division by zero"),
             Self::IndexOutOfBounds => write!(f, "Index out of bounds"),
             Self::InvalidCast(msg) => write!(f, "Invalid cast: {}", msg),
             Self::AssertionFailed(msg) => write!(f, "Assertion failed: {}", msg),

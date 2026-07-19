@@ -187,6 +187,13 @@ impl IRBuilder {
         }
     }
 
+    /// Returns true if the current block already has a terminator.
+    pub fn has_terminator(&self) -> bool {
+        self.current_block.as_ref()
+            .and_then(|b| b.terminator.as_ref())
+            .is_some()
+    }
+
     /// Emits a block terminator ending code emission for the current block.
     pub fn emit_terminator(&mut self, kind: TerminatorKind, span: Span) {
         if let Some(ref mut block) = self.current_block {

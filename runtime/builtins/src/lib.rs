@@ -121,6 +121,23 @@ impl BuiltinRegistry {
                 is_const: false,
             })
         });
+        self.register("type_of", |args| {
+            if args.is_empty() {
+                return Err(RuntimeError::new(
+                    techscript_interpreter::RuntimeErrorKind::InvalidOperation(
+                        "type_of requires 1 argument".to_string(),
+                    ),
+                    None,
+                    None,
+                ));
+            }
+            let type_name = match &args[0] {
+                Value::Str(_) => "str".to_string(),
+                Value::Map { .. } => "dict".to_string(),
+                other => other.runtime_type().to_string(),
+            };
+            Ok(Value::Str(type_name))
+        });
         self.register("len", |args| {
             if args.len() != 1 {
                 return Err(RuntimeError::new(

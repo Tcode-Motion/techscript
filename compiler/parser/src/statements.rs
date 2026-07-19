@@ -1,7 +1,7 @@
 use crate::parser::{ParseResult, Parser};
 use techscript_ast::{
-    Block, ExpressionStmt, ForStmt, IfStmt, ImportStmt, RepeatStmt, ReturnStmt, SayStmt, Statement,
-    ThrowStmt, TryStmt, WhileStmt,
+    Block, DSLBlock, DSLChild, DSLProperty, ExpressionStmt, ForStmt, IfStmt, ImportStmt,
+    RepeatStmt, ReturnStmt, SayStmt, Statement, ThrowStmt, TryStmt, WhileStmt,
 };
 use techscript_common::Span;
 use techscript_errors::{DiagnosticReporter, ErrorCode};
@@ -22,6 +22,7 @@ impl<'a> Parser<'a> {
             || self.check(TokenKind::Let)
             || self.check(TokenKind::Var)
             || self.check(TokenKind::Const)
+            || self.check(TokenKind::Keep)
             || self.check(TokenKind::Build)
             || self.check(TokenKind::Fun)
             || self.check(TokenKind::Function)
@@ -38,13 +39,7 @@ impl<'a> Parser<'a> {
         if self.check(TokenKind::If) || self.check(TokenKind::When) {
             let stmt = self.parse_if_stmt(reporter)?;
             Ok(Statement::If(stmt))
-        } else if self.check(TokenKind::For) || self.check(TokenKind::In) {
-            // EBNF uses "for" or "each" (Note: "each" is an identifier, handled below or keyword)
-            let stmt = self.parse_for_stmt(reporter)?;
-            Ok(Statement::For(stmt))
-        } else if self.peek().kind == TokenKind::Identifier
-            && (self.peek().lexeme == "each" || self.peek().lexeme == "for")
-        {
+        } else if self.check(TokenKind::For) || self.check(TokenKind::Each) || self.check(TokenKind::In) {
             let stmt = self.parse_for_stmt(reporter)?;
             Ok(Statement::For(stmt))
         } else if self.check(TokenKind::While) {
@@ -63,7 +58,7 @@ impl<'a> Parser<'a> {
             self.consume_terminator(reporter)?;
             let span = Span::new(start_pos, self.previous().span.end);
             Ok(Statement::Say(SayStmt::new(self.next_id(), value, span)))
-        } else if self.check(TokenKind::Return) {
+        } else if self.check(TokenKind::Return) || self.check(TokenKind::Give) {
             let start_pos = self.peek().span.start;
             self.advance();
             let mut value = None;
@@ -71,6 +66,7 @@ impl<'a> Parser<'a> {
             if !self.check(TokenKind::Semicolon)
                 && !self.check(TokenKind::Newline)
                 && !self.check(TokenKind::RightBrace)
+                && !self.check(TokenKind::End)
                 && !self.is_at_end()
             {
                 value = Some(self.parse_expression(techscript_syntax::Precedence::None, reporter)?);
@@ -93,7 +89,7 @@ impl<'a> Parser<'a> {
                 value,
                 span,
             )))
-        } else if self.check(TokenKind::Break) {
+        } else if self.check(TokenKind::Break) || self.check(TokenKind::Stop) {
             let start_pos = self.peek().span.start;
             self.advance();
             self.consume_terminator(reporter)?;
@@ -102,7 +98,7 @@ impl<'a> Parser<'a> {
                 self.next_id(),
                 span,
             )))
-        } else if self.check(TokenKind::Continue) {
+        } else if self.check(TokenKind::Continue) || self.check(TokenKind::Skip) {
             let start_pos = self.peek().span.start;
             self.advance();
             self.consume_terminator(reporter)?;
@@ -111,6 +107,9 @@ impl<'a> Parser<'a> {
                 self.next_id(),
                 span,
             )))
+        } else if self.check(TokenKind::Use) {
+            let stmt = self.parse_use_stmt(reporter)?;
+            Ok(Statement::Import(stmt))
         } else if self.check(TokenKind::Import)
             || (self.peek().kind == TokenKind::Identifier && self.peek().lexeme == "from")
             || self.check(TokenKind::From)
@@ -120,10 +119,20 @@ impl<'a> Parser<'a> {
         } else if self.check(TokenKind::LeftBrace) {
             let block = self.parse_block(reporter)?;
             Ok(Statement::Block(block))
+        } else if self.check(TokenKind::Identifier) && self.dsl_keywords.contains(&self.peek().lexeme) {
+            let block = self.parse_dsl_block(reporter)?;
+            Ok(Statement::DSL(block))
         } else {
-            // Expression Statement
             let start_pos = self.peek().span.start;
-            let expr = self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
+            let mut expr = self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
+            // v1.0.8 permits the readable one-argument call `greet "World"`.
+            if matches!(expr, techscript_ast::Expression::Identifier(_))
+                && matches!(self.peek().kind, TokenKind::StringLiteral | TokenKind::FStringStart | TokenKind::IntLiteral | TokenKind::FloatLiteral | TokenKind::True | TokenKind::False | TokenKind::LeftBracket | TokenKind::LeftBrace)
+            {
+                let argument = self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
+                let span = Span::new(expr.span().start, argument.span().end);
+                expr = techscript_ast::Expression::Call(techscript_ast::CallExpr::new(self.next_id(), Box::new(expr), vec![argument], span));
+            }
             self.consume_terminator(reporter)?;
             let span = Span::new(start_pos, self.previous().span.end);
             Ok(Statement::Expression(ExpressionStmt::new(
@@ -131,6 +140,43 @@ impl<'a> Parser<'a> {
                 expr,
                 span,
             )))
+        }
+    }
+
+    /// Parse block ` { statement* } ` or ` then statement* end `
+    pub fn parse_block_or_then_end(&mut self, reporter: &mut DiagnosticReporter) -> ParseResult<Block> {
+        while self.match_token(TokenKind::Newline) {}
+        let start_pos = self.peek().span.start;
+        if self.check(TokenKind::LeftBrace) {
+            self.parse_block(reporter)
+        } else {
+            self.consume(
+                TokenKind::Then,
+                ErrorCode::E0104,
+                "Expected '{' or 'then' to start block",
+                reporter,
+            )?;
+            let mut statements = Vec::new();
+            loop {
+                while self.match_token(TokenKind::Newline) {}
+                if self.check(TokenKind::End) || self.is_at_end() {
+                    break;
+                }
+                match self.parse_statement(reporter) {
+                    Ok(stmt) => statements.push(stmt),
+                    Err(_) => {
+                        self.synchronize();
+                    }
+                }
+            }
+            self.consume(
+                TokenKind::End,
+                ErrorCode::E0105,
+                "Expected 'end' to end block",
+                reporter,
+            )?;
+            let span = Span::new(start_pos, self.previous().span.end);
+            Ok(Block::new(self.next_id(), statements, span))
         }
     }
 
@@ -175,22 +221,26 @@ impl<'a> Parser<'a> {
         self.advance(); // consume if/when
 
         let condition = self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
-        let body = self.parse_block(reporter)?;
+        let body = self.parse_block_or_then_end(reporter)?;
 
         let mut else_ifs = Vec::new();
         let mut else_body = None;
 
         while !self.is_at_end() {
             // Skip newlines before checking elif/else
-            let mut skipped_newlines = false;
             while self.check(TokenKind::Newline) {
                 self.advance();
-                skipped_newlines = true;
             }
 
             if self.match_token(TokenKind::Elif) {
                 let cond = self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
-                let blk = self.parse_block(reporter)?;
+                let blk = self.parse_block_or_then_end(reporter)?;
+                else_ifs.push((cond, blk));
+            } else if self.check(TokenKind::Or) && self.peek_ahead(1).kind == TokenKind::When {
+                self.advance(); // consume Or
+                self.advance(); // consume When
+                let cond = self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
+                let blk = self.parse_block_or_then_end(reporter)?;
                 else_ifs.push((cond, blk));
             } else if self.match_token(TokenKind::Else) {
                 // Check if followed by "if" or "when" for backward compatibility else-ifs
@@ -198,29 +248,13 @@ impl<'a> Parser<'a> {
                     self.advance(); // consume if/when
                     let cond =
                         self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
-                    let blk = self.parse_block(reporter)?;
+                    let blk = self.parse_block_or_then_end(reporter)?;
                     else_ifs.push((cond, blk));
                 } else {
-                    else_body = Some(self.parse_block(reporter)?);
+                    else_body = Some(self.parse_block_or_then_end(reporter)?);
                     break;
                 }
             } else {
-                // If we didn't find elif/else, put back a newline if we skipped any,
-                // so that the caller can parse it as a terminator.
-                if skipped_newlines {
-                    // Note: Instead of actually rewinding the token stream (which Parser does not support directly),
-                    // we can just backtrack by 1 token if the last skipped token was a newline.
-                    // But wait, the parser has self.current.
-                    // If we just do not backtrack, does the caller care?
-                    // In parse_block:
-                    // while !self.check(TokenKind::RightBrace) && !self.is_at_end() {
-                    //     match self.parse_statement(reporter) { ... }
-                    // }
-                    // Inside parse_statement, the first thing it does is:
-                    // while self.match_token(TokenKind::Newline) {}
-                    // So any leading newlines are skipped anyway!
-                    // Thus, not backtracking is perfectly fine and safe, because newlines are skipped!
-                }
                 break;
             }
         }
@@ -249,7 +283,7 @@ impl<'a> Parser<'a> {
             reporter,
         )?;
         let iterable = self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
-        let body = self.parse_block(reporter)?;
+        let body = self.parse_block_or_then_end(reporter)?;
 
         let span = Span::new(start_pos, body.span.end);
         Ok(ForStmt::new(self.next_id(), item, iterable, body, span))
@@ -261,7 +295,7 @@ impl<'a> Parser<'a> {
         self.advance(); // consume while
 
         let condition = self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
-        let body = self.parse_block(reporter)?;
+        let body = self.parse_block_or_then_end(reporter)?;
 
         let span = Span::new(start_pos, body.span.end);
         Ok(WhileStmt::new(self.next_id(), condition, body, span))
@@ -273,7 +307,7 @@ impl<'a> Parser<'a> {
         self.advance(); // consume repeat
 
         let count = self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
-        let body = self.parse_block(reporter)?;
+        let body = self.parse_block_or_then_end(reporter)?;
 
         let span = Span::new(start_pos, body.span.end);
         Ok(RepeatStmt::new(self.next_id(), count, body, span))
@@ -284,7 +318,7 @@ impl<'a> Parser<'a> {
         let start_pos = self.peek().span.start;
         self.advance(); // consume try/attempt
 
-        let body = self.parse_block(reporter)?;
+        let body = self.parse_block_or_then_end(reporter)?;
         self.consume(
             TokenKind::Catch,
             ErrorCode::E0100,
@@ -292,7 +326,7 @@ impl<'a> Parser<'a> {
             reporter,
         )?;
         let catch_var = self.parse_identifier(reporter)?;
-        let catch_body = self.parse_block(reporter)?;
+        let catch_body = self.parse_block_or_then_end(reporter)?;
 
         let span = Span::new(start_pos, catch_body.span.end);
         Ok(TryStmt::new(
@@ -364,6 +398,138 @@ impl<'a> Parser<'a> {
             let span = Span::new(start_pos, self.previous().span.end);
             Ok(ImportStmt::new(self.next_id(), path, Some(symbols), span))
         }
+    }
+
+    /// Parse the v1.0.8 `use module` form into the shared import AST node.
+    /// Also registers the module's DSL keywords for subsequent declarative block parsing.
+    fn parse_use_stmt(&mut self, reporter: &mut DiagnosticReporter) -> ParseResult<ImportStmt> {
+        let start_pos = self.peek().span.start;
+        self.advance(); // use
+        let mut path = vec![self.parse_identifier(reporter)?];
+        while self.match_token(TokenKind::Dot) {
+            path.push(self.parse_identifier(reporter)?);
+        }
+        self.consume_terminator(reporter)?;
+
+        // Register DSL keywords from the imported module
+        let module_name = path.iter().map(|i| i.name.as_str()).collect::<Vec<_>>().join(".");
+        self.register_dsl_keywords(&module_name);
+
+        let span = Span::new(start_pos, self.previous().span.end);
+        Ok(ImportStmt::new(self.next_id(), path, None, span))
+    }
+
+    /// Parse a declarative DSL block: `keyword [args...]` newline `[body...]` `end`
+    pub fn parse_dsl_block(&mut self, reporter: &mut DiagnosticReporter) -> ParseResult<DSLBlock> {
+        let start_pos = self.peek().span.start;
+        let kind = self.parse_identifier(reporter)?.name;
+
+        // Parse optional arguments until the statement terminator
+        let mut args = Vec::new();
+        while !self.check(TokenKind::Newline)
+            && !self.check(TokenKind::Semicolon)
+            && !self.is_at_end()
+        {
+            args.push(self.parse_expression(techscript_syntax::Precedence::None, reporter)?);
+        }
+        self.consume_terminator(reporter)?;
+
+        // Parse body: properties and sub-blocks until `end`
+        let (properties, children) = self.parse_dsl_body(reporter)?;
+
+        let span = Span::new(start_pos, self.previous().span.end);
+        Ok(DSLBlock::new(self.next_id(), kind, args, properties, children, span))
+    }
+
+    /// Parse the body of a DSL block: zero or more properties and sub-blocks, terminated by `end`.
+    fn parse_dsl_body(&mut self, reporter: &mut DiagnosticReporter) -> ParseResult<(Vec<DSLProperty>, Vec<DSLChild>)> {
+        let mut properties = Vec::new();
+        let mut children = Vec::new();
+
+        loop {
+            while self.match_token(TokenKind::Newline) {}
+            if self.check(TokenKind::End) || self.is_at_end() {
+                break;
+            }
+
+            if !self.check(TokenKind::Identifier) {
+                let diag = techscript_errors::Diagnostic::new(
+                    techscript_errors::DiagnosticLevel::Error,
+                    ErrorCode::E0100,
+                    "Expected property name or sub-block keyword inside DSL block".to_string(),
+                    self.peek().span,
+                );
+                reporter.report(diag);
+                self.synchronize();
+                continue;
+            }
+
+            let name = self.peek().lexeme.clone();
+
+            if name == "code" {
+                // Code block: parse raw TechScript statements until `end`
+                self.advance();
+                self.consume_terminator(reporter)?;
+                let code_start = self.peek().span.start;
+                let mut statements = Vec::new();
+                loop {
+                    while self.match_token(TokenKind::Newline) {}
+                    if self.check(TokenKind::End) || self.is_at_end() {
+                        break;
+                    }
+                    match self.parse_statement(reporter) {
+                        Ok(stmt) => statements.push(stmt),
+                        Err(_) => { self.synchronize(); }
+                    }
+                }
+                self.consume(
+                    TokenKind::End,
+                    ErrorCode::E0105,
+                    "Expected 'end' to close code block",
+                    reporter,
+                )?;
+                let span = Span::new(code_start, self.previous().span.end);
+                children.push(DSLChild::Code(Block::new(self.next_id(), statements, span)));
+            } else if self.dsl_sub_blocks.contains(&name) {
+                // Nested DSL sub-block
+                let block = self.parse_dsl_block(reporter)?;
+                children.push(DSLChild::Block(block));
+            } else {
+                // Property: `name [value...]`
+                let prop = self.parse_dsl_property(reporter)?;
+                properties.push(prop);
+            }
+        }
+
+        self.consume(
+            TokenKind::End,
+            ErrorCode::E0105,
+            "Expected 'end' to close DSL block",
+            reporter,
+        )?;
+
+        Ok((properties, children))
+    }
+
+    /// Parse a DSL property: `name [value...]` terminated by newline/semicolon.
+    pub fn parse_dsl_property(&mut self, reporter: &mut DiagnosticReporter) -> ParseResult<DSLProperty> {
+        let start_pos = self.peek().span.start;
+        let name = self.parse_identifier(reporter)?.name;
+
+        let mut value = None;
+        // Check if there is a value expression on the same line
+        if !self.check(TokenKind::Newline)
+            && !self.check(TokenKind::Semicolon)
+            && !self.check(TokenKind::End)
+            && !self.check(TokenKind::RightBrace)
+            && !self.is_at_end()
+        {
+            value = Some(self.parse_expression(techscript_syntax::Precedence::None, reporter)?);
+        }
+        self.consume_terminator(reporter)?;
+
+        let span = Span::new(start_pos, self.previous().span.end);
+        Ok(DSLProperty::new(self.next_id(), name, value, span))
     }
 
     /// Consumes the required statement terminator (newline, semicolon, or implicit).

@@ -16,7 +16,7 @@ impl<'a> Parser<'a> {
         if self.check(TokenKind::Make) || self.check(TokenKind::Let) || self.check(TokenKind::Var) {
             let decl = self.parse_variable_decl(reporter)?;
             Ok(Statement::VarDecl(decl))
-        } else if self.check(TokenKind::Const) {
+        } else if self.check(TokenKind::Const) || self.check(TokenKind::Keep) {
             let decl = self.parse_constant_decl(reporter)?;
             Ok(Statement::ConstDecl(decl))
         } else if self.check(TokenKind::Build)
@@ -55,12 +55,14 @@ impl<'a> Parser<'a> {
             type_ann = Some(self.parse_type_spec(reporter)?);
         }
 
-        self.consume(
-            TokenKind::Equal,
-            ErrorCode::E0100,
-            "Expected '=' after variable pattern",
-            reporter,
-        )?;
+        if !self.match_token(TokenKind::Equal) {
+            self.consume(
+                TokenKind::Be,
+                ErrorCode::E0100,
+                "Expected '=' or 'be' after variable pattern",
+                reporter,
+            )?;
+        }
         let initializer = self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
         self.consume_terminator(reporter)?;
 
@@ -77,7 +79,7 @@ impl<'a> Parser<'a> {
     /// const pattern[: type] = expression
     fn parse_constant_decl(&mut self, reporter: &mut DiagnosticReporter) -> ParseResult<ConstDecl> {
         let start_pos = self.peek().span.start;
-        self.advance(); // consume const
+        self.advance(); // consume const/keep
 
         let pattern = self.parse_pattern(reporter)?;
 
@@ -86,12 +88,14 @@ impl<'a> Parser<'a> {
             type_ann = Some(self.parse_type_spec(reporter)?);
         }
 
-        self.consume(
-            TokenKind::Equal,
-            ErrorCode::E0100,
-            "Expected '=' after constant pattern",
-            reporter,
-        )?;
+        if !self.match_token(TokenKind::Equal) {
+            self.consume(
+                TokenKind::Be,
+                ErrorCode::E0100,
+                "Expected '=' or 'be' after constant pattern",
+                reporter,
+            )?;
+        }
         let initializer = self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
         self.consume_terminator(reporter)?;
 
@@ -148,34 +152,45 @@ impl<'a> Parser<'a> {
             generic_params = Some(list);
         }
 
-        self.consume(
-            TokenKind::LeftParen,
-            ErrorCode::E0104,
-            "Expected '(' before function parameters",
-            reporter,
-        )?;
         let mut params = Vec::new();
-        if !self.check(TokenKind::RightParen) {
+        if self.match_token(TokenKind::With) {
+            // v1.0.8 sentence-style declaration: `build greet with name then`.
+            // Multiple parameters may be comma-separated for consistency.
             loop {
                 params.push(self.parse_parameter(reporter)?);
                 if !self.match_token(TokenKind::Comma) {
                     break;
                 }
             }
+        } else {
+            self.consume(
+                TokenKind::LeftParen,
+                ErrorCode::E0104,
+                "Expected '(' or 'with' before function parameters",
+                reporter,
+            )?;
+            if !self.check(TokenKind::RightParen) {
+                loop {
+                    params.push(self.parse_parameter(reporter)?);
+                    if !self.match_token(TokenKind::Comma) {
+                        break;
+                    }
+                }
+            }
+            self.consume(
+                TokenKind::RightParen,
+                ErrorCode::E0105,
+                "Expected ')' after function parameters",
+                reporter,
+            )?;
         }
-        self.consume(
-            TokenKind::RightParen,
-            ErrorCode::E0105,
-            "Expected ')' after function parameters",
-            reporter,
-        )?;
 
         let mut return_type = None;
         if self.match_token(TokenKind::Arrow) {
             return_type = Some(self.parse_type_spec(reporter)?);
         }
 
-        let body = self.parse_block(reporter)?;
+        let body = self.parse_block_or_then_end(reporter)?;
         let span = Span::new(start_pos, body.span.end);
 
         Ok(FuncDecl::new(
@@ -302,19 +317,24 @@ impl<'a> Parser<'a> {
             parent = Some(self.parse_identifier(reporter)?);
         }
 
-        self.consume(
-            TokenKind::LeftBrace,
-            ErrorCode::E0104,
-            "Expected '{' before model body",
-            reporter,
-        )?;
+        let is_brace = self.match_token(TokenKind::LeftBrace);
+        if !is_brace {
+            self.consume(
+                TokenKind::Then,
+                ErrorCode::E0104,
+                "Expected '{' or 'then' before model body",
+                reporter,
+            )?;
+        }
 
         let mut fields = Vec::new();
         let mut methods = Vec::new();
 
-        while !self.check(TokenKind::RightBrace) && !self.is_at_end() {
+        let end_kind = if is_brace { TokenKind::RightBrace } else { TokenKind::End };
+
+        while !self.check(end_kind) && !self.is_at_end() {
             while self.match_token(TokenKind::Newline) || self.match_token(TokenKind::Semicolon) {}
-            if self.check(TokenKind::RightBrace) {
+            if self.check(end_kind) {
                 break;
             }
             // Check model members
@@ -323,7 +343,7 @@ impl<'a> Parser<'a> {
                 || self.check(TokenKind::Var)
             {
                 fields.push(self.parse_variable_decl(reporter)?);
-            } else if self.check(TokenKind::Const) {
+            } else if self.check(TokenKind::Const) || self.check(TokenKind::Keep) {
                 // Constants are treated as fields in the AST
                 let c_decl = self.parse_constant_decl(reporter)?;
                 let f_decl = VarDecl::new(
@@ -361,9 +381,9 @@ impl<'a> Parser<'a> {
         }
 
         self.consume(
-            TokenKind::RightBrace,
+            end_kind,
             ErrorCode::E0105,
-            "Expected '}' after model body",
+            "Expected closing delimiter after model body",
             reporter,
         )?;
         let span = Span::new(start_pos, self.previous().span.end);

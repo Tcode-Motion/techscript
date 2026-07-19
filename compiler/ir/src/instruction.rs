@@ -123,4 +123,6 @@ pub enum TerminatorKind {
     Return(Option<Value>),
     /// Signals unreachable static program paths.
     Unreachable,
+    /// Throw an exception with a value.
+    Throw(Value),
 }

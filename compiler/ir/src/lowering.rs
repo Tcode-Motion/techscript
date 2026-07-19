@@ -233,41 +233,146 @@ impl LoweringContext {
                     .enter_block(exit_block, "while_exit".to_string());
             }
             Statement::For(for_stmt) => {
+                let _init_block = self.builder.new_block("for_init".to_string());
                 let cond_block = self.builder.new_block("for_cond".to_string());
                 let body_block = self.builder.new_block("for_body".to_string());
+                let inc_block = self.builder.new_block("for_inc".to_string());
                 let exit_block = self.builder.new_block("for_exit".to_string());
 
-                // Evaluate iterable
-                let _iter_val = self.lower_expression(&for_stmt.iterable);
+                // Init path: evaluate iterable, store list and index=0
+                let iter_val = self.lower_expression(&for_stmt.iterable);
+                let iter_local = self.builder.allocate_local(IRType::Any);
+                let idx_local = self.builder.allocate_local(IRType::Any);
+                self.builder.emit_effect(
+                    Op::Store {
+                        target: Value::Local(iter_local),
+                        value: iter_val,
+                    },
+                    for_stmt.span,
+                );
+                let zero_idx = self.builder.emit_instruction(
+                    Op::Constant(LiteralVal::Int(0)),
+                    IRType::Int64,
+                    for_stmt.span,
+                );
+                self.builder.emit_effect(
+                    Op::Store {
+                        target: Value::Local(idx_local),
+                        value: Value::Temp(zero_idx),
+                    },
+                    for_stmt.span,
+                );
 
                 self.builder
                     .emit_terminator(TerminatorKind::Jump(cond_block), for_stmt.span);
 
-                // Cond path
+                // Cond path: load index, load len(list), compare index < len(list)
                 self.builder.enter_block(cond_block, "for_cond".to_string());
-                let cond_val = Value::Const(LiteralVal::Bool(true)); // Simplified loop condition
+                let idx_load = self.builder.emit_instruction(
+                    Op::Load(Value::Local(idx_local)),
+                    IRType::Int64,
+                    for_stmt.span,
+                );
+                let iter_load = self.builder.emit_instruction(
+                    Op::Load(Value::Local(iter_local)),
+                    IRType::Any,
+                    for_stmt.span,
+                );
+                let len_global = self.builder.declare_global("len".to_string(), IRType::Any);
+                let len_call = self.builder.emit_instruction(
+                    Op::Call {
+                        callee: Value::Global(len_global),
+                        args: vec![Value::Temp(iter_load)],
+                    },
+                    IRType::Int64,
+                    for_stmt.span,
+                );
+                let cond_val = self.builder.emit_instruction(
+                    Op::Compare {
+                        op: techscript_syntax::TokenKind::Less,
+                        left: Value::Temp(idx_load),
+                        right: Value::Temp(len_call),
+                    },
+                    IRType::Bool,
+                    for_stmt.span,
+                );
                 self.builder.emit_terminator(
                     TerminatorKind::ConditionalJump {
-                        cond: cond_val,
+                        cond: Value::Temp(cond_val),
                         then_block: body_block,
                         else_block: exit_block,
                     },
                     for_stmt.span,
                 );
 
-                // Body path
+                // Body path: load list[idx] into loop variable
                 self.break_stack.push(exit_block);
-                self.continue_stack.push(cond_block);
+                self.continue_stack.push(inc_block);
 
                 self.builder.enter_block(body_block, "for_body".to_string());
-                // Bind parameter iterator locally
+                let iter_load_body = self.builder.emit_instruction(
+                    Op::Load(Value::Local(iter_local)),
+                    IRType::Any,
+                    for_stmt.span,
+                );
+                let idx_load_body = self.builder.emit_instruction(
+                    Op::Load(Value::Local(idx_local)),
+                    IRType::Int64,
+                    for_stmt.span,
+                );
+                let elem = self.builder.emit_instruction(
+                    Op::IndexLoad {
+                        base: Value::Temp(iter_load_body),
+                        index: Value::Temp(idx_load_body),
+                    },
+                    IRType::Any,
+                    for_stmt.span,
+                );
                 let loop_param = self.builder.allocate_local(IRType::Any);
                 self.symbol_map.insert(
                     for_stmt.item.name.clone(),
                     SymbolBinding::Local(loop_param, IRType::Any),
                 );
+                self.builder.emit_effect(
+                    Op::Store {
+                        target: Value::Local(loop_param),
+                        value: Value::Temp(elem),
+                    },
+                    for_stmt.span,
+                );
 
                 self.lower_block(&for_stmt.body);
+                self.builder
+                    .emit_terminator(TerminatorKind::Jump(inc_block), for_stmt.span);
+
+                // Increment path: idx = idx + 1
+                self.builder.enter_block(inc_block, "for_inc".to_string());
+                let old_idx = self.builder.emit_instruction(
+                    Op::Load(Value::Local(idx_local)),
+                    IRType::Int64,
+                    for_stmt.span,
+                );
+                let one = self.builder.emit_instruction(
+                    Op::Constant(LiteralVal::Int(1)),
+                    IRType::Int64,
+                    for_stmt.span,
+                );
+                let new_idx = self.builder.emit_instruction(
+                    Op::BinaryOp {
+                        op: techscript_syntax::TokenKind::Plus,
+                        left: Value::Temp(old_idx),
+                        right: Value::Temp(one),
+                    },
+                    IRType::Int64,
+                    for_stmt.span,
+                );
+                self.builder.emit_effect(
+                    Op::Store {
+                        target: Value::Local(idx_local),
+                        value: Value::Temp(new_idx),
+                    },
+                    for_stmt.span,
+                );
                 self.builder
                     .emit_terminator(TerminatorKind::Jump(cond_block), for_stmt.span);
 
@@ -282,15 +387,13 @@ impl LoweringContext {
                 let body_block = self.builder.new_block("repeat_body".to_string());
                 let exit_block = self.builder.new_block("repeat_exit".to_string());
 
-                let _count_val = self.lower_expression(&repeat_stmt.count);
-
                 self.builder
                     .emit_terminator(TerminatorKind::Jump(cond_block), repeat_stmt.span);
 
-                // Cond
+                // Cond: evaluate condition each iteration
                 self.builder
                     .enter_block(cond_block, "repeat_cond".to_string());
-                let cond_val = Value::Const(LiteralVal::Bool(true));
+                let cond_val = self.lower_expression(&repeat_stmt.count);
                 self.builder.emit_terminator(
                     TerminatorKind::ConditionalJump {
                         cond: cond_val,
@@ -337,13 +440,14 @@ impl LoweringContext {
                     .emit_terminator(TerminatorKind::Return(val), ret_stmt.span);
             }
             Statement::Throw(throw_stmt) => {
-                let _val = self.lower_expression(&throw_stmt.value);
+                let val = self.lower_expression(&throw_stmt.value);
                 self.builder
-                    .emit_terminator(TerminatorKind::Unreachable, throw_stmt.span);
+                    .emit_terminator(TerminatorKind::Throw(val), throw_stmt.span);
             }
             Statement::Try(try_stmt) => {
                 // Lower try blocks as consecutive basic blocks
                 let try_block = self.builder.new_block("try_body".to_string());
+                let try_next = self.builder.new_block("try_next".to_string());
                 let catch_block = self.builder.new_block("catch_body".to_string());
                 let merge_block = self.builder.new_block("try_merge".to_string());
 
@@ -367,6 +471,13 @@ impl LoweringContext {
                 // Try Body
                 self.builder.enter_block(try_block, "try_body".to_string());
                 self.lower_block(&try_stmt.body);
+                if !self.builder.has_terminator() {
+                    self.builder
+                        .emit_terminator(TerminatorKind::Jump(try_next), try_stmt.span);
+                }
+
+                // Try next (normal completion path — runs EndTry then jumps to merge)
+                self.builder.enter_block(try_next, "try_next".to_string());
                 self.builder.emit_effect(Op::EndTry, try_stmt.span);
                 self.builder
                     .emit_terminator(TerminatorKind::Jump(merge_block), try_stmt.span);
@@ -479,6 +590,18 @@ impl LoweringContext {
                 let _ = self
                     .builder
                     .declare_global(decl.name.name.clone(), IRType::Enum(decl.name.name.clone()));
+            }
+            Statement::DSL(block) => {
+                // DSL blocks are declarative scene/world definitions.
+                // At the IR level, lower them as opaque globals to preserve the
+                // structure for the framework runtime.
+                let global_id = self
+                    .builder
+                    .declare_global(block.kind.clone(), IRType::Any);
+                self.symbol_map.insert(
+                    block.kind.clone(),
+                    SymbolBinding::Global(global_id, IRType::Any),
+                );
             }
         }
     }

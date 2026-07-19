@@ -54,25 +54,97 @@ impl SymbolTable {
     pub fn new() -> Self {
         let mut global_scope = Scope::new();
         let any_type = TypeId(0);
-        global_scope.symbols.insert("len".to_string(), Symbol::new("len".to_string(), true, true, false, any_type));
-        global_scope.symbols.insert("range".to_string(), Symbol::new("range".to_string(), true, true, false, any_type));
-        global_scope.symbols.insert("ask".to_string(), Symbol::new("ask".to_string(), true, true, false, any_type));
-        global_scope.symbols.insert("push".to_string(), Symbol::new("push".to_string(), true, true, false, any_type));
-        global_scope.symbols.insert("insert".to_string(), Symbol::new("insert".to_string(), true, true, false, any_type));
-        global_scope.symbols.insert("parse".to_string(), Symbol::new("parse".to_string(), true, true, false, any_type));
-        global_scope.symbols.insert("write_file".to_string(), Symbol::new("write_file".to_string(), true, true, false, any_type));
-        global_scope.symbols.insert("read_file".to_string(), Symbol::new("read_file".to_string(), true, true, false, any_type));
-        global_scope.symbols.insert("spawn_async".to_string(), Symbol::new("spawn_async".to_string(), true, true, false, any_type));
-        global_scope.symbols.insert("print".to_string(), Symbol::new("print".to_string(), true, true, false, any_type));
-        global_scope.symbols.insert("println".to_string(), Symbol::new("println".to_string(), true, true, false, any_type));
-        global_scope.symbols.insert("std".to_string(), Symbol::new("std".to_string(), true, true, false, any_type));
-        global_scope.symbols.insert("get".to_string(), Symbol::new("get".to_string(), true, true, false, any_type));
-        global_scope.symbols.insert("set".to_string(), Symbol::new("set".to_string(), true, true, false, any_type));
+
+        // Helper closure to avoid repetition
+        let mut add = |name: &str| {
+            global_scope.symbols.insert(
+                name.to_string(),
+                Symbol::new(name.to_string(), true, true, false, any_type),
+            );
+        };
+
+        // ── Core native-registry built-ins ──────────────────────────────────
+        add("say");
+        add("ask");
+        add("len");
+        add("range");
+        add("type_of");
+        add("to_int");
+        add("to_float");
+        add("to_str");
+        add("to_bool");
+        add("assert");
+        add("exit");
+
+        // ── Type-conversion aliases used in v1.0.8 code ─────────────────────
+        add("str");    // same as to_str
+        add("int");    // same as to_int
+        add("float");  // same as to_float
+        add("bool");   // same as to_bool
+
+        // ── Stdlib module-level globals ──────────────────────────────────────
+        add("std");
+        add("math");
+        add("random");
+        add("strings");
+        add("json");
+        add("io");
+        add("fs");
+        add("sys");
+        add("net");
+        add("http");
+        add("xml");
+        add("csv");
+        add("yaml");
+        add("datetime");
+        add("crypto");
+        add("hash");
+        add("regex");
+        add("path");
+        add("thread");
+        add("sync");
+        add("testing");
+        add("logging");
+        add("compress");
+        add("encoding");
+        add("uuid");
+        add("url");
+        add("system");
+        add("toml");
+        add("database");
+        add("graphics");
+        add("ai");
+
+        // ── Miscellaneous globals used in existing stdlib code ───────────────
+        add("push");
+        add("insert");
+        add("parse");
+        add("write_file");
+        add("read_file");
+        add("spawn_async");
+        add("print");
+        add("println");
+        add("get");
+        add("set");
+
+        // ── Math functions re-exported at global scope ───────────────────────
+        add("sqrt");
+        add("floor");
+        add("ceil");
+        add("round");
+        add("abs");
+        add("pow");
+        add("log");
+        add("sin");
+        add("cos");
+        add("tan");
+        add("pi");
 
         Self {
             scopes: vec![global_scope],
         }
     }
+
 
     pub fn push_scope(&mut self) {
         self.scopes.push(Scope::new());

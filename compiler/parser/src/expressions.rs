@@ -263,6 +263,17 @@ impl<'a> Parser<'a> {
                     span,
                 )))
             }
+            TokenKind::Typeof => {
+                let right = self.parse_expression(Precedence::Unary, reporter)?;
+                let callee = Expression::Identifier(techscript_common::Ident::new("type_of".to_string(), token.span));
+                let span = Span::new(token.span.start, right.span().end);
+                Ok(Expression::Call(techscript_ast::CallExpr::new(
+                    self.next_id(),
+                    Box::new(callee),
+                    vec![right],
+                    span,
+                )))
+            }
             _ => {
                 let diag = Diagnostic::new(
                     DiagnosticLevel::Error,
@@ -306,6 +317,7 @@ impl<'a> Parser<'a> {
             | TokenKind::Or
             | TokenKind::Is
             | TokenKind::In
+            | TokenKind::Equals
             | TokenKind::QuestionQuestion => {
                 let right_prec = if assoc == Associativity::Right {
                     next_lower_precedence(precedence)
@@ -314,10 +326,15 @@ impl<'a> Parser<'a> {
                 };
                 let right = self.parse_expression(right_prec, reporter)?;
                 let span = Span::new(left.span().start, right.span().end);
+                let lexeme = if token.kind == TokenKind::Equals {
+                    "==".to_string()
+                } else {
+                    token.lexeme.clone()
+                };
                 Ok(Expression::Binary(BinaryExpr::new(
                     self.next_id(),
                     Box::new(left),
-                    token.lexeme.clone(),
+                    lexeme,
                     Box::new(right),
                     span,
                 )))

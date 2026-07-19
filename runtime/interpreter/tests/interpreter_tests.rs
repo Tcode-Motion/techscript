@@ -179,8 +179,9 @@ make error_msg = ""
 try {
     throw "critical exception"
 } catch e {
-    error_msg = e
+    error_msg = e.message
 }
+
 "#;
     let mut reporter = DiagnosticReporter::new();
     let tokens = lex(source, &mut reporter).unwrap();
@@ -191,4 +192,40 @@ try {
 
     let val = interpreter.env.borrow().lookup("error_msg").unwrap();
     assert_eq!(val, RuntimeValue::Str("critical exception".to_string()));
+}
+
+#[test]
+fn test_v108_runtime_compatibility() {
+    let source = r#"
+keep limit be 4
+make x be 1
+repeat x < limit {
+    x = x + 1
+}
+make last = 0
+each i in 1..3 then
+    last = i
+end
+build greet(name, greeting = "Hello ") {
+    give greeting + name
+}
+make greeting = greet("TechScript")
+make caught = ""
+attempt {
+    make impossible = 1 / 0
+} catch err {
+    caught = err.message
+}
+"#;
+    let mut reporter = DiagnosticReporter::new();
+    let tokens = lex(source, &mut reporter).unwrap();
+    let program = parse(&tokens, &mut reporter).unwrap();
+    let checked = analyze(program, &mut reporter).unwrap();
+    let mut interpreter = Interpreter::new();
+    interpreter.interpret(&checked.program).unwrap();
+
+    assert_eq!(interpreter.env.borrow().lookup("x").unwrap(), RuntimeValue::Int(4));
+    assert_eq!(interpreter.env.borrow().lookup("last").unwrap(), RuntimeValue::Int(3));
+    assert_eq!(interpreter.env.borrow().lookup("greeting").unwrap(), RuntimeValue::Str("Hello TechScript".to_string()));
+    assert_eq!(interpreter.env.borrow().lookup("caught").unwrap(), RuntimeValue::Str("division by zero".to_string()));
 }

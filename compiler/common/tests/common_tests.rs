@@ -633,7 +633,7 @@ fn version_string_is_not_empty() {
 #[test]
 fn version_string_matches_cargo() {
     // The version should match the crate's Cargo.toml version
-    assert_eq!(TECHSCRIPT_VERSION, "0.1.0");
+    assert_eq!(TECHSCRIPT_VERSION, "2.0.0");
 }
 
 #[test]

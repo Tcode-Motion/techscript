@@ -3,8 +3,8 @@ use crate::pipeline::Pass;
 use crate::symbol_table::Symbol;
 use crate::types::Type;
 use techscript_ast::{
-    Block, ConstDecl, Expression, FuncDecl, MethodDecl, MethodKeyword, ModelDecl, Pattern, Program,
-    Statement, VarDecl,
+    Block, ConstDecl, DSLBlock, DSLChild, Expression, FuncDecl, MethodDecl, MethodKeyword, ModelDecl,
+    Pattern, Program, Statement, VarDecl,
 };
 use techscript_common::Ident;
 use techscript_errors::{Diagnostic, DiagnosticLevel, ErrorCode};
@@ -307,6 +307,33 @@ impl ResolveSymbols {
             Statement::Expression(stmt) => {
                 let _ = self.resolve_expression(&stmt.expression, context);
                 Ok(())
+            }
+            Statement::DSL(stmt) => {
+                self.resolve_dsl_block(stmt, context);
+                Ok(())
+            }
+        }
+    }
+
+    fn resolve_dsl_block(&self, block: &DSLBlock, context: &mut SemanticContext) {
+        // DSL blocks are side-effectful world-building nodes. At the semantic level,
+        // they function like pre-baked scene definitions. Resolve any expression values
+        // inside properties, sub-blocks, and inline code.
+        for child in &block.children {
+            match child {
+                DSLChild::Property(prop) => {
+                    if let Some(ref expr) = prop.value {
+                        let _ = self.resolve_expression(expr, context);
+                    }
+                }
+                DSLChild::Code(block) => {
+                    for stmt in &block.statements {
+                        let _ = self.resolve_statement(stmt, context);
+                    }
+                }
+                DSLChild::Block(dsl) => {
+                    self.resolve_dsl_block(dsl, context);
+                }
             }
         }
     }
@@ -685,15 +712,9 @@ impl ResolveSymbols {
                             if let Type::Function { ref params, .. } = function_type {
                                 // For TechScript 2.0 simple checking, let's compare argument counts.
                                 // (min, max checking can be detailed as we expand)
-                                if call.args.len() < params.len() {
-                                    let diag = Diagnostic::new(
-                                        DiagnosticLevel::Error,
-                                        ErrorCode::E0310,
-                                        format!("Too few arguments in call to '{}'. Expected {}, found {}", ident.name, params.len(), call.args.len()),
-                                        call.span,
-                                    );
-                                    context.diagnostics.push(diag);
-                                } else if call.args.len() > params.len() {
+                                // Runtime callables know their required/minimum arity;
+                                // this preserves default-parameter functions.
+                                if call.args.len() > params.len() {
                                     let diag = Diagnostic::new(
                                         DiagnosticLevel::Error,
                                         ErrorCode::E0311,

@@ -42,6 +42,56 @@ pub mod toml;
 pub mod database;
 pub mod graphics;
 pub mod ai;
+pub mod os;
+pub mod env;
+pub mod process;
+pub mod file;
+pub mod time;
+pub mod terminal;
+pub mod socket;
+pub mod websocket;
+pub mod dns;
+pub mod email;
+pub mod ftp;
+pub mod sqlite;
+pub mod mysql;
+pub mod postgres;
+pub mod mongodb;
+pub mod redis;
+pub mod jwt;
+pub mod oauth;
+pub mod image;
+pub mod gui;
+pub mod web;
+pub mod audio;
+pub mod video;
+pub mod scheduler;
+pub mod cache;
+pub mod binary;
+pub mod ini;
+pub mod docs;
+pub mod config;
+pub mod task;
+pub mod parallel;
+pub mod benchmark;
+pub mod profiler;
+pub mod mock;
+pub mod debug;
+pub mod svg;
+pub mod pdf;
+pub mod barcode;
+pub mod qrcode;
+pub mod notification;
+pub mod security;
+pub mod settings;
+pub mod localization;
+pub mod theme;
+pub mod charts;
+pub mod report;
+pub mod excel;
+pub mod word;
+pub mod powerpoint;
+pub mod canvas;
 
 /// Type definition for module function callbacks.
 pub type StdFnCallback =
@@ -270,5 +320,90 @@ impl StdlibRegistry {
         self.register_database();
         self.register_graphics();
         self.register_ai();
+        self.register_os();
+        self.register_env();
+        self.register_process();
+        self.register_file();
+        self.register_time();
+        self.register_terminal();
+        self.register_socket();
+        self.register_websocket();
+        self.register_dns();
+        self.register_email();
+        self.register_ftp();
+        self.register_sqlite();
+        self.register_mysql();
+        self.register_postgres();
+        self.register_mongodb();
+        self.register_redis();
+        self.register_jwt();
+        self.register_oauth();
+        self.register_image();
+        self.register_gui();
+        self.register_web();
+        self.register_audio();
+        self.register_video();
+        self.register_scheduler();
+        self.register_cache();
+        self.register_binary();
+        self.register_ini();
+        self.register_docs();
+        self.register_task();
+        self.register_config();
+        self.register_parallel();
+        self.register_benchmark();
+        self.register_profiler();
+        self.register_svg();
+        self.register_pdf();
+        self.register_barcode();
+        self.register_qrcode();
+        self.register_notification();
+        self.register_security();
+        self.register_settings();
+        self.register_localization();
+        self.register_theme();
+        self.register_charts();
+        self.register_report();
+        self.register_excel();
+        self.register_word();
+        self.register_powerpoint();
+        self.register_canvas();
+        self.register_debug();
+        self.register_mock();
+        self.register_v1_compatibility();
+    }
+
+    /// Add v1.0.8 public module spellings without changing the 2.0 `std.*`
+    /// API. Aliases share the existing callable implementations.
+    fn register_v1_compatibility(&mut self) {
+        if let Some(hash) = self.modules.get("std.hash").cloned() {
+            if let Some(crypto) = self.modules.get_mut("std.crypto") {
+                for (name, function) in hash.exports {
+                    crypto.exports.entry(name).or_insert(function);
+                }
+            }
+        }
+        if let Some(json) = self.modules.get_mut("std.json") {
+            if let Some(value) = json.exports.get("stringify").cloned() {
+                json.exports.insert("encode".to_string(), value);
+            }
+            if let Some(value) = json.exports.get("parse").cloned() {
+                json.exports.insert("decode".to_string(), value);
+            }
+        }
+        if let Some(fs) = self.modules.get_mut("std.fs") {
+            if let Some(value) = fs.exports.get("write_file").cloned() { fs.exports.insert("write".to_string(), value); }
+            if let Some(value) = fs.exports.get("read_file").cloned() { fs.exports.insert("read".to_string(), value); }
+        }
+        if let Some(random) = self.modules.get_mut("std.random") {
+            if let Some(value) = random.exports.get("int").cloned() { random.exports.insert("randint".to_string(), value); }
+            if let Some(value) = random.exports.get("float").cloned() { random.exports.insert("random".to_string(), value); }
+        }
+        if let Some(system) = self.modules.get_mut("std.system") {
+            if let Some(value) = system.exports.get("os").cloned() { system.exports.insert("name".to_string(), value); }
+        }
+        if let Some(datetime) = self.modules.get_mut("std.datetime") {
+            if let Some(value) = datetime.exports.get("epoch").cloned() { datetime.exports.insert("unix".to_string(), value); }
+        }
     }
 }

@@ -56,6 +56,9 @@ pub enum Statement {
 
     // Block
     Block(Block),
+
+    // Declarative DSL block (e.g., `page "/" ... end`, `logo "name" ... end`)
+    DSL(DSLBlock),
 }
 
 
@@ -612,6 +615,54 @@ impl Block {
     }
 }
 
+/// A declarative DSL block like `page "/" ... end` or `logo "name" ... end`.
+/// Syntax: `block-name [arg...]` newline `[properties]` `[children]` `end`
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct DSLBlock {
+    pub id: NodeId,
+    pub kind: String,
+    pub args: Vec<Expression>,
+    pub properties: Vec<DSLProperty>,
+    pub children: Vec<DSLChild>,
+    pub span: Span,
+}
+
+impl DSLBlock {
+    pub fn new(
+        id: NodeId,
+        kind: String,
+        args: Vec<Expression>,
+        properties: Vec<DSLProperty>,
+        children: Vec<DSLChild>,
+        span: Span,
+    ) -> Self {
+        Self { id, kind, args, properties, children, span }
+    }
+}
+
+/// A property within a DSL block body: `name value...`
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct DSLProperty {
+    pub id: NodeId,
+    pub name: String,
+    pub value: Option<Expression>,
+    pub span: Span,
+}
+
+impl DSLProperty {
+    pub fn new(id: NodeId, name: String, value: Option<Expression>, span: Span) -> Self {
+        Self { id, name, value, span }
+    }
+}
+
+/// A child element within a DSL block — either a nested DSL block, a code block, or a property.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum DSLChild {
+    Block(DSLBlock),
+    Code(Block),
+    Property(DSLProperty),
+}
+
 /// Expression node variants.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum Expression {
@@ -932,6 +983,7 @@ impl Statement {
             Statement::Import(stmt) => stmt.span,
             Statement::Expression(stmt) => stmt.span,
             Statement::Block(stmt) => stmt.span,
+            Statement::DSL(stmt) => stmt.span,
         }
     }
 }

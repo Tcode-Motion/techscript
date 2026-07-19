@@ -121,7 +121,7 @@ impl AstVisitor for Interpreter {
                 }
 
                 if let RuntimeValue::Function(func) = callee_val {
-                    if args.len() != func.arity()
+                    if !func.accepts_arity(args.len())
                         && func.name() != "assert"
                         && func.name() != "exit"
                         && func.name() != "print"
@@ -202,7 +202,12 @@ impl AstVisitor for Interpreter {
                 let end_val = self.visit_expression(&range.end)?;
                 let start = start_val.try_into_int()?;
                 let end = end_val.try_into_int()?;
-                let list = (start..end).map(RuntimeValue::Int).collect::<Vec<_>>();
+                // v1.0.8 defines `..` as inclusive (1..5 → 1,2,3,4,5).
+                // `..=` is accepted as an explicit alias with the same semantics.
+                // Both tokens produce an inclusive range — always add 1 for the
+                // exclusive Rust range iterator.
+                let final_end = end.saturating_add(1);
+                let list = (start..final_end).map(RuntimeValue::Int).collect::<Vec<_>>();
                 Ok(RuntimeValue::List {
                     items: Rc::new(RefCell::new(list)),
                     is_const: false,
@@ -234,12 +239,17 @@ impl AstVisitor for Interpreter {
 }
 
 impl Interpreter {
-    fn eval_member_access(
+    pub(crate) fn eval_member_access(
         &mut self,
         obj_val: RuntimeValue,
         member: &str,
         span: techscript_common::Span,
     ) -> EvalResult {
+        if let RuntimeValue::Str(message) = &obj_val {
+            if member == "message" {
+                return Ok(RuntimeValue::Str(message.clone()));
+            }
+        }
         match obj_val {
             RuntimeValue::StructInstance(inst) => {
                 if let Some(val) = inst.borrow().fields.get(member) {

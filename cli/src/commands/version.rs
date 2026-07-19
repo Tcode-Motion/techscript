@@ -22,15 +22,13 @@ pub fn execute() -> ExitCode {
     println!("LLVM Backend:             {}", llvm_status);
     
     println!("Standard Library:         v{}", techscript_common::TECHSCRIPT_VERSION);
-    println!("Language Server (LSP):    techscript-lsp v0.1.0");
-    println!("Formatter (tsfmt):        tsfmt v0.1.0");
-    println!("Linter (tslint):          tslint v0.1.0");
-    println!("Package Manager (tspm):   tspm v0.1.0");
+    println!("Language Server (LSP):    techscript-lsp v{}", techscript_common::TECHSCRIPT_VERSION);
+    println!("Formatter (tsfmt):        tsfmt v{}", techscript_common::TECHSCRIPT_VERSION);
+    println!("Linter (tslint):          tslint v{}", techscript_common::TECHSCRIPT_VERSION);
+    println!("Package Manager (tspm):   tspm v{}", techscript_common::TECHSCRIPT_VERSION);
     
     println!("Target Platform:          {}-{}", std::env::consts::ARCH, std::env::consts::OS);
-    println!("Git Commit Hash:          9f4d2c8");
-    println!("Build Date:               2026-07-17");
-    println!("Rust Toolchain:           rustc 1.78.0");
+    println!("Installation Path:        {}", std::env::current_exe().map(|p| p.parent().unwrap_or(p.as_path()).display().to_string()).unwrap_or_default());
     println!("{}", "=========================================================".bold());
 
     ExitCode::Success

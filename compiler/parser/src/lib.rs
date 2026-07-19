@@ -117,6 +117,10 @@ impl<'a> Parser<'a> {
                     // These are definitive declarations that stay at the top level
                     declarations.push(stmt);
                 }
+                Statement::DSL(_) => {
+                    // DSL blocks are executable statements (they have side effects)
+                    executable_stmts.push(stmt);
+                }
                 Statement::VarDecl(_) | Statement::ConstDecl(_) => {
                     // We keep global variables at the top level so they can be accessed globally
                     declarations.push(stmt);

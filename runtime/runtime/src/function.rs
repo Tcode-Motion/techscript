@@ -13,6 +13,13 @@ pub trait Callable {
     /// Returns the number of arguments expected by the callable.
     fn arity(&self) -> usize;
 
+    /// Whether this callable accepts a particular argument count.  Fixed-arity
+    /// callables retain the historical behaviour; user functions can widen
+    /// this range when they declare default parameters.
+    fn accepts_arity(&self, count: usize) -> bool {
+        count == self.arity()
+    }
+
     /// Executes the function call using the given context and argument values.
     fn call(
         &self,

@@ -50,6 +50,11 @@ impl NativeRegistry {
     pub fn remove(&mut self, name: &str) -> Option<Rc<dyn Callable>> {
         self.functions.remove(name)
     }
+
+    /// Iterates over all (name, callable) pairs in the registry.
+    pub fn iter(&self) -> impl Iterator<Item = (&str, &Rc<dyn Callable>)> {
+        self.functions.iter().map(|(k, v)| (k.as_str(), v))
+    }
 }
 
 pub struct SayNative;
@@ -183,7 +188,14 @@ impl Callable for TypeOfNative {
                 None,
             ));
         }
-        Ok(RuntimeValue::Str(args[0].runtime_type().to_string()))
+        // v1.0.8 type names: `str` for strings, `dict` for maps.
+        // All other type names (`int`, `float`, `bool`, `list`, `null`, etc.) match.
+        let type_name = match &args[0] {
+            RuntimeValue::Str(_)        => "str".to_string(),
+            RuntimeValue::Map { .. }    => "dict".to_string(),
+            other                       => other.runtime_type().to_string(),
+        };
+        Ok(RuntimeValue::Str(type_name))
     }
 }
 

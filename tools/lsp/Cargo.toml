@@ -1,6 +1,6 @@
 [package]
 name = "techscript_lsp"
-version = "0.1.0"
+version = "2.0.0"
 edition = "2021"
 description = "Language Server Protocol bindings for TechScript 2.0 compiler IDE features"
 

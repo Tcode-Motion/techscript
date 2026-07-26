@@ -745,8 +745,38 @@ impl VM {
                         };
 
                         let base = self.stack.pop()?;
-                        let res = collections::map_get(&base, name)
-                            .map_err(|e| VMError::RuntimeException(e.to_string()))?;
+                        let res = match &base {
+                            RuntimeValue::Map { .. } => {
+                                collections::map_get(&base, name)
+                                    .map_err(|e| VMError::RuntimeException(e.to_string()))?
+                            }
+                            RuntimeValue::ModelInstance(inst) => {
+                                if let Some(val) = inst.borrow().fields.get(name) {
+                                    val.clone()
+                                } else {
+                                    return Err(VMError::RuntimeException(format!(
+                                        "Field or method '{}' not found on model '{}'",
+                                        name, inst.borrow().name
+                                    )));
+                                }
+                            }
+                            RuntimeValue::StructInstance(inst) => {
+                                if let Some(val) = inst.borrow().fields.get(name) {
+                                    val.clone()
+                                } else {
+                                    return Err(VMError::RuntimeException(format!(
+                                        "Field '{}' not found on struct '{}'",
+                                        name, inst.borrow().name
+                                    )));
+                                }
+                            }
+                            other => {
+                                return Err(VMError::TypeError {
+                                    expected: "map, model, or struct".to_string(),
+                                    found: other.runtime_type().to_string(),
+                                });
+                            }
+                        };
                         self.stack.push(res)?;
                     } else {
                         return Err(VMError::InvalidOpcode);
@@ -772,8 +802,29 @@ impl VM {
 
                         let value = self.stack.pop()?;
                         let base = self.stack.pop()?;
-                        collections::map_set(&base, name.clone(), value.clone())
-                            .map_err(|e| VMError::RuntimeException(e.to_string()))?;
+                        match &base {
+                            RuntimeValue::Map { .. } => {
+                                collections::map_set(&base, name.clone(), value.clone())
+                                    .map_err(|e| VMError::RuntimeException(e.to_string()))?;
+                            }
+                            RuntimeValue::ModelInstance(inst) => {
+                                inst.borrow_mut().fields.insert(name.clone(), value.clone());
+                            }
+                            RuntimeValue::StructInstance(inst) => {
+                                if inst.borrow().is_const {
+                                    return Err(VMError::RuntimeException(
+                                        "Cannot mutate const struct instance".to_string()
+                                    ));
+                                }
+                                inst.borrow_mut().fields.insert(name.clone(), value.clone());
+                            }
+                            other => {
+                                return Err(VMError::TypeError {
+                                    expected: "map, model, or struct".to_string(),
+                                    found: other.runtime_type().to_string(),
+                                });
+                            }
+                        }
                         self.stack.push(value)?;
                     } else {
                         return Err(VMError::InvalidOpcode);

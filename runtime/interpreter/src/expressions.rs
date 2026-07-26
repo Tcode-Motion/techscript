@@ -114,6 +114,40 @@ impl AstVisitor for Interpreter {
                 Ok(RuntimeValue::Str(result))
             }
             Expression::Call(call) => {
+                if let Expression::Identifier(ref ident) = *call.callee {
+                    if ident.name == "env" {
+                        let arg = self.visit_expression(&call.args[0])?;
+                        let std_val = self.env.borrow().lookup("std")?;
+                        let env_val = self.eval_member_access(std_val, "env", call.span)?;
+                        let get_val = self.eval_member_access(env_val, "get", call.span)?;
+                        if let RuntimeValue::Function(func) = get_val {
+                            return func.call(&mut self.ctx, vec![arg]);
+                        }
+                    } else if ident.name == "file" {
+                        let arg = self.visit_expression(&call.args[0])?;
+                        let std_val = self.env.borrow().lookup("std")?;
+                        let file_val = self.eval_member_access(std_val, "file", call.span)?;
+                        let read_val = self.eval_member_access(file_val, "read", call.span)?;
+                        if let RuntimeValue::Function(func) = read_val {
+                            return func.call(&mut self.ctx, vec![arg]);
+                        }
+                    } else if ident.name == "json" {
+                        let arg = self.visit_expression(&call.args[0])?;
+                        let std_val = self.env.borrow().lookup("std")?;
+                        let file_val = self.eval_member_access(std_val.clone(), "file", call.span)?;
+                        let read_val = self.eval_member_access(file_val, "read", call.span)?;
+                        let content = if let RuntimeValue::Function(func) = read_val {
+                            func.call(&mut self.ctx, vec![arg])?
+                        } else {
+                            return Err(RuntimeError::new(RuntimeErrorKind::InvalidOperation("file.read not found".to_string()), Some(call.span), None));
+                        };
+                        let json_val = self.eval_member_access(std_val, "json", call.span)?;
+                        let parse_val = self.eval_member_access(json_val, "parse", call.span)?;
+                        if let RuntimeValue::Function(func) = parse_val {
+                            return func.call(&mut self.ctx, vec![content]);
+                        }
+                    }
+                }
                 let callee_val = self.visit_expression(&call.callee)?;
                 let mut args = Vec::new();
                 for arg_expr in &call.args {

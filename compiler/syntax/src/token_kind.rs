@@ -59,138 +59,148 @@ impl fmt::Display for NumericLiteralKind {
 
 /// Complete enumeration of all TechScript 2.0 token kinds.
 ///
-/// Contains canonical keywords, alias keywords, reserved future keywords,
-/// literals, identifiers, operators, delimiters, and special tokens.
+/// Keywords are grouped into three tiers:
+/// - **Canonical 2.0**: The one true spelling — no warnings emitted.
+/// - **Deprecated Alias**: Old spelling — still parsed, but emits a `TSW1xxx` warning.
+/// - **Reserved**: Recognised by the lexer but not yet active.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum TokenKind {
-    // ── Canonical Keywords ──────────────────────────────────────────────────
-    /// `make` variable declaration
-    Make,
-    /// `const` constant declaration
-    Const,
-    /// `say` statement
-    Say,
-    /// `ask` expression
-    Ask,
-    /// `build` function/method declaration
-    Build,
-    /// `return` statement
-    Return,
-    /// `model` class/type definition
-    Model,
-    /// `self` instance self-reference
-    SelfKw,
-    /// `new` instantiation operator
-    New,
-    /// `if` conditional keyword
-    If,
-    /// `elif` conditional keyword
-    Elif,
-    /// `else` conditional keyword
-    Else,
-    /// `for` loop keyword
-    For,
-    /// `in` membership and iteration keyword
-    In,
-    /// `while` loop keyword
-    While,
-    /// `repeat` loop keyword
-    Repeat,
-    /// `break` loop control statement
-    Break,
-    /// `continue` loop control statement
-    Continue,
-    /// `try` block keyword
-    Try,
-    /// `catch` handler keyword
-    Catch,
-    /// `throw` exception statement
-    Throw,
-    /// `import` module keyword
-    Import,
-    /// `from` module selection keyword
-    From,
-    /// `export` declaration keyword
-    Export,
-    /// `true` boolean literal
-    True,
-    /// `false` boolean literal
-    False,
-    /// `null` canonical null value literal
-    Null,
-
-    // ── Alias Keywords (Backward Compatibility) ─────────────────────────────
-    /// `let` alias for `make`
-    Let,
-    /// `var` alias for `make`
-    Var,
-    /// `fun` alias for `build`
-    Fun,
-    /// `function` alias for `build`
-    Function,
-    /// `when` alias for `if`
+    // ── Canonical 2.0 Keywords ──────────────────────────────────────────────────────
+    /// `do` — function/method declaration (replaces `build`, `fun`, `function`)
+    Do,
+    /// `send` — return value from function (replaces `return`, `give`)
+    Send,
+    /// `when` — conditional branch (replaces `if`)
     When,
-    /// `attempt` alias for `try`
-    Attempt,
-    /// `none` alias for `null`
-    None,
-    /// `class` alias for `model`
-    Class,
-    /// `keep` alias for `const`
-    Keep,
-    /// `give` alias for `return`
-    Give,
-    /// `stop` alias for `break`
-    Stop,
-    /// `skip` alias for `continue`
-    Skip,
-    /// `each` alias/keyword for loop iteration
-    Each,
-
-    // ── New-Dialect Keywords ──
-    /// `be` alias for assignment `=`
-    Be,
-    /// `equals` alias for comparison `==`
-    Equals,
-    /// `then` block delimiter
-    Then,
-    /// `end` block delimiter
-    End,
-    /// `with` block keyword
-    With,
-    /// `typeof` type evaluation operator
-    Typeof,
-    /// `use` imports a v1 compatibility module
-    Use,
-
-    // ── Future Reserved Keywords ────────────────────────────────────────────
-    /// `async` keyword
-    Async,
-    /// `await` keyword
-    Await,
-    /// `type` keyword
-    Type,
-    /// `interface` keyword
-    Interface,
-    /// `match` keyword
+    /// `loop` — counted loop: `loop N` executes exactly N times
+    Loop,
+    /// `repeat` — while-style loop: `repeat condition` (replaces `while`)
+    Repeat,
+    /// `for` — for-each iteration: `for x in y` (replaces `each`)
+    For,
+    /// `in` — membership and iteration boundary
+    In,
+    /// `match` — pattern match statement (replaces `switch`)
     Match,
-    /// `switch` keyword
-    Switch,
-    /// `case` keyword
+    /// `case` — match arm label
     Case,
-    /// `enum` keyword
-    Enum,
-    /// `struct` keyword
+    /// `default` — default match arm
+    Default,
+    /// `try` — error-handling block (replaces `attempt`)
+    Try,
+    /// `catch` — error handler block
+    Catch,
+    /// `throw` — raise an error
+    Throw,
+    /// `use` — module import (replaces `import`, `from`)
+    Use,
+    /// `class` — class/type definition (replaces `model`)
+    Class,
+    /// `struct` — struct definition
     Struct,
-    /// `trait` keyword
+    /// `enum` — enum definition
+    Enum,
+    /// `trait` — trait definition
     Trait,
-    /// `yield` keyword
+    /// `interface` — interface definition
+    Interface,
+    /// `const` — constant declaration (replaces `keep`)
+    Const,
+    /// `null` — canonical null literal (replaces `none`)
+    Null,
+    /// `say` — print to stdout, implicit call: `say "hello"`
+    Say,
+    /// `ask` — read from stdin, implicit call: `ask "prompt"`
+    Ask,
+    /// `break` — exit loop early
+    Break,
+    /// `continue` — skip to next iteration
+    Continue,
+    /// `else` — conditional else branch
+    Else,
+    /// `async` — async function or block
+    Async,
+    /// `await` — await an async expression
+    Await,
+    /// `parallel` — parallel execution block
+    Parallel,
+    /// `end` — block terminator (closes `do`/`when`/`loop`/`repeat`/`for`/`try`/`class`/`struct` blocks)
+    End,
+    /// `export` — declaration export keyword
+    Export,
+    /// `new` — object instantiation
+    New,
+    /// `self` — instance self-reference
+    SelfKw,
+    /// `true` — boolean true literal
+    True,
+    /// `false` — boolean false literal
+    False,
+    /// `typeof` — type evaluation operator
+    Typeof,
+    /// `with` — supplemental block keyword
+    With,
+
+    // ── Deprecated / Alias Keywords (all emit TSW1xxx warnings) ────────────────
+    /// `build` → `do` (deprecated TSW1002)
+    Build,
+    /// `make` → plain assignment (deprecated TSW1001)
+    Make,
+    /// `return` → `send` (deprecated TSW1003)
+    Return,
+    /// `model` → `class` (deprecated TSW1013)
+    Model,
+    /// `if` → `when` (deprecated TSW1007)
+    If,
+    /// `elif` → `else when` (deprecated TSW1007)
+    Elif,
+    /// `while` → `repeat` (deprecated TSW1008)
+    While,
+    /// `import` → `use` (deprecated TSW1009)
+    Import,
+    /// `from` → `use` (deprecated TSW1009)
+    From,
+    /// `let` → plain assignment (deprecated TSW1001)
+    Let,
+    /// `var` → plain assignment (deprecated TSW1001)
+    Var,
+    /// `fun` → `do` (deprecated TSW1002)
+    Fun,
+    /// `function` → `do` (deprecated TSW1002)
+    Function,
+    /// `attempt` → `try` (deprecated TSW1004)
+    Attempt,
+    /// `none` → `null` (deprecated TSW1011)
+    None,
+    /// `keep` → `const` (deprecated)
+    Keep,
+    /// `give` → `send` (deprecated TSW1005)
+    Give,
+    /// `stop` → `break` (deprecated)
+    Stop,
+    /// `skip` → `continue` (deprecated)
+    Skip,
+    /// `each` → `for` (deprecated TSW1010)
+    Each,
+    /// `switch` → `match` (deprecated)
+    Switch,
+    /// `be` alias for assignment `=` (deprecated)
+    Be,
+    /// `equals` alias for comparison `==` (deprecated)
+    Equals,
+    /// `then` block-open delimiter (deprecated TSW1006)
+    Then,
+
+    // ── Reserved / Meta Keywords ─────────────────────────────────────────────────
+    /// `type` reserved for future type alias syntax
+    Type,
+    /// `yield` reserved for generator syntax
     Yield,
-    /// `spawn` keyword
+    /// `spawn` reserved for concurrency primitives
     Spawn,
-    /// `pub` keyword
+    /// `pub` reserved for visibility modifiers
     Pub,
-    /// `mut` keyword
+    /// `mut` reserved for explicit mutability annotations
     Mut,
 
     // ── Literals and Identifiers ────────────────────────────────────────────
@@ -318,77 +328,95 @@ impl TokenKind {
         self.is_canonical_keyword() || self.is_alias_keyword() || self.is_future_reserved_keyword()
     }
 
-    /// Returns `true` if this token kind is a canonical keyword.
+    /// Returns `true` if this token kind is a canonical 2.0 keyword.
+    ///
+    /// Canonical keywords are the one-true spelling for TechScript 2.0.
+    /// They never emit deprecation warnings.
     pub fn is_canonical_keyword(&self) -> bool {
         matches!(
             self,
-            TokenKind::Make
-                | TokenKind::Const
-                | TokenKind::Say
-                | TokenKind::Ask
-                | TokenKind::Build
-                | TokenKind::Return
-                | TokenKind::Model
-                | TokenKind::SelfKw
-                | TokenKind::New
-                | TokenKind::If
-                | TokenKind::Elif
-                | TokenKind::Else
+            TokenKind::Do
+                | TokenKind::Send
+                | TokenKind::When
+                | TokenKind::Loop
+                | TokenKind::Repeat
                 | TokenKind::For
                 | TokenKind::In
-                | TokenKind::While
-                | TokenKind::Repeat
-                | TokenKind::Break
-                | TokenKind::Continue
+                | TokenKind::Match
+                | TokenKind::Case
+                | TokenKind::Default
                 | TokenKind::Try
                 | TokenKind::Catch
                 | TokenKind::Throw
-                | TokenKind::Import
-                | TokenKind::From
+                | TokenKind::Use
+                | TokenKind::Class
+                | TokenKind::Struct
+                | TokenKind::Enum
+                | TokenKind::Trait
+                | TokenKind::Interface
+                | TokenKind::Const
+                | TokenKind::Null
+                | TokenKind::Say
+                | TokenKind::Ask
+                | TokenKind::Break
+                | TokenKind::Continue
+                | TokenKind::Else
+                | TokenKind::Async
+                | TokenKind::Await
+                | TokenKind::Parallel
+                | TokenKind::End
                 | TokenKind::Export
+                | TokenKind::New
+                | TokenKind::SelfKw
                 | TokenKind::True
                 | TokenKind::False
-                | TokenKind::Null
+                | TokenKind::Typeof
+                | TokenKind::With
         )
     }
 
-    /// Returns `true` if this token kind is a backward-compatibility alias keyword.
+    /// Returns `true` if this token kind is a deprecated alias keyword.
+    ///
+    /// Deprecated keywords are still parsed for backward compatibility but
+    /// always emit a `TSW1xxx` deprecation diagnostic.
     pub fn is_alias_keyword(&self) -> bool {
         matches!(
             self,
-            TokenKind::Let
+            TokenKind::Build
+                | TokenKind::Make
+                | TokenKind::Return
+                | TokenKind::Model
+                | TokenKind::If
+                | TokenKind::Elif
+                | TokenKind::While
+                | TokenKind::Import
+                | TokenKind::From
+                | TokenKind::Let
                 | TokenKind::Var
                 | TokenKind::Fun
                 | TokenKind::Function
-                | TokenKind::When
                 | TokenKind::Attempt
                 | TokenKind::None
-                | TokenKind::Class
                 | TokenKind::Keep
                 | TokenKind::Give
                 | TokenKind::Stop
                 | TokenKind::Skip
                 | TokenKind::Each
+                | TokenKind::Switch
                 | TokenKind::Be
                 | TokenKind::Equals
-                | TokenKind::Use
+                | TokenKind::Then
         )
     }
 
-    /// Returns `true` if this token kind is a reserved future keyword.
+    /// Returns `true` if this token kind is a reserved keyword (not yet active in any production).
+    ///
+    /// Note: `Async`, `Await`, `Match`, `Case`, `Interface`, `Struct`, `Enum`, `Trait`
+    /// are now **canonical 2.0** keywords and are no longer in this reserved set.
     pub fn is_future_reserved_keyword(&self) -> bool {
         matches!(
             self,
-            TokenKind::Async
-                | TokenKind::Await
-                | TokenKind::Type
-                | TokenKind::Interface
-                | TokenKind::Match
-                | TokenKind::Switch
-                | TokenKind::Case
-                | TokenKind::Enum
-                | TokenKind::Struct
-                | TokenKind::Trait
+            TokenKind::Type
                 | TokenKind::Yield
                 | TokenKind::Spawn
                 | TokenKind::Pub
@@ -396,33 +424,54 @@ impl TokenKind {
         )
     }
 
-    /// Returns the canonical equivalent of an alias keyword.
+    /// Returns the canonical 2.0 equivalent of a deprecated alias keyword.
     ///
-    /// Returns `None` if this is not an alias keyword.
+    /// Returns `None` if this token is already canonical, reserved, or has no
+    /// single-token canonical replacement (e.g. `make`/`let`/`var` become plain
+    /// assignment — no keyword replacement).
     ///
     /// # Examples
     ///
     /// ```
     /// use techscript_syntax::TokenKind;
     ///
-    /// assert_eq!(TokenKind::Let.to_canonical(), Some(TokenKind::Make));
-    /// assert_eq!(TokenKind::Make.to_canonical(), None);
+    /// assert_eq!(TokenKind::Build.to_canonical(), Some(TokenKind::Do));
+    /// assert_eq!(TokenKind::Return.to_canonical(), Some(TokenKind::Send));
+    /// assert_eq!(TokenKind::Make.to_canonical(), None); // becomes plain assignment
+    /// assert_eq!(TokenKind::Do.to_canonical(), None);   // already canonical
     /// ```
     pub fn to_canonical(&self) -> Option<TokenKind> {
         match self {
-            TokenKind::Let | TokenKind::Var => Some(TokenKind::Make),
-            TokenKind::Fun | TokenKind::Function => Some(TokenKind::Build),
-            TokenKind::When => Some(TokenKind::If),
+            // Function declaration aliases
+            TokenKind::Build | TokenKind::Fun | TokenKind::Function => Some(TokenKind::Do),
+            // Return aliases
+            TokenKind::Return | TokenKind::Give => Some(TokenKind::Send),
+            // Conditional aliases
+            TokenKind::If | TokenKind::Elif => Some(TokenKind::When),
+            // Loop aliases
+            TokenKind::While => Some(TokenKind::Repeat),
+            // Error handling aliases
             TokenKind::Attempt => Some(TokenKind::Try),
-            TokenKind::None => Some(TokenKind::Null),
-            TokenKind::Class => Some(TokenKind::Model),
+            // Module aliases
+            TokenKind::Import | TokenKind::From => Some(TokenKind::Use),
+            // Type definition aliases
+            TokenKind::Model => Some(TokenKind::Class),
+            // Constant aliases
             TokenKind::Keep => Some(TokenKind::Const),
-            TokenKind::Give => Some(TokenKind::Return),
+            // Null alias
+            TokenKind::None => Some(TokenKind::Null),
+            // Loop control aliases
             TokenKind::Stop => Some(TokenKind::Break),
             TokenKind::Skip => Some(TokenKind::Continue),
+            // Iteration alias
             TokenKind::Each => Some(TokenKind::For),
+            // Match alias
+            TokenKind::Switch => Some(TokenKind::Match),
+            // Operator aliases
             TokenKind::Be => Some(TokenKind::Equal),
             TokenKind::Equals => Some(TokenKind::EqualEqual),
+            // Variable declaration aliases: Make/Let/Var become plain assignment — no token replacement
+            TokenKind::Make | TokenKind::Let | TokenKind::Var => None,
             _ => None,
         }
     }
@@ -577,7 +626,8 @@ impl TokenKind {
             TokenKind::With => Some("with"),
             TokenKind::Typeof => Some("typeof"),
             TokenKind::Use => Some("use"),
-
+            TokenKind::Do => Some("do"),
+            TokenKind::Send => Some("send"),
             TokenKind::Async => Some("async"),
             TokenKind::Await => Some("await"),
             TokenKind::Type => Some("type"),
@@ -593,10 +643,13 @@ impl TokenKind {
             TokenKind::Pub => Some("pub"),
             TokenKind::Mut => Some("mut"),
 
-            TokenKind::FStringStart => Some("f\""),
+            TokenKind::FStringStart => Some("$\""),  // canonical; `f"` is a deprecated alias
             TokenKind::FStringExprStart => Some("{"),
             TokenKind::FStringExprEnd => Some("}"),
             TokenKind::FStringEnd => Some("\""),
+            TokenKind::Loop => Some("loop"),
+            TokenKind::Parallel => Some("parallel"),
+            TokenKind::Default => Some("default"),
 
             TokenKind::Plus => Some("+"),
             TokenKind::Minus => Some("-"),
@@ -776,78 +829,81 @@ impl fmt::Display for TokenKind {
 /// ```
 pub fn lookup_keyword(lexeme: &str) -> Option<TokenKind> {
     match lexeme {
-        // Canonical Active Keywords
-        "make" => Some(TokenKind::Make),
-        "const" => Some(TokenKind::Const),
-        "say" => Some(TokenKind::Say),
-        "ask" => Some(TokenKind::Ask),
-        "build" => Some(TokenKind::Build),
-        "return" => Some(TokenKind::Return),
-        "model" => Some(TokenKind::Model),
-        "self" => Some(TokenKind::SelfKw),
-        "new" => Some(TokenKind::New),
-        "if" => Some(TokenKind::If),
-        "elif" => Some(TokenKind::Elif),
-        "else" => Some(TokenKind::Else),
-        "for" => Some(TokenKind::For),
-        "in" => Some(TokenKind::In),
-        "while" => Some(TokenKind::While),
-        "repeat" => Some(TokenKind::Repeat),
-        "break" => Some(TokenKind::Break),
-        "continue" => Some(TokenKind::Continue),
-        "try" => Some(TokenKind::Try),
-        "catch" => Some(TokenKind::Catch),
-        "throw" => Some(TokenKind::Throw),
-        "import" => Some(TokenKind::Import),
-        "from" => Some(TokenKind::From),
-        "export" => Some(TokenKind::Export),
-        "true" => Some(TokenKind::True),
-        "false" => Some(TokenKind::False),
-        "null" => Some(TokenKind::Null),
-
-        // Alias Keywords
-        "let" => Some(TokenKind::Let),
-        "var" => Some(TokenKind::Var),
-        "fun" => Some(TokenKind::Fun),
-        "function" => Some(TokenKind::Function),
-        "when" => Some(TokenKind::When),
-        "attempt" => Some(TokenKind::Attempt),
-        "none" => Some(TokenKind::None),
-        "class" => Some(TokenKind::Class),
-        // TechScript v1.0.8 compatibility keywords.  These deliberately
-        // remain distinct tokens so the parser can preserve the source dialect.
-        "keep" => Some(TokenKind::Keep),
-        "give" => Some(TokenKind::Give),
-        "stop" => Some(TokenKind::Stop),
-        "skip" => Some(TokenKind::Skip),
-        "each" => Some(TokenKind::Each),
-        "be" => Some(TokenKind::Be),
-        "equals" => Some(TokenKind::Equals),
-        "then" => Some(TokenKind::Then),
-        "end" => Some(TokenKind::End),
-        "with" => Some(TokenKind::With),
-        "typeof" => Some(TokenKind::Typeof),
-        "use" => Some(TokenKind::Use),
-
-        // Future Reserved Keywords
-        "async" => Some(TokenKind::Async),
-        "await" => Some(TokenKind::Await),
-        "type" => Some(TokenKind::Type),
+        // ── Canonical 2.0 Keywords ───────────────────────────────────────────────
+        "do"       => Some(TokenKind::Do),
+        "send"     => Some(TokenKind::Send),
+        "when"     => Some(TokenKind::When),
+        "loop"     => Some(TokenKind::Loop),
+        "repeat"   => Some(TokenKind::Repeat),
+        "for"      => Some(TokenKind::For),
+        "in"       => Some(TokenKind::In),
+        "match"    => Some(TokenKind::Match),
+        "case"     => Some(TokenKind::Case),
+        "default"  => Some(TokenKind::Default),
+        "try"      => Some(TokenKind::Try),
+        "catch"    => Some(TokenKind::Catch),
+        "throw"    => Some(TokenKind::Throw),
+        "use"      => Some(TokenKind::Use),
+        "class"    => Some(TokenKind::Class),
+        "struct"   => Some(TokenKind::Struct),
+        "enum"     => Some(TokenKind::Enum),
+        "trait"    => Some(TokenKind::Trait),
         "interface" => Some(TokenKind::Interface),
-        "match" => Some(TokenKind::Match),
-        "switch" => Some(TokenKind::Switch),
-        "case" => Some(TokenKind::Case),
-        "enum" => Some(TokenKind::Enum),
-        "struct" => Some(TokenKind::Struct),
-        "trait" => Some(TokenKind::Trait),
-        "yield" => Some(TokenKind::Yield),
-        "spawn" => Some(TokenKind::Spawn),
-        "pub" => Some(TokenKind::Pub),
-        "mut" => Some(TokenKind::Mut),
+        "const"    => Some(TokenKind::Const),
+        "null"     => Some(TokenKind::Null),
+        "say"      => Some(TokenKind::Say),
+        "ask"      => Some(TokenKind::Ask),
+        "break"    => Some(TokenKind::Break),
+        "continue" => Some(TokenKind::Continue),
+        "else"     => Some(TokenKind::Else),
+        "async"    => Some(TokenKind::Async),
+        "await"    => Some(TokenKind::Await),
+        "parallel" => Some(TokenKind::Parallel),
+        "end"      => Some(TokenKind::End),
+        "export"   => Some(TokenKind::Export),
+        "new"      => Some(TokenKind::New),
+        "self"     => Some(TokenKind::SelfKw),
+        "true"     => Some(TokenKind::True),
+        "false"    => Some(TokenKind::False),
+        "typeof"   => Some(TokenKind::Typeof),
+        "with"     => Some(TokenKind::With),
 
-        // Word operator aliases (logical)
+        // ── Deprecated / Alias Keywords (TSW1xxx) ───────────────────────────────
+        "build"    => Some(TokenKind::Build),    // TSW1002 → do
+        "make"     => Some(TokenKind::Make),     // TSW1001 → plain assignment
+        "return"   => Some(TokenKind::Return),   // TSW1003 → send
+        "model"    => Some(TokenKind::Model),    // TSW1013 → class
+        "if"       => Some(TokenKind::If),       // TSW1007 → when
+        "elif"     => Some(TokenKind::Elif),     // TSW1007 → else when
+        "while"    => Some(TokenKind::While),    // TSW1008 → repeat
+        "import"   => Some(TokenKind::Import),   // TSW1009 → use
+        "from"     => Some(TokenKind::From),     // TSW1009 → use
+        "let"      => Some(TokenKind::Let),      // TSW1001 → plain assignment
+        "var"      => Some(TokenKind::Var),      // TSW1001 → plain assignment
+        "fun"      => Some(TokenKind::Fun),      // TSW1002 → do
+        "function" => Some(TokenKind::Function), // TSW1002 → do
+        "attempt"  => Some(TokenKind::Attempt),  // TSW1004 → try
+        "none"     => Some(TokenKind::None),     // TSW1011 → null
+        "keep"     => Some(TokenKind::Keep),     // → const
+        "give"     => Some(TokenKind::Give),     // TSW1005 → send
+        "stop"     => Some(TokenKind::Stop),     // → break
+        "skip"     => Some(TokenKind::Skip),     // → continue
+        "each"     => Some(TokenKind::Each),     // TSW1010 → for
+        "switch"   => Some(TokenKind::Switch),   // → match
+        "be"       => Some(TokenKind::Be),
+        "equals"   => Some(TokenKind::Equals),
+        "then"     => Some(TokenKind::Then),     // TSW1006 → (removed)
+
+        // ── Reserved / Meta Keywords ───────────────────────────────────────────────
+        "type"     => Some(TokenKind::Type),
+        "yield"    => Some(TokenKind::Yield),
+        "spawn"    => Some(TokenKind::Spawn),
+        "pub"      => Some(TokenKind::Pub),
+        "mut"      => Some(TokenKind::Mut),
+
+        // ── Word Operator Aliases (logical) ───────────────────────────────────────
         "and" => Some(TokenKind::And),
-        "or" => Some(TokenKind::Or),
+        "or"  => Some(TokenKind::Or),
         "not" => Some(TokenKind::Not),
 
         _ => None,

@@ -1,5 +1,0 @@
-# 06_compression.txs
-# ZIP compression example.
-
-make ran = std.compress.zip("examples/basics", "basics.zip");
-std.io.println("Compression Ran");

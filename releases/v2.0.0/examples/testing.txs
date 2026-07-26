@@ -1,0 +1,5 @@
+# 13_testing.txs
+# Testing framework assertions.
+
+std.testing.assert(true, "sanity check")
+say "Assertions passed."

@@ -1,0 +1,9 @@
+# 01_sqlite.txs
+# SQLite database example.
+# Demonstrates connecting and running statements.
+
+use database
+
+db = std.database.connect(":memory:")
+std.database.execute(db, "CREATE TABLE users(id INTEGER);")
+say "SQLite database OK"

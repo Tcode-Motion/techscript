@@ -1,8 +1,0 @@
-# 10_uuid.txs
-# UUID generation example.
-# Demonstrates generating a standard UUID v4.
-
-make uuid = std.uuid.uuid_v4();
-if std.collections.len(uuid) == 36 {
-    std.io.println("UUID OK");
-}

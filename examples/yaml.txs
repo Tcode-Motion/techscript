@@ -1,0 +1,10 @@
+# 07_yaml.txs
+# YAML parsing example.
+# Demonstrates parsing YAML data.
+
+use string
+use yaml
+
+yaml_data = "port: 8080"
+data = yaml.parse(yaml_data)
+say string.from_int(data.port)

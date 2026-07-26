@@ -1,0 +1,30 @@
+# LEGACY COMPATIBILITY TEST
+# This file intentionally uses deprecated TechScript syntax.
+# It verifies backward compatibility.
+# Expected: Successful compilation + TSW100x warnings.
+
+# compat/03_error_handling.txs — v1.0.8 attempt/catch
+# Note: 2.0's `catch err` binds err as a string, not a map.
+# Use `to_str(err.message)` only if err is a map.
+
+attempt {
+  throw "Something went wrong"
+} catch err {
+  say err     # expected: Something went wrong
+}
+
+# safe_divide using throw/catch
+build safe_divide with a, b then
+  attempt {
+    if b equals 0 then
+      throw "Division by zero"
+    end
+    give a / b
+  } catch err {
+    say "Caught: " + err
+    give 0
+  }
+end
+
+say safe_divide(10, 2)   # expected: 5
+say safe_divide(10, 0)   # expected: Caught: Division by zero\n0

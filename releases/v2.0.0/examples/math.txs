@@ -1,0 +1,9 @@
+# 01_math.txs
+# Math module example.
+# Demonstrates absolute values, ceiling, floor, and square root.
+
+use math
+use string
+
+x = -9.5
+say "Abs: " + string.from_int(math.abs(-42))

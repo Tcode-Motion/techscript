@@ -1,0 +1,9 @@
+# 08_pattern_matching.txs
+# Pattern Matching example.
+# Demonstrates destructured list patterns.
+
+use string
+
+list = [10, 20]
+make [first, second] = list
+say "First: " + string.from_int(first)

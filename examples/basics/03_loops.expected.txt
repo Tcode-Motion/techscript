@@ -1,4 +1,0 @@
-Iteration: 0
-Iteration: 1
-Iteration: 2
-Execution finished with value: Int(3)

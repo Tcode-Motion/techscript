@@ -1,0 +1,670 @@
+﻿BytecodeModule {
+    name: "main",
+    functions: [
+        BytecodeFunction {
+            name: "main",
+            param_count: 0,
+            local_count: 6,
+            max_stack_size: 10,
+            chunk: Chunk {
+                instructions: [
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            0,
+                        ),
+                        op: Try,
+                        operands: [
+                            JumpOffset(
+                                22,
+                            ),
+                        ],
+                        span: Span {
+                            start: 19,
+                            end: 139,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            9999,
+                        ),
+                        op: Jump,
+                        operands: [
+                            JumpOffset(
+                                1,
+                            ),
+                        ],
+                        span: Span {
+                            start: 19,
+                            end: 139,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            9999,
+                        ),
+                        op: LoadGlobal,
+                        operands: [
+                            GlobalIndex(
+                                1,
+                            ),
+                        ],
+                        span: Span {
+                            start: 52,
+                            end: 55,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            1,
+                        ),
+                        op: StoreLocal,
+                        operands: [
+                            LocalIndex(
+                                0,
+                            ),
+                        ],
+                        span: Span {
+                            start: 52,
+                            end: 55,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            9999,
+                        ),
+                        op: LoadLocal,
+                        operands: [
+                            LocalIndex(
+                                0,
+                            ),
+                        ],
+                        span: Span {
+                            start: 52,
+                            end: 59,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            2,
+                        ),
+                        op: FieldLoad,
+                        operands: [
+                            ConstantIndex(
+                                0,
+                            ),
+                        ],
+                        span: Span {
+                            start: 52,
+                            end: 59,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            2,
+                        ),
+                        op: StoreLocal,
+                        operands: [
+                            LocalIndex(
+                                1,
+                            ),
+                        ],
+                        span: Span {
+                            start: 52,
+                            end: 59,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            9999,
+                        ),
+                        op: LoadLocal,
+                        operands: [
+                            LocalIndex(
+                                1,
+                            ),
+                        ],
+                        span: Span {
+                            start: 52,
+                            end: 63,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            3,
+                        ),
+                        op: FieldLoad,
+                        operands: [
+                            ConstantIndex(
+                                1,
+                            ),
+                        ],
+                        span: Span {
+                            start: 52,
+                            end: 63,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            3,
+                        ),
+                        op: StoreLocal,
+                        operands: [
+                            LocalIndex(
+                                2,
+                            ),
+                        ],
+                        span: Span {
+                            start: 52,
+                            end: 63,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            9999,
+                        ),
+                        op: LoadLocal,
+                        operands: [
+                            LocalIndex(
+                                2,
+                            ),
+                        ],
+                        span: Span {
+                            start: 52,
+                            end: 71,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            9999,
+                        ),
+                        op: LoadConst,
+                        operands: [
+                            ConstantIndex(
+                                2,
+                            ),
+                        ],
+                        span: Span {
+                            start: 52,
+                            end: 71,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            4,
+                        ),
+                        op: Call,
+                        operands: [
+                            Count(
+                                1,
+                            ),
+                        ],
+                        span: Span {
+                            start: 52,
+                            end: 71,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            4,
+                        ),
+                        op: StoreLocal,
+                        operands: [
+                            LocalIndex(
+                                3,
+                            ),
+                        ],
+                        span: Span {
+                            start: 52,
+                            end: 71,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            9999,
+                        ),
+                        op: LoadLocal,
+                        operands: [
+                            LocalIndex(
+                                3,
+                            ),
+                        ],
+                        span: Span {
+                            start: 37,
+                            end: 73,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            9999,
+                        ),
+                        op: StoreLocal,
+                        operands: [
+                            LocalIndex(
+                                4,
+                            ),
+                        ],
+                        span: Span {
+                            start: 37,
+                            end: 73,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            9999,
+                        ),
+                        op: LoadGlobal,
+                        operands: [
+                            GlobalIndex(
+                                999,
+                            ),
+                        ],
+                        span: Span {
+                            start: 81,
+                            end: 96,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            9999,
+                        ),
+                        op: LoadConst,
+                        operands: [
+                            ConstantIndex(
+                                3,
+                            ),
+                        ],
+                        span: Span {
+                            start: 81,
+                            end: 96,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            6,
+                        ),
+                        op: Call,
+                        operands: [
+                            Count(
+                                1,
+                            ),
+                        ],
+                        span: Span {
+                            start: 81,
+                            end: 96,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            9999,
+                        ),
+                        op: Jump,
+                        operands: [
+                            JumpOffset(
+                                1,
+                            ),
+                        ],
+                        span: Span {
+                            start: 19,
+                            end: 139,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            7,
+                        ),
+                        op: EndTry,
+                        operands: [],
+                        span: Span {
+                            start: 19,
+                            end: 139,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            9999,
+                        ),
+                        op: Jump,
+                        operands: [
+                            JumpOffset(
+                                6,
+                            ),
+                        ],
+                        span: Span {
+                            start: 19,
+                            end: 139,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            9999,
+                        ),
+                        op: StoreLocal,
+                        operands: [
+                            LocalIndex(
+                                5,
+                            ),
+                        ],
+                        span: Span {
+                            start: 0,
+                            end: 0,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            9999,
+                        ),
+                        op: LoadGlobal,
+                        operands: [
+                            GlobalIndex(
+                                999,
+                            ),
+                        ],
+                        span: Span {
+                            start: 120,
+                            end: 134,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            9999,
+                        ),
+                        op: LoadConst,
+                        operands: [
+                            ConstantIndex(
+                                4,
+                            ),
+                        ],
+                        span: Span {
+                            start: 120,
+                            end: 134,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            8,
+                        ),
+                        op: Call,
+                        operands: [
+                            Count(
+                                1,
+                            ),
+                        ],
+                        span: Span {
+                            start: 120,
+                            end: 134,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            9999,
+                        ),
+                        op: Jump,
+                        operands: [
+                            JumpOffset(
+                                1,
+                            ),
+                        ],
+                        span: Span {
+                            start: 19,
+                            end: 139,
+                        },
+                    },
+                    BytecodeInstruction {
+                        id: InstructionId(
+                            9999,
+                        ),
+                        op: Return,
+                        operands: [],
+                        span: Span {
+                            start: 0,
+                            end: 142,
+                        },
+                    },
+                ],
+                constants: ConstantPool {
+                    constants: [
+                        Str(
+                            "env",
+                        ),
+                        Str(
+                            "get",
+                        ),
+                        Str(
+                            "PATH",
+                        ),
+                        Str(
+                            "granted",
+                        ),
+                        Str(
+                            "denied",
+                        ),
+                    ],
+                },
+            },
+            source_map: SourceMap {
+                mappings: [
+                    (
+                        0,
+                        Span {
+                            start: 19,
+                            end: 139,
+                        },
+                    ),
+                    (
+                        1,
+                        Span {
+                            start: 19,
+                            end: 139,
+                        },
+                    ),
+                    (
+                        2,
+                        Span {
+                            start: 52,
+                            end: 55,
+                        },
+                    ),
+                    (
+                        3,
+                        Span {
+                            start: 52,
+                            end: 55,
+                        },
+                    ),
+                    (
+                        4,
+                        Span {
+                            start: 52,
+                            end: 59,
+                        },
+                    ),
+                    (
+                        5,
+                        Span {
+                            start: 52,
+                            end: 59,
+                        },
+                    ),
+                    (
+                        6,
+                        Span {
+                            start: 52,
+                            end: 59,
+                        },
+                    ),
+                    (
+                        7,
+                        Span {
+                            start: 52,
+                            end: 63,
+                        },
+                    ),
+                    (
+                        8,
+                        Span {
+                            start: 52,
+                            end: 63,
+                        },
+                    ),
+                    (
+                        9,
+                        Span {
+                            start: 52,
+                            end: 63,
+                        },
+                    ),
+                    (
+                        10,
+                        Span {
+                            start: 52,
+                            end: 71,
+                        },
+                    ),
+                    (
+                        11,
+                        Span {
+                            start: 52,
+                            end: 71,
+                        },
+                    ),
+                    (
+                        12,
+                        Span {
+                            start: 52,
+                            end: 71,
+                        },
+                    ),
+                    (
+                        13,
+                        Span {
+                            start: 52,
+                            end: 71,
+                        },
+                    ),
+                    (
+                        14,
+                        Span {
+                            start: 37,
+                            end: 73,
+                        },
+                    ),
+                    (
+                        15,
+                        Span {
+                            start: 37,
+                            end: 73,
+                        },
+                    ),
+                    (
+                        16,
+                        Span {
+                            start: 81,
+                            end: 96,
+                        },
+                    ),
+                    (
+                        17,
+                        Span {
+                            start: 81,
+                            end: 96,
+                        },
+                    ),
+                    (
+                        18,
+                        Span {
+                            start: 81,
+                            end: 96,
+                        },
+                    ),
+                    (
+                        19,
+                        Span {
+                            start: 19,
+                            end: 139,
+                        },
+                    ),
+                    (
+                        20,
+                        Span {
+                            start: 19,
+                            end: 139,
+                        },
+                    ),
+                    (
+                        21,
+                        Span {
+                            start: 19,
+                            end: 139,
+                        },
+                    ),
+                    (
+                        22,
+                        Span {
+                            start: 0,
+                            end: 0,
+                        },
+                    ),
+                    (
+                        23,
+                        Span {
+                            start: 120,
+                            end: 134,
+                        },
+                    ),
+                    (
+                        24,
+                        Span {
+                            start: 120,
+                            end: 134,
+                        },
+                    ),
+                    (
+                        25,
+                        Span {
+                            start: 120,
+                            end: 134,
+                        },
+                    ),
+                    (
+                        26,
+                        Span {
+                            start: 19,
+                            end: 139,
+                        },
+                    ),
+                    (
+                        27,
+                        Span {
+                            start: 0,
+                            end: 142,
+                        },
+                    ),
+                ],
+            },
+            debug_symbols: DebugSymbols {
+                local_names: {
+                    1: "temp_1",
+                    3: "temp_3",
+                    2: "temp_2",
+                    0: "temp_0",
+                    5: "local_0",
+                    4: "local_1",
+                },
+                function_names: {},
+            },
+        },
+    ],
+    globals: [
+        (
+            "main",
+            Any,
+        ),
+        (
+            "std",
+            Any,
+        ),
+    ],
+    imports: [],
+    exports: [],
+    entry_idx: 0,
+}

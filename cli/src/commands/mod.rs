@@ -27,4 +27,5 @@ pub mod examples;
 pub mod docs;
 pub mod config;
 pub mod self_cmd;
+pub mod migrate;
 

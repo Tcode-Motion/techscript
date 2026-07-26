@@ -1,0 +1,10 @@
+# 01_file.txs
+# Filesystem example.
+# Demonstrates safe chrooted file operations.
+
+use fs
+
+filename = "data.txt"
+fs.write_file(filename, "TechScript 2.0")
+content = fs.read_file(filename)
+say content

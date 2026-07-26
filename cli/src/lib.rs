@@ -149,6 +149,12 @@ pub enum Commands {
         fix: bool,
     },
 
+    /// Migrates legacy TechScript 1.0.8 code to TechScript 2.0 canonical syntax
+    Migrate {
+        /// Optional file or directory path
+        path: Option<String>,
+    },
+
     /// Cleans build outputs and incremental caches
     Clean {
         /// Remove all caches, log files, and build folders

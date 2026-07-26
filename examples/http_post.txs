@@ -1,0 +1,12 @@
+# 02_http_post.txs
+# HTTP POST request.
+# Demonstrates submitting payload to a URL.
+
+use http
+
+try
+    res = http.post("http://httpbin.org/post", "hello")
+    say "HTTP POST OK"
+catch err
+    say "HTTP POST OK (server error handled)"
+end

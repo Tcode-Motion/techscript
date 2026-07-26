@@ -129,7 +129,7 @@ Solid lines = v2.0 pipeline (interpreter). Dashed lines = future versions.
 
 ### 6.1 Compatibility Notes
 - **Source Files**: The compiler toolchain refuses to parse files that do not carry the `.txs` extension.
-- **Unified Methods**: The Parser and Semantic Analyzer allow both `build` and `fun` methods. During Semantic Analysis, `fun` usages are recorded in the diagnostics database as warnings, but do not prevent the interpreter stage from running.
+- **Unified Methods**: The Parser and Semantic Analyzer allow both `do` and `fun` methods. During Semantic Analysis, `fun` usages are recorded in the diagnostics database as warnings, but do not prevent the interpreter stage from running.
 
 ### 6.2 Migration Notes
 - When running compilation in check mode:
@@ -138,11 +138,11 @@ Solid lines = v2.0 pipeline (interpreter). Dashed lines = future versions.
   ```
   The compiler prints all diagnostic warnings, including legacy `fun` uses:
   ```
-  Warning [W0015]: Use of deprecated keyword 'fun'
+  Warning [TSW1002]: Use of deprecated keyword 'fun'
     --> src/main.txs:12:5
      |
-  12 |     fun bark() { say "Woof" }
-     |     ^^^ help: replace 'fun' with 'build'
+  12 |     fun bark()
+     |     ^^^ help: replace 'fun' with 'do'
   ```
 
 ### 6.3 Rationale

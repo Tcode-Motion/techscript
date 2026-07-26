@@ -249,7 +249,7 @@ impl<'a> Lexer<'a> {
             }
 
             // 3. Check for string / f-string starts
-            if remaining.starts_with("f\"") {
+            if remaining.starts_with("f\"") || remaining.starts_with("$\"") {
                 if self.scan_string(true, reporter).is_err() {
                     return Err(reporter.get_diagnostics().to_vec());
                 }
@@ -449,10 +449,11 @@ impl<'a> Lexer<'a> {
     ) -> Result<(), ()> {
         let start_pos = self.pos;
         if is_fstring {
-            self.pos += 2; // skip `f"`
+            let lexeme = self.source[start_pos..start_pos + 2].to_string();
+            self.pos += 2; // skip `f"` or `$"`
             self.token_queue.push(Token::new(
                 TokenKind::FStringStart,
-                "f\"".to_string(),
+                lexeme,
                 Span::new(start_pos, start_pos + 2),
             ));
 
@@ -499,7 +500,7 @@ impl<'a> Lexer<'a> {
                     let mut brace_count = 1;
                     let expr_text_start = self.pos;
                     while self.pos < self.source.len() {
-                        let c = self.source.chars().nth(self.pos).unwrap();
+                        let c = self.source[self.pos..].chars().next().unwrap();
                         if c == '{' {
                             brace_count += 1;
                         } else if c == '}' {

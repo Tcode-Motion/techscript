@@ -1,5 +1,0 @@
-# 05_process.txs
-# Spawning processes example.
-
-make res = std.process.run("cmd", ["/c", "echo", "process"]);
-std.io.println("Process Spawned");

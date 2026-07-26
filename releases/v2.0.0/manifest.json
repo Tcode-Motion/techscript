@@ -1,0 +1,25 @@
+{
+  "build": 1,
+  "build_date": "2026-07-26",
+  "compiler": "2.0.0",
+  "docs": 12,
+  "examples": 50,
+  "git_commit": "6d6cfe348907b34deeab60b82cf09ca03922236a",
+  "sha256": {
+    "TechScript.vsix": "efadab22147419bedb685042ba834d413d42060aa11b6442ad20317b7f8ced03",
+    "TechScript_Online_Setup.exe": "5b3da8c1b5607ea123ae0e00eeaeb52e5492c06679753ccf172dbf00f067ebea",
+    "TechScript_Portable.zip": "bf7d8063aa2d21aeb44b2ebe9c7f7b0f39cec01f630fe5a9826c9193b75eb946",
+    "TechScript_Setup.exe": "5b3da8c1b5607ea123ae0e00eeaeb52e5492c06679753ccf172dbf00f067ebea",
+    "tsc.exe": "63539164ec93875a1684ca1a12f3daa6e327bb2014af77baf1aa6ad7e21fc3df",
+    "tsls.exe": "f1776da28b29bbf4b7a903f7cd25372eb867776b31eba0b40aec00042928da0c",
+    "tspm.exe": "63539164ec93875a1684ca1a12f3daa6e327bb2014af77baf1aa6ad7e21fc3df",
+    "tsvm.exe": "63539164ec93875a1684ca1a12f3daa6e327bb2014af77baf1aa6ad7e21fc3df"
+  },
+  "stdlib": "2.0.0",
+  "supported_targets": [
+    "x86_64-pc-windows-msvc",
+    "x86_64-unknown-linux-gnu",
+    "aarch64-apple-darwin"
+  ],
+  "version": "2.0.0"
+}

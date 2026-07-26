@@ -22,6 +22,7 @@ impl<'a> Parser<'a> {
         } else if self.check(TokenKind::Build)
             || self.check(TokenKind::Fun)
             || self.check(TokenKind::Function)
+            || self.check(TokenKind::Do)
             || self.check(TokenKind::Async)
         {
             let decl = self.parse_function_decl(reporter)?;
@@ -46,6 +47,13 @@ impl<'a> Parser<'a> {
     /// make/let/var pattern[: type] = expression
     fn parse_variable_decl(&mut self, reporter: &mut DiagnosticReporter) -> ParseResult<VarDecl> {
         let start_pos = self.peek().span.start;
+        let kw_span = self.peek().span;
+        reporter.report(techscript_errors::Diagnostic::new(
+            techscript_errors::DiagnosticLevel::Warning,
+            techscript_errors::ErrorCode::TSW1001,
+            "Warning TSW1001: Variable declaration keywords ('make', 'let', 'var') are deprecated. Declare variables automatically on assignment.".to_string(),
+            kw_span,
+        ));
         self.advance(); // consume keyword
 
         let pattern = self.parse_pattern(reporter)?;
@@ -79,6 +87,16 @@ impl<'a> Parser<'a> {
     /// const pattern[: type] = expression
     fn parse_constant_decl(&mut self, reporter: &mut DiagnosticReporter) -> ParseResult<ConstDecl> {
         let start_pos = self.peek().span.start;
+        let kw_span = self.peek().span;
+        let is_keep = self.peek().kind == TokenKind::Keep;
+        if is_keep {
+            reporter.report(techscript_errors::Diagnostic::new(
+                techscript_errors::DiagnosticLevel::Warning,
+                techscript_errors::ErrorCode::TSW1001,
+                "Warning TSW1001: 'keep' is deprecated. Use 'const' to declare constant variables.".to_string(),
+                kw_span,
+            ));
+        }
         self.advance(); // consume const/keep
 
         let pattern = self.parse_pattern(reporter)?;
@@ -117,15 +135,20 @@ impl<'a> Parser<'a> {
             async_kw = true;
         }
 
-        if !self.check(TokenKind::Build)
-            && !self.check(TokenKind::Fun)
-            && !self.check(TokenKind::Function)
-        {
+        let kw = self.peek().kind;
+        if kw == TokenKind::Build || kw == TokenKind::Fun || kw == TokenKind::Function {
+            reporter.report(techscript_errors::Diagnostic::new(
+                techscript_errors::DiagnosticLevel::Warning,
+                techscript_errors::ErrorCode::TSW1002,
+                "Warning TSW1002: 'build' is deprecated. Use 'do' for functions and top-level statements instead.".to_string(),
+                self.peek().span,
+            ));
+        } else if kw != TokenKind::Do {
             let span = self.peek().span;
             reporter.report(techscript_errors::Diagnostic::new(
                 techscript_errors::DiagnosticLevel::Error,
                 ErrorCode::E0100,
-                "Expected build or fun keyword in function declaration".to_string(),
+                "Expected do, build, or fun keyword in function declaration".to_string(),
                 span,
             ));
             return Err(());
@@ -211,17 +234,16 @@ impl<'a> Parser<'a> {
         self.advance(); // consume struct
 
         let name = self.parse_identifier(reporter)?;
-        self.consume(
-            TokenKind::LeftBrace,
-            ErrorCode::E0104,
-            "Expected '{' before struct body",
-            reporter,
-        )?;
-
-        let mut fields = Vec::new();
-        while !self.check(TokenKind::RightBrace) && !self.is_at_end() {
+        let is_brace = self.match_token(TokenKind::LeftBrace);
+        if !is_brace {
             while self.match_token(TokenKind::Newline) || self.match_token(TokenKind::Semicolon) {}
-            if self.check(TokenKind::RightBrace) {
+        }
+
+        let end_kind = if is_brace { TokenKind::RightBrace } else { TokenKind::End };
+        let mut fields = Vec::new();
+        while !self.check(end_kind) && !self.is_at_end() {
+            while self.match_token(TokenKind::Newline) || self.match_token(TokenKind::Semicolon) {}
+            if self.check(end_kind) {
                 break;
             }
             let field_start = self.peek().span.start;
@@ -239,9 +261,9 @@ impl<'a> Parser<'a> {
         }
 
         self.consume(
-            TokenKind::RightBrace,
+            end_kind,
             ErrorCode::E0105,
-            "Expected '}' after struct body",
+            "Expected closing delimiter after struct body",
             reporter,
         )?;
         let span = Span::new(start_pos, self.previous().span.end);
@@ -255,17 +277,16 @@ impl<'a> Parser<'a> {
         self.advance(); // consume enum
 
         let name = self.parse_identifier(reporter)?;
-        self.consume(
-            TokenKind::LeftBrace,
-            ErrorCode::E0104,
-            "Expected '{' before enum body",
-            reporter,
-        )?;
-
-        let mut variants = Vec::new();
-        while !self.check(TokenKind::RightBrace) && !self.is_at_end() {
+        let is_brace = self.match_token(TokenKind::LeftBrace);
+        if !is_brace {
             while self.match_token(TokenKind::Newline) || self.match_token(TokenKind::Semicolon) {}
-            if self.check(TokenKind::RightBrace) {
+        }
+
+        let end_kind = if is_brace { TokenKind::RightBrace } else { TokenKind::End };
+        let mut variants = Vec::new();
+        while !self.check(end_kind) && !self.is_at_end() {
+            while self.match_token(TokenKind::Newline) || self.match_token(TokenKind::Semicolon) {}
+            if self.check(end_kind) {
                 break;
             }
             let var_start = self.peek().span.start;
@@ -295,9 +316,9 @@ impl<'a> Parser<'a> {
         }
 
         self.consume(
-            TokenKind::RightBrace,
+            end_kind,
             ErrorCode::E0105,
-            "Expected '}' after enum body",
+            "Expected closing delimiter after enum body",
             reporter,
         )?;
         let span = Span::new(start_pos, self.previous().span.end);
@@ -319,12 +340,9 @@ impl<'a> Parser<'a> {
 
         let is_brace = self.match_token(TokenKind::LeftBrace);
         if !is_brace {
-            self.consume(
-                TokenKind::Then,
-                ErrorCode::E0104,
-                "Expected '{' or 'then' before model body",
-                reporter,
-            )?;
+            if !self.match_token(TokenKind::Then) {
+                while self.match_token(TokenKind::Newline) || self.match_token(TokenKind::Semicolon) {}
+            }
         }
 
         let mut fields = Vec::new();
@@ -357,9 +375,12 @@ impl<'a> Parser<'a> {
             } else if self.check(TokenKind::Build)
                 || self.check(TokenKind::Fun)
                 || self.check(TokenKind::Function)
+                || self.check(TokenKind::Do)
             {
                 let keyword = if self.check(TokenKind::Fun) {
                     MethodKeyword::Fun
+                } else if self.check(TokenKind::Do) {
+                    MethodKeyword::Do
                 } else {
                     MethodKeyword::Build
                 };
@@ -374,6 +395,36 @@ impl<'a> Parser<'a> {
                     fn_decl.body,
                     fn_decl.span,
                 ));
+            } else if self.check(TokenKind::Identifier) {
+                // Parse plain field declaration
+                let field_start = self.peek().span.start;
+                let name_ident = self.parse_identifier(reporter)?;
+                
+                let mut type_ann = None;
+                if self.match_token(TokenKind::Colon) {
+                    type_ann = Some(self.parse_type_spec(reporter)?);
+                }
+                
+                if !self.match_token(TokenKind::Equal) {
+                    self.consume(
+                        TokenKind::Be,
+                        ErrorCode::E0100,
+                        "Expected '=' or 'be' after field name",
+                        reporter,
+                    )?;
+                }
+                let initializer = self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
+                self.consume_terminator(reporter)?;
+                let field_span = Span::new(field_start, self.previous().span.end);
+                
+                let f_decl = VarDecl::new(
+                    self.next_id(),
+                    Pattern::Single(name_ident),
+                    type_ann,
+                    initializer,
+                    field_span,
+                );
+                fields.push(f_decl);
             } else {
                 // recovery inside model
                 self.advance();

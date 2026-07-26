@@ -1,0 +1,7 @@
+# 06_compression.txs
+# ZIP compression example.
+
+use compress
+
+ran = std.compress.zip("examples/hello_world", "basics.zip")
+say "Compression Ran"

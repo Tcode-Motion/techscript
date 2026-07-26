@@ -1,6 +1,0 @@
-# 01_math.txs
-# Math module example.
-# Demonstrates absolute values, ceiling, floor, and square root.
-
-make x = -9.5;
-std.io.println("Abs: " + std.strings.from_int(std.math.abs(-42)));

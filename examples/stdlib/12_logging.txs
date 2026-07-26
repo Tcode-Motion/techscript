@@ -1,5 +1,0 @@
-# 12_logging.txs
-# Logging example.
-# Demonstrates logging messages at various levels.
-
-std.logging.info("App initialized");

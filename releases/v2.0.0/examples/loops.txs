@@ -1,0 +1,11 @@
+# 03_loops.txs
+# Loops example.
+# Demonstrates executing code repeatedly using a while loop.
+
+use string
+
+i = 0
+repeat i < 3
+    say "Iteration: " + string.from_int(i)
+    i = i + 1
+end

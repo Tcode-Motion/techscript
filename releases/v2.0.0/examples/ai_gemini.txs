@@ -1,0 +1,7 @@
+# 07_ai_gemini.txs
+# Gemini LLM helper wrapper.
+
+response = std.ai.generate_text("gemini", "Translate: Hello", {})
+when std.collections.len(response) > 0
+    say "AI Gemini OK"
+end

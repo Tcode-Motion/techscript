@@ -1,0 +1,7 @@
+# 05_sync.txs
+# Mutex locks.
+
+m = std.sync.make_mutex()
+std.sync.mutex_lock(m)
+std.sync.mutex_unlock(m)
+say "Mutex locked and unlocked."

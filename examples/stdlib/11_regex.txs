@@ -1,6 +1,0 @@
-# 11_regex.txs
-# Regular Expressions example.
-# Demonstrates pattern matching checks.
-
-make matched = std.regex["match"]("a+b", "aaab");
-std.io.println(std.strings.from_bool(matched));

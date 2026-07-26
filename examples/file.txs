@@ -1,0 +1,10 @@
+# 01_file.txs
+# Filesystem example.
+# Demonstrates safe chrooted file operations.
+
+use fs
+
+filename = "data.csv"
+fs.write_file(filename, "Language,Version\nTechScript,2.0")
+content = fs.read_file(filename)
+say content

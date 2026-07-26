@@ -1,0 +1,7 @@
+# 04_system_info.txs
+# System details diagnostic checker.
+
+count = std.system.cpucount()
+when count > 0
+    say "System OK"
+end

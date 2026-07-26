@@ -1,6 +1,0 @@
-let res = std.ai.generate_text("gemini", "Gemini prompt", {});
-if (std.collections.len(res) > 0) {
-    std.io.println("AI Gemini OK");
-} else {
-    std.io.println("AI Gemini Failed");
-}

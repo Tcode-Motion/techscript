@@ -1,0 +1,27 @@
+# LEGACY COMPATIBILITY TEST
+# This file intentionally uses deprecated TechScript syntax.
+# It verifies backward compatibility.
+# Expected: Successful compilation + TSW100x warnings.
+
+# compat/02_range.txs — v1.0.8 inclusive range semantics
+# `1..5` must yield [1, 2, 3, 4, 5] (five elements, 5 is INCLUDED)
+
+make total be 0
+each n in 1..5 then
+  total = total + n
+end
+say total    # expected: 15  (1+2+3+4+5)
+
+# Verify element count
+make rng be 1..5
+say rng      # expected: [1, 2, 3, 4, 5]
+
+# `..=` should be identical to `..` (both inclusive)
+make rng2 be 1..=5
+say rng2     # expected: [1, 2, 3, 4, 5]
+
+# Edge case: single element range
+say 7..7     # expected: [7]
+
+# Zero-based range
+say 0..4     # expected: [0, 1, 2, 3, 4]

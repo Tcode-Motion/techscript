@@ -318,6 +318,7 @@ impl ModelDecl {
 pub enum MethodKeyword {
     Build,
     Fun,
+    Do,
 }
 
 /// build method_name(params) { body } (inside a model)

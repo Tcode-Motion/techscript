@@ -41,42 +41,42 @@ Let's build a simple TechScript console application.
    ```
    Output:
    ```
-   Hello, World!
+   Hello, TechScript!
    ```
 
 ---
 
 ## 3. Language Basics
 
-TechScript is an expressive, strongly typed language. 
-- **Comments**: Single-line comments start with `//`. Multi-line comments are not supported.
-- **Semicolons**: Optional but recommended to terminate statements.
-- **Blocks**: Scopes are delimited by curly braces `{ ... }`.
+TechScript is an expressive, dynamically typed language.
+- **Comments**: Single-line comments start with `#`. Multi-line comments are not supported.
+- **Semicolons**: Semicolons are not used. Statements are terminated by newlines.
+- **Blocks**: Scopes open with a statement and close with the `end` keyword. Indentation is 4 spaces.
 
 Example:
-```techscript
-// This is a comment
-build main() {
-    make message = "Welcome to TechScript!";
-    say message;
-}
+```txs
+# This is a comment
+do main()
+    message = "Welcome to TechScript!"
+    say message
+end
 ```
 
 ---
 
 ## 4. Variables & Constants
 
-TechScript supports dynamic and static type checking. Variables are defined using the `make` or `let` keyword, and constants using the `const` keyword.
+TechScript variables do not require declaration keywords. First assignment declares the variable in the current lexical scope. Constants are declared using the `const` keyword.
 
-- `make` defines a mutable variable:
-  ```techscript
-  make count = 10;
-  count = 20; // Ok
+- Variable declaration and assignment:
+  ```txs
+  count = 10
+  count = 20      # Reassignment is allowed
   ```
-- `const` defines an immutable constant:
-  ```techscript
-  const PI = 3.14159;
-  PI = 3.0; // Compile-time Error!
+- Constant declaration:
+  ```txs
+  const PI = 3.14159
+  PI = 3.0        # Compile-time Error (TSE0302)!
   ```
 
 ### Supported Core Types:
@@ -92,81 +92,84 @@ TechScript supports dynamic and static type checking. Variables are defined usin
 
 ## 5. Functions & Closures
 
-Functions are declared using the `fun` keyword (or the entrypoint `build main`).
+Functions are declared using the `do` keyword and return values with `send`.
 
 ### Declaration:
-```techscript
-fun add(a, b) {
-    return a + b;
-}
+```txs
+do add(a, b)
+    send a + b
+end
 ```
 
 ### Closures:
-Functions are first-class citizens and can capture variables from their outer scope:
-```techscript
-fun make_counter() {
-    make count = 0;
-    return fun() {
-        count = count + 1;
-        return count;
-    };
-}
+Functions can capture variables from their enclosing lexical scopes:
+```txs
+do make_counter()
+    count = 0
+    send do()
+        count = count + 1
+        send count
+    end
+end
 ```
 
 ---
 
 ## 6. Structs
 
-Structs group related fields together. They are declared with the `struct` keyword and instantiated using `new`.
+Structs group fields together. They are declared with the `struct` keyword and instantiated using `new`.
 
-```techscript
-struct Point {
-    x,
+```txs
+struct Point
+    x
     y
-}
+end
 
-fun main() {
-    make p = new Point { x: 10, y: 20 };
-    say p.x; // prints 10
-}
+do main()
+    p = new Point()
+    p.x = 10
+    p.y = 20
+    say p.x    # prints 10
+end
 ```
 
 ---
 
 ## 7. Enums
 
-Enums represent a type that can have one of several named variants, which can optionally hold data.
+Enums represent a type that can have one of several named variants.
 
-```techscript
-enum Status {
-    Idle,
-    Loading,
-    Success(message),
-    Failure(code)
-}
+```txs
+enum Status
+    Idle
+    Loading
+    Success
+    Failure
+end
 ```
 
 ---
 
 ## 8. Modules & Imports
 
-Every file in TechScript acts as a module. You can export symbols using the `export` keyword and import them using `import`.
+Every file in TechScript acts as a module. You can export symbols using the `export` keyword and import them using the `use` keyword.
 
 ### Module file `math_helper.txs`:
-```techscript
-export const factor = 2;
-export fun double(x) {
-    return x * factor;
-}
+```txs
+export const factor = 2
+
+export do double(x)
+    send x * factor
+end
 ```
 
 ### Main file `main.txs`:
-```techscript
-import { double, factor } from "./math_helper.txs";
+```txs
+use math_helper
 
-build main() {
-    say double(10); // prints 20
-}
+do main()
+    say math_helper.double(10)    # prints 20
+end
 ```
 
 ---
@@ -190,81 +193,67 @@ Running `tsc install` resolves dependencies and creates a `tech.lock` lockfile.
 
 ---
 
-## 10. Generics
+## 10. Pattern Matching
 
-Generics parameterize structs and functions over types.
+The `match` expression provides pattern matching.
 
-```techscript
-struct Box<T> {
-    value: T
-}
-
-fun get_val<T>(b: Box<T>): T {
-    return b.value;
-}
+```txs
+do evaluate_status(status)
+    match status
+    case Status.Idle
+        say "System is idle"
+    case Status.Loading
+        say "Loading data..."
+    case Status.Success
+        say "Success"
+    default
+        say "Unknown status"
+    end
+end
 ```
 
 ---
 
-## 11. Pattern Matching
+## 11. Error Handling
 
-The `when` expression provides powerful pattern matching and structural destructuring.
+TechScript uses the `try` / `catch` block mechanism for error handling. Use `throw` to raise errors.
 
-```techscript
-fun evaluate_status(status) {
-    when (status) {
-        Status::Idle => say "System is idle",
-        Status::Loading => say "Loading data...",
-        Status::Success(msg) => say "Success: " + msg,
-        Status::Failure(code) => say "Failed with code: " + code
-    }
-}
+```txs
+use fs
+
+do read_config(path)
+    try
+        content = fs.read_file(path)
+        send content
+    catch err
+        say $"Could not read file: {err}"
+        send null
+    end
+end
 ```
 
 ---
 
-## 12. Error Handling
+## 12. Memory Model
 
-TechScript uses the `attempt` / `catch` block mechanism for error handling.
-
-```techscript
-fun read_config(path) {
-    attempt {
-        make content = std.fs.read_file(path);
-        return content;
-    } catch (err) {
-        say "Could not read file: " + err;
-        return null;
-    }
-}
-```
+TechScript uses a tracing Garbage Collector (GC) to manage heap-allocated values (Strings, Lists, Maps, Structs, Enums). Stack values (Int, Float, Bool) are copied by value.
 
 ---
 
-## 13. Memory Model
+## 13. Standard Library Reference
 
-TechScript uses a high-performance tracing Garbage Collector (GC) to manage heap-allocated values (Strings, Lists, Maps, Structs, Enums). 
-Stack values (Int, Float, Bool) are copied by value. Reference-based collections are automatically collected when they are no longer reachable from root scopes.
-
----
-
-## 14. Standard Library Reference
-
-The `std` namespace is loaded automatically in every program.
+True language built-ins (`say`, `ask`, `env`, `file`, `len`, `typeof`, `assert`, `panic`, `exit`, `sleep`, `json`, `time`) are available implicitly. Standard library modules require the `use` keyword and qualified calls.
 
 ### Core Modules:
-- `std.io`: Console input and output (`print`, `readline`)
-- `std.fs`: Filesystem read, write, and exists checks
-- `std.net`: TCP listener and socket client connect
-- `std.http`: Clean HTTP client GET/POST request helpers and HTTP server listeners
-- `std.json` & `std.yaml`: Structured string parsing and stringification
-- `std.crypto`: Safe data encryption algorithms (AES) and hashing (MD5, SHA256)
-- `std.async` & `std.future`: Task spawning and futures resolution event loops
-- `std.testing`: Comprehensive assertions (`assert`, `assert_eq`, `assert_ne`) and benchmarks
+- `math`: Mathematical operations and constants (`math.abs`, `math.sqrt`)
+- `json`: JSON parsing and serialization (`json.parse`, `json.stringify`)
+- `http`: HTTP client GET/POST requests and HTTP server hosting
+- `crypto`: Data hashing (`crypto.sha256`) and encryption
+- `testing`: Unit assertions (`testing.assert_eq`) and benchmarks
 
 ---
 
-## 15. Package Manager CLI
+## 14. Package Manager CLI
 
 Manage dependencies in your project using the compiler driver:
 
@@ -287,7 +276,7 @@ Manage dependencies in your project using the compiler driver:
 
 ---
 
-## 16. CLI Reference
+## 15. CLI Reference
 
 ```
 TechScript 2.0 CLI compiler driver (tsc)
@@ -308,7 +297,7 @@ Commands:
 
 ---
 
-## 17. REPL Guide
+## 16. REPL Guide
 
 Start the interactive session:
 ```bash
@@ -317,8 +306,8 @@ tsc repl
 Type any valid statement to evaluate it immediately:
 ```
 TechScript REPL v2.0
->> make x = 5
->> make y = 10
+>> x = 5
+>> y = 10
 >> x * y
 50
 >> exit
@@ -326,54 +315,35 @@ TechScript REPL v2.0
 
 ---
 
-## 18. VS Code Guide
+## 17. VS Code Guide
 
-The TechScript extension provides complete syntax coloring, error diagnostic highlights, automatic code formatting, and completion:
+The TechScript extension provides complete syntax coloring, error diagnostic highlights, automatic formatting, and completion:
 1. Search for "TechScript" in VS Code Extensions.
 2. Install the extension.
 3. Open any `.txs` file. The extension will automatically spawn the background Language Server (`techscript-lsp`).
 
 ---
 
-## 19. Native Compilation
+## 18. Native Compilation
 
 TechScript compiles to native machine code via its LLVM backend:
 ```bash
 tsc build src/main.txs --output my_app.exe
 ```
-This performs:
-- Semantic Verification
-- IR Lowering
-- LLVM Optimization Passes (O3)
-- Machine code generation to a native binary
 
 ---
 
-## 20. Bytecode Execution
-
-For fast developer loops, TechScript executes bytecode inside a VM:
-- Compile to portable bytecode:
-  ```bash
-  tsc compile src/main.txs --output main.txc
-  ```
-- Run the compiled bytecode:
-  ```bash
-  tsc run main.txc --vm
-  ```
-
----
-
-## 21. FAQ
+## 19. FAQ
 
 **Q: Is TechScript statically typed?**
-A: TechScript supports hybrid typing; variables can be dynamically typed (`make`), but the optimizer resolves concrete types statically for LLVM native output where possible.
+A: TechScript 2.0 is dynamically typed, but the optimizer resolves concrete types statically for LLVM native output where possible. Optional static type annotations are scheduled for future v2.2 releases.
 
 **Q: How does it compare in speed to Python?**
 A: Native compiled TechScript programs run up to 10-20x faster than standard Python, and virtual machine execution outperforms Python JITs for loop operations.
 
 ---
 
-## 22. Troubleshooting
+## 20. Troubleshooting
 
 ### Windows File Lock Errors (OS Error 32)
 - **Problem**: Cargo or compiler commands fail with `process cannot access the file because it is being used by another process`.

@@ -1,0 +1,11 @@
+# 04_functions.txs
+# Functions example.
+# Demonstrates function declarations and calling.
+
+use string
+
+do add(a, b)
+    send a + b
+end
+result = add(5, 7)
+say "Result: " + string.from_int(result)

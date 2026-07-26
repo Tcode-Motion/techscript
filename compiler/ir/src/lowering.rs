@@ -12,6 +12,7 @@ use techscript_common::Span;
 use techscript_errors::Diagnostic;
 
 /// Mapping context holding current symbol registers and loop targets.
+#[derive(Debug, Clone)]
 pub enum SymbolBinding {
     Local(LocalId, IRType),
     Global(crate::types::GlobalId, IRType),
@@ -587,9 +588,13 @@ impl LoweringContext {
             }
             Statement::EnumDecl(decl) => {
                 // Declare enum type globally
-                let _ = self
+                let global_id = self
                     .builder
                     .declare_global(decl.name.name.clone(), IRType::Enum(decl.name.name.clone()));
+                self.symbol_map.insert(
+                    decl.name.name.clone(),
+                    SymbolBinding::Global(global_id, IRType::Enum(decl.name.name.clone())),
+                );
             }
             Statement::DSL(block) => {
                 // Lower DSL blocks to structured IR with properties, children, and args.
@@ -715,16 +720,24 @@ impl LoweringContext {
             .iter()
             .map(|f| (f.name.name.clone(), IRType::Any))
             .collect::<Vec<_>>();
-        let _ = self.builder.declare_global(
+        let global_id = self.builder.declare_global(
             decl.name.name.clone(),
             IRType::Struct(decl.name.name.clone()),
+        );
+        self.symbol_map.insert(
+            decl.name.name.clone(),
+            SymbolBinding::Global(global_id, IRType::Struct(decl.name.name.clone())),
         );
     }
 
     fn lower_model_decl(&mut self, decl: &ModelDecl) {
-        let _ = self.builder.declare_global(
+        let global_id = self.builder.declare_global(
             decl.name.name.clone(),
             IRType::Model(decl.name.name.clone()),
+        );
+        self.symbol_map.insert(
+            decl.name.name.clone(),
+            SymbolBinding::Global(global_id, IRType::Model(decl.name.name.clone())),
         );
     }
 
@@ -798,7 +811,6 @@ impl LoweringContext {
 
         id
     }
-
     /// Convert an expression to a debug string for IR fallback.
     fn expr_to_debug_string(&self, expr: &Expression) -> String {
         match expr {
@@ -806,6 +818,32 @@ impl LoweringContext {
             Expression::Identifier(ident) => ident.name.clone(),
             _ => "<expr>".to_string(),
         }
+    }
+
+    fn lower_std_call(&mut self, module: &str, method: &str, args: Vec<Value>, span: Span) -> Value {
+        let std_ty = IRType::Any;
+        let std_global_id = self.builder.declare_global("std".to_string(), std_ty.clone());
+        let std_val = Value::Temp(self.builder.emit_instruction(
+            Op::Load(Value::Global(std_global_id)),
+            std_ty,
+            span,
+        ));
+        let mod_val = Value::Temp(self.builder.emit_instruction(
+            Op::FieldLoad { base: std_val, field: module.to_string() },
+            IRType::Any,
+            span,
+        ));
+        let method_val = Value::Temp(self.builder.emit_instruction(
+            Op::FieldLoad { base: mod_val, field: method.to_string() },
+            IRType::Any,
+            span,
+        ));
+        let temp = self.builder.emit_instruction(
+            Op::Call { callee: method_val, args },
+            IRType::Any,
+            span,
+        );
+        Value::Temp(temp)
     }
 
     fn lower_expression(&mut self, expr: &Expression) -> Value {
@@ -852,6 +890,19 @@ impl LoweringContext {
             Expression::Binary(bin) => self.lower_binary(bin),
             Expression::Unary(un) => self.lower_unary(un),
             Expression::Call(call) => {
+                if let Expression::Identifier(ref ident) = *call.callee {
+                    if ident.name == "env" {
+                        let arg_val = self.lower_expression(&call.args[0]);
+                        return self.lower_std_call("env", "get", vec![arg_val], call.span);
+                    } else if ident.name == "file" {
+                        let arg_val = self.lower_expression(&call.args[0]);
+                        return self.lower_std_call("file", "read", vec![arg_val], call.span);
+                    } else if ident.name == "json" {
+                        let file_arg = self.lower_expression(&call.args[0]);
+                        let read_val = self.lower_std_call("file", "read", vec![file_arg], call.span);
+                        return self.lower_std_call("json", "parse", vec![read_val], call.span);
+                    }
+                }
                 let callee_val = self.lower_expression(&call.callee);
                 let mut args = Vec::new();
                 for arg in &call.args {
@@ -1156,26 +1207,40 @@ impl LoweringContext {
 
         match &*assign.target {
             Expression::Identifier(ident) => {
-                if let Some(binding) = self.symbol_map.get(&ident.name) {
-                    match binding {
-                        SymbolBinding::Local(local_id, _) => {
-                            self.builder.emit_effect(
-                                Op::Store {
-                                    target: Value::Local(*local_id),
-                                    value: value.clone(),
-                                },
-                                assign.span,
-                            );
-                        }
-                        SymbolBinding::Global(global_id, _) => {
-                            self.builder.emit_effect(
-                                Op::Store {
-                                    target: Value::Global(*global_id),
-                                    value: value.clone(),
-                                },
-                                assign.span,
-                            );
-                        }
+                let binding = if let Some(binding) = self.symbol_map.get(&ident.name) {
+                    binding.clone()
+                } else {
+                    if self.builder.current_function.is_some() {
+                        let local_id = self.builder.allocate_local(IRType::Any);
+                        let b = SymbolBinding::Local(local_id, IRType::Any);
+                        self.symbol_map.insert(ident.name.clone(), b.clone());
+                        b
+                    } else {
+                        let global_id = self.builder.declare_global(ident.name.clone(), IRType::Any);
+                        let b = SymbolBinding::Global(global_id, IRType::Any);
+                        self.symbol_map.insert(ident.name.clone(), b.clone());
+                        b
+                    }
+                };
+
+                match binding {
+                    SymbolBinding::Local(local_id, _) => {
+                        self.builder.emit_effect(
+                            Op::Store {
+                                target: Value::Local(local_id),
+                                value: value.clone(),
+                            },
+                            assign.span,
+                        );
+                    }
+                    SymbolBinding::Global(global_id, _) => {
+                        self.builder.emit_effect(
+                            Op::Store {
+                                target: Value::Global(global_id),
+                                value: value.clone(),
+                            },
+                            assign.span,
+                        );
                     }
                 }
             }

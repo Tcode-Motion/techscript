@@ -1,7 +1,0 @@
-# 08_pattern_matching.txs
-# Pattern Matching example.
-# Demonstrates destructured list patterns.
-
-make list = [10, 20];
-make [first, second] = list;
-std.io.println("First: " + std.strings.from_int(first));

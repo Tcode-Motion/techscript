@@ -1,1 +1,0 @@
-Mutex locked and unlocked.

@@ -50,14 +50,14 @@ impl Environment {
         }
 
         if let Some(ref parent) = self.parent {
-            return parent.borrow_mut().assign(name, value);
+            if parent.borrow().lookup(name).is_ok() {
+                return parent.borrow_mut().assign(name, value);
+            }
         }
 
-        Err(RuntimeError::new(
-            RuntimeErrorKind::UndefinedVariable(name.to_string()),
-            None,
-            None,
-        ))
+        // First assignment in this scope: define it
+        self.define(name.to_string(), value, false);
+        Ok(())
     }
 
     /// Looks up a variable value by recursively searching scope parents.

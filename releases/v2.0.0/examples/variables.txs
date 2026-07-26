@@ -1,0 +1,10 @@
+# 02_variables.txs
+# Variables example.
+# Demonstrates declaring mutable variables and constants.
+
+use string
+
+x = 42
+const y = 10
+x = x + y
+say "Value of x: " + string.from_int(x)

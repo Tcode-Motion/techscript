@@ -1,0 +1,8 @@
+# 01_async.txs
+# Async task spawning.
+
+do background()
+    send "done"
+end
+fut = spawn_async(background)
+say "Async Task Spawned"

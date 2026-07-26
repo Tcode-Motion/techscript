@@ -1,0 +1,3 @@
+use path
+p = path.join("bin", "tsc.exe")
+say p

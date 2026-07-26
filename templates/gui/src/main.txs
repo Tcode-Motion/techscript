@@ -1,3 +1,14 @@
-build main() {
-    say "GUI window initialized."
-}
+# GUI app starter
+use gui
+
+window
+
+    title "My App"
+
+    size 800 600
+
+    button "OK"
+
+end
+
+show

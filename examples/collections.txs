@@ -1,0 +1,8 @@
+# 03_collections.txs
+# Collections module example.
+# Demonstrates getting list length and pushing elements.
+
+use string
+
+list = [1, 2]
+say string.from_int(std.collections.len(list))

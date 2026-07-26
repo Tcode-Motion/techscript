@@ -1,6 +1,0 @@
-# 02_path.txs
-# Path module example.
-# Demonstrates directory path joining.
-
-make p = std.path.join("bin", "tsc.exe");
-std.io.println(p);

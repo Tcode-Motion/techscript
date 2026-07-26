@@ -63,7 +63,7 @@ impl SymbolTable {
             );
         };
 
-        // ── Core native-registry built-ins ──────────────────────────────────
+                // ── Core native-registry built-ins ──────────────────────────────────
         add("say");
         add("ask");
         add("len");
@@ -75,6 +75,9 @@ impl SymbolTable {
         add("to_bool");
         add("assert");
         add("exit");
+        add("env");
+        add("file");
+        add("panic");
 
         // ── Type-conversion aliases used in v1.0.8 code ─────────────────────
         add("str");    // same as to_str

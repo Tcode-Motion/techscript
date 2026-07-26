@@ -1,0 +1,8 @@
+# 02_path.txs
+# Path module example.
+# Demonstrates directory path joining.
+
+use path
+
+p = path.join("bin", "tsc.exe")
+say p

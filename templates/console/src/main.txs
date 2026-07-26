@@ -1,3 +1,2 @@
-build main() {
-    say "Hello, TechScript Console App!"
-}
+# Console app starter
+say "Hello, TechScript!"

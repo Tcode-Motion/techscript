@@ -1,7 +1,0 @@
-# 06_xml.txs
-# XML parsing example.
-# Demonstrates parsing an XML string.
-
-make xml = "<val>hello</val>";
-make data = std.xml.parse(xml);
-std.io.println(data.val);

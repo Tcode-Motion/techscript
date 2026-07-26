@@ -25,7 +25,7 @@ pub struct IRBuilder {
     imports: Vec<String>,
     exports: Vec<String>,
 
-    current_function: Option<Function>,
+    pub current_function: Option<Function>,
     current_block: Option<BasicBlock>,
     blocks_in_progress: Vec<BasicBlock>,
 }

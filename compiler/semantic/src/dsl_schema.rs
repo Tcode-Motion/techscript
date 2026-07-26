@@ -52,7 +52,7 @@ pub fn build_dsl_registry() -> HashMap<String, DSLSchema> {
              "background".into(), "color".into(), "image".into(),
              "align".into(), "size".into()],
         vec![],
-        vec!["button".into(), "link".into(), "input".into()],
+        vec!["button".into(), "link".into(), "input".into(), "start".into()],
     ));
 
     reg.insert("section".to_string(), DSLSchema::new(

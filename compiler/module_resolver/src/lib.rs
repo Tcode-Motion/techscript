@@ -29,7 +29,7 @@ impl DefaultModuleResolver {
             "std/time", "std/datetime", "std/env", "std/process", "std/crypto", "std/hash", "std/random",
             "std/math", "std/collections", "std/string", "std/strings", "std/regex", "std/path", "std/thread", "std/sync",
             "std/async", "std/future", "std/channel", "std/testing", "std/logging", "std/compress",
-            "std/encoding", "std/base64", "std/hex", "std/uuid", "std/url", "std/system"
+            "std/encoding", "std/base64", "std/hex", "std/uuid", "std/url", "std/system", "std/web"
         ];
         for m in &modules {
             stdlib_modules.insert(m.to_string());

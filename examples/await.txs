@@ -1,0 +1,9 @@
+# 02_await.txs
+# Awaiting future completion.
+
+do background()
+    send "completed task"
+end
+fut = spawn_async(background)
+result = await fut
+say result

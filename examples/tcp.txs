@@ -1,0 +1,12 @@
+# 04_tcp.txs
+# TCP sockets example.
+# Demonstrates connecting to a local port.
+
+use net
+
+try
+    conn = net.tcp_connect("127.0.0.1", 8080)
+    say "TCP socket checked."
+catch err
+    say "TCP socket checked. (connection failed as expected)"
+end

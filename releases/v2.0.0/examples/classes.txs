@@ -1,0 +1,14 @@
+# 05_classes.txs
+# Classes example.
+# Demonstrates defining a model and instantiating it.
+
+class User
+    id = 1
+    name = "Alice"
+    
+    do greet()
+        send "Hello from " + self.name
+    end
+end
+u = new User()
+say u.greet()

@@ -1,3 +1,7 @@
-export build add(a, b) {
-    return a + b
-}
+# Library starter
+
+do greet(name)
+
+    send "Hello " + name
+
+end

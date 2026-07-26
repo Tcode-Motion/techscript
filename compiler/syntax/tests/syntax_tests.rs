@@ -53,33 +53,43 @@ fn test_associativity_display() {
 #[test]
 fn test_canonical_keywords_lookup() {
     let canonicals = [
-        ("make", TokenKind::Make),
-        ("const", TokenKind::Const),
-        ("say", TokenKind::Say),
-        ("ask", TokenKind::Ask),
-        ("build", TokenKind::Build),
-        ("return", TokenKind::Return),
-        ("model", TokenKind::Model),
-        ("self", TokenKind::SelfKw),
-        ("new", TokenKind::New),
-        ("if", TokenKind::If),
-        ("elif", TokenKind::Elif),
-        ("else", TokenKind::Else),
+        ("do", TokenKind::Do),
+        ("send", TokenKind::Send),
+        ("when", TokenKind::When),
+        ("loop", TokenKind::Loop),
+        ("repeat", TokenKind::Repeat),
         ("for", TokenKind::For),
         ("in", TokenKind::In),
-        ("while", TokenKind::While),
-        ("repeat", TokenKind::Repeat),
-        ("break", TokenKind::Break),
-        ("continue", TokenKind::Continue),
+        ("match", TokenKind::Match),
+        ("case", TokenKind::Case),
+        ("default", TokenKind::Default),
         ("try", TokenKind::Try),
         ("catch", TokenKind::Catch),
         ("throw", TokenKind::Throw),
-        ("import", TokenKind::Import),
-        ("from", TokenKind::From),
+        ("use", TokenKind::Use),
+        ("class", TokenKind::Class),
+        ("struct", TokenKind::Struct),
+        ("enum", TokenKind::Enum),
+        ("trait", TokenKind::Trait),
+        ("interface", TokenKind::Interface),
+        ("const", TokenKind::Const),
+        ("null", TokenKind::Null),
+        ("say", TokenKind::Say),
+        ("ask", TokenKind::Ask),
+        ("break", TokenKind::Break),
+        ("continue", TokenKind::Continue),
+        ("else", TokenKind::Else),
+        ("async", TokenKind::Async),
+        ("await", TokenKind::Await),
+        ("parallel", TokenKind::Parallel),
+        ("end", TokenKind::End),
         ("export", TokenKind::Export),
+        ("new", TokenKind::New),
+        ("self", TokenKind::SelfKw),
         ("true", TokenKind::True),
         ("false", TokenKind::False),
-        ("null", TokenKind::Null),
+        ("typeof", TokenKind::Typeof),
+        ("with", TokenKind::With),
     ];
 
     for (lexeme, expected_kind) in canonicals {
@@ -95,14 +105,21 @@ fn test_canonical_keywords_lookup() {
 #[test]
 fn test_alias_keywords_lookup_and_conversion() {
     let aliases = [
-        ("let", TokenKind::Let, TokenKind::Make),
-        ("var", TokenKind::Var, TokenKind::Make),
-        ("fun", TokenKind::Fun, TokenKind::Build),
-        ("function", TokenKind::Function, TokenKind::Build),
-        ("when", TokenKind::When, TokenKind::If),
+        ("build", TokenKind::Build, TokenKind::Do),
+        ("fun", TokenKind::Fun, TokenKind::Do),
+        ("function", TokenKind::Function, TokenKind::Do),
+        ("return", TokenKind::Return, TokenKind::Send),
+        ("give", TokenKind::Give, TokenKind::Send),
+        ("if", TokenKind::If, TokenKind::When),
+        ("while", TokenKind::While, TokenKind::Repeat),
         ("attempt", TokenKind::Attempt, TokenKind::Try),
         ("none", TokenKind::None, TokenKind::Null),
-        ("class", TokenKind::Class, TokenKind::Model),
+        ("model", TokenKind::Model, TokenKind::Class),
+        ("keep", TokenKind::Keep, TokenKind::Const),
+        ("stop", TokenKind::Stop, TokenKind::Break),
+        ("skip", TokenKind::Skip, TokenKind::Continue),
+        ("each", TokenKind::Each, TokenKind::For),
+        ("switch", TokenKind::Switch, TokenKind::Match),
     ];
 
     for (lexeme, alias_kind, canonical_kind) in aliases {
@@ -119,16 +136,7 @@ fn test_alias_keywords_lookup_and_conversion() {
 #[test]
 fn test_future_reserved_keywords_lookup() {
     let reserved = [
-        ("async", TokenKind::Async),
-        ("await", TokenKind::Await),
         ("type", TokenKind::Type),
-        ("interface", TokenKind::Interface),
-        ("match", TokenKind::Match),
-        ("switch", TokenKind::Switch),
-        ("case", TokenKind::Case),
-        ("enum", TokenKind::Enum),
-        ("struct", TokenKind::Struct),
-        ("trait", TokenKind::Trait),
         ("yield", TokenKind::Yield),
         ("spawn", TokenKind::Spawn),
         ("pub", TokenKind::Pub),
@@ -330,19 +338,19 @@ fn test_token_creation() {
 
 #[test]
 fn test_token_to_canonical() {
-    let span = Span::new(0, 3);
-    let token = Token::new(TokenKind::Let, "let".to_string(), span);
+    let span = Span::new(0, 5);
+    let token = Token::new(TokenKind::Build, "build".to_string(), span);
     let canonical = token.to_canonical();
-    assert_eq!(canonical.kind, TokenKind::Make);
-    assert_eq!(canonical.lexeme, "let"); // lexeme remains unchanged
+    assert_eq!(canonical.kind, TokenKind::Do);
+    assert_eq!(canonical.lexeme, "build"); // lexeme remains unchanged
 }
 
 #[test]
 fn test_token_display() {
-    let token = Token::new(TokenKind::Make, "make".to_string(), Span::new(0, 4));
+    let token = Token::new(TokenKind::Do, "do".to_string(), Span::new(0, 2));
     let display = format!("{}", token);
-    assert!(display.contains("make"));
-    assert!(display.contains("0..4"));
+    assert!(display.contains("do"));
+    assert!(display.contains("0..2"));
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -352,7 +360,7 @@ fn test_token_display() {
 #[test]
 fn test_serde_roundtrips() {
     // TokenKind
-    let kind = TokenKind::Make;
+    let kind = TokenKind::Do;
     let kind_json = serde_json::to_string(&kind).unwrap();
     let deserialized_kind: TokenKind = serde_json::from_str(&kind_json).unwrap();
     assert_eq!(kind, deserialized_kind);
@@ -373,55 +381,67 @@ fn test_token_uniqueness() {
     // Ensure all TokenKind static_lexemes are unique
     let mut lexemes = HashSet::new();
     let kinds = [
-        TokenKind::Make,
-        TokenKind::Const,
-        TokenKind::Say,
-        TokenKind::Ask,
-        TokenKind::Build,
-        TokenKind::Return,
-        TokenKind::Model,
-        TokenKind::SelfKw,
-        TokenKind::New,
-        TokenKind::If,
-        TokenKind::Elif,
-        TokenKind::Else,
+        TokenKind::Do,
+        TokenKind::Send,
+        TokenKind::When,
+        TokenKind::Loop,
+        TokenKind::Repeat,
         TokenKind::For,
         TokenKind::In,
-        TokenKind::While,
-        TokenKind::Repeat,
-        TokenKind::Break,
-        TokenKind::Continue,
+        TokenKind::Match,
+        TokenKind::Case,
+        TokenKind::Default,
         TokenKind::Try,
         TokenKind::Catch,
         TokenKind::Throw,
-        TokenKind::Import,
-        TokenKind::From,
+        TokenKind::Use,
+        TokenKind::Class,
+        TokenKind::Struct,
+        TokenKind::Enum,
+        TokenKind::Trait,
+        TokenKind::Interface,
+        TokenKind::Const,
+        TokenKind::Null,
+        TokenKind::Say,
+        TokenKind::Ask,
+        TokenKind::Break,
+        TokenKind::Continue,
+        TokenKind::Else,
+        TokenKind::Async,
+        TokenKind::Await,
+        TokenKind::Parallel,
+        TokenKind::End,
         TokenKind::Export,
+        TokenKind::New,
+        TokenKind::SelfKw,
         TokenKind::True,
         TokenKind::False,
-        TokenKind::Null,
+        TokenKind::Typeof,
+        TokenKind::With,
+        TokenKind::Build,
+        TokenKind::Make,
+        TokenKind::Return,
+        TokenKind::Model,
+        TokenKind::If,
+        TokenKind::Elif,
+        TokenKind::While,
+        TokenKind::Import,
+        TokenKind::From,
         TokenKind::Let,
         TokenKind::Var,
         TokenKind::Fun,
         TokenKind::Function,
-        TokenKind::When,
         TokenKind::Attempt,
         TokenKind::None,
-        TokenKind::Class,
-        TokenKind::Async,
-        TokenKind::Await,
-        TokenKind::Type,
-        TokenKind::Interface,
-        TokenKind::Match,
+        TokenKind::Keep,
+        TokenKind::Give,
+        TokenKind::Stop,
+        TokenKind::Skip,
+        TokenKind::Each,
         TokenKind::Switch,
-        TokenKind::Case,
-        TokenKind::Enum,
-        TokenKind::Struct,
-        TokenKind::Trait,
-        TokenKind::Yield,
-        TokenKind::Spawn,
-        TokenKind::Pub,
-        TokenKind::Mut,
+        TokenKind::Be,
+        TokenKind::Equals,
+        TokenKind::Then,
         TokenKind::Plus,
         TokenKind::Minus,
         TokenKind::Star,

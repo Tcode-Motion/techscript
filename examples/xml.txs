@@ -1,0 +1,9 @@
+# 06_xml.txs
+# XML parsing example.
+# Demonstrates parsing an XML string.
+
+use xml
+
+xml_data = "<val>hello</val>"
+data = xml.parse(xml_data)
+say data.val

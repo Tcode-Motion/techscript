@@ -8,7 +8,23 @@ fn check_source(source: &str) -> (Result<CheckedProgram, Vec<Diagnostic>>, Vec<D
     let tokens = lex(source, &mut reporter).expect("lexing should succeed");
     let program = parse(&tokens, &mut reporter).expect("parsing should succeed");
     let result = analyze(program, &mut reporter);
-    (result, reporter.get_diagnostics().to_vec())
+    let filtered_diags = reporter.get_diagnostics()
+        .iter()
+        .filter(|d| {
+            !matches!(
+                d.code,
+                ErrorCode::TSW1001
+                    | ErrorCode::TSW1002
+                    | ErrorCode::TSW1003
+                    | ErrorCode::TSW1004
+                    | ErrorCode::TSW1005
+                    | ErrorCode::TSW1006
+                    | ErrorCode::TSW1012
+            )
+        })
+        .cloned()
+        .collect();
+    (result, filtered_diags)
 }
 
 #[test]

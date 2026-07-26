@@ -1,3 +1,20 @@
-build main() {
-    say "Web server listening on port 8080..."
-}
+# Web app starter
+use web
+
+page "/"
+
+    title "My App"
+
+    hero
+
+        heading "TechScript"
+
+        subtitle "Simple as English"
+
+        button "Get Started"
+
+    end
+
+end
+
+start

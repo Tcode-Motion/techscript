@@ -1,0 +1,7 @@
+# 03_os.txs
+# Environment variables example.
+
+use env
+
+env.set("TS_OS_TEST", "verified")
+say env.get("TS_OS_TEST")

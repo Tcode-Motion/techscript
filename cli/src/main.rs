@@ -44,7 +44,7 @@ fn main() {
     if parsed_args.len() >= 2 {
         let first_arg = &parsed_args[1];
         let subcommands = [
-            "run", "build", "check", "fmt", "lint", "clean", "init", "new",
+            "run", "build", "check", "fmt", "lint", "migrate", "clean", "init", "new",
             "doc", "test", "repl", "publish", "install", "uninstall", "update", "doctor",
             "dump-ast", "dump-ir", "dump-bytecode", "emit-ir", "emit-llvm", "emit-asm", "emit-obj",
             "benchmark", "completion", "examples", "docs", "config", "self", "help"
@@ -131,6 +131,7 @@ fn main() {
         Commands::Check { file, watch } => crate::commands::check::execute(file.as_deref(), *watch),
         Commands::Fmt { path } => crate::commands::fmt::execute(path.as_deref()),
         Commands::Lint { path, fix } => crate::commands::lint::execute(path.as_deref(), *fix),
+        Commands::Migrate { path } => crate::commands::migrate::execute(path.as_deref()),
         Commands::Clean { all } => crate::commands::clean::execute(*all),
         Commands::Init { template } => crate::commands::init::execute(template.as_deref()),
         Commands::New { name, template } => {
@@ -345,8 +346,8 @@ fn show_custom_help() {
     println!("  tsc build --release       Compile in release mode");
     println!("  tsc fmt .                 Format current directory files");
     println!("  tsc doctor                Check environment health");
-    println!("\nDocumentation: https://github.com/Tcode-Motion/TechScript-2.0/docs");
-    println!("GitHub:        https://github.com/Tcode-Motion/TechScript-2.0");
+    println!("\nDocumentation: https://github.com/Tcode-Motion/techscript/tree/main/docs");
+    println!("GitHub:        https://github.com/Tcode-Motion/techscript");
     println!("{}", "========================================================".cyan().bold());
 }
 

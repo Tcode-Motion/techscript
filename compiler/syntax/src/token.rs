@@ -47,10 +47,10 @@ impl Token {
     /// use techscript_syntax::{Token, TokenKind};
     /// use techscript_common::Span;
     ///
-    /// let token = Token::new(TokenKind::Let, "let".to_string(), Span::new(0, 3));
+    /// let token = Token::new(TokenKind::Build, "build".to_string(), Span::new(0, 5));
     /// let canonical = token.to_canonical();
-    /// assert_eq!(canonical.kind, TokenKind::Make);
-    /// assert_eq!(canonical.lexeme, "let");
+    /// assert_eq!(canonical.kind, TokenKind::Do);
+    /// assert_eq!(canonical.lexeme, "build");
     /// ```
     pub fn to_canonical(&self) -> Self {
         if let Some(canonical_kind) = self.kind.to_canonical() {

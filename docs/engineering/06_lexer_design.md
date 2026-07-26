@@ -74,11 +74,11 @@ pub enum TokenKind {
     IntLiteral,     // 42, 0xFF, 0b1010, 0o77, 1_000_000
     FloatLiteral,   // 3.14, 1.0e10, 2.5e-3
     StringLiteral,  // "hello"
-    FStringStart,   // f" (start of f-string)
-    FStringText,    // literal text portion of f-string
-    FStringExprStart, // { inside f-string
-    FStringExprEnd,   // } inside f-string
-    FStringEnd,     // " (end of f-string)
+    FStringStart,   // $" (start of interpolated string)
+    FStringText,    // literal text portion of interpolated string
+    FStringExprStart, // { inside interpolated string
+    FStringExprEnd,   // } inside interpolated string
+    FStringEnd,     // " (end of interpolated string)
 
     // ── Identifiers ──────────────────────────────────────
     Identifier,     // variable names, function names, etc.

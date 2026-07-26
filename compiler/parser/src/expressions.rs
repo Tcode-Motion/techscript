@@ -19,6 +19,29 @@ impl<'a> Parser<'a> {
 
         while !self.is_at_end() {
             let next_prec = self.peek().kind.precedence();
+
+            // Check for implicit call (e.g. `env "PATH"`, `say x` etc.)
+            if precedence < Precedence::Call 
+                && self.can_start_implicit_call_arg(self.peek().kind)
+                && self.is_callable(&left)
+            {
+                // Parse argument(s)
+                let mut args = Vec::new();
+                let arg = self.parse_expression(Precedence::Call, reporter)?;
+                args.push(arg);
+                while self.match_token(TokenKind::Comma) {
+                    args.push(self.parse_expression(Precedence::Call, reporter)?);
+                }
+                let span = Span::new(left.span().start, self.previous().span.end);
+                left = Expression::Call(CallExpr::new(
+                    self.next_id(),
+                    Box::new(left),
+                    args,
+                    span,
+                ));
+                continue;
+            }
+
             if precedence >= next_prec {
                 break;
             }
@@ -28,6 +51,34 @@ impl<'a> Parser<'a> {
         }
 
         Ok(left)
+    }
+
+    fn can_start_implicit_call_arg(&self, kind: TokenKind) -> bool {
+        matches!(
+            kind,
+            TokenKind::IntLiteral
+                | TokenKind::FloatLiteral
+                | TokenKind::StringLiteral
+                | TokenKind::True
+                | TokenKind::False
+                | TokenKind::Null
+                | TokenKind::None
+                | TokenKind::Identifier
+                | TokenKind::SelfKw
+                | TokenKind::FStringStart
+                | TokenKind::Ask
+                | TokenKind::New
+        )
+    }
+
+    fn is_callable(&self, expr: &Expression) -> bool {
+        matches!(
+            expr,
+            Expression::Identifier(_)
+                | Expression::Member(_)
+                | Expression::Index(_)
+                | Expression::Call(_)
+        )
     }
 
     /// Handles parsing of prefix / leaf expressions.
@@ -233,6 +284,14 @@ impl<'a> Parser<'a> {
             }
             TokenKind::FStringStart => {
                 let start_pos = token.span.start;
+                if token.lexeme.starts_with('f') {
+                    reporter.report(techscript_errors::Diagnostic::new(
+                        techscript_errors::DiagnosticLevel::Warning,
+                        techscript_errors::ErrorCode::TSW1012,
+                        "Warning TSW1012: 'f\"' prefix is deprecated. Use '$\"' for string interpolation.".to_string(),
+                        token.span,
+                    ));
+                }
                 let mut parts = Vec::new();
                 while !self.check(TokenKind::FStringEnd) && !self.is_at_end() {
                     if self.match_token(TokenKind::FStringText) {

@@ -1,7 +1,0 @@
-# 05_csv.txs
-# CSV parsing example.
-# Demonstrates parsing CSV data.
-
-make csv = "name,val\na,10";
-make data = std.csv.parse(csv);
-std.io.println(data[0][0]);

@@ -265,14 +265,14 @@ impl Interpreter {
             Statement::DSL(dsl) => {
                 let block_val = self.eval_dsl_block(dsl)?;
                 let blocks_list_key = "_dsl_blocks".to_string();
-                let has_list = self.env.borrow().lookup(&blocks_list_key).is_ok();
+                let has_list = self.ctx.global_env.borrow().lookup(&blocks_list_key).is_ok();
                 if has_list {
-                    let env = self.env.borrow();
+                    let env = self.ctx.global_env.borrow();
                     if let Ok(RuntimeValue::List { items, .. }) = env.lookup(&blocks_list_key) {
                         items.borrow_mut().push(block_val);
                     }
                 } else {
-                    self.env.borrow_mut().define(
+                    self.ctx.global_env.borrow_mut().define(
                         blocks_list_key,
                         RuntimeValue::List {
                             items: Rc::new(RefCell::new(vec![block_val])),
@@ -530,7 +530,16 @@ impl Callable for ModelConstructor {
                 Pattern::Single(ident) => ident.name.clone(),
                 _ => continue,
             };
-            fields.insert(field_name, RuntimeValue::Null);
+            let mut temp_interp = Interpreter {
+                ctx: techscript_runtime::RuntimeContext::new(ctx.config.clone()),
+                env: Rc::clone(&ctx.global_env),
+                call_stack: Vec::new(),
+            };
+            let init_val = match temp_interp.visit_expression(&field.initializer) {
+                Ok(val) => val,
+                Err(_) => RuntimeValue::Null,
+            };
+            fields.insert(field_name, init_val);
         }
 
         let inst = ModelInstance::new(self.name.clone(), fields);

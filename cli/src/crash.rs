@@ -108,7 +108,7 @@ pub fn install_panic_hook(build_dir: PathBuf) {
         }
 
         eprintln!(
-            "Please report this bug at: https://github.com/Tcode-Motion/TechScript-2.0/issues"
+            "Please report this bug at: https://github.com/Tcode-Motion/techscript/issues/new"
         );
 
         std::process::exit(ExitCode::InternalError.code());

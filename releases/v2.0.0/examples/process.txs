@@ -1,0 +1,7 @@
+# 05_process.txs
+# Spawning processes example.
+
+use process
+
+res = process.run("cmd", ["/c", "echo", "process"])
+say "Process Spawned"

@@ -1,0 +1,12 @@
+# 01_http_get.txs
+# HTTP GET request.
+# Demonstrates fetching content from a URL.
+
+use http
+
+try
+    res = http.get("http://httpbin.org/get")
+    say "HTTP GET OK"
+catch err
+    say "HTTP GET OK (server error handled)"
+end

@@ -1,95 +1,69 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "TechScript",
+  "scopeName": "source.techscript",
   "patterns": [
-    {
-      "include": "#comments"
-    },
-    {
-      "include": "#keywords"
-    },
-    {
-      "include": "#types"
-    },
-    {
-      "include": "#strings"
-    },
-    {
-      "include": "#numbers"
-    },
-    {
-      "include": "#literals"
-    }
+    { "include": "#comments" },
+    { "include": "#attributes" },
+    { "include": "#keywords" },
+    { "include": "#types" },
+    { "include": "#functions" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#literals" },
+    { "include": "#dsl" }
   ],
   "repository": {
     "comments": {
       "patterns": [
-        {
-          "name": "comment.line.double-slash.techscript",
-          "match": "//.*$"
-        },
-        {
-          "name": "comment.block.techscript",
-          "begin": "/\\*",
-          "end": "\\*/"
-        }
+        { "name": "comment.line.double-slash.techscript", "match": "//.*$" },
+        { "name": "comment.block.techscript", "begin": "/\\*", "end": "\\*/" }
       ]
+    },
+    "attributes": {
+      "name": "entity.name.tag.attribute.techscript",
+      "match": "#\\[[a-zA-Z_]+\\]"
     },
     "keywords": {
       "patterns": [
-        {
-          "name": "keyword.control.techscript",
-          "match": "\\b(if|else|while|for|in|return|match|await)\\b"
-        },
-        {
-          "name": "keyword.declaration.techscript",
-          "match": "\\b(let|mut|const|fn|async|struct|enum|model|import|export)\\b"
-        }
+        { "name": "keyword.control.techscript", "match": "\\b(if|else|while|for|in|return|match|await|when|catch)\\b" },
+        { "name": "keyword.declaration.techscript", "match": "\\b(let|mut|const|fn|async|struct|enum|model|import|export|build|trait|package)\\b" },
+        { "name": "keyword.operator.techscript", "match": "(=|==|!=|<|>|<=|>=|\\+|\\-|\\*|/|\\%|&&|\\|\\||!)" }
       ]
     },
     "types": {
       "patterns": [
-        {
-          "name": "support.type.primitive.techscript",
-          "match": "\\b(int|float|bool|str|list|map|any|void)\\b"
-        }
+        { "name": "support.type.primitive.techscript", "match": "\\b(int|float|bool|str|list|map|any|void)\\b" },
+        { "name": "entity.name.type.techscript", "match": "\\b[A-Z][a-zA-Z0-9_]*\\b" }
+      ]
+    },
+    "functions": {
+      "patterns": [
+        { "name": "entity.name.function.techscript", "match": "\\b[a-z][a-zA-Z0-9_]*(?=\\s*\\()" }
       ]
     },
     "strings": {
       "patterns": [
-        {
-          "name": "string.quoted.double.techscript",
-          "begin": "\"",
-          "end": "\"",
-          "patterns": [
-            {
-              "name": "constant.character.escape.techscript",
-              "match": "\\\\."
-            }
-          ]
-        }
+        { "name": "string.quoted.double.techscript", "begin": "\"", "end": "\"", "patterns": [{ "name": "constant.character.escape.techscript", "match": "\\\\." }] },
+        { "name": "string.quoted.single.techscript", "begin": "'", "end": "'", "patterns": [{ "name": "constant.character.escape.techscript", "match": "\\\\." }] }
       ]
     },
     "numbers": {
       "patterns": [
-        {
-          "name": "constant.numeric.float.techscript",
-          "match": "\\b\\d+\\.\\d+\\b"
-        },
-        {
-          "name": "constant.numeric.integer.techscript",
-          "match": "\\b\\d+\\b"
-        }
+        { "name": "constant.numeric.float.techscript", "match": "\\b\\d+\\.\\d+\\b" },
+        { "name": "constant.numeric.integer.techscript", "match": "\\b\\d+\\b" }
       ]
     },
     "literals": {
       "patterns": [
-        {
-          "name": "constant.language.boolean.techscript",
-          "match": "\\b(true|false|null)\\b"
-        }
+        { "name": "constant.language.boolean.techscript", "match": "\\b(true|false|null)\\b" }
+      ]
+    },
+    "dsl": {
+      "patterns": [
+        { "name": "entity.name.tag.dsl.techscript", "match": "\\b(website|page|hero|section|card|button|link|nav|header|footer|input|form|main|aside|start|logo|rings|emblem|core|letter|circuits)\\b" },
+        { "name": "variable.other.dsl.techscript", "match": "\\b(text|color|size|count|thickness|shape|char|id|title|subtitle|url|label|placeholder)\\b" }
       ]
     }
-  },
-  "scopeName": "source.techscript"
+  }
 }

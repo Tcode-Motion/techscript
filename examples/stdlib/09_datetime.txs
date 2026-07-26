@@ -1,8 +1,0 @@
-# 09_datetime.txs
-# Datetime example.
-# Demonstrates epoch time retrieval.
-
-make now = std.datetime.epoch();
-if now > 0.0 {
-    std.io.println("Datetime OK");
-}

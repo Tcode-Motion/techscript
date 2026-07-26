@@ -1,37 +1,76 @@
 # TechScript 2.0 Testing Guide
 
-Unit tests are written using `std.testing` and run via the `tsc test` command.
+> **Status**: Frozen Specification — 2.0.0 Stable
+> **Last Updated**: 2026-07-26
 
-## Writing Tests
+TechScript 2.0 provides testing utilities under the `testing` module. Unit tests
+and benchmarks can be run directly using the `tsc test` command line runner.
 
-```techscript
-import std.testing;
+---
 
-function test_addition() {
-    let result = 1 + 1;
-    std.testing.assert_eq(result, 2, "1 + 1 should equal 2");
-}
+## 1. Writing Unit Tests
 
-test_addition();
+Unit tests are standard functions. Use the language built-in `assert` or qualified
+utilities from the `testing` module to verify correctness.
+
+```txs
+use testing
+
+do test_addition()
+    result = 1 + 1
+    testing.assert_eq(result, 2)
+end
+
+do test_string_format()
+    name = "Boss"
+    greeting = $"Hello {name}"
+    testing.assert_eq(greeting, "Hello Boss")
+end
+
+# Run the test functions directly if executed as scripts
+test_addition()
+test_string_format()
 ```
 
-## Assertions
+### Assertions
 
-- `std.testing.assert(condition, message)`
-- `std.testing.assert_eq(actual, expected, message)`
-- `std.testing.assert_ne(actual, expected, message)`
+The following assertion functions are exported by the `testing` module:
 
-## Benchmarks
+- `testing.assert(condition, message = "")`: Asserts that the condition is true.
+- `testing.assert_eq(actual, expected, message = "")`: Asserts that two values are equal.
+- `testing.assert_ne(actual, expected, message = "")`: Asserts that two values are not equal.
 
-```techscript
-import std.testing;
+---
 
-function my_heavy_loop() {
-    let sum = 0;
-    for let i = 0; i < 1000; i = i + 1 {
-        sum = sum + i;
-    }
-}
+## 2. Writing Benchmarks
 
-std.testing.benchmark(my_heavy_loop, 5000);
+Benchmarks measure execution duration over repeated iterations. Use `testing.benchmark`
+to execute a test function a specified number of times:
+
+```txs
+use testing
+
+do heavy_operation()
+    sum = 0
+    for i in 1..1000
+        sum += i
+    end
+end
+
+# Benchmark: execute heavy_operation 5000 times
+duration = testing.benchmark(heavy_operation, 5000)
+say $"5000 iterations took {duration}ms"
 ```
+
+---
+
+## 3. Running Tests via CLI
+
+Run all tests in the current project workspace:
+
+```bash
+tsc test .
+```
+
+The runner automatically scans for functions prefixed with `test_`, executes them,
+and reports pass/fail diagnostics.

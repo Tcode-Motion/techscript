@@ -14,39 +14,6 @@ pub struct ResolveSymbols;
 
 impl Pass for ResolveSymbols {
     fn run(&mut self, program: &Program, context: &mut SemanticContext) {
-        let has_explicit_main = program.statements.iter().any(|stmt| {
-            if let Statement::FuncDecl(decl) = stmt {
-                decl.name.name == "main"
-            } else {
-                false
-            }
-        });
-
-        if has_explicit_main {
-            for stmt in &program.statements {
-                let is_decl = matches!(
-                    stmt,
-                    Statement::FuncDecl(_)
-                        | Statement::StructDecl(_)
-                        | Statement::EnumDecl(_)
-                        | Statement::ModelDecl(_)
-                        | Statement::ExportDecl(_)
-                        | Statement::Import(_)
-                        | Statement::VarDecl(_)
-                        | Statement::ConstDecl(_)
-                );
-                if !is_decl {
-                    let diag = Diagnostic::new(
-                        DiagnosticLevel::Error,
-                        ErrorCode::E0313,
-                        "Cannot mix top-level execution statements with an explicit build main() function.".to_string(),
-                        stmt.span(),
-                    );
-                    context.diagnostics.push(diag);
-                }
-            }
-        }
-
         for stmt in &program.statements {
             let _ = self.resolve_statement(stmt, context);
         }
@@ -680,18 +647,30 @@ impl ResolveSymbols {
                 Ok(ty)
             }
             Expression::Assignment(assign) => {
-                // Check mutation of constant variable
                 if let Expression::Identifier(ref ident) = *assign.target {
-                    if let Some(symbol) = context.symbol_table.lookup(&ident.name) {
-                        if symbol.is_constant {
-                            let diag = Diagnostic::new(
-                                DiagnosticLevel::Error,
-                                ErrorCode::E0302,
-                                format!("Cannot reassign constant variable '{}'", ident.name),
-                                ident.span,
-                            );
-                            context.diagnostics.push(diag);
-                            return Err(());
+                    if context.symbol_table.lookup(&ident.name).is_none() {
+                        // Automatically declare the variable on first assignment
+                        let symbol = Symbol::new(
+                            ident.name.clone(),
+                            false, // is_constant
+                            false, // is_function
+                            false, // is_type
+                            context.interner.any(),
+                        );
+                        context.symbol_table.register(ident.name.clone(), symbol);
+                    } else {
+                        // Check mutation of constant variable
+                        if let Some(symbol) = context.symbol_table.lookup(&ident.name) {
+                            if symbol.is_constant {
+                                let diag = Diagnostic::new(
+                                    DiagnosticLevel::Error,
+                                    ErrorCode::E0302,
+                                    format!("Cannot reassign constant variable '{}'", ident.name),
+                                    ident.span,
+                                );
+                                context.diagnostics.push(diag);
+                                return Err(());
+                            }
                         }
                     }
                 }

@@ -1,3 +1,5 @@
-build main() {
-    say "TechScript CLI Tool running."
-}
+# CLI app starter
+use env
+
+args = env "ARGS"
+say args

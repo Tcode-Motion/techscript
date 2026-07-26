@@ -1,6 +1,0 @@
-# 06_graphics.txs
-# Headless canvas rendering.
-
-make canvas = std.graphics.create_canvas(10, 10);
-std.graphics.draw_rect(canvas, 1, 1, 8, 8, "#00ff00");
-std.io.println("Graphics render OK");

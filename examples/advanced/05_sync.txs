@@ -1,7 +1,0 @@
-# 05_sync.txs
-# Mutex locks.
-
-make m = std.sync.make_mutex();
-std.sync.mutex_lock(m);
-std.sync.mutex_unlock(m);
-std.io.println("Mutex locked and unlocked.");

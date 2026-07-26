@@ -1,0 +1,9 @@
+# 08_toml.txs
+# TOML parsing example.
+# Demonstrates parsing TOML data.
+
+use toml
+
+toml_data = "host = \"localhost\""
+data = toml.parse(toml_data)
+say data.host

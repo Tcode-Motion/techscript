@@ -51,7 +51,18 @@ pub fn execute(
     let backend = if native {
         ExecutionBackend::Native
     } else {
-        match backend_str.unwrap_or("vm").to_lowercase().as_str() {
+        let mut default_backend = "vm";
+        if let Ok(content) = std::fs::read_to_string(file_path) {
+            let dsl_keywords = ["website", "canvas", "logo", "window", "dialog", "menu"];
+            for line in content.lines() {
+                let trimmed = line.trim();
+                if dsl_keywords.iter().any(|&kw| trimmed.starts_with(kw)) {
+                    default_backend = "interpreter";
+                    break;
+                }
+            }
+        }
+        match backend_str.unwrap_or(default_backend).to_lowercase().as_str() {
             "interpreter" | "interp" => ExecutionBackend::Interpreter,
             "native" => ExecutionBackend::Native,
             _ => ExecutionBackend::Vm,

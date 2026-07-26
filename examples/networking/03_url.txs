@@ -1,5 +1,0 @@
-# 03_url.txs
-# URL parser helper.
-
-make parsed = std.url.url_parse("http://localhost:8080/index");
-std.io.println(parsed.host);

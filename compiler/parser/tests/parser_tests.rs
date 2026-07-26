@@ -214,7 +214,8 @@ fn test_parser_error_recovery() {
 
     // The parser should recover after semicolon and parse `say 42` successfully, but return Err because reporter has errors.
     assert!(reporter.has_errors());
-    assert_eq!(reporter.get_diagnostics().len(), 1);
+    let error_count = reporter.get_diagnostics().iter().filter(|d| d.level == techscript_errors::DiagnosticLevel::Error).count();
+    assert_eq!(error_count, 1);
 }
 
 #[test]

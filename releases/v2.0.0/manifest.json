@@ -1,19 +1,19 @@
 {
   "build": 1,
-  "build_date": "2026-07-26",
+  "build_date": "2026-07-27",
   "compiler": "2.0.0",
   "docs": 12,
   "examples": 50,
-  "git_commit": "6d6cfe348907b34deeab60b82cf09ca03922236a",
+  "git_commit": "fc1d25d46ac2c7410488d651073d4e748b8b9d24",
   "sha256": {
-    "TechScript.vsix": "efadab22147419bedb685042ba834d413d42060aa11b6442ad20317b7f8ced03",
-    "TechScript_Online_Setup.exe": "5b3da8c1b5607ea123ae0e00eeaeb52e5492c06679753ccf172dbf00f067ebea",
-    "TechScript_Portable.zip": "bf7d8063aa2d21aeb44b2ebe9c7f7b0f39cec01f630fe5a9826c9193b75eb946",
-    "TechScript_Setup.exe": "5b3da8c1b5607ea123ae0e00eeaeb52e5492c06679753ccf172dbf00f067ebea",
-    "tsc.exe": "63539164ec93875a1684ca1a12f3daa6e327bb2014af77baf1aa6ad7e21fc3df",
-    "tsls.exe": "f1776da28b29bbf4b7a903f7cd25372eb867776b31eba0b40aec00042928da0c",
-    "tspm.exe": "63539164ec93875a1684ca1a12f3daa6e327bb2014af77baf1aa6ad7e21fc3df",
-    "tsvm.exe": "63539164ec93875a1684ca1a12f3daa6e327bb2014af77baf1aa6ad7e21fc3df"
+    "TechScript.vsix": "5afb2b0672667c81dc172902edcdeeb8d34f10d9db7832fec971d01d671966e0",
+    "TechScript_Online_Setup.exe": "aa430b14605ef565c4849583671d8e21599f13b735509996eb94c1ed3f3c1b60",
+    "TechScript_Portable.zip": "10d98e75162cd7a325a6e08e7eaded673d70eaafd6078bf7dc234d6abdcce9ac",
+    "TechScript_Setup.exe": "aa430b14605ef565c4849583671d8e21599f13b735509996eb94c1ed3f3c1b60",
+    "tsc.exe": "96a5333e63bad9580412ccd9165f60c7453bfcc96fee27b291c61928f52699ce",
+    "tsls.exe": "4ee299de495611d68e2f80b797433d21b5f084d813be62df0db618e96961ff87",
+    "tspm.exe": "96a5333e63bad9580412ccd9165f60c7453bfcc96fee27b291c61928f52699ce",
+    "tsvm.exe": "96a5333e63bad9580412ccd9165f60c7453bfcc96fee27b291c61928f52699ce"
   },
   "stdlib": "2.0.0",
   "supported_targets": [

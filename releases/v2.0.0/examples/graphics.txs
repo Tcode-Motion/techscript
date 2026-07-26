@@ -1,6 +1,7 @@
 # 06_graphics.txs
 # Headless canvas rendering.
 
-canvas = std.graphics.create_canvas(10, 10)
-std.graphics.draw_rect(canvas, 1, 1, 8, 8, "#00ff00")
+c = std.graphics.create_canvas(10, 10)
+std.graphics.draw_rect(c, 1, 1, 8, 8, "#00ff00")
+std.graphics.save_png(c, "output.png")
 say "Graphics render OK"

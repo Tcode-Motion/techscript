@@ -1,8 +1,8 @@
 # TechScript 2.0 Categorized Examples Verification Summary
 
 Total Examples Discovered: 49
-Passed: 47
-Success Rate: 95.9%
+Passed: 49
+Success Rate: 100.0%
 
 | Category | Example | semantic check | execution | output match | Final Status |
 |----------|---------|----------------|-----------|--------------|--------------|
@@ -21,11 +21,11 @@ Success Rate: 95.9%
 | `` | `channels.txs` | ✓ | ✓ | ✓ | **PASS** |
 | `` | `classes.txs` | ✓ | ✓ | ✓ | **PASS** |
 | `` | `collections.txs` | ✓ | ✓ | ✓ | **PASS** |
-| `` | `compression.txs` | ✓ | ✗ | ✓ | **FAIL** |
+| `` | `compression.txs` | ✓ | ✓ | ✓ | **PASS** |
 | `` | `csv.txs` | ✓ | ✓ | ✓ | **PASS** |
 | `` | `datetime.txs` | ✓ | ✓ | ✓ | **PASS** |
 | `` | `enums.txs` | ✓ | ✓ | ✓ | **PASS** |
-| `` | `file.txs` | ✓ | ✓ | ✗ | **FAIL** |
+| `` | `file.txs` | ✓ | ✓ | ✓ | **PASS** |
 | `` | `functions.txs` | ✓ | ✓ | ✓ | **PASS** |
 | `` | `graphics.txs` | ✓ | ✓ | ✓ | **PASS** |
 | `` | `hello.txs` | ✓ | ✓ | ✓ | **PASS** |

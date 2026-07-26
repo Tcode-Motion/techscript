@@ -2,6 +2,7 @@
 # Run: tsc run examples/graphics/logo_design.txs
 # Uses canvas DSL blocks to generate techscript_logo.svg
 
+use fs
 use canvas
 
 # Build the TechScript logo from DSL blocks
@@ -46,7 +47,7 @@ circuits
 end
 
 # Render all DSL blocks to SVG and save
-svg = canvas.render_blocks()
-canvas.save("techscript_logo.svg", svg)
+svg_content = canvas.render_blocks()
+fs.write_file("techscript_logo.svg", svg_content)
 
 say "Done! Saved techscript_logo.svg"

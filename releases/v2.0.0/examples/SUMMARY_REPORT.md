@@ -6,6 +6,13 @@ Success Rate: 100.0%
 
 | Category | Example | semantic check | execution | output match | Final Status |
 |----------|---------|----------------|-----------|--------------|--------------|
+| `` | `01_keywords.txs` | ✓ | ✓ | ✓ | **PASS** |
+| `` | `02_range.txs` | ✓ | ✓ | ✓ | **PASS** |
+| `` | `03_error_handling.txs` | ✓ | ✓ | ✓ | **PASS** |
+| `` | `04_model_init.txs` | ✓ | ✓ | ✓ | **PASS** |
+| `` | `05_modules.txs` | ✓ | ✓ | ✓ | **PASS** |
+| `` | `06_repeat.txs` | ✓ | ✓ | ✓ | **PASS** |
+| `` | `07_mixed_dialect.txs` | ✓ | ✓ | ✓ | **PASS** |
 | `` | `ai_chat.txs` | ✓ | ✓ | ✓ | **PASS** |
 | `` | `ai_gemini.txs` | ✓ | ✓ | ✓ | **PASS** |
 | `` | `async.txs` | ✓ | ✓ | ✓ | **PASS** |
@@ -48,10 +55,3 @@ Success Rate: 100.0%
 | `` | `web_landing_page.txs` | ✓ | ✓ | ✓ | **PASS** |
 | `` | `xml.txs` | ✓ | ✓ | ✓ | **PASS** |
 | `` | `yaml.txs` | ✓ | ✓ | ✓ | **PASS** |
-| `compat` | `01_keywords.txs` | ✓ | ✓ | ✓ | **PASS** |
-| `compat` | `02_range.txs` | ✓ | ✓ | ✓ | **PASS** |
-| `compat` | `03_error_handling.txs` | ✓ | ✓ | ✓ | **PASS** |
-| `compat` | `04_model_init.txs` | ✓ | ✓ | ✓ | **PASS** |
-| `compat` | `05_modules.txs` | ✓ | ✓ | ✓ | **PASS** |
-| `compat` | `06_repeat.txs` | ✓ | ✓ | ✓ | **PASS** |
-| `compat` | `07_mixed_dialect.txs` | ✓ | ✓ | ✓ | **PASS** |

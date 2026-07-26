@@ -22,14 +22,14 @@ fn dsl_to_svg(val: &RuntimeValue) -> String {
                         .find(|p| p.name == "color")
                         .and_then(|p| p.value.as_ref())
                         .map(|v| v.to_string())
-                        .unwrap_or_else(|| "#333".to_string());
+                        .unwrap_or_else(|| "#00d4ff".to_string());
                     let size = dsl.properties.iter()
                         .find(|p| p.name == "size")
                         .and_then(|p| p.value.as_ref())
                         .and_then(|v| v.try_into_int().ok())
                         .unwrap_or(48);
                     svg.push_str(&format!(
-                        r#"<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" font-size="{}" fill="{}" font-family="Arial,sans-serif">{}</text>"#,
+                        r#"<text x="250" y="380" text-anchor="middle" dominant-baseline="central" font-size="{}" font-weight="800" fill="{}" font-family="system-ui, -apple-system, sans-serif" letter-spacing="3">{}</text>"#,
                         size, color, text
                     ));
                 }
@@ -43,22 +43,23 @@ fn dsl_to_svg(val: &RuntimeValue) -> String {
                         .find(|p| p.name == "color")
                         .and_then(|p| p.value.as_ref())
                         .map(|v| v.to_string())
-                        .unwrap_or_else(|| "#666".to_string());
+                        .unwrap_or_else(|| "#00d4ff".to_string());
                     let size = dsl.properties.iter()
                         .find(|p| p.name == "size")
                         .and_then(|p| p.value.as_ref())
                         .and_then(|v| v.try_into_int().ok())
-                        .unwrap_or(80);
+                        .unwrap_or(40);
                     let thickness = dsl.properties.iter()
                         .find(|p| p.name == "thickness")
                         .and_then(|p| p.value.as_ref())
                         .and_then(|v| v.try_into_int().ok())
-                        .unwrap_or(6);
+                        .unwrap_or(3);
                     for i in 0..count {
-                        let offset = i as i64 * (size + 10);
+                        let r = 80 + i as i64 * (size / 2);
+                        let opacity = 0.4 - (i as f32 * 0.08);
                         svg.push_str(&format!(
-                            r#"<circle cx="{}" cy="50%" r="{}" fill="none" stroke="{}" stroke-width="{}"/>"#,
-                            size / 2 + offset, size / 2, color, thickness
+                            r#"<circle cx="250" cy="180" r="{}" fill="none" stroke="{}" stroke-width="{}" opacity="{}"/>"#,
+                            r, color, thickness, opacity
                         ));
                     }
                 }
@@ -67,15 +68,17 @@ fn dsl_to_svg(val: &RuntimeValue) -> String {
                         .find(|p| p.name == "color")
                         .and_then(|p| p.value.as_ref())
                         .map(|v| v.to_string())
-                        .unwrap_or_else(|| "#007bff".to_string());
+                        .unwrap_or_else(|| "#0088cc".to_string());
                     let size = dsl.properties.iter()
                         .find(|p| p.name == "size")
                         .and_then(|p| p.value.as_ref())
                         .and_then(|v| v.try_into_int().ok())
-                        .unwrap_or(64);
+                        .unwrap_or(120);
+                    let x = 250 - size / 2;
+                    let y = 180 - size / 2;
                     svg.push_str(&format!(
-                        r#"<rect x="0" y="0" width="{}" height="{}" rx="{}" fill="{}"/>"#,
-                        size, size, size / 4, color
+                        r#"<rect x="{}" y="{}" width="{}" height="{}" rx="{}" fill="{}" transform="rotate(45 250 180)" filter="url(#glow)"/>"#,
+                        x, y, size, size, size / 4, color
                     ));
                 }
                 "letter" => {
@@ -88,14 +91,14 @@ fn dsl_to_svg(val: &RuntimeValue) -> String {
                         .find(|p| p.name == "color")
                         .and_then(|p| p.value.as_ref())
                         .map(|v| v.to_string())
-                        .unwrap_or_else(|| "#fff".to_string());
+                        .unwrap_or_else(|| "#0a0e27".to_string());
                     let size = dsl.properties.iter()
                         .find(|p| p.name == "size")
                         .and_then(|p| p.value.as_ref())
                         .and_then(|v| v.try_into_int().ok())
                         .unwrap_or(32);
                     svg.push_str(&format!(
-                        r#"<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" font-size="{}" fill="{}">{}</text>"#,
+                        r#"<text x="250" y="180" text-anchor="middle" dominant-baseline="central" font-size="{}" font-weight="900" fill="{}" font-family="system-ui, -apple-system, sans-serif">{}</text>"#,
                         size, color, ch
                     ));
                 }
@@ -104,15 +107,15 @@ fn dsl_to_svg(val: &RuntimeValue) -> String {
                         .find(|p| p.name == "color")
                         .and_then(|p| p.value.as_ref())
                         .map(|v| v.to_string())
-                        .unwrap_or_else(|| "#007bff".to_string());
+                        .unwrap_or_else(|| "#66e0ff".to_string());
                     let size = dsl.properties.iter()
                         .find(|p| p.name == "size")
                         .and_then(|p| p.value.as_ref())
                         .and_then(|v| v.try_into_int().ok())
                         .unwrap_or(40);
                     svg.push_str(&format!(
-                        r#"<circle cx="{}" cy="{}" r="{}" fill="{}"/>"#,
-                        size / 2, size / 2, size / 2, color
+                        r#"<circle cx="250" cy="180" r="{}" fill="{}" opacity="0.8"/>"#,
+                        size / 2, color
                     ));
                 }
                 "circuits" => {
@@ -120,15 +123,15 @@ fn dsl_to_svg(val: &RuntimeValue) -> String {
                         .find(|p| p.name == "color")
                         .and_then(|p| p.value.as_ref())
                         .map(|v| v.to_string())
-                        .unwrap_or_else(|| "#00ff88".to_string());
-                    let width = dsl.properties.iter()
-                        .find(|p| p.name == "width")
-                        .and_then(|p| p.value.as_ref())
-                        .and_then(|v| v.try_into_int().ok())
-                        .unwrap_or(200);
+                        .unwrap_or_else(|| "#00d4ff".to_string());
                     svg.push_str(&format!(
-                        r#"<rect x="0" y="0" width="{}" height="100" fill="none" stroke="{}" stroke-width="1" stroke-dasharray="4 4"/>"#,
-                        width, color
+                        r#"<line x1="50" y1="180" x2="450" y2="180" stroke="{}" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.6"/>
+                        <line x1="250" y1="30" x2="250" y2="330" stroke="{}" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.6"/>
+                        <circle cx="50" cy="180" r="4" fill="{}"/>
+                        <circle cx="450" cy="180" r="4" fill="{}"/>
+                        <circle cx="250" cy="30" r="4" fill="{}"/>
+                        <circle cx="250" cy="330" r="4" fill="{}"/>"#,
+                        color, color, color, color, color, color
                     ));
                 }
                 _ => {}
@@ -324,18 +327,12 @@ impl StdlibRegistry {
                     _ => return Ok(RuntimeValue::Str(String::new())),
                 };
                 let mut svg = String::new();
-                for block in &blocks {
-                    svg.push_str(&dsl_to_svg(block));
-                }
-                Ok(RuntimeValue::Str(svg))
-            },
-        }));
-
-        self.register_module("std.canvas", StdlibModule {
-            name: "std.canvas".to_string(),
-            version: "1.0.0".to_string(),
-            exports,
-            required_capabilities: Vec::new(),
-        });
-    }
-}
+                svg.push_str(r#"<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
+  <defs>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  <rect width="100%" height="100%" fill="#0a0e27"/>
+"#);

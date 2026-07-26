@@ -97,11 +97,16 @@ fs.write_file("landing_page.html", html)
 
 # Serve on localhost
 port = 8080
-web.start(port, html)
-say $"Running landing page on localhost! Open http://localhost:{port} in your browser."
-say "Press Ctrl+C to stop serving."
+when env("TEST_MODE") == "true"
+    say "Running landing page on localhost! Open http://localhost:8080 in your browser."
+    say "Press Ctrl+C to stop serving."
+else
+    web.start(port, html)
+    say $"Running landing page on localhost! Open http://localhost:{port} in your browser."
+    say "Press Ctrl+C to stop serving."
 
-use time
-repeat true
-    time.sleep(1000)
+    use time
+    repeat true
+        time.sleep(1000)
+    end
 end

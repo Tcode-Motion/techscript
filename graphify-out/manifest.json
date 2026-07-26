@@ -470,8 +470,8 @@
     "semantic_hash": "a6b61ce9b66b8e9e1facfda5b9326bd1"
   },
   "compiler/semantic/src/symbol_table.rs": {
-    "mtime": 1784470197.1083145,
-    "ast_hash": "a41163762ecc993bdfaa78a2a8a8202b",
+    "mtime": 1785091225.3969917,
+    "ast_hash": "3fc5794cc8fe46f85733a5cc6ac001f0",
     "semantic_hash": ""
   },
   "compiler/semantic/src/types.rs": {
@@ -555,8 +555,8 @@
     "semantic_hash": ""
   },
   "runtime/interpreter/src/statements.rs": {
-    "mtime": 1785080023.3413606,
-    "ast_hash": "08b919bad7769d7924c48701ee1aa57f",
+    "mtime": 1785088505.327873,
+    "ast_hash": "62c25c96c42bb53477d073a06d2eac05",
     "semantic_hash": ""
   },
   "runtime/interpreter/src/visitor.rs": {
@@ -1105,8 +1105,8 @@
     "semantic_hash": ""
   },
   "cli/src/commands/run.rs": {
-    "mtime": 1784294216.852777,
-    "ast_hash": "9c337de15df99d1888c252e4f120d45a",
+    "mtime": 1785088518.4562695,
+    "ast_hash": "7f2147d6460e3e37f658d2baf91219fb",
     "semantic_hash": ""
   },
   "cli/src/commands/test.rs": {
@@ -1235,7 +1235,7 @@
     "semantic_hash": ""
   },
   "editors/vscode/package.json": {
-    "mtime": 1785085381.1873543,
+    "mtime": 1785092389.975623,
     "ast_hash": "4aa379f5fad2f789ccc33d77cf7d134f",
     "semantic_hash": ""
   },
@@ -1250,8 +1250,8 @@
     "semantic_hash": "be75e4291768beb4c6c10eccbe0d4263"
   },
   "tools/packager/src/main.rs": {
-    "mtime": 1785082981.0791583,
-    "ast_hash": "f794056923c3d80a675fd8eb3f34e93d",
+    "mtime": 1785086332.7871077,
+    "ast_hash": "4d067c1e3186c91771f734f7118fe41e",
     "semantic_hash": ""
   },
   "editors/vscode/CHANGELOG.md": {
@@ -2630,8 +2630,8 @@
     "semantic_hash": ""
   },
   "examples/SUMMARY_REPORT.md": {
-    "mtime": 1785081367.6911004,
-    "ast_hash": "b765a06d79bab37fcdb14752688bcdaa",
+    "mtime": 1785091638.036887,
+    "ast_hash": "2381dc17cd5396cedf946af3ff454063",
     "semantic_hash": ""
   },
   ".claude/settings.local.json": {
@@ -2645,8 +2645,8 @@
     "semantic_hash": ""
   },
   "compiler/semantic/src/dsl_schema.rs": {
-    "mtime": 1784485369.9537868,
-    "ast_hash": "3a8756cea0d7a726b8c9a3c613b0a4dc",
+    "mtime": 1785087038.110326,
+    "ast_hash": "702052d2a74097738fe11541ee3e7cbb",
     "semantic_hash": ""
   },
   "compiler/semantic/src/passes/validate_dsl.rs": {
@@ -2690,8 +2690,8 @@
     "semantic_hash": ""
   },
   "stdlib/src/canvas.rs": {
-    "mtime": 1784489520.8065648,
-    "ast_hash": "799d4e5d08ddd7292e3f4932827d5460",
+    "mtime": 1785092250.6483228,
+    "ast_hash": "9b12f2e321e06c76a92085efa95c017a",
     "semantic_hash": ""
   },
   "stdlib/src/charts.rs": {
@@ -2900,8 +2900,8 @@
     "semantic_hash": ""
   },
   "stdlib/src/web.rs": {
-    "mtime": 1784489520.8075764,
-    "ast_hash": "21c6b26b58ad4f76ea6710dde8a2e4b8",
+    "mtime": 1785086874.0796912,
+    "ast_hash": "1b666866dbb6666a98b8a7317c47d5c1",
     "semantic_hash": ""
   },
   "stdlib/src/websocket.rs": {
@@ -2920,8 +2920,8 @@
     "semantic_hash": ""
   },
   "verify_all_examples.py": {
-    "mtime": 1785080566.42905,
-    "ast_hash": "63a7a728f5209e124b06133335ac4135",
+    "mtime": 1785091065.9657712,
+    "ast_hash": "df9fc142c33da510c5b41ea6836c469e",
     "semantic_hash": ""
   },
   "TechScript_v1.0.8_Research_Paper.md": {
@@ -2935,8 +2935,8 @@
     "semantic_hash": ""
   },
   "landing_page.html": {
-    "mtime": 1785079346.1082845,
-    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "mtime": 1785091637.7785132,
+    "ast_hash": "8028f2883499966a4b35811e0d1e0ffe",
     "semantic_hash": ""
   },
   "loops_bytecode.txt": {
@@ -2949,14 +2949,9 @@
     "ast_hash": "9532fc5736e823012bf282ff3bb9cd5a",
     "semantic_hash": ""
   },
-  "techscript_logo.svg": {
-    "mtime": 1785079624.7096994,
-    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
-    "semantic_hash": ""
-  },
   "releases/v2.0.0/manifest.json": {
-    "mtime": 1785085531.9318967,
-    "ast_hash": "e8dc2cd6d71f0fa8d933451df7c05d44",
+    "mtime": 1785092555.3233712,
+    "ast_hash": "5288b45698f44c4276a8c72f203a8093",
     "semantic_hash": ""
   },
   "releases/v2.0.0/runtime/stdlib/src/ai.rs": {
@@ -2995,8 +2990,8 @@
     "semantic_hash": ""
   },
   "releases/v2.0.0/runtime/stdlib/src/canvas.rs": {
-    "mtime": 1784489520.8065648,
-    "ast_hash": "799d4e5d08ddd7292e3f4932827d5460",
+    "mtime": 1785092250.6483228,
+    "ast_hash": "9b12f2e321e06c76a92085efa95c017a",
     "semantic_hash": ""
   },
   "releases/v2.0.0/runtime/stdlib/src/charts.rs": {
@@ -3345,8 +3340,8 @@
     "semantic_hash": ""
   },
   "releases/v2.0.0/runtime/stdlib/src/web.rs": {
-    "mtime": 1784489520.8075764,
-    "ast_hash": "21c6b26b58ad4f76ea6710dde8a2e4b8",
+    "mtime": 1785086874.0796912,
+    "ast_hash": "1b666866dbb6666a98b8a7317c47d5c1",
     "semantic_hash": ""
   },
   "releases/v2.0.0/runtime/stdlib/src/websocket.rs": {
@@ -3410,13 +3405,13 @@
     "semantic_hash": ""
   },
   "releases/v2.0.0/RELEASE_NOTES.md": {
-    "mtime": 1785085483.6591928,
-    "ast_hash": "7b59ab080eb2efdf0934e8cb58899180",
+    "mtime": 1785092470.4205277,
+    "ast_hash": "ca3ef86dd7b0ad6d520c1e7fdfca2237",
     "semantic_hash": ""
   },
   "releases/v2.0.0/SHA256SUMS.txt": {
-    "mtime": 1785085532.0849686,
-    "ast_hash": "98346201c944d4aa3a30e4a4e176ad55",
+    "mtime": 1785092555.523143,
+    "ast_hash": "d1f84135b09e2492d722abbaeabbb6da",
     "semantic_hash": ""
   },
   "releases/v2.0.0/docs/APIReference.md": {
@@ -3460,8 +3455,8 @@
     "semantic_hash": ""
   },
   "releases/v2.0.0/docs/ReleaseNotes.md": {
-    "mtime": 1785085483.6591928,
-    "ast_hash": "7b59ab080eb2efdf0934e8cb58899180",
+    "mtime": 1785092470.4205277,
+    "ast_hash": "ca3ef86dd7b0ad6d520c1e7fdfca2237",
     "semantic_hash": ""
   },
   "releases/v2.0.0/docs/StdlibReference.md": {
@@ -3480,8 +3475,8 @@
     "semantic_hash": ""
   },
   "releases/v2.0.0/examples/SUMMARY_REPORT.md": {
-    "mtime": 1785081367.6911004,
-    "ast_hash": "b765a06d79bab37fcdb14752688bcdaa",
+    "mtime": 1785091638.036887,
+    "ast_hash": "2381dc17cd5396cedf946af3ff454063",
     "semantic_hash": ""
   },
   "releases/v2.0.0/runtime/stdlib/README.md": {
@@ -3492,6 +3487,16 @@
   "docs/errors.md": {
     "mtime": 1785084271.2609353,
     "ast_hash": "342491d512ff863b9f5b42001cf5ef40",
+    "semantic_hash": ""
+  },
+  "output.png": {
+    "mtime": 1785092174.4498434,
+    "ast_hash": "d3e998dde6428afb65b9d2b25b617a9a",
+    "semantic_hash": ""
+  },
+  "techscript_logo.svg": {
+    "mtime": 1785092610.594251,
+    "ast_hash": "982d24451f32998c48b665feefd43c01",
     "semantic_hash": ""
   }
 }

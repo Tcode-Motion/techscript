@@ -1817,7 +1817,7 @@
       "label": "run_once()",
       "file_type": "code",
       "source_file": "cli/src/commands/run.rs",
-      "source_location": "L91",
+      "source_location": "L102",
       "_origin": "ast",
       "id": "commands_run_run_once",
       "community": 304,
@@ -1827,7 +1827,7 @@
       "label": "Path",
       "file_type": "code",
       "source_file": "cli/src/commands/run.rs",
-      "source_location": "L91",
+      "source_location": "L102",
       "_origin": "ast",
       "id": "cli_src_commands_run_rs_path",
       "community": 304,
@@ -1837,7 +1837,7 @@
       "label": "BuildProfile",
       "file_type": "code",
       "source_file": "cli/src/commands/run.rs",
-      "source_location": "L91",
+      "source_location": "L102",
       "_origin": "ast",
       "id": "buildprofile",
       "community": 304,
@@ -1847,7 +1847,7 @@
       "label": "ExecutionBackend",
       "file_type": "code",
       "source_file": "cli/src/commands/run.rs",
-      "source_location": "L91",
+      "source_location": "L102",
       "_origin": "ast",
       "id": "executionbackend",
       "community": 304,
@@ -1857,7 +1857,7 @@
       "label": "Result",
       "file_type": "code",
       "source_file": "cli/src/commands/run.rs",
-      "source_location": "L91",
+      "source_location": "L102",
       "_origin": "ast",
       "id": "cli_src_commands_run_rs_result",
       "community": 304,
@@ -1867,7 +1867,7 @@
       "label": "Error",
       "file_type": "code",
       "source_file": "cli/src/commands/run.rs",
-      "source_location": "L91",
+      "source_location": "L102",
       "_origin": "ast",
       "id": "cli_src_commands_run_rs_error",
       "community": 304,
@@ -18077,7 +18077,7 @@
       "label": ".push_scope()",
       "file_type": "code",
       "source_file": "compiler/semantic/src/symbol_table.rs",
-      "source_location": "L149",
+      "source_location": "L152",
       "_origin": "ast",
       "id": "src_symbol_table_symboltable_push_scope",
       "community": 44,
@@ -18087,7 +18087,7 @@
       "label": ".pop_scope()",
       "file_type": "code",
       "source_file": "compiler/semantic/src/symbol_table.rs",
-      "source_location": "L153",
+      "source_location": "L156",
       "_origin": "ast",
       "id": "src_symbol_table_symboltable_pop_scope",
       "community": 44,
@@ -18097,7 +18097,7 @@
       "label": ".register()",
       "file_type": "code",
       "source_file": "compiler/semantic/src/symbol_table.rs",
-      "source_location": "L159",
+      "source_location": "L162",
       "_origin": "ast",
       "id": "src_symbol_table_symboltable_register",
       "community": 44,
@@ -18107,7 +18107,7 @@
       "label": ".lookup()",
       "file_type": "code",
       "source_file": "compiler/semantic/src/symbol_table.rs",
-      "source_location": "L165",
+      "source_location": "L168",
       "_origin": "ast",
       "id": "src_symbol_table_symboltable_lookup",
       "community": 44,
@@ -18117,7 +18117,7 @@
       "label": "Option",
       "file_type": "code",
       "source_file": "compiler/semantic/src/symbol_table.rs",
-      "source_location": "L165",
+      "source_location": "L168",
       "_origin": "ast",
       "id": "compiler_semantic_src_symbol_table_rs_option",
       "community": 44,
@@ -18127,7 +18127,7 @@
       "label": ".lookup_mut()",
       "file_type": "code",
       "source_file": "compiler/semantic/src/symbol_table.rs",
-      "source_location": "L174",
+      "source_location": "L177",
       "_origin": "ast",
       "id": "src_symbol_table_symboltable_lookup_mut",
       "community": 44,
@@ -18137,7 +18137,7 @@
       "label": ".check_shadowing()",
       "file_type": "code",
       "source_file": "compiler/semantic/src/symbol_table.rs",
-      "source_location": "L183",
+      "source_location": "L186",
       "_origin": "ast",
       "id": "src_symbol_table_symboltable_check_shadowing",
       "community": 44,
@@ -23267,7 +23267,7 @@
       "label": "StdlibRegistry",
       "file_type": "code",
       "source_file": "releases/v2.0.0/runtime/stdlib/src/web.rs",
-      "source_location": "L232",
+      "source_location": "L259",
       "_origin": "ast",
       "id": "releases_v2_0_0_runtime_stdlib_src_web_rs_src_web_stdlibregistry",
       "community": 298,
@@ -23277,7 +23277,7 @@
       "label": ".register_web()",
       "file_type": "code",
       "source_file": "releases/v2.0.0/runtime/stdlib/src/web.rs",
-      "source_location": "L233",
+      "source_location": "L260",
       "_origin": "ast",
       "id": "releases_v2_0_0_runtime_stdlib_src_web_rs_src_web_stdlibregistry_register_web",
       "community": 298,
@@ -32367,7 +32367,7 @@
       "label": "StdlibRegistry",
       "file_type": "code",
       "source_file": "stdlib/src/web.rs",
-      "source_location": "L232",
+      "source_location": "L259",
       "_origin": "ast",
       "id": "stdlib_src_web_rs_src_web_stdlibregistry",
       "community": 354,
@@ -32377,7 +32377,7 @@
       "label": ".register_web()",
       "file_type": "code",
       "source_file": "stdlib/src/web.rs",
-      "source_location": "L233",
+      "source_location": "L260",
       "_origin": "ast",
       "id": "stdlib_src_web_rs_src_web_stdlibregistry_register_web",
       "community": 354,
@@ -35237,7 +35237,7 @@
       "label": "generate_online_inno_script()",
       "file_type": "code",
       "source_file": "tools/packager/src/main.rs",
-      "source_location": "L779",
+      "source_location": "L831",
       "_origin": "ast",
       "id": "src_main_generate_online_inno_script",
       "community": 0,
@@ -35247,7 +35247,7 @@
       "label": "compile_inno_installer()",
       "file_type": "code",
       "source_file": "tools/packager/src/main.rs",
-      "source_location": "L1075",
+      "source_location": "L1179",
       "_origin": "ast",
       "id": "src_main_compile_inno_installer",
       "community": 0,
@@ -35257,7 +35257,7 @@
       "label": "sign_executable()",
       "file_type": "code",
       "source_file": "tools/packager/src/main.rs",
-      "source_location": "L1126",
+      "source_location": "L1230",
       "_origin": "ast",
       "id": "src_main_sign_executable",
       "community": 0,
@@ -35267,7 +35267,7 @@
       "label": "calculate_checksums_json()",
       "file_type": "code",
       "source_file": "tools/packager/src/main.rs",
-      "source_location": "L1145",
+      "source_location": "L1249",
       "_origin": "ast",
       "id": "src_main_calculate_checksums_json",
       "community": 0,
@@ -35277,7 +35277,7 @@
       "label": "generate_checksums_txt()",
       "file_type": "code",
       "source_file": "tools/packager/src/main.rs",
-      "source_location": "L1182",
+      "source_location": "L1286",
       "_origin": "ast",
       "id": "src_main_generate_checksums_txt",
       "community": 0,
@@ -35487,7 +35487,7 @@
       "label": "main()",
       "file_type": "code",
       "source_file": "verify_all_examples.py",
-      "source_location": "L23",
+      "source_location": "L78",
       "_origin": "ast",
       "id": "verify_all_examples_main",
       "community": 419,
@@ -118410,9 +118410,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors",
-      "target": "docs_errors_techscript_2_0_error_warning_code_reference",
-      "confidence_score": 1.0
+      "target": "docs_errors_techscript_2_0_error_warning_code_reference"
     },
     {
       "relation": "contains",
@@ -118420,9 +118420,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L229",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_techscript_2_0_error_warning_code_reference",
-      "target": "docs_errors_deprecation_warnings_tsw1001_tsw1099",
-      "confidence_score": 1.0
+      "target": "docs_errors_deprecation_warnings_tsw1001_tsw1099"
     },
     {
       "relation": "contains",
@@ -118430,9 +118430,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L166",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_techscript_2_0_error_warning_code_reference",
-      "target": "docs_errors_dsl_validation_errors_tse0400_tse0499",
-      "confidence_score": 1.0
+      "target": "docs_errors_dsl_validation_errors_tse0400_tse0499"
     },
     {
       "relation": "contains",
@@ -118440,9 +118440,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L335",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_techscript_2_0_error_warning_code_reference",
-      "target": "docs_errors_informational_hints_tsi3001_tsi3099",
-      "confidence_score": 1.0
+      "target": "docs_errors_informational_hints_tsi3001_tsi3099"
     },
     {
       "relation": "contains",
@@ -118450,9 +118450,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_techscript_2_0_error_warning_code_reference",
-      "target": "docs_errors_lexer_errors_tse0001_tse0099",
-      "confidence_score": 1.0
+      "target": "docs_errors_lexer_errors_tse0001_tse0099"
     },
     {
       "relation": "contains",
@@ -118460,9 +118460,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L44",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_techscript_2_0_error_warning_code_reference",
-      "target": "docs_errors_parser_errors_tse0100_tse0299",
-      "confidence_score": 1.0
+      "target": "docs_errors_parser_errors_tse0100_tse0299"
     },
     {
       "relation": "contains",
@@ -118470,9 +118470,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L192",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_techscript_2_0_error_warning_code_reference",
-      "target": "docs_errors_runtime_errors_tse1000_tse1999",
-      "confidence_score": 1.0
+      "target": "docs_errors_runtime_errors_tse1000_tse1999"
     },
     {
       "relation": "contains",
@@ -118480,9 +118480,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L90",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_techscript_2_0_error_warning_code_reference",
-      "target": "docs_errors_semantic_errors_tse0300_tse0499",
-      "confidence_score": 1.0
+      "target": "docs_errors_semantic_errors_tse0300_tse0499"
     },
     {
       "relation": "contains",
@@ -118490,9 +118490,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L319",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_techscript_2_0_error_warning_code_reference",
-      "target": "docs_errors_style_lint_warnings_tsw2001_tsw2099",
-      "confidence_score": 1.0
+      "target": "docs_errors_style_lint_warnings_tsw2001_tsw2099"
     },
     {
       "relation": "contains",
@@ -118500,9 +118500,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_lexer_errors_tse0001_tse0099",
-      "target": "docs_errors_e0001_unexpected_character",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0001_unexpected_character"
     },
     {
       "relation": "contains",
@@ -118510,9 +118510,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L19",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_lexer_errors_tse0001_tse0099",
-      "target": "docs_errors_e0010_trailing_underscore_in_number",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0010_trailing_underscore_in_number"
     },
     {
       "relation": "contains",
@@ -118520,9 +118520,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L26",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_lexer_errors_tse0001_tse0099",
-      "target": "docs_errors_e0011_empty_numeric_prefix",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0011_empty_numeric_prefix"
     },
     {
       "relation": "contains",
@@ -118530,9 +118530,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L32",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_lexer_errors_tse0001_tse0099",
-      "target": "docs_errors_e0012_invalid_base_digit",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0012_invalid_base_digit"
     },
     {
       "relation": "contains",
@@ -118540,9 +118540,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L38",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_lexer_errors_tse0001_tse0099",
-      "target": "docs_errors_e0021_unterminated_string",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0021_unterminated_string"
     },
     {
       "relation": "contains",
@@ -118550,9 +118550,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L50",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_parser_errors_tse0100_tse0299",
-      "target": "docs_errors_e0100_expected_expression",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0100_expected_expression"
     },
     {
       "relation": "contains",
@@ -118560,9 +118560,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L56",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_parser_errors_tse0100_tse0299",
-      "target": "docs_errors_e0101_expected_identifier",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0101_expected_identifier"
     },
     {
       "relation": "contains",
@@ -118570,9 +118570,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L62",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_parser_errors_tse0100_tse0299",
-      "target": "docs_errors_e0104_expected_end_to_close_block",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0104_expected_end_to_close_block"
     },
     {
       "relation": "contains",
@@ -118580,9 +118580,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L73",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_parser_errors_tse0100_tse0299",
-      "target": "docs_errors_e0105_expected_block_body",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0105_expected_block_body"
     },
     {
       "relation": "contains",
@@ -118590,9 +118590,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L78",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_parser_errors_tse0100_tse0299",
-      "target": "docs_errors_e0107_expected_statement_terminator",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0107_expected_statement_terminator"
     },
     {
       "relation": "contains",
@@ -118600,9 +118600,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L84",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_parser_errors_tse0100_tse0299",
-      "target": "docs_errors_e0113_invalid_assignment_target",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0113_invalid_assignment_target"
     },
     {
       "relation": "contains",
@@ -118610,9 +118610,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L96",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_semantic_errors_tse0300_tse0499",
-      "target": "docs_errors_e0300_undefined_variable",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0300_undefined_variable"
     },
     {
       "relation": "contains",
@@ -118620,9 +118620,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L102",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_semantic_errors_tse0300_tse0499",
-      "target": "docs_errors_e0301_duplicate_declaration",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0301_duplicate_declaration"
     },
     {
       "relation": "contains",
@@ -118630,9 +118630,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L114",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_semantic_errors_tse0300_tse0499",
-      "target": "docs_errors_e0302_cannot_reassign_const",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0302_cannot_reassign_const"
     },
     {
       "relation": "contains",
@@ -118640,9 +118640,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L124",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_semantic_errors_tse0300_tse0499",
-      "target": "docs_errors_e0303_variable_used_before_assignment",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0303_variable_used_before_assignment"
     },
     {
       "relation": "contains",
@@ -118650,9 +118650,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L129",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_semantic_errors_tse0300_tse0499",
-      "target": "docs_errors_e0310_wrong_argument_count_too_few",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0310_wrong_argument_count_too_few"
     },
     {
       "relation": "contains",
@@ -118660,9 +118660,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L134",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_semantic_errors_tse0300_tse0499",
-      "target": "docs_errors_e0311_wrong_argument_count_too_many",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0311_wrong_argument_count_too_many"
     },
     {
       "relation": "contains",
@@ -118670,9 +118670,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L139",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_semantic_errors_tse0300_tse0499",
-      "target": "docs_errors_e0312_send_outside_function_body",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0312_send_outside_function_body"
     },
     {
       "relation": "contains",
@@ -118680,9 +118680,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L144",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_semantic_errors_tse0300_tse0499",
-      "target": "docs_errors_e0313_mixed_top_level_statements_with_explicit_main",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0313_mixed_top_level_statements_with_explicit_main"
     },
     {
       "relation": "contains",
@@ -118690,9 +118690,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L150",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_semantic_errors_tse0300_tse0499",
-      "target": "docs_errors_e0320_self_used_outside_method",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0320_self_used_outside_method"
     },
     {
       "relation": "contains",
@@ -118700,9 +118700,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L155",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_semantic_errors_tse0300_tse0499",
-      "target": "docs_errors_e0340_module_not_found",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0340_module_not_found"
     },
     {
       "relation": "contains",
@@ -118710,9 +118710,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L161",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_semantic_errors_tse0300_tse0499",
-      "target": "docs_errors_e0350_cannot_export_non_exportable_declaration",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0350_cannot_export_non_exportable_declaration"
     },
     {
       "relation": "contains",
@@ -118720,9 +118720,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L172",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_dsl_validation_errors_tse0400_tse0499",
-      "target": "docs_errors_e0400_dsl_block_missing_required_field",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0400_dsl_block_missing_required_field"
     },
     {
       "relation": "contains",
@@ -118730,9 +118730,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L177",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_dsl_validation_errors_tse0400_tse0499",
-      "target": "docs_errors_e0401_dsl_field_has_wrong_type",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0401_dsl_field_has_wrong_type"
     },
     {
       "relation": "contains",
@@ -118740,9 +118740,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L182",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_dsl_validation_errors_tse0400_tse0499",
-      "target": "docs_errors_e0402_unknown_dsl_directive",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0402_unknown_dsl_directive"
     },
     {
       "relation": "contains",
@@ -118750,9 +118750,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L187",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_dsl_validation_errors_tse0400_tse0499",
-      "target": "docs_errors_e0403_invalid_nested_dsl_block",
-      "confidence_score": 1.0
+      "target": "docs_errors_e0403_invalid_nested_dsl_block"
     },
     {
       "relation": "contains",
@@ -118760,9 +118760,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L198",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_runtime_errors_tse1000_tse1999",
-      "target": "docs_errors_e1010_division_by_zero",
-      "confidence_score": 1.0
+      "target": "docs_errors_e1010_division_by_zero"
     },
     {
       "relation": "contains",
@@ -118770,9 +118770,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L203",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_runtime_errors_tse1000_tse1999",
-      "target": "docs_errors_e1011_type_mismatch",
-      "confidence_score": 1.0
+      "target": "docs_errors_e1011_type_mismatch"
     },
     {
       "relation": "contains",
@@ -118780,9 +118780,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L209",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_runtime_errors_tse1000_tse1999",
-      "target": "docs_errors_e1020_stack_overflow",
-      "confidence_score": 1.0
+      "target": "docs_errors_e1020_stack_overflow"
     },
     {
       "relation": "contains",
@@ -118790,9 +118790,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L214",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_runtime_errors_tse1000_tse1999",
-      "target": "docs_errors_e1030_value_not_iterable_in_for_loop",
-      "confidence_score": 1.0
+      "target": "docs_errors_e1030_value_not_iterable_in_for_loop"
     },
     {
       "relation": "contains",
@@ -118800,9 +118800,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L219",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_runtime_errors_tse1000_tse1999",
-      "target": "docs_errors_e1041_field_or_method_not_found",
-      "confidence_score": 1.0
+      "target": "docs_errors_e1041_field_or_method_not_found"
     },
     {
       "relation": "contains",
@@ -118810,9 +118810,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L224",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_runtime_errors_tse1000_tse1999",
-      "target": "docs_errors_e1050_index_out_of_bounds",
-      "confidence_score": 1.0
+      "target": "docs_errors_e1050_index_out_of_bounds"
     },
     {
       "relation": "contains",
@@ -118820,9 +118820,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L235",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_deprecation_warnings_tsw1001_tsw1099",
-      "target": "docs_errors_tsw1001_deprecated_variable_declaration_keywords",
-      "confidence_score": 1.0
+      "target": "docs_errors_tsw1001_deprecated_variable_declaration_keywords"
     },
     {
       "relation": "contains",
@@ -118830,9 +118830,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L241",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_deprecation_warnings_tsw1001_tsw1099",
-      "target": "docs_errors_tsw1002_deprecated_function_declaration_keywords",
-      "confidence_score": 1.0
+      "target": "docs_errors_tsw1002_deprecated_function_declaration_keywords"
     },
     {
       "relation": "contains",
@@ -118840,9 +118840,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L247",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_deprecation_warnings_tsw1001_tsw1099",
-      "target": "docs_errors_tsw1003_deprecated_return_keyword",
-      "confidence_score": 1.0
+      "target": "docs_errors_tsw1003_deprecated_return_keyword"
     },
     {
       "relation": "contains",
@@ -118850,9 +118850,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L253",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_deprecation_warnings_tsw1001_tsw1099",
-      "target": "docs_errors_tsw1004_deprecated_error_handling_syntax",
-      "confidence_score": 1.0
+      "target": "docs_errors_tsw1004_deprecated_error_handling_syntax"
     },
     {
       "relation": "contains",
@@ -118860,9 +118860,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L259",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_deprecation_warnings_tsw1001_tsw1099",
-      "target": "docs_errors_tsw1005_deprecated_return_alias",
-      "confidence_score": 1.0
+      "target": "docs_errors_tsw1005_deprecated_return_alias"
     },
     {
       "relation": "contains",
@@ -118870,9 +118870,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L265",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_deprecation_warnings_tsw1001_tsw1099",
-      "target": "docs_errors_tsw1006_deprecated_curly_braces_and_semicolons",
-      "confidence_score": 1.0
+      "target": "docs_errors_tsw1006_deprecated_curly_braces_and_semicolons"
     },
     {
       "relation": "contains",
@@ -118880,9 +118880,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L271",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_deprecation_warnings_tsw1001_tsw1099",
-      "target": "docs_errors_tsw1007_deprecated_if_statement_keywords",
-      "confidence_score": 1.0
+      "target": "docs_errors_tsw1007_deprecated_if_statement_keywords"
     },
     {
       "relation": "contains",
@@ -118890,9 +118890,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L277",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_deprecation_warnings_tsw1001_tsw1099",
-      "target": "docs_errors_tsw1008_deprecated_while_loop_keyword",
-      "confidence_score": 1.0
+      "target": "docs_errors_tsw1008_deprecated_while_loop_keyword"
     },
     {
       "relation": "contains",
@@ -118900,9 +118900,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L283",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_deprecation_warnings_tsw1001_tsw1099",
-      "target": "docs_errors_tsw1009_deprecated_import_syntax",
-      "confidence_score": 1.0
+      "target": "docs_errors_tsw1009_deprecated_import_syntax"
     },
     {
       "relation": "contains",
@@ -118910,9 +118910,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L289",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_deprecation_warnings_tsw1001_tsw1099",
-      "target": "docs_errors_tsw1010_deprecated_loop_keyword",
-      "confidence_score": 1.0
+      "target": "docs_errors_tsw1010_deprecated_loop_keyword"
     },
     {
       "relation": "contains",
@@ -118920,9 +118920,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L295",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_deprecation_warnings_tsw1001_tsw1099",
-      "target": "docs_errors_tsw1011_deprecated_null_representation",
-      "confidence_score": 1.0
+      "target": "docs_errors_tsw1011_deprecated_null_representation"
     },
     {
       "relation": "contains",
@@ -118930,9 +118930,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L301",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_deprecation_warnings_tsw1001_tsw1099",
-      "target": "docs_errors_tsw1012_deprecated_f_string_syntax",
-      "confidence_score": 1.0
+      "target": "docs_errors_tsw1012_deprecated_f_string_syntax"
     },
     {
       "relation": "contains",
@@ -118940,9 +118940,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L307",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_deprecation_warnings_tsw1001_tsw1099",
-      "target": "docs_errors_tsw1013_deprecated_model_keyword",
-      "confidence_score": 1.0
+      "target": "docs_errors_tsw1013_deprecated_model_keyword"
     },
     {
       "relation": "contains",
@@ -118950,9 +118950,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L313",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_deprecation_warnings_tsw1001_tsw1099",
-      "target": "docs_errors_tsw1014_deprecated_print_function_calls",
-      "confidence_score": 1.0
+      "target": "docs_errors_tsw1014_deprecated_print_function_calls"
     },
     {
       "relation": "contains",
@@ -118960,9 +118960,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L325",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_style_lint_warnings_tsw2001_tsw2099",
-      "target": "docs_errors_tsw2001_unused_variable",
-      "confidence_score": 1.0
+      "target": "docs_errors_tsw2001_unused_variable"
     },
     {
       "relation": "contains",
@@ -118970,9 +118970,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L330",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_style_lint_warnings_tsw2001_tsw2099",
-      "target": "docs_errors_tsw2002_variable_shadowing",
-      "confidence_score": 1.0
+      "target": "docs_errors_tsw2002_variable_shadowing"
     },
     {
       "relation": "contains",
@@ -118980,9 +118980,9 @@
       "source_file": "docs/errors.md",
       "source_location": "L341",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_errors_informational_hints_tsi3001_tsi3099",
-      "target": "docs_errors_tsi3001_string_concatenation",
-      "confidence_score": 1.0
+      "target": "docs_errors_tsi3001_string_concatenation"
     },
     {
       "relation": "contains",
@@ -122644,5 +122644,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "6d6cfe348907b34deeab60b82cf09ca03922236a"
+  "built_at_commit": "fc1d25d46ac2c7410488d651073d4e748b8b9d24"
 }

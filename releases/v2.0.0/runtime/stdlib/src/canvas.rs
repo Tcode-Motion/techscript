@@ -324,9 +324,11 @@ impl StdlibRegistry {
                     _ => return Ok(RuntimeValue::Str(String::new())),
                 };
                 let mut svg = String::new();
+                svg.push_str(r#"<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">"#);
                 for block in &blocks {
                     svg.push_str(&dsl_to_svg(block));
                 }
+                svg.push_str("</svg>");
                 Ok(RuntimeValue::Str(svg))
             },
         }));

@@ -3,5 +3,7 @@
 
 use compress
 
-ran = std.compress.zip("examples/compat", "basics.zip")
+ran = std.compress.zip("examples", "basics.zip")
 say "Compression Ran"
+
+

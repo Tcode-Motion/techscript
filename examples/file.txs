@@ -5,6 +5,7 @@
 use fs
 
 filename = "data.csv"
-fs.write_file(filename, "Language,Version\nTechScript,2.0")
+fs.write_file(filename, "Language,Version
+TechScript,2.0")
 content = fs.read_file(filename)
 say content

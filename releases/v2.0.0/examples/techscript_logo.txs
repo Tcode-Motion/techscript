@@ -1,0 +1,40 @@
+# TechScript Dragon Logo Design — DSL Block Syntax
+# Uses canvas DSL blocks to generate techscript_logo.svg
+
+use fs
+use canvas
+
+logo "dragon"
+  text "TechScript"
+  color "#00d4ff"
+  size 64
+end
+
+rings
+  count 4
+  color "#00d4ff"
+  size 40
+  thickness 3
+end
+
+emblem
+  shape "dragon"
+  color "#0088cc"
+  size 120
+end
+
+letter "T"
+  char "T"
+  color "#0a0e27"
+  size 28
+end
+
+circuits
+  color "#00d4ff"
+end
+
+# Render all DSL blocks to SVG and save
+svg_content = canvas.render_blocks()
+fs.write_file("techscript_logo1.svg", svg_content)
+
+say "Done! Saved techscript_logo1.svg"

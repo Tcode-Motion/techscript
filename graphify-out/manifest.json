@@ -1235,7 +1235,7 @@
     "semantic_hash": ""
   },
   "editors/vscode/package.json": {
-    "mtime": 1785092389.975623,
+    "mtime": 1785094236.4196422,
     "ast_hash": "4aa379f5fad2f789ccc33d77cf7d134f",
     "semantic_hash": ""
   },
@@ -2690,8 +2690,8 @@
     "semantic_hash": ""
   },
   "stdlib/src/canvas.rs": {
-    "mtime": 1785092250.6483228,
-    "ast_hash": "9b12f2e321e06c76a92085efa95c017a",
+    "mtime": 1785094422.490885,
+    "ast_hash": "e80c16a6d1c0fe800665ec8168db89e4",
     "semantic_hash": ""
   },
   "stdlib/src/charts.rs": {
@@ -2950,8 +2950,8 @@
     "semantic_hash": ""
   },
   "releases/v2.0.0/manifest.json": {
-    "mtime": 1785092555.3233712,
-    "ast_hash": "5288b45698f44c4276a8c72f203a8093",
+    "mtime": 1785094401.489222,
+    "ast_hash": "824fad8291ffc14c4a64582762a84a9d",
     "semantic_hash": ""
   },
   "releases/v2.0.0/runtime/stdlib/src/ai.rs": {
@@ -2990,8 +2990,8 @@
     "semantic_hash": ""
   },
   "releases/v2.0.0/runtime/stdlib/src/canvas.rs": {
-    "mtime": 1785092250.6483228,
-    "ast_hash": "9b12f2e321e06c76a92085efa95c017a",
+    "mtime": 1785094154.515701,
+    "ast_hash": "f7b2d6537166c815d554a8d2c523960f",
     "semantic_hash": ""
   },
   "releases/v2.0.0/runtime/stdlib/src/charts.rs": {
@@ -3405,13 +3405,13 @@
     "semantic_hash": ""
   },
   "releases/v2.0.0/RELEASE_NOTES.md": {
-    "mtime": 1785092470.4205277,
-    "ast_hash": "ca3ef86dd7b0ad6d520c1e7fdfca2237",
+    "mtime": 1785094328.9116185,
+    "ast_hash": "8bbdd49efd805a2841f5d6a8b282dfb6",
     "semantic_hash": ""
   },
   "releases/v2.0.0/SHA256SUMS.txt": {
-    "mtime": 1785092555.523143,
-    "ast_hash": "d1f84135b09e2492d722abbaeabbb6da",
+    "mtime": 1785094401.6706545,
+    "ast_hash": "34494735e20c78838f513d497a1c8474",
     "semantic_hash": ""
   },
   "releases/v2.0.0/docs/APIReference.md": {
@@ -3455,8 +3455,8 @@
     "semantic_hash": ""
   },
   "releases/v2.0.0/docs/ReleaseNotes.md": {
-    "mtime": 1785092470.4205277,
-    "ast_hash": "ca3ef86dd7b0ad6d520c1e7fdfca2237",
+    "mtime": 1785094328.9116185,
+    "ast_hash": "8bbdd49efd805a2841f5d6a8b282dfb6",
     "semantic_hash": ""
   },
   "releases/v2.0.0/docs/StdlibReference.md": {
@@ -3495,8 +3495,13 @@
     "semantic_hash": ""
   },
   "techscript_logo.svg": {
-    "mtime": 1785092610.594251,
-    "ast_hash": "982d24451f32998c48b665feefd43c01",
+    "mtime": 1785094621.126979,
+    "ast_hash": "d5e9d464d899604ccdeb7d1a6508dedb",
+    "semantic_hash": ""
+  },
+  "geometric_logo.svg": {
+    "mtime": 1785094529.9945488,
+    "ast_hash": "b82288335f8932bcd9c34aaec8ff1740",
     "semantic_hash": ""
   }
 }

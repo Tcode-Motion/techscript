@@ -1,7 +1,7 @@
 # Graph Report - TechScript 2.0  (2026-07-27)
 
 ## Corpus Check
-- 499 files · ~297,067 words
+- 499 files · ~300,933 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `fc1d25d4`
+- Built from commit: `13139c9a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -557,8 +557,8 @@ Cohesion: 0.08
 Nodes (69): Block, Box, DSLChild, DSLProperty, Expression, FieldSpec, Ident, MethodDecl (+61 more)
 
 ### Community 3 - "Community 3"
-Cohesion: 0.14
-Nodes (17): BytecodeModule, Duration, FileId, Option, Path, PathBuf, ProjectBuildGraph, Result (+9 more)
+Cohesion: 0.19
+Nodes (11): BytecodeModule, Duration, FileId, Option, Path, PathBuf, ProjectBuildGraph, Result (+3 more)
 
 ### Community 4 - "Community 4"
 Cohesion: 0.14
@@ -1493,8 +1493,8 @@ Cohesion: 0.24
 Nodes (13): Capability, Result, RuntimeValue, String, Vec, run_src(), test_e2e_calculator(), test_e2e_collections_lists_and_maps() (+5 more)
 
 ### Community 303 - "Community 303"
-Cohesion: 0.29
-Nodes (12): ArtifactManager, BuildCache, ExitCode, Option, Self, SourceManager, execute(), EffectiveConfig (+4 more)
+Cohesion: 0.24
+Nodes (14): BuildCache, RuntimeValue, Self, SourceManager, String, EffectiveConfig, EventBus, Logger (+6 more)
 
 ### Community 304 - "Community 304"
 Cohesion: 0.27
@@ -1505,16 +1505,16 @@ Cohesion: 0.31
 Nodes (9): Capability, Result, RuntimeValue, String, Vec, run_src(), test_regression_await_precedence(), test_regression_sandboxed_environment_denied() (+1 more)
 
 ### Community 306 - "Community 306"
-Cohesion: 0.17
-Nodes (7): main(), Box, Error, Result, ExitCode, execute(), Instant
+Cohesion: 0.16
+Nodes (10): ExitCode, Error, ExitCode, Option, Path, Result, execute(), execute() (+2 more)
 
 ### Community 307 - "Community 307"
 Cohesion: 0.12
 Nodes (16): Callable, CanvasOp, Rc, RefCell, Result, RuntimeContext, RuntimeError, RuntimeValue (+8 more)
 
 ### Community 308 - "Community 308"
-Cohesion: 0.36
-Nodes (7): Error, ExitCode, Option, Path, Result, execute(), invoke_linker()
+Cohesion: 0.40
+Nodes (4): main(), Box, Error, Result
 
 ### Community 309 - "Community 309"
 Cohesion: 0.36
@@ -1533,8 +1533,8 @@ Cohesion: 0.40
 Nodes (3): Rgba, parse_color(), StdlibRegistry
 
 ### Community 313 - "Community 313"
-Cohesion: 0.67
-Nodes (3): ExitCode, Option, execute()
+Cohesion: 0.28
+Nodes (7): ArtifactManager, ExitCode, Option, ExitCode, Option, execute(), execute()
 
 ### Community 314 - "Community 314"
 Cohesion: 0.50
@@ -1708,9 +1708,9 @@ _Questions this graph is uniquely positioned to answer:_
   _1717 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 2` be split into smaller, more focused modules?**
   _Cohesion score 0.0815090824406148 - nodes in this community are weakly interconnected._
-- **Should `Community 3` be split into smaller, more focused modules?**
-  _Cohesion score 0.1380952380952381 - nodes in this community are weakly interconnected._
 - **Should `Community 4` be split into smaller, more focused modules?**
   _Cohesion score 0.1422924901185771 - nodes in this community are weakly interconnected._
 - **Should `Community 6` be split into smaller, more focused modules?**
   _Cohesion score 0.07132867132867132 - nodes in this community are weakly interconnected._
+- **Should `Community 7` be split into smaller, more focused modules?**
+  _Cohesion score 0.06836158192090395 - nodes in this community are weakly interconnected._

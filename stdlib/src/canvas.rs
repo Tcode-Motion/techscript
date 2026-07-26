@@ -327,7 +327,7 @@ impl StdlibRegistry {
                     _ => return Ok(RuntimeValue::Str(String::new())),
                 };
                 let mut svg = String::new();
-                svg.push_str(r#"<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
+                svg.push_str(r##"<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
   <defs>
     <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
       <feGaussianBlur stdDeviation="6" result="blur" />
@@ -335,4 +335,20 @@ impl StdlibRegistry {
     </filter>
   </defs>
   <rect width="100%" height="100%" fill="#0a0e27"/>
-"#);
+"##);
+                for block in &blocks {
+                    svg.push_str(&dsl_to_svg(block));
+                }
+                svg.push_str("</svg>");
+                Ok(RuntimeValue::Str(svg))
+            },
+        }));
+
+        self.register_module("std.canvas", StdlibModule {
+            name: "std.canvas".to_string(),
+            version: "1.0.0".to_string(),
+            exports,
+            required_capabilities: Vec::new(),
+        });
+    }
+}

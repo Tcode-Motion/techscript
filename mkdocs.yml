@@ -1,0 +1,100 @@
+site_name: TechScript Docs
+site_url: https://techscript.is-a.dev/docs/
+site_description: Official documentation for the TechScript 2.0 programming language.
+site_author: Tcode-Motion
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: green
+      toggle:
+        icon: material/brightness-7
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: green
+      toggle:
+        icon: material/brightness-4
+        name: Switch to dark mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+exclude_docs: |
+  ai/**/*
+  engineering/**/*
+  CODE_OF_CONDUCT.md
+  CONTRIBUTING.md
+  changelog.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+
+plugins:
+  - search
+  - minify:
+      minify_html: true
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Installation: Installation.md
+  - Language Guide:
+    - Variables: variables.md
+    - Types & Operators: types.md
+    - Operators: operators.md
+    - Control Flow & Loops: syntax.md
+    - Functions: functions.md
+    - Closures: closures.md
+    - Arrays: arrays.md
+    - Maps: maps.md
+    - Classes & OOP: classes.md
+    - Inheritance: inheritance.md
+    - Interfaces: interfaces.md
+    - Traits: traits.md
+    - Pattern Matching: pattern-matching.md
+    - Error Handling: exceptions.md
+  - Advanced concepts:
+    - Memory & Ownership: ownership.md
+    - Imports & Modules: imports.md
+    - Packages: packages.md
+    - Multithreading: multithreading.md
+    - Async: async.md
+    - FFI: ffi.md
+  - Architecture & Compiler:
+    - Compiler Architecture: CompilerArchitecture.md
+    - LLVM Backend: llvm-backend.md
+    - Bytecode VM: vm.md
+    - Bytecode Format: bytecode.md
+    - Memory Model: memory-model.md
+  - Toolchain Tools:
+    - CLI Command Reference: cli.md
+    - Formatter (tsfmt): formatter.md
+    - Package Manager (tspm): package-manager.md
+    - Unit Testing: testing.md
+  - Resources:
+    - API Reference: APIReference.md
+    - Stdlib Reference: StdlibReference.md
+    - Examples Guide: ExamplesGuide.md
+    - Best Practices: BestPractices.md
+    - FAQ: FAQ.md
+    - Release Notes: ReleaseNotes.md
+    - Roadmap: Roadmap.md

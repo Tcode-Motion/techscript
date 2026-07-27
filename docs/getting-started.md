@@ -5,7 +5,7 @@ This guide gets you up and running with your very first TechScript program.
 ---
 
 ## 💻 Prerequisite
-Make sure you have installed the TechScript compiler and VM on your machine. If not, follow the [Installation Guide](installation.md).
+Make sure you have installed the TechScript compiler and VM on your machine. If not, follow the [Installation Guide](Installation.md).
 
 Validate your installation:
 ```bash

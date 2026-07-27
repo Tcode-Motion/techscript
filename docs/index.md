@@ -20,7 +20,7 @@ Welcome to the TechScript official documentation! TechScript is an open-source, 
 
 ### ⚡ Compiler & Engine Specification
 * [Compiler Architecture](CompilerArchitecture.md) - Analysis of lexer, Pratt parser, and LLVM backend.
-* [VM Specification](VM.md) - Details on stack execution, frame layouts, and NaN-boxing.
+* [VM Specification](vm.md) - Details on stack execution, frame layouts, and NaN-boxing.
 * [Performance benchmarks](Performance.md) - Speed comparison data and optimization rules.
 
 ### 🤝 Project, Release & Community

@@ -1,0 +1,130 @@
+#!/usr/bin/env bash
+# ============================================================
+#  TechScript v2.0.0 — macOS & Linux Universal Installer
+#  Builds and installs the tsc compiler driver from source.
+#  Run with:  curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
+# ============================================================
+
+set -e
+
+RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
+BLUE='\033[0;34m'; BOLD='\033[1m'; NC='\033[0m'
+
+echo ""
+echo -e "${BLUE}${BOLD}  =======================================${NC}"
+echo -e "${BLUE}${BOLD}   TechScript 2.0 — Universal Installer  ${NC}"
+echo -e "${BLUE}${BOLD}  =======================================${NC}"
+echo ""
+
+# ---------- Detect OS ----------
+OS="$(uname -s)"
+case "${OS}" in
+    Linux*)  PLATFORM="Linux"  ;;
+    Darwin*) PLATFORM="macOS"  ;;
+    *)       PLATFORM="Unknown";;
+esac
+echo -e "  Detected Platform: ${GREEN}${PLATFORM} (${NC}$(uname -m)${GREEN})${NC}"
+
+# ---------- Check Cargo/Rust ----------
+echo ""
+echo "  [1/4] Checking for Rust Toolchain..."
+if ! command -v cargo &>/dev/null; then
+    echo -e "  ${RED}[ERROR] Rust cargo package manager not found.${NC}"
+    echo "  Please install Rust before running this script."
+    echo "  You can install Rust with this command:"
+    echo -e "    ${YELLOW}curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh${NC}"
+    exit 1
+fi
+echo -e "  ${GREEN}✓ Rust cargo is available: $(cargo --version)${NC}"
+
+# ---------- Clone & Build ----------
+echo ""
+echo "  [2/4] Clonging and building TechScript from source..."
+TEMP_DIR=$(mktemp -d)
+log_message() {
+    echo -e "  [INFO] $1"
+}
+
+log_message "Creating temporary build workspace: $TEMP_DIR"
+git clone https://github.com/Tcode-Motion/techscript.git "$TEMP_DIR/techscript"
+
+cd "$TEMP_DIR/techscript"
+log_message "Compiling release binaries (cargo build --release)..."
+cargo build --workspace --release
+
+# ---------- Set up Destination ----------
+echo ""
+echo "  [3/4] Setup 'tsc' executable binary..."
+
+# Determine installation directory
+INSTALL_DIR="/usr/local/bin"
+USE_SUDO=false
+
+if [ ! -w "$INSTALL_DIR" ]; then
+    # If /usr/local/bin is not writable, try ~/.local/bin
+    INSTALL_DIR="$HOME/.local/bin"
+    mkdir -p "$INSTALL_DIR"
+else
+    # If we have write permissions, use it directly (or require sudo if preferred)
+    true
+fi
+
+log_message "Installing binary to $INSTALL_DIR/tsc"
+if [ -w "$INSTALL_DIR" ]; then
+    cp target/release/tsc "$INSTALL_DIR/tsc"
+else
+    log_message "Requesting superuser privileges to copy binary to $INSTALL_DIR..."
+    sudo cp target/release/tsc "$INSTALL_DIR/tsc"
+fi
+chmod +x "$INSTALL_DIR/tsc"
+
+# ---------- Set up Shell PATH ----------
+echo ""
+echo "  [4/4] Setting up environment PATH..."
+
+SHELL_RC=""
+case "${SHELL}" in
+    */zsh)   SHELL_RC="$HOME/.zshrc" ;;
+    */bash)  SHELL_RC="$HOME/.bashrc" ;;
+    *)       SHELL_RC="$HOME/.profile" ;;
+esac
+
+# Check if INSTALL_DIR is in PATH
+if [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
+    EXPORT_LINE="export PATH=\"$INSTALL_DIR:\$PATH\""
+    if [ -f "$SHELL_RC" ]; then
+        if ! grep -q "$INSTALL_DIR" "$SHELL_RC"; then
+            echo "" >> "$SHELL_RC"
+            echo "# TechScript v2 Toolchain" >> "$SHELL_RC"
+            echo "$EXPORT_LINE" >> "$SHELL_RC"
+            echo -e "  ${GREEN}✓ Added PATH configuration to $SHELL_RC${NC}"
+        fi
+    else
+        echo -e "  ${YELLOW}[WARN] Please manually add $INSTALL_DIR to your shell PATH.${NC}"
+    fi
+else
+    echo -e "  ${GREEN}✓ $INSTALL_DIR is already in your environment PATH.${NC}"
+fi
+
+# ---------- Verify Installation ----------
+echo ""
+export PATH="$INSTALL_DIR:$PATH"
+if command -v tsc &>/dev/null; then
+    echo -e "  ${GREEN}✓ 'tsc' command is successfully installed!${NC}"
+    echo "  Version: $(tsc --version)"
+else
+    echo -e "  ${YELLOW}[WARN] 'tsc' binary installed but not active in current shell environment.${NC}"
+    echo "  Please restart your terminal or run:  source $SHELL_RC"
+fi
+
+# ---------- Clean Up ----------
+rm -rf "$TEMP_DIR"
+
+echo ""
+echo -e "${GREEN}${BOLD}  =======================================${NC}"
+echo -e "${GREEN}${BOLD}   TechScript v2.0.0 Setup Complete! 🎉  ${NC}"
+echo -e "${GREEN}${BOLD}  =======================================${NC}"
+echo ""
+echo "  Try compiling your first program:"
+echo "    tsc run examples/hello_world/hello.txs"
+echo ""

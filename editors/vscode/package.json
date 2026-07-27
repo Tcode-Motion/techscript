@@ -261,6 +261,6 @@
   "qna": "https://github.com/Tcode-Motion/techscript/discussions",
   "main": "./extension.js",
   "name": "techscript",
-  "publisher": "techscript-motion",
+  "publisher": "tanmoy",
   "version": "2.0.0"
 }

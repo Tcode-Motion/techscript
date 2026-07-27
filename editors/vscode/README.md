@@ -107,7 +107,7 @@ curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/script
 
 ### Step 2 — Install This Extension
 
-Search for **"TechScript 2.0"** in the VS Code Extensions marketplace, or install it directly from the [Marketplace listing](https://marketplace.visualstudio.com/items?itemName=techscript-motion.techscript).
+Search for **"TechScript 2.0"** in the VS Code Extensions marketplace, or install it directly from the [Marketplace listing](https://marketplace.visualstudio.com/items?itemName=tanmoy.techscript).
 
 ### Step 3 — Open a TechScript Project
 

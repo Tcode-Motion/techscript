@@ -87,6 +87,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: assets-dist/*
+          body_path: README.md
           draft: true
           prerelease: contains(github.ref, 'alpha') || contains(github.ref, 'beta') || contains(github.ref, 'rc')
         env:

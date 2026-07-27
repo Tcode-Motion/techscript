@@ -9,6 +9,7 @@ Syntax highlighting · IntelliSense · Diagnostics · Debugging · Formatting ·
 
 [![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/Tcode-Motion/techscript/releases)
 [![VS Code](https://img.shields.io/badge/VS%20Code-%5E1.75.0-blue.svg)](https://code.visualstudio.com/)
+[![Open VSX](https://img.shields.io/badge/Open%20VSX-Extension-purple.svg)](https://open-vsx.org/extension/Tcode-Motion/techscript)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/Tcode-Motion/techscript/blob/main/LICENSE)
 [![GitHub](https://img.shields.io/badge/GitHub-Tcode--Motion%2Ftechscript-black.svg)](https://github.com/Tcode-Motion/techscript)
 
@@ -185,6 +186,8 @@ This extension provides a built-in debug adapter for TechScript. Add a `launch.j
 |---|---|
 | 🌐 Official Website | [techscript.is-a.dev](https://techscript.is-a.dev) |
 | 📦 GitHub Repository | [Tcode-Motion/techscript](https://github.com/Tcode-Motion/techscript) |
+| 🖥️ VS Code Marketplace | [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=tanmoy.techscript) |
+| 🚀 Open VSX Registry | [Open VSX Registry Page](https://open-vsx.org/extension/Tcode-Motion/techscript) |
 | 📥 Releases & Downloads | [GitHub Releases](https://github.com/Tcode-Motion/techscript/releases) |
 | 💬 Discussions & Support | [GitHub Discussions](https://github.com/Tcode-Motion/techscript/discussions) |
 | 🎬 YouTube Channel | [@tcodemotin](https://www.youtube.com/@tcodemotin) |

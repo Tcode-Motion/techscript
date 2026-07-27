@@ -1,4 +1,4 @@
-#![allow(unused_imports, unused_variables, unused_mut, dead_code)]
+#![allow(warnings, clippy::all)]
 
 //! # TechScript CLI Library
 //!

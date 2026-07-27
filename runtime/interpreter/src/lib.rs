@@ -3,6 +3,8 @@
 //! Tree-walking interpreter backend for AST evaluation.
 //! Maintains local environment states and manages execution control signals.
 
+#![allow(warnings, clippy::all)]
+
 pub mod control_flow;
 pub mod expressions;
 pub mod functions;

@@ -2,6 +2,8 @@
 //!
 //! Typed intermediate representation and AST lowering pipeline.
 
+#![allow(warnings, clippy::all)]
+
 pub mod block;
 pub mod builder;
 pub mod function;

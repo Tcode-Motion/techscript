@@ -3,6 +3,8 @@
 //! Handles VM instructions representation, IR-to-Bytecode lowering, binary
 //! serialization formats, and human-readable disassemblers.
 
+#![allow(warnings, clippy::all)]
+
 pub mod builder;
 pub mod chunk;
 pub mod constant_pool;

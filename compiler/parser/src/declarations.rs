@@ -348,12 +348,8 @@ impl<'a> Parser<'a> {
         }
 
         let is_brace = self.match_token(TokenKind::LeftBrace);
-        if !is_brace {
-            if !self.match_token(TokenKind::Then) {
-                while self.match_token(TokenKind::Newline) || self.match_token(TokenKind::Semicolon)
-                {
-                }
-            }
+        if !is_brace && !self.match_token(TokenKind::Then) {
+            while self.match_token(TokenKind::Newline) || self.match_token(TokenKind::Semicolon) {}
         }
 
         let mut fields = Vec::new();

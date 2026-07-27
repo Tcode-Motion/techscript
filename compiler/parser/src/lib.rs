@@ -84,6 +84,7 @@ impl<'a> Parser<'a> {
     }
 
     /// Wraps all top-level execution statements into a synthetic `main` function.
+    #[allow(dead_code)]
     fn wrap_top_level_statements(
         &mut self,
         statements: Vec<techscript_ast::Statement>,

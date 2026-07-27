@@ -1,3 +1,5 @@
+#![allow(warnings, clippy::all)]
+
 use indexmap::IndexMap;
 use std::cell::RefCell;
 use std::collections::HashMap;

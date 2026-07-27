@@ -84,7 +84,7 @@ jobs:
           ls -la assets-dist/
 
       - name: Publish draft release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           files: assets-dist/*
           body_path: README.md

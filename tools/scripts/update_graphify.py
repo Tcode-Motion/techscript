@@ -242,11 +242,11 @@ def main():
             
         temp_ignore = (
             original_ignore +
-            "\ndocs/\n.agents/\n.github/\nresearch/\nassets/\nreleases/\nlogs/\n"
+            "\ndocs/\n.agents/\n.github/\nresearch/\nassets/\nreleases/\nlogs/\nscripts/\n"
             "Executive Summary.pdf\n*.md\n**/*.md\n*.pdf\n**/*.pdf\n"
             "*.docx\n**/*.docx\n*.txt\n**/*.txt\n*.png\n**/*.png\n"
             "*.jpg\n**/*.jpg\n*.jpeg\n**/*.jpeg\n*.gif\n**/*.gif\n"
-            "*.svg\n**/*.svg\n*.ico\n**/*.ico\n"
+            "*.svg\n**/*.svg\n*.ico\n**/*.ico\n*.sh\n**/*.sh\n"
             "requirements.txt\n*.bat\n**/*.bat\n*.toml\n**/*.toml\n"
             "*.lock\n**/*.lock\n"
             "LICENSE\n**/LICENSE\n"

@@ -1,0 +1,15 @@
+# Exclude source maps and dev files
+*.map
+*.vsix
+
+# Exclude node_modules if ever added
+node_modules/**
+
+# Exclude test files
+**/*.test.js
+**/*.spec.js
+
+# Exclude development config files
+.eslintrc*
+.prettierrc*
+tsconfig.json

@@ -240,10 +240,25 @@
   "keywords": [
     "techscript",
     "compiler",
-    "syntax",
+    "syntax highlighting",
     "lsp",
-    "debug"
+    "language server",
+    "debug",
+    "formatter",
+    "linter",
+    "intellisense",
+    "snippets"
   ],
+  "license": "MIT",
+  "homepage": "https://techscript.is-a.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tcode-Motion/techscript"
+  },
+  "bugs": {
+    "url": "https://github.com/Tcode-Motion/techscript/issues"
+  },
+  "qna": "https://github.com/Tcode-Motion/techscript/discussions",
   "main": "./extension.js",
   "name": "techscript",
   "publisher": "techscript-motion",

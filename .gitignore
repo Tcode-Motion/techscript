@@ -42,6 +42,7 @@ node_modules/
 dist/
 out/
 *.vsix
+!editors/*.vsix
 
 # Python Wrap Caches
 __pycache__/

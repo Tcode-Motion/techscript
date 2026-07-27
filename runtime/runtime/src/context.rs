@@ -45,6 +45,12 @@ pub struct ResourceTable {
     resources: HashMap<u32, Box<dyn Any>>,
 }
 
+impl Default for ResourceTable {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ResourceTable {
     pub fn new() -> Self {
         Self {

@@ -56,11 +56,11 @@ jobs:
 
       - name: Run Graphify Update
         run: |
-          python tools/update_graphify.py
+          python tools/scripts/update_graphify.py
 
       - name: Run Graphify Output Validation
         run: |
-          python tools/check_graphify.py
+          python tools/scripts/check_graphify.py
 
       - name: Verify Graph Invariant (No Uncommitted Changes)
         if: env.GEMINI_API_KEY != ''

@@ -52,7 +52,7 @@ jobs:
           cp target/${{ matrix.target }}/release/${{ matrix.artifact_name }} dist/
           cd dist
           if [ "${{ matrix.os }}" = "windows-latest" ]; then
-            zip ../${{ matrix.release_name }}.zip ${{ matrix.artifact_name }}
+            7z a ../${{ matrix.release_name }}.zip ${{ matrix.artifact_name }}
           else
             tar -czvf ../${{ matrix.release_name }}.tar.gz ${{ matrix.artifact_name }}
           fi

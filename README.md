@@ -115,25 +115,14 @@ graph TD
 
 ## 🚀 Quick Start
 
-Get from zero to running a project in under 30 seconds:
+Once TechScript is installed on your system, you can scaffold and execute a new project in under 10 seconds:
 
-1. **Install the Toolchain**:
-   * **Linux / macOS / Termux (Recommended)**:
-     ```bash
-     curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
-     ```
-   * **Windows (Recommended)**: Download and run **`TechScript_Setup.exe`** from [GitHub Releases](https://github.com/Tcode-Motion/techscript/releases).
-   * **Python pip (Not Recommended)**:
-     ```bash
-     pip install techscript
-     techscript install
-     ```
-2. **Scaffold a Project**:
+1. **Scaffold a Project**:
    ```bash
    tsc new hello_world
    cd hello_world
    ```
-3. **Run the Project**:
+2. **Compile and Run**:
    ```bash
    tsc run
    ```

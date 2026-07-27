@@ -30,8 +30,8 @@ echo -e "  Detected Platform: ${GREEN}${PLATFORM} (${ARCH})${NC}"
 echo ""
 echo "  [1/4] Retrieving latest release information..."
 LATEST_TAG=$(curl -s "https://api.github.com/repos/Tcode-Motion/techscript/releases/latest" | grep -Po '"tag_name": "\K[^"]*' || true)
-if [ -z "$LATEST_TAG" ]; then
-    LATEST_TAG="v2.0.0"
+if [ -z "$LATEST_TAG" ] || [[ "$LATEST_TAG" == v1.* ]]; then
+    LATEST_TAG="release-2.0.0"
 fi
 echo -e "  Target Release: ${GREEN}${LATEST_TAG}${NC}"
 

@@ -159,12 +159,25 @@ impl StdlibRegistry {
                 name: "random".to_string(),
                 arity: 0,
                 callback: |_ctx, _args| {
+                    use std::cell::Cell;
                     use std::time::SystemTime;
-                    let nano = SystemTime::now()
-                        .duration_since(SystemTime::UNIX_EPOCH)
-                        .unwrap_or_default()
-                        .subsec_nanos();
-                    let rand_float = (nano as f64) / 1_000_000_000.0;
+                    thread_local! {
+                        static SEED: Cell<u64> = Cell::new({
+                            SystemTime::now()
+                                .duration_since(SystemTime::UNIX_EPOCH)
+                                .unwrap_or_default()
+                                .as_nanos() as u64
+                        });
+                    }
+                    let next_seed = SEED.with(|cell| {
+                        let current = cell.get();
+                        let next = current
+                            .wrapping_mul(6364136223846793005)
+                            .wrapping_add(1442695040888963407);
+                        cell.set(next);
+                        next
+                    });
+                    let rand_float = (next_seed as f64) / (u64::MAX as f64);
                     Ok(RuntimeValue::Float(rand_float))
                 },
             }),

@@ -242,12 +242,13 @@ def main():
             
         temp_ignore = (
             original_ignore +
-            "\ndocs/\n.agents/\n.github/\nresearch/\nassets/\nreleases/\nlogs/\nscripts/\n"
+            "\ndocs/\n.agents/\n.github/\nresearch/\nassets/\nreleases/\nlogs/\nscripts/\neditors/\npython-installer/\npython-installer-lang/\ndesign/\n"
             "Executive Summary.pdf\n*.md\n**/*.md\n*.pdf\n**/*.pdf\n"
             "*.docx\n**/*.docx\n*.txt\n**/*.txt\n*.png\n**/*.png\n"
             "*.jpg\n**/*.jpg\n*.jpeg\n**/*.jpeg\n*.gif\n**/*.gif\n"
             "*.svg\n**/*.svg\n*.ico\n**/*.ico\n*.sh\n**/*.sh\n"
             "requirements.txt\n*.bat\n**/*.bat\n*.toml\n**/*.toml\n"
+            "*.yml\n**/*.yml\n*.yaml\n**/*.yaml\nmkdocs.yml\n"
             "*.lock\n**/*.lock\n"
             "LICENSE\n**/LICENSE\n"
             "NOTICE\n**/NOTICE\n"
@@ -263,7 +264,7 @@ def main():
                 ignore_modified = True
                 log_message(f"Wrote temporary ignore file to {GRAPHIFY_IGNORE_PATH}")
                 
-            cmd = base_cmd + ["extract", ".", "--no-cluster"]
+            cmd = base_cmd + ["extract", ".", "--no-cluster", "--code-only"]
             if use_cargo:
                 cmd.append("--cargo")
             success = run_command(cmd, dry_run=dry_run)

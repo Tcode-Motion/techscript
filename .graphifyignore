@@ -13,3 +13,13 @@ graphify-out/
 *.log
 .DS_Store
 Thumbs.db
+
+# Exclude packaging and extension folders
+editors/
+python-installer/
+python-installer-lang/
+design/
+*.vsix
+mkdocs.yml
+*.yml
+*.yaml

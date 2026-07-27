@@ -1,0 +1,87 @@
+name: Publish to PyPI
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write   # Required for Trusted Publishing (OIDC)
+
+jobs:
+  build:
+    name: Build Python wheel and sdist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build tools
+        run: pip install build hatchling
+
+      - name: Build wheel and sdist
+        working-directory: python-installer
+        run: python -m build
+
+      - name: Verify package size is under 200 KB
+        working-directory: python-installer
+        run: |
+          for f in dist/*.whl dist/*.tar.gz; do
+            size=$(stat -c%s "$f")
+            echo "  $f: ${size} bytes"
+            if [ "$size" -gt 204800 ]; then
+              echo "ERROR: $f exceeds 200 KB limit ($size bytes)"
+              exit 1
+            fi
+          done
+
+      - name: Upload dist artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-dist
+          path: python-installer/dist/
+
+  test:
+    name: Run installer tests
+    needs: build
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ["3.8", "3.11", "3.12"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install package
+        working-directory: python-installer
+        run: pip install -e .
+
+      - name: Run tests
+        working-directory: python-installer
+        run: python -m unittest discover -s tests -v
+
+  publish:
+    name: Publish to PyPI
+    needs: [build, test]
+    runs-on: ubuntu-latest
+    environment: pypi
+    steps:
+      - name: Download dist artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: python-dist
+          path: dist/
+
+      - name: Publish to PyPI (Trusted Publishing)
+        uses: pypa/gh-action-pypi-publish@release/v1
+        # No token needed — uses OIDC Trusted Publishing
+        # Configure Trusted Publisher at: https://pypi.org/manage/project/techscript/settings/publishing/

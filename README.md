@@ -19,6 +19,7 @@
 [![Built with Rust](https://img.shields.io/badge/built%20in-Rust-D8B4FE?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org/)
 [![Platform](https://img.shields.io/badge/Platform-Cross--Platform-E0F2FE?style=for-the-badge)](https://github.com/Tcode-Motion/techscript/releases)
 [![VS Code Extension](https://img.shields.io/badge/VS%20Code-Extension-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=tanmoy.techscript)
+[![PyPI](https://img.shields.io/pypi/v/techscript?style=for-the-badge&color=0DF28B&logo=pypi&logoColor=white)](https://pypi.org/project/techscript/)
 [![Documentation](https://img.shields.io/badge/Docs-Read-059669?style=for-the-badge)](docs/index.md)
 [![Open Issues](https://img.shields.io/github/issues-raw/Tcode-Motion/techscript?style=for-the-badge&color=ef4444&label=Issues)](https://github.com/Tcode-Motion/techscript/issues)
 [![Stars](https://img.shields.io/github/stars/Tcode-Motion/techscript?style=for-the-badge&color=0DF28B&label=⭐)](https://github.com/Tcode-Motion/techscript/stargazers)
@@ -123,29 +124,37 @@ graph TD
 
 ## 📦 Installation
 
+### 🐍 Via pip — All Platforms (Recommended)
+```bash
+pip install techscript
+techscript install
+```
+The PyPI package auto-detects your OS and downloads the correct native binary from GitHub Releases.
+
 ### 🪟 Windows Setup
 1. Go to the [Releases](https://github.com/Tcode-Motion/techscript/releases) page on GitHub.
 2. Download **`TechScript_Setup.exe`** (or `TechScript_Portable.zip` for a zero-install portable version).
 3. Run the installer to configure your environment:
-   * Installs the native Rust compiler (`tsc`) and VM (`tsvm`).
+   * Installs the native compiler (`tsc`) and VM.
    * Automatically adds `tsc` to your system environment `PATH`.
-   * Configures file associations for `.txs` source scripts.
+   * Configures file associations for `.txs` scripts.
 
 ### 🐧 Linux / 🍎 macOS Setup
-Execute the official one-liner in your terminal to download and configure the native binary:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
 ```
 
 ### 🤖 Android (Termux) Setup
-Run these commands in Termux to download and configure TechScript natively on Android:
 ```bash
 pkg update
 pkg install curl
 curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
 ```
 
+> **Homebrew** (`brew install techscript`), **Winget** and **Scoop** support coming soon!
+
 ---
+
 
 ## 🚀 Quick Start
 
@@ -170,6 +179,7 @@ curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/script
 * **GitHub Repository**: [https://github.com/Tcode-Motion/techscript](https://github.com/Tcode-Motion/techscript)
 * **GitHub Discussions**: [https://github.com/Tcode-Motion/techscript/discussions](https://github.com/Tcode-Motion/techscript/discussions)
 * **VS Code Extension**: [TechScript 2.0 on VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=tanmoy.techscript)
+* **PyPI Package**: [pypi.org/project/techscript](https://pypi.org/project/techscript/)
 * **YouTube Channel**: [@tcodemotin on YouTube](https://www.youtube.com/@tcodemotin)
 * **Author Profile**: [@Tcode-Motion on GitHub](https://github.com/Tcode-Motion)
 * **Discord Community**: [Join Discord (Community Chat)](https://discord.gg/tRtNbuDUr)

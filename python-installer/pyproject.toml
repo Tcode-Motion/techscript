@@ -1,0 +1,58 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "techscript"
+version = "2.0.0"
+description = "Official installer and launcher for the TechScript 2.0 programming language toolchain"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.8"
+authors = [
+    { name = "Tcode-Motion", email = "tcode.motion@gmail.com" }
+]
+keywords = ["techscript", "compiler", "installer", "tsc", "programming-language"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Compilers",
+    "Topic :: System :: Installation/Setup",
+]
+dependencies = [
+    "requests>=2.28.0",
+]
+
+[project.urls]
+Homepage = "https://techscript.is-a.dev"
+Repository = "https://github.com/Tcode-Motion/techscript"
+Issues = "https://github.com/Tcode-Motion/techscript/issues"
+Changelog = "https://github.com/Tcode-Motion/techscript/blob/main/CHANGELOG.md"
+
+[project.scripts]
+techscript = "techscript.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["techscript"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "techscript/",
+    "tests/",
+    "README.md",
+    "LICENSE",
+    "pyproject.toml",
+]
+
+[project.optional-dependencies]
+dev = ["build", "hatchling"]
+

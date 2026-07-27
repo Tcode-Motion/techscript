@@ -136,23 +136,20 @@ Get from zero to running a project in under 30 seconds:
 
 ## 📦 Installation
 
-### 🐍 Via pip (All Platforms - Recommended)
-```bash
-pip install techscript
-techscript install
-```
-*Alternatively, you can use the name `techscript-lang` which is also published and updated on PyPI:*
-```bash
-pip install techscript-lang
-techscript install
-```
+### 1. 🪟 Windows Setup
+1. Go to the [Releases](https://github.com/Tcode-Motion/techscript/releases) page on GitHub.
+2. Download **`TechScript_Setup.exe`** (or `TechScript_Portable.zip` for a zero-install portable version).
+3. Run the installer to configure your environment:
+   * Installs the native compiler (`tsc`) and VM.
+   * Automatically adds `tsc` to your system environment `PATH`.
+   * Configures file associations for `.txs` scripts.
 
-### 🐧 Linux / 🍎 macOS Setup (Shell Script)
+### 2. 🐧 Linux / 🍎 macOS Setup (Shell Script)
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
 ```
 
-### 🤖 Android (Termux) Setup
+### 3. 🤖 Android (Termux) Setup
 **Recommended Method (Shell script):**
 ```bash
 pkg update
@@ -167,6 +164,15 @@ pip install techscript
 techscript install
 ```
 *(Note: Python installations in Termux may require the `--break-system-packages` flag under PEP 668).*
+
+### 4. 🐍 Via pip (All Platforms - Not Recommended)
+```bash
+pip install techscript       # or: pip install techscript-lang
+techscript install
+```
+The PyPI package auto-detects your OS/architecture and downloads the correct native binary from GitHub Releases.
+
+> **Homebrew** (`brew install techscript`), **Winget**, and **Scoop** support coming soon!
 
 ---
 

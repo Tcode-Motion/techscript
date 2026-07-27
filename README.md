@@ -94,11 +94,11 @@ say response
 ```
 
 ### 🛠️ Unified Toolchain
-The `tech` binary compiles everything:
-* `tech fmt` - Auto-formats source files.
-* `tech lint` - Analyzes safety traps and warns on deprecated syntax.
-* `tech test` - Executes built-in unit tests.
-* `tech package` - Fetches dependencies and publishes modules to the registry.
+The `tsc` binary compiles everything:
+* `tsc fmt` - Auto-formats source files.
+* `tsc lint` - Analyzes safety traps and warns on deprecated syntax.
+* `tsc test` - Executes built-in unit tests.
+* `tsc package` - Fetches dependencies and publishes modules to the registry.
 
 ---
 
@@ -122,11 +122,25 @@ graph TD
 
 ## 📦 Installation
 
-### Windows Setup
-Download the standalone installer `TechScript_v2.0.0_x64.exe` from [GitHub Releases](../../releases). This adds the `tech` toolchain to system PATH and configures file extensions automatically.
+### 🪟 Windows Setup
+1. Go to the [Releases](https://github.com/Tcode-Motion/techscript/releases) page on GitHub.
+2. Download **`TechScript_Setup.exe`** (or `TechScript_Portable.zip` for a zero-install portable version).
+3. Run the installer to configure your environment:
+   * Installs the native Rust compiler (`tsc`) and VM (`tsvm`).
+   * Automatically adds `tsc` to your system environment `PATH`.
+   * Configures file associations for `.txs` source scripts.
 
-### Linux / macOS One-Liner
+### 🐧 Linux / 🍎 macOS Setup
+Execute the official one-liner in your terminal to download and configure the native binary:
 ```bash
+curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
+```
+
+### 🤖 Android (Termux) Setup
+Run these commands in Termux to download and configure TechScript natively on Android:
+```bash
+pkg update
+pkg install curl
 curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
 ```
 
@@ -134,19 +148,17 @@ curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/script
 
 ## 🚀 Quick Start
 
-1. Create a script file `app.txs`:
-   ```txs
-   say "Write like a Human. Run like Rust."
-   
-   prices = [100, 250, 400]
-   for price in prices
-       discounted = price * 0.9
-       say $"Original: {price}, Discounted: {discounted}"
-   end
-   ```
-2. Execute the script:
+1. Scaffold a new project:
    ```bash
-   tech run app.txs
+   tsc new hello_world
+   ```
+2. Navigate into the project:
+   ```bash
+   cd hello_world
+   ```
+3. Compile and execute:
+   ```bash
+   tsc run
    ```
 
 ---

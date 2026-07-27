@@ -126,10 +126,10 @@ graph TD
 
 ### 🐍 Via pip — All Platforms (Recommended)
 ```bash
-pip install techscript
+pip install techscript       # or: pip install techscript-lang
 techscript install
 ```
-The PyPI package auto-detects your OS and downloads the correct native binary from GitHub Releases.
+The PyPI packages auto-detect your OS and download the correct native binary from GitHub Releases.
 
 ### 🪟 Windows Setup
 1. Go to the [Releases](https://github.com/Tcode-Motion/techscript/releases) page on GitHub.
@@ -145,11 +145,21 @@ curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/script
 ```
 
 ### 🤖 Android (Termux) Setup
+**Recommended Method (Shell script):**
 ```bash
 pkg update
 pkg install curl
 curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
 ```
+
+**Alternative Method (pip — Not Recommended):**
+```bash
+pkg update
+pkg install python
+pip install techscript       # or: pip install techscript-lang
+techscript install
+```
+*(Note: Python installations in Termux may require the `--break-system-packages` flag under PEP 668).*
 
 > **Homebrew** (`brew install techscript`), **Winget** and **Scoop** support coming soon!
 

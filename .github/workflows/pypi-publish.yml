@@ -23,19 +23,24 @@ jobs:
       - name: Install build tools
         run: pip install build hatchling
 
-      - name: Build wheel and sdist
+      - name: Build wheel and sdist (techscript)
         working-directory: python-installer
         run: python -m build
 
+      - name: Build wheel and sdist (techscript-lang)
+        working-directory: python-installer-lang
+        run: python -m build
+
       - name: Verify package size is under 200 KB
-        working-directory: python-installer
         run: |
-          for f in dist/*.whl dist/*.tar.gz; do
-            size=$(stat -c%s "$f")
-            echo "  $f: ${size} bytes"
-            if [ "$size" -gt 204800 ]; then
-              echo "ERROR: $f exceeds 200 KB limit ($size bytes)"
-              exit 1
+          for f in python-installer/dist/* python-installer-lang/dist/*; do
+            if [ -f "$f" ]; then
+              size=$(stat -c%s "$f")
+              echo "  $f: ${size} bytes"
+              if [ "$size" -gt 204800 ]; then
+                echo "ERROR: $f exceeds 200 KB limit ($size bytes)"
+                exit 1
+              fi
             fi
           done
 
@@ -43,7 +48,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: python-dist
-          path: python-installer/dist/
+          path: |
+            python-installer/dist/
+            python-installer-lang/dist/
 
   test:
     name: Run installer tests

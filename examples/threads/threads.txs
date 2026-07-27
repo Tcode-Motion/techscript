@@ -1,0 +1,25 @@
+# Multithreading Demo
+use time
+use thread
+
+spawn_fn = thread["spawn"]
+join_fn = thread["join"]
+
+do task_a()
+    time.sleep(100)
+    say "Task A completed on worker thread."
+end
+
+do task_b()
+    time.sleep(50)
+    say "Task B completed on worker thread."
+end
+
+say "Starting threads..."
+handle_a = spawn_fn(task_a)
+handle_b = spawn_fn(task_b)
+
+join_fn(handle_a)
+join_fn(handle_b)
+
+say "All threads joined main thread."

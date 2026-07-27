@@ -1,0 +1,39 @@
+# Todo CLI Demo
+use collections
+
+do add_todo(todo_list, title)
+    item = {
+        "title": title,
+        "completed": false
+    }
+    collections.push(todo_list, item)
+    say $"Added: {title}"
+end
+
+do complete_todo(todo_list, index)
+    when index < len(todo_list)
+        todo_list[index]["completed"] = true
+        say $"Completed: {todo_list[index].title}"
+    else
+        say "Invalid Index"
+    end
+end
+
+do print_todos(todo_list)
+    say "--- TODO LIST ---"
+    for i in 0..(len(todo_list))
+        status = "[ ]"
+        when todo_list[i]["completed"]
+            status = "[x]"
+        end
+        say $"{status} {i + 1}. {todo_list[i].title}"
+    end
+end
+
+todo_list = []
+add_todo(todo_list, "Learn TechScript syntax")
+add_todo(todo_list, "Write a simple compiler")
+add_todo(todo_list, "Build an open source language")
+
+complete_todo(todo_list, 0)
+print_todos(todo_list)

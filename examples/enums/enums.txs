@@ -1,0 +1,22 @@
+# Enums Demo
+
+enum TrafficLight
+    Red
+    Yellow
+    Green
+end
+
+do get_action(light)
+    when light == TrafficLight.Red
+        send "Stop"
+    else
+        when light == TrafficLight.Yellow
+            send "Caution"
+        else
+            send "Go"
+        end
+    end
+end
+
+say $"Red Light: {get_action(TrafficLight.Red)}"
+say $"Green Light: {get_action(TrafficLight.Green)}"

@@ -1,6 +1,0 @@
-res = std.ai.generate_text("gemini", "Gemini prompt", {})
-when (std.collections.len(res) > 0)
-    say "AI Gemini OK"
-else
-    say "AI Gemini Failed"
-end

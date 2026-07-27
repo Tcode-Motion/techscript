@@ -1,8 +1,0 @@
-# 11_regex.txs
-# Regular Expressions example.
-# Demonstrates pattern matching checks.
-
-use string
-
-matched = std.regex["match"]("a+b", "aaab")
-say string.from_bool(matched)

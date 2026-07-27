@@ -1,0 +1,12 @@
+# HTTP Server Demo
+
+say "HTTP Server configured on http://localhost:8080"
+say "Running route mock test..."
+
+response = {
+    "status": 200,
+    "body": "Hello from TechScript Server!"
+}
+
+say $"Response Code: {response.status}"
+say $"Response Body: {response.body}"

@@ -1,0 +1,16 @@
+# JSON Encoding and Decoding Example
+use json
+
+raw_json = "{\"name\": \"TechScript\", \"version\": 2, \"active\": true}"
+
+# Decode JSON string to map
+data = json.decode(raw_json)
+
+say $"Decoded Name: {data.name}"
+say $"Decoded Version: {data.version}"
+say $"Decoded Active: {data.active}"
+
+# Modify and re-encode to JSON
+data["status"] = "stable"
+encoded = json.encode(data)
+say $"Encoded JSON: {encoded}"

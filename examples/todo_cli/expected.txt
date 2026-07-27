@@ -1,0 +1,8 @@
+Added: Learn TechScript syntax
+Added: Write a simple compiler
+Added: Build an open source language
+Completed: Learn TechScript syntax
+--- TODO LIST ---
+[x] 1. Learn TechScript syntax
+[ ] 2. Write a simple compiler
+[ ] 3. Build an open source language

@@ -1,0 +1,18 @@
+# Guess the Number Game Simulation
+
+secret_number = 42
+guesses = [10, 50, 40, 42]
+
+for guess in guesses
+    say $"Guessing: {guess}"
+    when guess < secret_number
+        say "Too low!"
+    else
+        when guess > secret_number
+            say "Too high!"
+        else
+            say "Correct! You guessed it!"
+            break
+        end
+    end
+end

@@ -1,0 +1,4 @@
+Number value: 42
+String value: TechScript
+Int Box holds: 100
+Str Box holds: Generic Box

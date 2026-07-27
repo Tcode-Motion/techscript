@@ -1,0 +1,8 @@
+# Gemini AI Module Integration Demo
+use ai
+
+say "Sending prompt to Gemini AI model..."
+response = ai.generate_text("gemini", "Explain stack-based VMs", {})
+
+say "AI Response Received:"
+say response

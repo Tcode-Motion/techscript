@@ -1,9 +1,0 @@
-# 04_thread.txs
-# Native OS threading.
-
-do run_thread()
-    send "thread output"
-end
-handle = std.thread["spawn"](run_thread)
-std.thread.join(handle)
-say "thread output"

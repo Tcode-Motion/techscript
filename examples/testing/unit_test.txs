@@ -1,0 +1,11 @@
+# Unit Testing Demo
+use testing
+
+say "Running unit tests..."
+
+result = 5 * 5
+testing.assert_eq(result, 25, "5 * 5 should equal 25")
+
+testing.assert(10 > 5, "10 should be greater than 5")
+
+say "All unit tests completed successfully."

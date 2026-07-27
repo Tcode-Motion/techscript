@@ -1,0 +1,8 @@
+--- List Iteration ---
+apple
+banana
+cherry
+--- Map Iteration ---
+banana: 20
+apple: 50
+cherry: 80

@@ -1,0 +1,17 @@
+# File Reader Demo
+use file
+
+filename = "test_file.txt"
+content = "Line 1: TechScript is cool!\nLine 2: Zero overhead memory safety."
+
+say $"Writing to {filename}..."
+file.write(filename, content)
+
+say $"Reading from {filename}..."
+read_content = file.read(filename)
+
+say "File Content:"
+say read_content
+
+# Clean up
+file.remove(filename)

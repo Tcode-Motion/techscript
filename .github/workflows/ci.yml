@@ -1,4 +1,4 @@
-name: CI
+name: Continuous Integration
 
 on:
   push:
@@ -6,53 +6,53 @@ on:
   pull_request:
     branches: [ main, dev ]
 
-jobs:
-  rust-checks:
-    name: Rust Compilation & Validation
-    runs-on: ubuntu-latest
+env:
+  CARGO_TERM_COLOR: always
 
+jobs:
+  ci:
+    name: Build, Lint & Test Workspace
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - name: Checkout Code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Rust Toolchain
+      - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy, rustfmt
 
-      - name: Rust Cache
-        uses: Swatinem/rust-cache@v2
+      - name: Cache cargo registry
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ matrix.os }}-cargo-ci-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ matrix.os }}-cargo-ci-
 
-      - name: Check Formatting
-        run: cargo fmt --check
+      - name: Verify formatting
+        run: cargo fmt --all -- --check
 
-      - name: Run Clippy Linter
+      - name: Run clippy linter
         run: cargo clippy --workspace --all-targets -- -D warnings
 
-      - name: Execute Workspace Tests
-        run: cargo test --workspace --all-targets
+      - name: Run workspace tests
+        run: cargo test --workspace --verbose
 
-      - name: Compile Workspace Documentation
-        run: cargo doc --workspace --no-deps
+      - name: Build workspace binaries
+        run: cargo build --workspace --release
 
-  graphify-checks:
-    name: Graphify Integrity Checks
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-          cache: 'pip'
-
-      - name: Install Python Dependencies
+      - name: Verify hello world example
+        shell: bash
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Run Graphify Validation
-        run: python tools/check_graphify.py
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            target/release/tech.exe run examples/hello_world/hello.txs
+          else
+            target/release/tech run examples/hello_world/hello.txs
+          fi

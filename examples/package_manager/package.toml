@@ -1,0 +1,8 @@
+[package]
+name = "math_demo"
+version = "1.0.0"
+authors = ["Tanmoy Majumder <tanmoy@example.com>"]
+description = "A math library demo package"
+
+[dependencies]
+http_helper = "1.2.0"

@@ -1,84 +1,57 @@
-# TechScript 2.0 Compiler API Reference
+# API Reference
 
-> **Status**: Frozen Specification — 2.0.0 Stable
-> **Last Updated**: 2026-07-26
-
-This reference details the public Rust APIs exposed by the compiler workspace
-crates for tools (LSP, CLI, Linter, Formatter) and direct integration.
+This reference documents the globally available built-in functions in TechScript 2.0.
 
 ---
 
-## 1. `techscript_syntax`
+## 🖨️ Global Functions
 
-Contains lexical and syntactic definitions, token kinds, and operators.
-
-### Key Types
-
-#### `TokenKind` (enum)
-The list of all canonical 2.0 keywords, deprecated aliases, literals, and delimiters.
-
-Functions:
-- `is_canonical_keyword() -> bool`: Returns `true` if it is a canonical keyword (no warning).
-- `is_alias_keyword() -> bool`: Returns `true` if it is a deprecated compatibility alias.
-- `is_future_reserved_keyword() -> bool`: Returns `true` if it is a future reserved word.
-- `to_canonical() -> Option<TokenKind>`: Returns the canonical 2.0 equivalent for deprecated aliases.
-- `static_lexeme() -> Option<&'static str>`: Returns static string spelling if any.
-
-#### `lookup_keyword(lexeme: &str) -> Option<TokenKind>`
-Searches the keyword map. Handles all canonical, alias, and reserved words.
-
----
-
-## 2. `techscript_lexer`
-
-Lexical scanner that scans source string slices into a stream of tokens.
-
-### Key Types
-
-#### `Lexer<'a>` (struct)
-```rust
-pub struct Lexer<'a> {
-    source: &'a str,
-    cursor: usize,
-    // ...
-}
+### `say(val)`
+Prints the string representation of `val` to stdout, followed by a newline:
+```txs
+say "Hello"
+say 42
 ```
 
-Functions:
-- `Lexer::new(source: &'a str) -> Self`: Creates a scanner instance.
-- `next_token(&mut self) -> Token`: Scans and returns the next token.
-- `lex_recovered(&mut self) -> (Vec<Token>, Vec<Diagnostic>)`: Scans entire source file, collecting recovery tokens and any lexical warnings/errors.
-
----
-
-## 3. `techscript_parser`
-
-Constructs the AST from a stream of scanned tokens using recursive descent.
-
-### Key Types
-
-#### `Parser<'a>` (struct)
-```rust
-pub struct Parser<'a> {
-    tokens: &'a [Token],
-    cursor: usize,
-    // ...
-}
+### `ask(prompt)`
+Prints the `prompt` string to stdout and blocks execution until input is read from stdin. Returns the input as a string:
+```txs
+name = ask "Enter your name: "
 ```
 
-Functions:
-- `Parser::new(tokens: &'a [Token]) -> Self`: Creates parser instance.
-- `parse_recovered(&mut self) -> (ProgramNode, Vec<Diagnostic>)`: Parses entire stream, returning the AST and collecting recovery error diagnostics.
+### `len(collection)`
+Returns the size of a list, map, or string as an integer:
+```txs
+size = len([1, 2, 3]) # 3
+char_count = len("Tech") # 4
+```
 
----
+### `typeof(val)`
+Returns a string representing the runtime type of the value (`"int"`, `"float"`, `"str"`, `"bool"`, `"list"`, `"map"`, `"null"`, or custom class name):
+```txs
+say typeof(42) # "int"
+```
 
-## 4. `techscript_semantic`
+### `sleep(ms)`
+Suspends thread execution for `ms` milliseconds:
+```txs
+sleep(1000) # Sleep for 1 second
+```
 
-Validates scoping, performs name resolution, and checks semantic constraints.
+### `assert(condition)`
+Triggers a runtime panic if the condition is false:
+```txs
+assert(1 == 1)
+```
 
-### Key Types
+### `panic(message)`
+Halts VM execution immediately and prints the error message:
+```txs
+panic "Unrecoverable fatal error occurred"
+```
 
-#### `Analyzer` (struct)
-Performs scope checks, duplicate definitions check, and shadows checks.
-- `Analyzer::new() -> Self`
-- `analyze(&mut self, program: &ProgramNode) -> Vec<Diagnostic>`: Runs semantic passes. Returns a vector of diagnostics containing warnings and compile errors.
+### `exit(code)`
+Exits the process immediately with the specified integer status code:
+```txs
+exit(0)
+```

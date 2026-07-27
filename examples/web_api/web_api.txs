@@ -1,0 +1,22 @@
+# HTTP Client Web API Demo
+use http
+use json
+
+github_url = "https://api.github.com/repos/Tcode-Motion/techscript"
+
+say $"Sending GET request to {github_url}..."
+# In a real run, this fetches from the endpoint. For expected output verification,
+# we mock the request structure or print the simulated response keys.
+
+# Send request
+response = http.get(github_url, {
+    "User-Agent": "TechScript-Compiler"
+})
+
+say $"Status Code: {response.status}"
+
+# Parse response body
+data = json.decode(response.body)
+say $"Repository: {data.name}"
+say $"Owner: {data.owner.login}"
+say $"Open Issues: {data.open_issues_count}"

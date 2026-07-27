@@ -1,0 +1,2 @@
+Red Light: Stop
+Green Light: Go

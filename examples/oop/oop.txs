@@ -1,0 +1,28 @@
+# Object Oriented Programming (Procedural OOP) Demo
+
+do make_shape(name)
+    send {
+        "name": name
+    }
+end
+
+do describe_shape(shape)
+    say $"This is a {shape.name}."
+end
+
+do make_circle(radius)
+    send {
+        "name": "Circle",
+        "radius": radius
+    }
+end
+
+do describe_circle(circle)
+    say $"This is a Circle with radius: {circle.radius}."
+end
+
+shape = make_shape("Polygon")
+describe_shape(shape)
+
+circle = make_circle(5)
+describe_circle(circle)

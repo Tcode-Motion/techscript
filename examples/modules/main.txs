@@ -1,0 +1,6 @@
+# Modules Import Demo
+use math
+
+val = 25
+say $"Value: {val}"
+say $"Square Root: {math.sqrt(val)}"

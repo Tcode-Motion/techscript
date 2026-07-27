@@ -1,0 +1,46 @@
+# Calculator Example
+
+This example demonstrates how to define basic mathematical functions and perform operations in TechScript.
+
+## Code (`calculator.txs`)
+```txs
+do add(a, b)
+    send a + b
+end
+
+do subtract(a, b)
+    send a - b
+end
+
+do multiply(a, b)
+    send a * b
+end
+
+do divide(a, b)
+    when b == 0
+        throw "Division by zero"
+    end
+    send a / b
+end
+
+x = 12
+y = 4
+
+say $"Adding {x} + {y} = {add(x, y)}"
+say $"Subtracting {x} - {y} = {subtract(x, y)}"
+say $"Multiplying {x} * {y} = {multiply(x, y)}"
+say $"Dividing {x} / {y} = {divide(x, y)}"
+```
+
+## Running the Example
+```bash
+tech run calculator.txs
+```
+
+## Expected Output
+```
+Adding 12 + 4 = 16
+Subtracting 12 - 4 = 8
+Multiplying 12 * 4 = 48
+Dividing 12 / 4 = 3
+```

@@ -1,25 +1,73 @@
-# Rust
+# TechScript 2.0 Root GitIgnore
+
+# Rust & Cargo targets
 target/
-target*/
-build/
-logs/
-graphify-out/
+target_clippy/
+Cargo.lock.lock
+**/*.rs.bk
+
+# Compiled TechScript binaries and packages
+*.txc
 public-release/
 releases/current/
-releases/latest
+releases/latest/
+releases/*.exe
+releases/*.zip
+releases/*.tar.gz
 
-# VS Code / JS
+# Compiler Caches and Logs
+build/
+logs/
+.tsc-cache/
+.graphify-cache/
+
+# OS Temporary Files
+.DS_Store
+Thumbs.db
+*.tmp
+*.temp
+
+# IDEs & Editor Configuration Cache
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
+
+# Node & Frontend dependencies (if any frontend builds exist)
 node_modules/
-out/
 dist/
+out/
 *.vsix
 
-# Python
+# Python Wrap Caches
 __pycache__/
 *.pyc
+*.pyo
+.pypy/
+.pytest_cache/
 
-# Local Environment / Temporary
+# Local Environment Variables & Secrets
 .env
-.DS_Store
-research/temp/
-docs/build/
+.env.*
+*.pem
+*.key
+*.cert
+*.pfx
+credentials.json
+client_secret.json
+
+# Local SQLite databases
+*.db
+local.db
+
+# Releases directory
+releases/
+
+# Graphify Knowledge Graph
+graphify-out/
+
+

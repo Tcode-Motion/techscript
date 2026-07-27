@@ -54,12 +54,27 @@ pub fn execute(
         let mut default_backend = "vm";
         if let Ok(content) = std::fs::read_to_string(file_path) {
             let dsl_keywords = ["website", "canvas", "logo", "window", "dialog", "menu"];
+            let mut use_interpreter = false;
             for line in content.lines() {
                 let trimmed = line.trim();
                 if dsl_keywords.iter().any(|&kw| trimmed.starts_with(kw)) {
-                    default_backend = "interpreter";
+                    use_interpreter = true;
                     break;
                 }
+            }
+
+            if !use_interpreter {
+                let interpreter_keywords = ["class", "struct", "enum"];
+                let words: std::collections::HashSet<&str> = content
+                    .split(|c: char| !c.is_alphanumeric() && c != '_')
+                    .collect();
+                if interpreter_keywords.iter().any(|kw| words.contains(kw)) {
+                    use_interpreter = true;
+                }
+            }
+
+            if use_interpreter {
+                default_backend = "interpreter";
             }
         }
         match backend_str.unwrap_or(default_backend).to_lowercase().as_str() {

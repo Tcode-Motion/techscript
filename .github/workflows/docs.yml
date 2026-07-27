@@ -1,0 +1,32 @@
+name: Build Documentation Website
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+      - 'README.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  docs:
+    name: Build & Verify Docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install MkDocs & Material Theme
+        run: |
+          pip install mkdocs mkdocs-material mkdocs-minify-plugin
+
+      - name: Build MkDocs Site
+        run: mkdocs build

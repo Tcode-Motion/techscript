@@ -1,0 +1,8 @@
+Guessing: 10
+Too low!
+Guessing: 50
+Too high!
+Guessing: 40
+Too low!
+Guessing: 42
+Correct! You guessed it!

@@ -1,128 +1,49 @@
-# TechScript 2.0 Examples Guide
+# Examples Directory Guide
 
-> **Status**: Authoritative Reference — 2.0.0 Stable
-> **Last Updated**: 2026-07-26
-
-TechScript 2.0 includes structured examples in the `examples/` directory to demonstrate
-the canonical syntax, modules, and language features.
+This guide explains how to run, understand, and inspect the code examples under the `examples/` directory.
 
 ---
 
-## 1. Core Language Examples
+## 📂 Example Folder Structure
+Every example is in its own folder and contains:
+* **Source Script**: The `.txs` source code.
+* **`README.md`**: Explanation of how the code works.
+* **`expected.txt`**: The exact output printed by the program when executed.
 
-### Hello World (`examples/01_hello_world.txs`)
-Demonstrates basic implicit execution and stdout printing.
-```txs
-# Standard Hello World
-say "Hello, TechScript 2.0!"
+---
+
+## 🚀 Running the Examples
+
+Run an example using the `tech` compiler:
+```bash
+# Navigate to the example folder
+cd examples/hello_world
+tech run hello.txs
 ```
 
-### Variables and Scope (`examples/02_variables.txs`)
-Demonstrates variable declaration (first-assignment) and constant declarations.
-```txs
-const PI = 3.14159265
-
-# Implicit variable declarations
-radius = 10
-area = PI * radius * radius
-
-say $"Area is {area}"
-```
-
-### Conditionals & Match (`examples/03_control.txs`)
-Demonstrates `when`/`else when`/`else` conditionals and `match`/`case` switching.
-```txs
-score = 82
-
-when score >= 90
-    say "Grade: A"
-else when score >= 80
-    say "Grade: B"
-else
-    say "Grade: C"
-end
-
-# Pattern matching
-status = "success"
-match status
-case "success"
-    say "Operation succeeded"
-case "error"
-    say "Operation failed"
-default
-    say "Operation state unknown"
-end
-```
-
-### Counted Loops & Iteration (`examples/04_loops.txs`)
-Demonstrates counted `loop N`, conditional `repeat cond`, and `for x in y` ranges.
-```txs
-# Counted loop (executes exactly 5 times)
-loop 5
-    say "Hello from loop!"
-end
-
-# Conditional repeat (while)
-count = 0
-repeat count < 3
-    count += 1
-    say $"Count is {count}"
-end
-
-# List iteration
-fruits = ["Apple", "Banana", "Cherry"]
-for fruit in fruits
-    say fruit
-end
-
-# Range iteration
-for i in 1..=5
-    say i
-end
+You can verify that output matches expectations:
+```bash
+tech test
 ```
 
 ---
 
-## 2. Advanced Language Examples
+## 🗺️ Index of Core Examples
 
-### Classes and Objects (`examples/05_classes.txs`)
-Demonstrates type definition with `class`, constructor declaration with `do init()`, methods, and inheritance.
-```txs
-class Shape
-    name = "Shape"
-
-    do init(name)
-        self.name = name
-    end
-
-    do describe()
-        say $"This is a {self.name}."
-    end
-end
-
-class Circle(Shape)
-    radius = 0
-
-    do init(radius)
-        self.name = "Circle"
-        self.radius = radius
-    end
-
-    do area()
-        use math
-        send math.pi * self.radius * self.radius
-    end
-end
-
-c = new Circle(5)
-c.describe()
-say $"Area: {c.area()}"
-```
-
----
-
-## 3. Standard Library Integration Examples
-
-See the `examples/compat/` folder for legacy test fixtures. They verify that older
-1.x dialect syntaxes (such as `make`, `model`, `fun`, `{}`) compile correctly while
-emitting compiler warnings.
+| Folder | Focus | Key Concept covered |
+|:---|:---|:---|
+| [hello_world](../examples/hello_world/) | Core | Simplest output prints |
+| [calculator](../examples/calculator/) | Math | Functions and math operators |
+| [todo_cli](../examples/todo_cli/) | State | Lists and maps manipulation |
+| [guess_number](../examples/guess_number/) | Logic | Ranges, loops, conditionals |
+| [http_server](../examples/http_server/) | Network | Web routing and mock testing |
+| [json_parser](../examples/json_parser/) | Data | Encoding/decoding maps |
+| [file_reader](../examples/file_reader/) | File System | IO file writes and reads |
+| [oop](../examples/oop/) | Models | Classes, inheritance, overriding |
+| [modules](../examples/modules/) | Imports | Multi-file namespaces |
+| [collections](../examples/collections/) | Types | Loops over list and maps |
+| [generics](../examples/generics/) | Polymorph | Parameterized types |
+| [error_handling](../examples/error_handling/) | Errors | `try`/`catch` boundaries |
+| [async](../examples/async/) | Concurrency | Event loops and futures |
+| [threads](../examples/threads/) | Parallel | Thread spawns & mutexes |
+| [web_api](../examples/web_api/) | Fetch | External GET API calls |

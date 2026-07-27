@@ -1,0 +1,5 @@
+Sending GET request to https://api.github.com/repos/Tcode-Motion/techscript...
+Status Code: 200
+Repository: techscript
+Owner: Tcode-Motion
+Open Issues: 0

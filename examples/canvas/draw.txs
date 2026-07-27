@@ -1,0 +1,12 @@
+# Canvas Drawing Demo
+use canvas
+
+say "Initializing canvas viewport..."
+canvas.create(800, 600)
+
+say "Drawing rectangles and shapes..."
+canvas.rect(0, 0, 800, 600, "#000000") # Background
+canvas.circle(400, 300, 100, "#0DF28B") # Core circle
+canvas.text("TechScript Canvas Engine", 50, 50, 24, "#FFFFFF")
+
+say "Canvas drawings completed successfully."

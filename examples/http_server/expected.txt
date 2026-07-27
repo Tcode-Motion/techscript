@@ -1,0 +1,4 @@
+HTTP Server configured on http://localhost:8080
+Running route mock test...
+Response Code: 200
+Response Body: Hello from TechScript Server!

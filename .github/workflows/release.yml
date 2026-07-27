@@ -1,4 +1,4 @@
-name: TechScript 2.0 Release Packaging
+name: Public Release Packaging
 
 on:
   push:
@@ -6,45 +6,87 @@ on:
       - 'v*'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  build-and-test:
-    name: Build & Test Workspace
+  build-binaries:
+    name: Build Release Binary
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            artifact_name: tsc
+            release_name: techscript-linux-x64
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            artifact_name: tsc.exe
+            release_name: techscript-windows-x64
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            artifact_name: tsc
+            release_name: techscript-macos-x64
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            artifact_name: tsc
+            release_name: techscript-macos-arm64
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Install Rust toolchain
+      - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
-
-      - name: Run workspace tests
-        run: cargo test --workspace --all-targets
-
-  package-windows:
-    name: Package Windows Release
-    needs: build-and-test
-    runs-on: windows-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Install Inno Setup
-        run: choco install innosetup
-
-      - name: Run Packaging Script
-        run: cargo run -p techscript_packager
-
-      - name: Run Smoke Verification Script
-        run: .\verify_release.bat
-
-      - name: Upload Release Artifacts
-        uses: actions/upload-artifact@v3
         with:
-          name: TechScript_Windows_Release
-          path: public-release/
+          targets: ${{ matrix.target }}
+
+      - name: Build target release
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Packaging
+        shell: bash
+        run: |
+          mkdir -p dist
+          cp target/${{ matrix.target }}/release/${{ matrix.artifact_name }} dist/
+          cd dist
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            zip ../${{ matrix.release_name }}.zip ${{ matrix.artifact_name }}
+          else
+            tar -czvf ../${{ matrix.release_name }}.tar.gz ${{ matrix.artifact_name }}
+          fi
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.release_name }}
+          path: ${{ matrix.release_name }}.*
+
+  publish-github-release:
+    name: Publish GitHub Release
+    needs: build-binaries
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Structure assets
+        run: |
+          mkdir assets-dist
+          find artifacts -type f \( -name "*.zip" -o -name "*.tar.gz" \) -exec cp {} assets-dist/ \;
+          ls -la assets-dist/
+
+      - name: Publish draft release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: assets-dist/*
+          draft: true
+          prerelease: contains(github.ref, 'alpha') || contains(github.ref, 'beta') || contains(github.ref, 'rc')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

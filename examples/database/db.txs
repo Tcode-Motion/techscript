@@ -1,0 +1,23 @@
+# SQL Database Demo
+use sqlite
+
+say "Opening local SQLite database..."
+db = sqlite.open("local.db")
+
+# Clean table first
+sqlite.execute(db, "DROP TABLE IF EXISTS users")
+sqlite.execute(db, "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT)")
+
+# Insert records
+sqlite.execute(db, "INSERT INTO users (name) VALUES ('Alice')")
+sqlite.execute(db, "INSERT INTO users (name) VALUES ('Bob')")
+
+say "Querying users..."
+rows = sqlite.query(db, "SELECT * FROM users ORDER BY id ASC")
+for i in 0..(len(rows))
+    row = rows[i]
+    say $"User #{i + 1}: {row.name}"
+end
+
+# Clean up
+sqlite.close(db)

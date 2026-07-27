@@ -1,0 +1,3 @@
+Sending prompt to Gemini AI model...
+AI Response Received:
+[Mock Gemini Response] Prompt: Explain stack-based VMs

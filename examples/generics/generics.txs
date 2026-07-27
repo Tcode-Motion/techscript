@@ -1,0 +1,25 @@
+# Generics (Dynamic Typing) Demo
+
+# Dynamic identity function
+do identity(value)
+    send value
+end
+
+# Dynamic box factory
+do make_box(val)
+    send {
+        "val": val
+    }
+end
+
+num_val = identity(42)
+str_val = identity("TechScript")
+
+say $"Number value: {num_val}"
+say $"String value: {str_val}"
+
+int_box = make_box(100)
+str_box = make_box("Generic Box")
+
+say $"Int Box holds: {int_box.val}"
+say $"Str Box holds: {str_box.val}"

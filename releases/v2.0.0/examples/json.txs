@@ -1,9 +1,0 @@
-# 04_json.txs
-# JSON parsing example.
-# Demonstrates parsing a JSON string to retrieve its properties.
-
-use json
-use string
-
-data = json.parse("{\"success\": true}")
-say string.from_bool(data.success)

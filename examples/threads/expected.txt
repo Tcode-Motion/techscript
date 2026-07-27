@@ -1,0 +1,4 @@
+Starting threads...
+Task B completed on worker thread.
+Task A completed on worker thread.
+All threads joined main thread.

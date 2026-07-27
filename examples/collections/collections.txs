@@ -1,0 +1,23 @@
+# Lists and Maps Collections Demo
+use collections
+
+# List modifications
+fruits = ["apple", "banana"]
+collections.push(fruits, "cherry")
+
+say "--- List Iteration ---"
+for fruit in fruits
+    say fruit
+end
+
+# Map modifications
+prices = {
+    "apple": 50,
+    "banana": 20
+}
+prices["cherry"] = 80
+
+say "--- Map Iteration ---"
+for item in collections.keys(prices)
+    say $"{item}: {prices[item]}"
+end

@@ -1,0 +1,4 @@
+Adding 12 + 4 = 16
+Subtracting 12 - 4 = 8
+Multiplying 12 * 4 = 48
+Dividing 12 / 4 = 3

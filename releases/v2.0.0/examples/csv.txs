@@ -1,9 +1,0 @@
-# 05_csv.txs
-# CSV parsing example.
-# Demonstrates parsing CSV data.
-
-use csv
-
-csv_data = "name,val\na,10"
-data = csv.parse(csv_data)
-say data[0][0]

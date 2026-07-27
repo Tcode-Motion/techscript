@@ -1,54 +1,55 @@
-# TechScript 2.0 Web Guide
+# Web Application Builder Guide
 
-TechScript provides native capabilities for building web clients and servers through the standard library `web` and `http` modules.
+The `web` module allows developers to create full-stack, responsive websites natively using only TechScript.
 
-## HTTP Client API
+---
 
-To make HTTP requests, import the `http` module and use the qualified functions:
-
-```txs
-use http
-
-# GET request
-response = http.get("https://api.github.com/repos/Tcode-Motion/TechScript-2.0")
-say response
-
-# POST request
-payload = {"title": "New Issue", "body": "Reported from TechScript 2.0"}
-resp = http.post("https://api.github.com/repos/Tcode-Motion/TechScript-2.0/issues", json.stringify(payload))
-say resp
-```
-
-## HTTP Server API
-
-To build web servers, use the `web` module:
+## 🏗️ Structure of a Web Page
+Import `use web` and instantiate the `WebPage` model. Define layouts declaratively without writing HTML or CSS:
 
 ```txs
 use web
 
-# Create a simple server on port 8080
-server = web.listen(8080)
-say "Web server running on port 8080..."
+# Create a page instance
+page = WebPage("Home Page")
 
-# Handle incoming requests
-repeat true
-    request = server.accept()
-    when request.path == "/"
-        request.respond(200, "text/html", "<h1>Welcome to TechScript 2.0 Web Server!</h1>")
-    else
-        request.respond(404, "text/plain", "Not Found")
+# Apply styles directly
+page.style("body", {
+    "background-color": "#0f0f11",
+    "color": "#eeeeee",
+    "font-family": "sans-serif",
+    "padding": "40px"
+})
+
+# Define script methods (runs on browser client)
+page.script("""
+    do alert_hello()
+        alert("Hello from TechScript!")
     end
-end
+""")
+
+# Define document structure
+page.body([
+    page.h1("Welcome to My Website!"),
+    page.p("This page is generated entirely in TechScript."),
+    page.button("Click Me!", { "onclick": "alert_hello()" })
+])
+
+# Launch the page in the browser
+page.run()
 ```
 
-## Compilation and Execution
+---
 
-Web capabilities require standard network permissions in the configuration:
+## 🧬 Supported Elements
+The `WebPage` class exposes methods for creating standard elements:
+* `page.h1(text)` to `page.h6(text)`: Heading elements.
+* `page.p(text)`: Paragraph blocks.
+* `page.button(text, attributes)`: Interactive buttons.
+* `page.input(attributes)`: Text input elements.
+* `page.div(children, attributes)`: Group layouts.
 
-```toml
-# tech.toml
-[package]
-name = "web_app"
-version = "1.0.0"
-capabilities = ["Network"]
-```
+---
+
+## 🚀 Execution & Hot-Reloading
+When you run a web script using `tech run site.txs`, the engine spins up an HTTP server on port `8080` and opens your default browser. The server watches files and reloads automatically when changes are saved.

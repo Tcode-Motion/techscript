@@ -1,7 +1,0 @@
-# 03_channels.txs
-# Channels sync communication.
-
-chan = std.channel.make_channel()
-std.channel.send_channel(chan, "ping")
-msg = std.channel.recv_channel(chan)
-say msg

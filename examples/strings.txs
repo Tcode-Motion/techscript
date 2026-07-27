@@ -1,8 +1,0 @@
-# 02_strings.txs
-# Strings module example.
-# Demonstrates string transformations and checks.
-
-use string
-
-s = "techscript"
-say std.string.to_upper(s)

@@ -1,0 +1,25 @@
+# Async/Await Concurrency Demo
+use time
+
+async do fetch_resource(resource_name)
+    say $"[Async] Starting fetch for: {resource_name}"
+    # Sleep to simulate network delay
+    time.sleep(200)
+    send $"Data: {resource_name} content"
+end
+
+async do run_main()
+    say "Spawning resource futures..."
+    future_a = fetch_resource("Config")
+    future_b = fetch_resource("User Profile")
+    
+    say "Awaiting Config..."
+    data_a = await future_a
+    say $"[Done] {data_a}"
+    
+    say "Awaiting User Profile..."
+    data_b = await future_b
+    say $"[Done] {data_b}"
+end
+
+await run_main()

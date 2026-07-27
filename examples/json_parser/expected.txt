@@ -1,0 +1,4 @@
+Decoded Name: TechScript
+Decoded Version: 2
+Decoded Active: true
+Encoded JSON: {"active":true,"name":"TechScript","version":2,"status":"stable"}

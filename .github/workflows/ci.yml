@@ -52,7 +52,7 @@ jobs:
         shell: bash
         run: |
           if [ "${{ matrix.os }}" = "windows-latest" ]; then
-            target/release/tech.exe run examples/hello_world/hello.txs
+            target/release/tsc.exe run examples/hello_world/hello.txs
           else
-            target/release/tech run examples/hello_world/hello.txs
+            target/release/tsc run examples/hello_world/hello.txs
           fi

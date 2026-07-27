@@ -21,7 +21,23 @@ impl CollectDecls {
         match stmt {
             Statement::FuncDecl(decl) => {
                 let name = decl.name.name.clone();
-                let is_builtin = ["len", "range", "ask", "push", "insert", "parse", "write_file", "read_file", "spawn_async", "print", "println", "std", "get", "set"].contains(&name.as_str());
+                let is_builtin = [
+                    "len",
+                    "range",
+                    "ask",
+                    "push",
+                    "insert",
+                    "parse",
+                    "write_file",
+                    "read_file",
+                    "spawn_async",
+                    "print",
+                    "println",
+                    "std",
+                    "get",
+                    "set",
+                ]
+                .contains(&name.as_str());
                 if context.symbol_table.scopes[0].symbols.contains_key(&name) && !is_builtin {
                     let diag = Diagnostic::new(
                         DiagnosticLevel::Error,

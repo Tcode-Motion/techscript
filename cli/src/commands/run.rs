@@ -77,7 +77,11 @@ pub fn execute(
                 default_backend = "interpreter";
             }
         }
-        match backend_str.unwrap_or(default_backend).to_lowercase().as_str() {
+        match backend_str
+            .unwrap_or(default_backend)
+            .to_lowercase()
+            .as_str()
+        {
             "interpreter" | "interp" => ExecutionBackend::Interpreter,
             "native" => ExecutionBackend::Native,
             _ => ExecutionBackend::Vm,
@@ -92,13 +96,31 @@ pub fn execute(
                 "\n[tsc watch] Change detected in: {:?}. Re-running...",
                 changed
             );
-            if let Err(e) = run_once(&path, &current_dir, profile, backend, time, verbose, show_return, debug) {
+            if let Err(e) = run_once(
+                &path,
+                &current_dir,
+                profile,
+                backend,
+                time,
+                verbose,
+                show_return,
+                debug,
+            ) {
                 eprintln!("Run failed: {}", e);
             }
         });
         ExitCode::Success
     } else {
-        let res = run_once(&path, &current_dir, profile, backend, time, verbose, show_return, debug);
+        let res = run_once(
+            &path,
+            &current_dir,
+            profile,
+            backend,
+            time,
+            verbose,
+            show_return,
+            debug,
+        );
         if double_click {
             println!("\n[Process completed. Press Enter to exit...]");
             let mut buffer = String::new();

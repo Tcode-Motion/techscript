@@ -84,8 +84,11 @@ impl<'a> Parser<'a> {
     }
 
     /// Wraps all top-level execution statements into a synthetic `main` function.
-    fn wrap_top_level_statements(&mut self, statements: Vec<techscript_ast::Statement>) -> Vec<techscript_ast::Statement> {
-        use techscript_ast::{Statement, FuncDecl, Block, Ident, Span};
+    fn wrap_top_level_statements(
+        &mut self,
+        statements: Vec<techscript_ast::Statement>,
+    ) -> Vec<techscript_ast::Statement> {
+        use techscript_ast::{Block, FuncDecl, Ident, Span, Statement};
 
         let mut has_explicit_main = false;
         for stmt in &statements {
@@ -158,11 +161,7 @@ impl<'a> Parser<'a> {
     }
 }
 
-pub fn parse_recovered(
-    tokens: &[Token],
-    reporter: &mut DiagnosticReporter,
-) -> Program {
+pub fn parse_recovered(tokens: &[Token], reporter: &mut DiagnosticReporter) -> Program {
     let mut parser = Parser::new(tokens);
     parser.parse_recovered(reporter)
 }
-

@@ -1,15 +1,13 @@
+use crate::{StdFunction, StdlibModule, StdlibRegistry};
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
-use std::cell::RefCell;
-use techscript_runtime::{
-    error::RuntimeError,
-    value::RuntimeValue,
-};
-use crate::{StdFunction, StdlibModule, StdlibRegistry};
+use techscript_runtime::{error::RuntimeError, value::RuntimeValue};
 
 impl StdlibRegistry {
     pub fn register_csv(&mut self) {
-        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> = HashMap::new();
+        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
+            HashMap::new();
 
         exports.insert(
             "parse".to_string(),
@@ -20,7 +18,10 @@ impl StdlibRegistry {
                     let csv = args[0].try_into_string()?;
                     let mut list = Vec::new();
                     for line in csv.lines() {
-                        let parts: Vec<RuntimeValue> = line.split(',').map(|s| RuntimeValue::Str(s.to_string())).collect();
+                        let parts: Vec<RuntimeValue> = line
+                            .split(',')
+                            .map(|s| RuntimeValue::Str(s.to_string()))
+                            .collect();
                         list.push(RuntimeValue::List {
                             items: Rc::new(RefCell::new(parts)),
                             is_const: false,
@@ -43,8 +44,15 @@ impl StdlibRegistry {
                     let mut lines = Vec::new();
                     if let RuntimeValue::List { items, .. } = &args[0] {
                         for row in items.borrow().iter() {
-                            if let RuntimeValue::List { items: row_items, .. } = row {
-                                let parts: Vec<String> = row_items.borrow().iter().map(|item| item.try_into_string().unwrap_or_default()).collect();
+                            if let RuntimeValue::List {
+                                items: row_items, ..
+                            } = row
+                            {
+                                let parts: Vec<String> = row_items
+                                    .borrow()
+                                    .iter()
+                                    .map(|item| item.try_into_string().unwrap_or_default())
+                                    .collect();
                                 lines.push(parts.join(","));
                             }
                         }

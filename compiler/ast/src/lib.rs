@@ -61,7 +61,6 @@ pub enum Statement {
     DSL(DSLBlock),
 }
 
-
 /// make/let/var pattern[: type] = expression
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct VarDecl {
@@ -637,7 +636,14 @@ impl DSLBlock {
         children: Vec<DSLChild>,
         span: Span,
     ) -> Self {
-        Self { id, kind, args, properties, children, span }
+        Self {
+            id,
+            kind,
+            args,
+            properties,
+            children,
+            span,
+        }
     }
 }
 
@@ -652,7 +658,12 @@ pub struct DSLProperty {
 
 impl DSLProperty {
     pub fn new(id: NodeId, name: String, value: Option<Expression>, span: Span) -> Self {
-        Self { id, name, value, span }
+        Self {
+            id,
+            name,
+            value,
+            span,
+        }
     }
 }
 

@@ -43,4 +43,3 @@ fn test_cli_emit_commands() {
         _ => panic!("Expected EmitLlvm subcommand"),
     }
 }
-

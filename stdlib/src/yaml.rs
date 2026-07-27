@@ -1,16 +1,14 @@
+use crate::{StdFunction, StdlibModule, StdlibRegistry};
+use indexmap::IndexMap;
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
-use std::cell::RefCell;
-use indexmap::IndexMap;
-use techscript_runtime::{
-    error::RuntimeError,
-    value::RuntimeValue,
-};
-use crate::{StdFunction, StdlibModule, StdlibRegistry};
+use techscript_runtime::{error::RuntimeError, value::RuntimeValue};
 
 impl StdlibRegistry {
     pub fn register_yaml(&mut self) {
-        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> = HashMap::new();
+        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
+            HashMap::new();
 
         exports.insert(
             "parse".to_string(),
@@ -22,10 +20,12 @@ impl StdlibRegistry {
                     let mut map = IndexMap::new();
                     for line in yaml.lines() {
                         let line = line.trim();
-                        if line.starts_with('#') || line.is_empty() { continue; }
+                        if line.starts_with('#') || line.is_empty() {
+                            continue;
+                        }
                         if let Some(pos) = line.find(':') {
                             let k = line[..pos].trim().to_string();
-                            let v = line[pos+1..].trim().to_string();
+                            let v = line[pos + 1..].trim().to_string();
                             map.insert(k, RuntimeValue::Str(v));
                         }
                     }

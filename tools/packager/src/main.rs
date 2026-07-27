@@ -58,11 +58,22 @@ fn main() -> anyhow::Result<()> {
         return Err(anyhow!("tsc.exe not found at {}", tsc_exe.display()));
     }
     if !lsp_exe.exists() {
-        return Err(anyhow!("techscript-lsp.exe not found at {}", lsp_exe.display()));
+        return Err(anyhow!(
+            "techscript-lsp.exe not found at {}",
+            lsp_exe.display()
+        ));
     }
 
     // Copy compiler driver & duplicate to make compiler tool suite
-    let tools_list = ["tsc.exe", "tsvm.exe", "tspm.exe", "tsfmt.exe", "tslint.exe", "tsdoc.exe", "tsmigrate.exe"];
+    let tools_list = [
+        "tsc.exe",
+        "tsvm.exe",
+        "tspm.exe",
+        "tsfmt.exe",
+        "tslint.exe",
+        "tsdoc.exe",
+        "tsmigrate.exe",
+    ];
     for tool_name in &tools_list {
         fs::copy(&tsc_exe, tools_dir.join(tool_name))?;
     }
@@ -102,7 +113,10 @@ pause
     if root_dir.join("stdlib").exists() {
         copy_dir_all(root_dir.join("stdlib"), &stdlib_dest)?;
     } else {
-        fs::write(stdlib_dest.join("README.md"), "# Stdlib runtime source placeholder\n")?;
+        fs::write(
+            stdlib_dest.join("README.md"),
+            "# Stdlib runtime source placeholder\n",
+        )?;
     }
 
     // 7. Copy flattened examples to examples/ (retaining compat)
@@ -121,9 +135,16 @@ pause
 
     // 8. Copy specific docs to docs/
     let required_docs = [
-        "LanguageGuide.md", "SyntaxGuide.md", "StdlibReference.md", "WebGuide.md",
-        "CanvasGuide.md", "GUI.md", "MigrationGuide.md", "APIReference.md",
-        "ExamplesGuide.md", "BestPractices.md"
+        "LanguageGuide.md",
+        "SyntaxGuide.md",
+        "StdlibReference.md",
+        "WebGuide.md",
+        "CanvasGuide.md",
+        "GUI.md",
+        "MigrationGuide.md",
+        "APIReference.md",
+        "ExamplesGuide.md",
+        "BestPractices.md",
     ];
     let src_docs_dir = root_dir.join("docs");
     for doc_name in &required_docs {
@@ -142,7 +163,10 @@ pause
         fs::copy(root_dir.join("LICENSE"), release_dir.join("LICENSE"))?;
     }
     if root_dir.join("CHANGELOG.md").exists() {
-        fs::copy(root_dir.join("CHANGELOG.md"), release_dir.join("CHANGELOG.md"))?;
+        fs::copy(
+            root_dir.join("CHANGELOG.md"),
+            release_dir.join("CHANGELOG.md"),
+        )?;
     }
     if root_dir.join("README.md").exists() {
         fs::copy(root_dir.join("README.md"), release_dir.join("README.md"))?;
@@ -164,13 +188,16 @@ pause
 
     // 11. Create Portable release ZIP (excluding installers/zip themselves)
     let portable_zip_dest = release_dir.join("TechScript_Portable.zip");
-    println!("Generating portable release: {}", portable_zip_dest.display());
+    println!(
+        "Generating portable release: {}",
+        portable_zip_dest.display()
+    );
     zip_release_folder(&release_dir, &portable_zip_dest)?;
 
     // 12. Create Zip packages for Online Installer download
     let installer_res_dir = release_dir.join("installer");
     fs::create_dir_all(&installer_res_dir)?;
-    
+
     zip_sub_directory(&runtime_dir, &installer_res_dir.join("stdlib.zip"))?;
     zip_sub_directory(&examples_dir, &installer_res_dir.join("examples.zip"))?;
     zip_sub_directory(&docs_dir, &installer_res_dir.join("docs.zip"))?;
@@ -190,7 +217,10 @@ pause
 
     // 15. Compile Offline installer using Inno Setup and copy to online filename so both are same
     compile_inno_installer(&offline_iss, &release_dir.join("TechScript_Setup.exe"))?;
-    fs::copy(release_dir.join("TechScript_Setup.exe"), release_dir.join("TechScript_Online_Setup.exe"))?;
+    fs::copy(
+        release_dir.join("TechScript_Setup.exe"),
+        release_dir.join("TechScript_Online_Setup.exe"),
+    )?;
 
     // 16. Code-sign the setup installers
     sign_executable(&release_dir.join("TechScript_Setup.exe"));
@@ -251,7 +281,8 @@ fn propagate_version_to_vscode(root_dir: &Path, version: &str) -> anyhow::Result
     let pkg_json_path = root_dir.join("editors").join("vscode").join("package.json");
     if pkg_json_path.exists() {
         let content = fs::read_to_string(&pkg_json_path)?;
-        let mut val: serde_json::Value = serde_json::from_str(&content).unwrap_or(serde_json::Value::Null);
+        let mut val: serde_json::Value =
+            serde_json::from_str(&content).unwrap_or(serde_json::Value::Null);
         if val.is_object() {
             val["version"] = serde_json::Value::String(version.to_string());
             let updated = serde_json::to_string_pretty(&val)?;
@@ -336,10 +367,22 @@ fn package_vsix(root_dir: &Path, dest_vsix: &Path, version: &str) -> anyhow::Res
 
     let vscode_src = root_dir.join("editors").join("vscode");
     let files = vec![
-        "package.json", "extension.js", "language-configuration.json", "README.md",
-        "CHANGELOG.md", "LICENSE", "icon.png", "icon@2x.png", "snippets.json",
-        "icons/theme.json", "icons/explorer.svg", "icons/pm.svg", "icons/examples.svg",
-        "icons/templates.svg", "icons/docs.svg", "syntaxes/techscript.tmLanguage.json",
+        "package.json",
+        "extension.js",
+        "language-configuration.json",
+        "README.md",
+        "CHANGELOG.md",
+        "LICENSE",
+        "icon.png",
+        "icon@2x.png",
+        "snippets.json",
+        "icons/theme.json",
+        "icons/explorer.svg",
+        "icons/pm.svg",
+        "icons/examples.svg",
+        "icons/templates.svg",
+        "icons/docs.svg",
+        "syntaxes/techscript.tmLanguage.json",
     ];
 
     for file_path in files {
@@ -628,7 +671,7 @@ begin
     ModePage.Add('Fresh Install (Reinstalls everything, overrides old files, and sets up a clean environment)');
     ModePage.Add('Update (Updates binaries and files to the new version)');
     ModePage.Add('Uninstall (Completely remove TechScript from this computer)');
-    
+
     ModePage.SelectedValueIndex := 0;
   end;
 end;
@@ -748,7 +791,7 @@ begin
     DeleteFile(ExpandConstant('{{%USERPROFILE}}\.cargo\bin\tsmigrate.exe'));
 
     OldBinDir := 'C:\Program Files (x86)\TechScript\bin';
-    
+
     // Clean system PATH
     if RegQueryStringValue(HKEY_LOCAL_MACHINE,
         'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
@@ -976,7 +1019,7 @@ begin
     ModePage.Add('Fresh Install (Reinstalls everything, overrides old files, and sets up a clean environment)');
     ModePage.Add('Update (Updates binaries and files to the new version)');
     ModePage.Add('Uninstall (Completely remove TechScript from this computer)');
-    
+
     ModePage.SelectedValueIndex := 0;
   end;
 end;
@@ -1096,7 +1139,7 @@ begin
     DeleteFile(ExpandConstant('{{%USERPROFILE}}\.cargo\bin\tsmigrate.exe'));
 
     OldBinDir := 'C:\Program Files (x86)\TechScript\bin';
-    
+
     // Clean system PATH
     if RegQueryStringValue(HKEY_LOCAL_MACHINE,
         'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
@@ -1192,7 +1235,14 @@ fn compile_inno_installer(iss_path: &Path, out_exe: &Path) -> anyhow::Result<()>
             Command::new("where.exe").arg("iscc").output()
         } else {
             Command::new("cmd")
-                .args(["/c", "if", "exist", &path.to_string_lossy(), "echo", "found"])
+                .args([
+                    "/c",
+                    "if",
+                    "exist",
+                    &path.to_string_lossy(),
+                    "echo",
+                    "found",
+                ])
                 .output()
         };
 
@@ -1210,7 +1260,11 @@ fn compile_inno_installer(iss_path: &Path, out_exe: &Path) -> anyhow::Result<()>
 
         if status.success() {
             let file_name = iss_path.file_stem().unwrap().to_string_lossy();
-            let base_name = if file_name.contains("online") { "TechScript_Online_Setup.exe" } else { "TechScript_Setup.exe" };
+            let base_name = if file_name.contains("online") {
+                "TechScript_Online_Setup.exe"
+            } else {
+                "TechScript_Setup.exe"
+            };
             let generated_setup = iss_path.parent().unwrap().join(base_name);
 
             if generated_setup.exists() {
@@ -1222,7 +1276,10 @@ fn compile_inno_installer(iss_path: &Path, out_exe: &Path) -> anyhow::Result<()>
         }
     } else {
         println!("Warning: Inno Setup compiler not found. Writing placeholder setup EXE.");
-        fs::write(out_exe, "TechScript setup installer placeholder executable (Requires ISCC to build fully).\n")?;
+        fs::write(
+            out_exe,
+            "TechScript setup installer placeholder executable (Requires ISCC to build fully).\n",
+        )?;
     }
     Ok(())
 }
@@ -1230,14 +1287,27 @@ fn compile_inno_installer(iss_path: &Path, out_exe: &Path) -> anyhow::Result<()>
 fn sign_executable(file_path: &Path) {
     println!("Attempting to code-sign: {}", file_path.display());
     let res = Command::new("signtool.exe")
-        .args(["sign", "/a", "/tr", "http://timestamp.digicert.com", "/td", "sha256", "/fd", "sha256", &file_path.to_string_lossy()])
+        .args([
+            "sign",
+            "/a",
+            "/tr",
+            "http://timestamp.digicert.com",
+            "/td",
+            "sha256",
+            "/fd",
+            "sha256",
+            &file_path.to_string_lossy(),
+        ])
         .status();
     match res {
         Ok(status) => {
             if status.success() {
                 println!("Successfully code-signed {}", file_path.display());
             } else {
-                println!("Warning: signtool sign returned non-zero code for {}.", file_path.display());
+                println!(
+                    "Warning: signtool sign returned non-zero code for {}.",
+                    file_path.display()
+                );
             }
         }
         Err(_) => {
@@ -1261,12 +1331,20 @@ fn calculate_checksums_json(release_dir: &Path) -> anyhow::Result<serde_json::Va
             file.read_to_end(&mut buffer)?;
             hasher.update(&buffer);
             let hash = hasher.finalize();
-            map.insert(fname.to_string(), serde_json::Value::String(hex::encode(hash)));
+            map.insert(
+                fname.to_string(),
+                serde_json::Value::String(hex::encode(hash)),
+            );
         }
     }
 
     // Also include installers and portable zip
-    let root_files = ["TechScript_Setup.exe", "TechScript_Online_Setup.exe", "TechScript_Portable.zip", "TechScript.vsix"];
+    let root_files = [
+        "TechScript_Setup.exe",
+        "TechScript_Online_Setup.exe",
+        "TechScript_Portable.zip",
+        "TechScript.vsix",
+    ];
     for fname in &root_files {
         let fpath = release_dir.join(fname);
         if fpath.exists() {
@@ -1276,7 +1354,10 @@ fn calculate_checksums_json(release_dir: &Path) -> anyhow::Result<serde_json::Va
             file.read_to_end(&mut buffer)?;
             hasher.update(&buffer);
             let hash = hasher.finalize();
-            map.insert(fname.to_string(), serde_json::Value::String(hex::encode(hash)));
+            map.insert(
+                fname.to_string(),
+                serde_json::Value::String(hex::encode(hash)),
+            );
         }
     }
 
@@ -1312,12 +1393,16 @@ fn generate_checksums_txt(release_dir: &Path) -> anyhow::Result<()> {
             file.read_to_end(&mut buffer)?;
             hasher.update(&buffer);
             let hash = hasher.finalize();
-            
+
             // Format to show filename relative to the release root
             let filename = if file_path.parent().unwrap().ends_with("tools") {
                 format!("tools/{}", file_path.file_name().unwrap().to_string_lossy())
             } else {
-                file_path.file_name().unwrap().to_string_lossy().into_owned()
+                file_path
+                    .file_name()
+                    .unwrap()
+                    .to_string_lossy()
+                    .into_owned()
             };
             writeln!(out, "{}  {}", hex::encode(hash), filename)?;
         }

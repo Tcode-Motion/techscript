@@ -1,4 +1,4 @@
-use crate::types::{BlockId, IRType, InstructionId, ValueId, LocalId};
+use crate::types::{BlockId, IRType, InstructionId, LocalId, ValueId};
 use crate::value::Value;
 use serde::{Deserialize, Serialize};
 use techscript_ast::LiteralVal;
@@ -94,7 +94,10 @@ pub enum Op {
     /// Conversions.
     Cast { value: Value, target_type: IRType },
     /// Setup try/catch handler
-    Try { catch_block: BlockId, catch_var: LocalId },
+    Try {
+        catch_block: BlockId,
+        catch_var: LocalId,
+    },
     /// Pop try/catch handler
     EndTry,
     /// Construct a DSL block value with its kind, args, properties, and children refs.

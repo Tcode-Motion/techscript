@@ -14,9 +14,9 @@ pub fn execute(fix: bool) -> ExitCode {
 
     let mut overall_success = true;
     let mut warnings = 0;
-    
+
     let theme = crate::theme::Theme::detect();
-    
+
     // Helper to print check item
     let print_status = |label: &str, status: &str, color: &str| {
         let icon = match status {
@@ -24,12 +24,17 @@ pub fn execute(fix: bool) -> ExitCode {
             "WARN" => theme.warning_icon.yellow().bold(),
             _ => theme.error_icon.red().bold(),
         };
-        println!("  {}  {:<35} [ {} ]", icon, label, status.color(color).bold());
+        println!(
+            "  {}  {:<35} [ {} ]",
+            icon,
+            label,
+            status.color(color).bold()
+        );
     };
 
     // 1. Compiler Toolchain version
     print_status("Compiler version check", "OK", "green");
-    
+
     // 2. Standard library load test
     let registry = techscript_stdlib::StdlibRegistry::new();
     if registry.has_module("std.math") && registry.has_module("std.io") {
@@ -40,7 +45,9 @@ pub fn execute(fix: bool) -> ExitCode {
     }
 
     // 3. Rust & Cargo installation (optional LLVM build dependency)
-    let rustc_check = std::process::Command::new("rustc").arg("--version").output();
+    let rustc_check = std::process::Command::new("rustc")
+        .arg("--version")
+        .output();
     if rustc_check.is_ok() {
         print_status("rustc backend dependency", "OK", "green");
     } else {
@@ -62,9 +69,10 @@ pub fn execute(fix: bool) -> ExitCode {
     // 5. Internet connectivity check
     let internet_ok = std::net::TcpStream::connect_timeout(
         &"8.8.8.8:53".parse().unwrap(),
-        std::time::Duration::from_millis(1200)
-    ).is_ok();
-    
+        std::time::Duration::from_millis(1200),
+    )
+    .is_ok();
+
     if internet_ok {
         print_status("Network connectivity", "OK", "green");
     } else {
@@ -78,7 +86,7 @@ pub fn execute(fix: bool) -> ExitCode {
         let config_dir = home.join(".techscript");
         let cache_dir = config_dir.join("cache");
         let packages_dir = config_dir.join("packages");
-        
+
         let mut cache_ok = cache_dir.exists();
         let mut packages_ok = packages_dir.exists();
 
@@ -121,13 +129,20 @@ pub fn execute(fix: bool) -> ExitCode {
             overall_success = false;
         }
     } else {
-        println!("  {}  {:<35} [ {} ]", theme.info_icon.dimmed(), "Project manifest layout", "SKIPPED".dimmed());
+        println!(
+            "  {}  {:<35} [ {} ]",
+            theme.info_icon.dimmed(),
+            "Project manifest layout",
+            "SKIPPED".dimmed()
+        );
         println!("     Note: No tech.toml found. Running in single-file script execution mode.");
     }
 
     // 8. PATH Env check
     let path_val = std::env::var("PATH").unwrap_or_default();
-    let has_tsc_bin = path_val.contains(".techscript") || path_val.contains("TechScript") || std::env::var("TECHSCRIPT_HOME").is_ok();
+    let has_tsc_bin = path_val.contains(".techscript")
+        || path_val.contains("TechScript")
+        || std::env::var("TECHSCRIPT_HOME").is_ok();
     if has_tsc_bin {
         print_status("PATH environment configuration", "OK", "green");
     } else {
@@ -168,7 +183,9 @@ pub fn execute(fix: bool) -> ExitCode {
         } else {
             print_status("User file associations", "WARN", "yellow");
             warnings += 1;
-            println!("     Note: User file associations (.txs, .tsx) are missing or misconfigured.");
+            println!(
+                "     Note: User file associations (.txs, .tsx) are missing or misconfigured."
+            );
             if fix {
                 println!("     Repairing user file associations...");
                 for ext in &extensions {
@@ -188,7 +205,7 @@ pub fn execute(fix: bool) -> ExitCode {
     }
 
     println!("------------------------------------------------------------");
-    
+
     if fix && !overall_success {
         println!("Performing automatic repair routines...");
         // Auto-initialize directories
@@ -206,7 +223,12 @@ output_format = "Plain"
                 std::fs::write(config_file, default_config).ok();
             }
         }
-        println!("{}", "✓ Repair completed successfully. Re-run doctor to verify.".green().bold());
+        println!(
+            "{}",
+            "✓ Repair completed successfully. Re-run doctor to verify."
+                .green()
+                .bold()
+        );
         return ExitCode::Success;
     }
 

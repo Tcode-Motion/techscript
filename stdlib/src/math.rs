@@ -1,3 +1,4 @@
+use crate::{StdFunction, StdlibModule, StdlibRegistry};
 use std::collections::HashMap;
 use std::rc::Rc;
 use techscript_runtime::{
@@ -5,11 +6,11 @@ use techscript_runtime::{
     value::RuntimeValue,
     RuntimeContext,
 };
-use crate::{StdFunction, StdlibModule, StdlibRegistry};
 
 impl StdlibRegistry {
     pub fn register_math(&mut self) {
-        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> = HashMap::new();
+        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
+            HashMap::new();
 
         exports.insert(
             "abs".to_string(),

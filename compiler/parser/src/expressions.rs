@@ -21,7 +21,7 @@ impl<'a> Parser<'a> {
             let next_prec = self.peek().kind.precedence();
 
             // Check for implicit call (e.g. `env "PATH"`, `say x` etc.)
-            if precedence < Precedence::Call 
+            if precedence < Precedence::Call
                 && self.can_start_implicit_call_arg(self.peek().kind)
                 && self.is_callable(&left)
             {
@@ -33,12 +33,7 @@ impl<'a> Parser<'a> {
                     args.push(self.parse_expression(Precedence::Call, reporter)?);
                 }
                 let span = Span::new(left.span().start, self.previous().span.end);
-                left = Expression::Call(CallExpr::new(
-                    self.next_id(),
-                    Box::new(left),
-                    args,
-                    span,
-                ));
+                left = Expression::Call(CallExpr::new(self.next_id(), Box::new(left), args, span));
                 continue;
             }
 
@@ -324,7 +319,10 @@ impl<'a> Parser<'a> {
             }
             TokenKind::Typeof => {
                 let right = self.parse_expression(Precedence::Unary, reporter)?;
-                let callee = Expression::Identifier(techscript_common::Ident::new("type_of".to_string(), token.span));
+                let callee = Expression::Identifier(techscript_common::Ident::new(
+                    "type_of".to_string(),
+                    token.span,
+                ));
                 let span = Span::new(token.span.start, right.span().end);
                 Ok(Expression::Call(techscript_ast::CallExpr::new(
                     self.next_id(),

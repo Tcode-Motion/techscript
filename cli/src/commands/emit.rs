@@ -1,8 +1,8 @@
 // cli/src/commands/emit.rs
 
 use crate::exit_code::ExitCode;
-use std::path::{Path, PathBuf};
 use std::fs;
+use std::path::{Path, PathBuf};
 
 fn compile_to_ir_module(file_path: &str) -> Result<techscript_ir::Module, String> {
     let path = Path::new(file_path);
@@ -10,13 +10,13 @@ fn compile_to_ir_module(file_path: &str) -> Result<techscript_ir::Module, String
         return Err(format!("Source file does not exist: {}", file_path));
     }
 
-    let source = fs::read_to_string(path)
-        .map_err(|e| format!("Failed to read source file: {}", e))?;
+    let source =
+        fs::read_to_string(path).map_err(|e| format!("Failed to read source file: {}", e))?;
 
     let mut reporter = techscript_errors::DiagnosticReporter::new();
     let tokens = techscript_lexer::lex(&source, &mut reporter)
         .map_err(|_| "Lexical analysis failed".to_string())?;
-    
+
     let program = techscript_parser::parse(&tokens, &mut reporter)
         .map_err(|_| "Parsing failed".to_string())?;
 

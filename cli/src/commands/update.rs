@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
 use techscript_package_manager::{
-    CapabilityValidator, DependencySolver, Lockfile, Manifest, PackageVerifier, Registry,
-    RegistryPackageVersion, Version, VersionConstraint, LockedPackage, DependencyConfig,
+    CapabilityValidator, DependencyConfig, DependencySolver, LockedPackage, Lockfile, Manifest,
+    PackageVerifier, Registry, RegistryPackageVersion, Version, VersionConstraint,
 };
 
 pub fn execute() -> ExitCode {
@@ -47,7 +47,11 @@ pub fn execute() -> ExitCode {
     let mut registry = Registry::new();
     registry.register(RegistryPackageVersion {
         name: "log".to_string(),
-        version: Version { major: 1, minor: 0, patch: 1 }, // Updated patch version!
+        version: Version {
+            major: 1,
+            minor: 0,
+            patch: 1,
+        }, // Updated patch version!
         dependencies: HashMap::new(),
         required_capabilities: vec!["FileSystem".to_string()],
         checksum: "sha_log_101".to_string(),
@@ -55,7 +59,11 @@ pub fn execute() -> ExitCode {
     });
     registry.register(RegistryPackageVersion {
         name: "http".to_string(),
-        version: Version { major: 2, minor: 1, patch: 1 }, // Updated patch version!
+        version: Version {
+            major: 2,
+            minor: 1,
+            patch: 1,
+        }, // Updated patch version!
         dependencies: HashMap::new(),
         required_capabilities: vec!["Network".to_string()],
         checksum: "sha_http_211".to_string(),
@@ -67,7 +75,9 @@ pub fn execute() -> ExitCode {
     for (k, d_config) in &deps {
         let constraint_val = match d_config {
             DependencyConfig::SimpleVersion(s) => s.as_str(),
-            DependencyConfig::Detailed { version: Some(s), .. } => s.as_str(),
+            DependencyConfig::Detailed {
+                version: Some(s), ..
+            } => s.as_str(),
             _ => "*",
         };
         if let Ok(c) = VersionConstraint::parse(constraint_val) {
@@ -85,7 +95,11 @@ pub fn execute() -> ExitCode {
 
     // Sandboxing safety checks and validation
     let parent_caps = manifest.package.capabilities.clone().unwrap_or_default();
-    let allowed_elevation = manifest.package.allow_capability_elevation.clone().unwrap_or_default();
+    let allowed_elevation = manifest
+        .package
+        .allow_capability_elevation
+        .clone()
+        .unwrap_or_default();
 
     for pkg in &resolved {
         CapabilityValidator::validate_elevation(
@@ -93,18 +107,17 @@ pub fn execute() -> ExitCode {
             &pkg.required_capabilities,
             &allowed_elevation,
             &pkg.name,
-        ).map_err(|e| {
+        )
+        .map_err(|e| {
             eprintln!("Elevation check failed: {}", e);
-        }).ok();
+        })
+        .ok();
 
-        PackageVerifier::verify_signature(
-            &pkg.name,
-            &pkg.checksum,
-            &pkg.signature,
-            "pubkey",
-        ).map_err(|e| {
-            eprintln!("Signature check failed: {}", e);
-        }).ok();
+        PackageVerifier::verify_signature(&pkg.name, &pkg.checksum, &pkg.signature, "pubkey")
+            .map_err(|e| {
+                eprintln!("Signature check failed: {}", e);
+            })
+            .ok();
     }
 
     // Refresh packages/ directory
@@ -115,11 +128,14 @@ pub fn execute() -> ExitCode {
     for pkg in &resolved {
         let pkg_path = packages_dir.join(&pkg.name);
         fs::create_dir_all(&pkg_path).ok();
-        
+
         let entry_file = pkg_path.join("lib.txs");
-        let mock_src = format!("// Mock package: {}\npub function version() {{ return \"{}\"; }}\n", pkg.name, pkg.version);
+        let mock_src = format!(
+            "// Mock package: {}\npub function version() {{ return \"{}\"; }}\n",
+            pkg.name, pkg.version
+        );
         fs::write(entry_file, mock_src).ok();
-        
+
         let pkg_manifest = pkg_path.join("tech.toml");
         let pkg_toml = format!(
             "[package]\nname = \"{}\"\nversion = \"{}\"\nentry = \"lib.txs\"\n",
@@ -137,7 +153,9 @@ pub fn execute() -> ExitCode {
     }
 
     // Update lockfile
-    let lockfile = Lockfile { package: locked_packages };
+    let lockfile = Lockfile {
+        package: locked_packages,
+    };
     let lockfile_toml = match toml::to_string(&lockfile) {
         Ok(s) => s,
         Err(e) => {

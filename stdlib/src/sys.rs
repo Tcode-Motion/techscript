@@ -1,17 +1,18 @@
+use crate::{StdFunction, StdlibModule, StdlibRegistry};
+use indexmap::IndexMap;
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
-use std::cell::RefCell;
-use indexmap::IndexMap;
 use techscript_runtime::{
     context::Capability,
     error::{RuntimeError, RuntimeErrorKind},
     value::RuntimeValue,
 };
-use crate::{StdFunction, StdlibModule, StdlibRegistry};
 
 impl StdlibRegistry {
     pub fn register_sys(&mut self) {
-        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> = HashMap::new();
+        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
+            HashMap::new();
 
         exports.insert(
             "read_file".to_string(),
@@ -22,7 +23,8 @@ impl StdlibRegistry {
                     if !ctx.config.capabilities.contains(&Capability::FileSystem) {
                         return Err(RuntimeError::new(
                             RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: FileSystem capability is denied".to_string(),
+                                "Security policy violation: FileSystem capability is denied"
+                                    .to_string(),
                             ),
                             None,
                             None,
@@ -50,7 +52,8 @@ impl StdlibRegistry {
                     if !ctx.config.capabilities.contains(&Capability::FileSystem) {
                         return Err(RuntimeError::new(
                             RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: FileSystem capability is denied".to_string(),
+                                "Security policy violation: FileSystem capability is denied"
+                                    .to_string(),
                             ),
                             None,
                             None,
@@ -79,7 +82,8 @@ impl StdlibRegistry {
                     if !ctx.config.capabilities.contains(&Capability::FileSystem) {
                         return Err(RuntimeError::new(
                             RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: FileSystem capability is denied".to_string(),
+                                "Security policy violation: FileSystem capability is denied"
+                                    .to_string(),
                             ),
                             None,
                             None,
@@ -101,8 +105,8 @@ impl StdlibRegistry {
             },
         );
 
-
-        let mut time_exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> = HashMap::new();
+        let mut time_exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
+            HashMap::new();
         time_exports.insert(
             "now".to_string(),
             Rc::new(StdFunction {

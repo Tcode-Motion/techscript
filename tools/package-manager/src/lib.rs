@@ -179,9 +179,13 @@ impl Registry {
     }
 
     pub fn fetch_package_index(&mut self, url: &str) -> Result<()> {
-        let response = ureq::get(url).call().map_err(|e| anyhow!("Failed to download registry index: {}", e))?;
-        let json_str = response.into_string().map_err(|e| anyhow!("Failed to read registry index: {}", e))?;
-        
+        let response = ureq::get(url)
+            .call()
+            .map_err(|e| anyhow!("Failed to download registry index: {}", e))?;
+        let json_str = response
+            .into_string()
+            .map_err(|e| anyhow!("Failed to read registry index: {}", e))?;
+
         #[derive(Deserialize)]
         struct RegistryIndexEntry {
             name: String,
@@ -191,10 +195,10 @@ impl Registry {
             checksum: String,
             signature: String,
         }
-        
+
         let entries: Vec<RegistryIndexEntry> = serde_json::from_str(&json_str)
             .map_err(|e| anyhow!("Failed to parse registry index JSON: {}", e))?;
-            
+
         for entry in entries {
             let mut resolved_deps = HashMap::new();
             for (dep_name, dep_constraint) in entry.dependencies {

@@ -113,14 +113,24 @@ impl DocumentFormatter {
                     techscript_ast::Pattern::Single(ident) => ident.name.clone(),
                     _ => "<pat>".to_string(),
                 };
-                format!("{}make {} = {}\n", base, name, self.format_expr(&decl.initializer))
+                format!(
+                    "{}make {} = {}\n",
+                    base,
+                    name,
+                    self.format_expr(&decl.initializer)
+                )
             }
             Statement::ConstDecl(decl) => {
                 let name = match &decl.pattern {
                     techscript_ast::Pattern::Single(ident) => ident.name.clone(),
                     _ => "<pat>".to_string(),
                 };
-                format!("{}const {} = {}\n", base, name, self.format_expr(&decl.initializer))
+                format!(
+                    "{}const {} = {}\n",
+                    base,
+                    name,
+                    self.format_expr(&decl.initializer)
+                )
             }
             Statement::Say(s) => format!("{}say {}\n", base, self.format_expr(&s.value)),
             Statement::Return(ret) => {

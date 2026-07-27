@@ -1,17 +1,14 @@
+use crate::{async_runtime, StdFunction, StdlibModule, StdlibRegistry};
+use indexmap::IndexMap;
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
-use std::cell::RefCell;
-use indexmap::IndexMap;
-use techscript_runtime::{
-    error::RuntimeError,
-    value::RuntimeValue,
-    RuntimeContext,
-};
-use crate::{StdFunction, StdlibModule, StdlibRegistry, async_runtime};
+use techscript_runtime::{error::RuntimeError, value::RuntimeValue, RuntimeContext};
 
 impl StdlibRegistry {
     pub fn register_async(&mut self) {
-        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> = HashMap::new();
+        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
+            HashMap::new();
 
         exports.insert(
             "spawn_async".to_string(),
@@ -21,19 +18,27 @@ impl StdlibRegistry {
                 callback: |_ctx, args| {
                     let callback = args[0].clone();
                     let mut fut_map = IndexMap::new();
-                    fut_map.insert("state".to_string(), RuntimeValue::Str("pending".to_string()));
+                    fut_map.insert(
+                        "state".to_string(),
+                        RuntimeValue::Str("pending".to_string()),
+                    );
                     fut_map.insert("value".to_string(), RuntimeValue::Null);
                     let future = RuntimeValue::Map {
                         entries: Rc::new(RefCell::new(fut_map)),
                         is_const: false,
                     };
-                    
+
                     let fut_clone = future.clone();
                     if let RuntimeValue::Function(func) = callback {
                         let func_ptr = Box::into_raw(Box::new(func)) as usize;
                         async_runtime::spawn_task(fut_clone, move || {
-                            let func = unsafe { Box::from_raw(func_ptr as *mut Rc<dyn techscript_runtime::function::Callable>) };
-                            let mut ctx = RuntimeContext::new(techscript_runtime::RuntimeConfig::default());
+                            let func = unsafe {
+                                Box::from_raw(
+                                    func_ptr as *mut Rc<dyn techscript_runtime::function::Callable>,
+                                )
+                            };
+                            let mut ctx =
+                                RuntimeContext::new(techscript_runtime::RuntimeConfig::default());
                             func.call(&mut ctx, vec![]).map_err(|e| format!("{:?}", e))
                         });
                     }
@@ -54,7 +59,8 @@ impl StdlibRegistry {
     }
 
     pub fn register_future(&mut self) {
-        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> = HashMap::new();
+        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
+            HashMap::new();
 
         exports.insert(
             "make_future".to_string(),
@@ -63,7 +69,10 @@ impl StdlibRegistry {
                 arity: 0,
                 callback: |_ctx, _args| {
                     let mut fut_map = IndexMap::new();
-                    fut_map.insert("state".to_string(), RuntimeValue::Str("pending".to_string()));
+                    fut_map.insert(
+                        "state".to_string(),
+                        RuntimeValue::Str("pending".to_string()),
+                    );
                     fut_map.insert("value".to_string(), RuntimeValue::Null);
                     Ok(RuntimeValue::Map {
                         entries: Rc::new(RefCell::new(fut_map)),
@@ -85,7 +94,8 @@ impl StdlibRegistry {
     }
 
     pub fn register_channel(&mut self) {
-        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> = HashMap::new();
+        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
+            HashMap::new();
 
         exports.insert(
             "make_channel".to_string(),
@@ -114,9 +124,16 @@ impl StdlibRegistry {
                 arity: 2,
                 callback: |ctx, args| {
                     if let RuntimeValue::Map { entries, .. } = &args[0] {
-                        let handle_id = entries.borrow().get("_tx_handle").cloned().unwrap_or(RuntimeValue::Null).try_into_int()? as u32;
+                        let handle_id = entries
+                            .borrow()
+                            .get("_tx_handle")
+                            .cloned()
+                            .unwrap_or(RuntimeValue::Null)
+                            .try_into_int()? as u32;
                         let resources = ctx.resources.borrow();
-                        if let Some(tx) = resources.get::<std::sync::mpsc::Sender<RuntimeValue>>(handle_id) {
+                        if let Some(tx) =
+                            resources.get::<std::sync::mpsc::Sender<RuntimeValue>>(handle_id)
+                        {
                             tx.send(args[1].clone()).ok();
                         }
                     }
@@ -132,9 +149,16 @@ impl StdlibRegistry {
                 arity: 1,
                 callback: |ctx, args| {
                     if let RuntimeValue::Map { entries, .. } = &args[0] {
-                        let handle_id = entries.borrow().get("_rx_handle").cloned().unwrap_or(RuntimeValue::Null).try_into_int()? as u32;
+                        let handle_id = entries
+                            .borrow()
+                            .get("_rx_handle")
+                            .cloned()
+                            .unwrap_or(RuntimeValue::Null)
+                            .try_into_int()? as u32;
                         let resources = ctx.resources.borrow();
-                        if let Some(rx) = resources.get::<std::sync::mpsc::Receiver<RuntimeValue>>(handle_id) {
+                        if let Some(rx) =
+                            resources.get::<std::sync::mpsc::Receiver<RuntimeValue>>(handle_id)
+                        {
                             if let Ok(val) = rx.recv() {
                                 return Ok(val);
                             }

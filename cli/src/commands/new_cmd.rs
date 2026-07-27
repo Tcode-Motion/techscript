@@ -5,9 +5,9 @@
 
 use crate::exit_code::ExitCode;
 use crate::templates::ProjectTemplate;
-use std::path::PathBuf;
-use std::io::{self, Write};
 use colored::Colorize;
+use std::io::{self, Write};
+use std::path::PathBuf;
 
 pub fn execute(name_opt: Option<&str>, template_str: Option<&str>) -> ExitCode {
     let mut resolved_name = name_opt.map(|s| s.to_string());
@@ -15,10 +15,20 @@ pub fn execute(name_opt: Option<&str>, template_str: Option<&str>) -> ExitCode {
 
     // 1. Run interactive wizard if name is not provided
     if resolved_name.is_none() {
-        println!("{}", "=========================================================".cyan().bold());
+        println!(
+            "{}",
+            "========================================================="
+                .cyan()
+                .bold()
+        );
         println!("             TECHSCRIPT 2.0 PROJECT CREATOR              ");
-        println!("{}", "=========================================================".cyan().bold());
-        
+        println!(
+            "{}",
+            "========================================================="
+                .cyan()
+                .bold()
+        );
+
         print!("Project Name [hello_techscript]: ");
         io::stdout().flush().ok();
         let mut input_name = String::new();
@@ -48,7 +58,12 @@ pub fn execute(name_opt: Option<&str>, template_str: Option<&str>) -> ExitCode {
             "5" | "empty" => "empty".to_string(),
             _ => "console".to_string(),
         });
-        println!("{}", "=========================================================\n".cyan().bold());
+        println!(
+            "{}",
+            "=========================================================\n"
+                .cyan()
+                .bold()
+        );
     }
 
     let name = resolved_name.as_ref().unwrap();
@@ -81,7 +96,7 @@ pub fn execute(name_opt: Option<&str>, template_str: Option<&str>) -> ExitCode {
             for path in paths {
                 println!("  Created: {}", path.display());
             }
-            
+
             println!("\n{}", "✓ Project created successfully.".green().bold());
             println!("\nNext steps:");
             println!("  cd {}", name.cyan());

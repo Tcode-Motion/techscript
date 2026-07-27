@@ -1,14 +1,14 @@
 // cli/tests/regressions.rs
 use std::collections::HashSet;
 use techscript_errors::DiagnosticReporter;
-use techscript_runtime::value::RuntimeValue;
 use techscript_runtime::context::Capability;
+use techscript_runtime::value::RuntimeValue;
 
 fn run_src(src: &str, capabilities: Vec<Capability>) -> Result<RuntimeValue, String> {
     let mut reporter = DiagnosticReporter::new();
     let tokens = techscript_lexer::lex_recovered(src, &mut reporter);
     let program = techscript_parser::parse_recovered(&tokens, &mut reporter);
-    
+
     if reporter.has_errors() {
         return Err(format!("Parsing failed: {:?}", reporter.get_diagnostics()));
     }
@@ -16,7 +16,10 @@ fn run_src(src: &str, capabilities: Vec<Capability>) -> Result<RuntimeValue, Str
     let mut semantic_reporter = DiagnosticReporter::new();
     let checked = techscript_semantic::analyze(program.clone(), &mut semantic_reporter);
     if checked.is_err() || semantic_reporter.has_errors() {
-        return Err(format!("Semantic failed: {:?}", semantic_reporter.get_diagnostics()));
+        return Err(format!(
+            "Semantic failed: {:?}",
+            semantic_reporter.get_diagnostics()
+        ));
     }
 
     let lowered = techscript_ir::lower(&program, "main");

@@ -5,13 +5,28 @@
 
 use crate::exit_code::ExitCode;
 use crate::pipeline::{BuildProfile, CompilationPipeline, ExecutionBackend, PipelineOptions};
-use std::time::Instant;
 use colored::Colorize;
+use std::time::Instant;
 
 pub fn execute() -> ExitCode {
-    println!("{}", "============================================================".cyan().bold());
-    println!("{}", "           TECHSCRIPT 2.0 BENCHMARKING SUITE                 ".cyan().bold());
-    println!("{}", "============================================================".cyan().bold());
+    println!(
+        "{}",
+        "============================================================"
+            .cyan()
+            .bold()
+    );
+    println!(
+        "{}",
+        "           TECHSCRIPT 2.0 BENCHMARKING SUITE                 "
+            .cyan()
+            .bold()
+    );
+    println!(
+        "{}",
+        "============================================================"
+            .cyan()
+            .bold()
+    );
     println!("Comparing execution times for Fibonacci(25) recursive:\n");
 
     let source_code = r#"
@@ -45,7 +60,10 @@ pub fn execute() -> ExitCode {
             .map_err(|e| e.to_string())?;
         let artifacts = crate::artifacts::ArtifactManager::new(&current_dir);
         let events = crate::events::EventBus::new();
-        let logger = crate::logging::Logger::new(crate::logging::LogLevel::Quiet, crate::logging::LogFormat::Human);
+        let logger = crate::logging::Logger::new(
+            crate::logging::LogLevel::Quiet,
+            crate::logging::LogFormat::Human,
+        );
         let profiler = crate::profiler::TimingProfiler::new(false);
 
         let mut pipeline = CompilationPipeline::new(
@@ -67,12 +85,12 @@ pub fn execute() -> ExitCode {
             emit_build_manifest: false,
         };
 
-        let res = pipeline.compile_unit(&temp_file, &opts)
+        let res = pipeline
+            .compile_unit(&temp_file, &opts)
             .map_err(|e| e.to_string())?;
 
         let start = Instant::now();
-        let _ret_val = pipeline.execute(&res, &opts)
-            .map_err(|e| e.to_string())?;
+        let _ret_val = pipeline.execute(&res, &opts).map_err(|e| e.to_string())?;
         let duration = start.elapsed().as_micros();
 
         Ok(duration)

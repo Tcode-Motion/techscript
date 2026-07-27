@@ -71,7 +71,8 @@ fn migrate_source(source: &str) -> String {
     let tokens = techscript_lexer::lex_recovered(source, &mut reporter);
     let _program = techscript_parser::parse_recovered(&tokens, &mut reporter);
 
-    let mut deprecation_warnings: Vec<_> = reporter.get_diagnostics()
+    let mut deprecation_warnings: Vec<_> = reporter
+        .get_diagnostics()
         .iter()
         .filter(|d| {
             matches!(
@@ -131,7 +132,9 @@ fn migrate_source(source: &str) -> String {
                     let continuations = ["catch", "else", "elif", "or"];
                     for cont in &continuations {
                         let len = cont.len();
-                        if follow_idx + len <= output.len() && &output[follow_idx..follow_idx + len] == *cont {
+                        if follow_idx + len <= output.len()
+                            && &output[follow_idx..follow_idx + len] == *cont
+                        {
                             is_followed_by_block_continuation = true;
                             break;
                         }
@@ -173,25 +176,25 @@ fn post_process(source: &str) -> String {
 
     // ── stdlib module prefix rewrites ─────────────────────────────────────
     let stdlib_rewrites: &[(&str, &str)] = &[
-        ("std.math.",     "math."),
-        ("std.strings.",  "string."),
-        ("std.fs.",       "file."),
-        ("std.path.",     "path."),
-        ("std.env.",      "env."),
-        ("std.os.",       "os."),
-        ("std.time.",     "time."),
-        ("std.net.",      "net."),
-        ("std.http.",     "http."),
-        ("std.json.",     "json."),
-        ("std.csv.",      "csv."),
-        ("std.xml.",      "xml."),
-        ("std.yaml.",     "yaml."),
-        ("std.toml.",     "toml."),
-        ("std.regex.",    "regex."),
-        ("std.crypto.",   "crypto."),
-        ("std.uuid.",     "uuid."),
+        ("std.math.", "math."),
+        ("std.strings.", "string."),
+        ("std.fs.", "file."),
+        ("std.path.", "path."),
+        ("std.env.", "env."),
+        ("std.os.", "os."),
+        ("std.time.", "time."),
+        ("std.net.", "net."),
+        ("std.http.", "http."),
+        ("std.json.", "json."),
+        ("std.csv.", "csv."),
+        ("std.xml.", "xml."),
+        ("std.yaml.", "yaml."),
+        ("std.toml.", "toml."),
+        ("std.regex.", "regex."),
+        ("std.crypto.", "crypto."),
+        ("std.uuid.", "uuid."),
         ("std.database.", "database."),
-        ("std.sqlite.",   "sqlite."),
+        ("std.sqlite.", "sqlite."),
     ];
     for (old, new) in stdlib_rewrites {
         out = out.replace(old, new);
@@ -251,7 +254,10 @@ fn replace_call(source: &str, prefix: &str, keyword: &str) -> String {
     let mut remaining = source;
     loop {
         match remaining.find(full.as_str()) {
-            None => { result.push_str(remaining); break; }
+            None => {
+                result.push_str(remaining);
+                break;
+            }
             Some(pos) => {
                 result.push_str(&remaining[..pos]);
                 remaining = &remaining[pos + full.len()..];
@@ -274,7 +280,9 @@ fn line_transform<F: Fn(&str) -> String>(source: &str, f: F) -> String {
     let ends_newline = source.ends_with('\n');
     let transformed: Vec<String> = source.lines().map(|l| f(l)).collect();
     let mut out = transformed.join("\n");
-    if ends_newline { out.push('\n'); }
+    if ends_newline {
+        out.push('\n');
+    }
     out
 }
 
@@ -332,28 +340,43 @@ mod tests {
     fn test_post_process_import_to_use() {
         let input = "import math\nfrom json import parse";
         let result = post_process(input);
-        assert!(result.contains("use math"), "Expected 'use math', got: {result}");
-        assert!(result.contains("use json"), "Expected 'use json', got: {result}");
+        assert!(
+            result.contains("use math"),
+            "Expected 'use math', got: {result}"
+        );
+        assert!(
+            result.contains("use json"),
+            "Expected 'use json', got: {result}"
+        );
     }
 
     #[test]
     fn test_post_process_model_to_class() {
         let input = "model User {\n    name = \"\"\n}";
         let result = post_process(input);
-        assert!(result.contains("class User"), "Expected 'class User', got: {result}");
+        assert!(
+            result.contains("class User"),
+            "Expected 'class User', got: {result}"
+        );
     }
 
     #[test]
     fn test_post_process_fstring_prefix() {
         let input = "say f\"Hello {name}\"";
         let result = post_process(input);
-        assert!(result.contains("$\"Hello {name}\""), "Expected $-string, got: {result}");
+        assert!(
+            result.contains("$\"Hello {name}\""),
+            "Expected $-string, got: {result}"
+        );
     }
 
     #[test]
     fn test_post_process_each_to_for() {
         let input = "each i in items {\n    say i\n}";
         let result = post_process(input);
-        assert!(result.contains("for i in items"), "Expected 'for i in items', got: {result}");
+        assert!(
+            result.contains("for i in items"),
+            "Expected 'for i in items', got: {result}"
+        );
     }
 }

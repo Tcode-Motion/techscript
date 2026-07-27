@@ -1,19 +1,17 @@
-use std::collections::HashMap;
-use std::rc::Rc;
-use std::fs::File;
-use std::io::{Write, Read};
-use std::path::Path;
-use techscript_runtime::{
-    context::Capability,
-    error::RuntimeError,
-    error::RuntimeErrorKind,
-    value::RuntimeValue,
-};
 use crate::{StdFunction, StdlibModule, StdlibRegistry};
+use std::collections::HashMap;
+use std::fs::File;
+use std::io::{Read, Write};
+use std::path::Path;
+use std::rc::Rc;
+use techscript_runtime::{
+    context::Capability, error::RuntimeError, error::RuntimeErrorKind, value::RuntimeValue,
+};
 
 impl StdlibRegistry {
     pub fn register_compress(&mut self) {
-        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> = HashMap::new();
+        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
+            HashMap::new();
 
         exports.insert(
             "zip".to_string(),
@@ -23,7 +21,10 @@ impl StdlibRegistry {
                 callback: |ctx, args| {
                     if !ctx.config.capabilities.contains(&Capability::FileSystem) {
                         return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation("Security policy violation: FileSystem capability is denied".to_string()),
+                            RuntimeErrorKind::InvalidOperation(
+                                "Security policy violation: FileSystem capability is denied"
+                                    .to_string(),
+                            ),
                             None,
                             None,
                         ));
@@ -50,7 +51,10 @@ impl StdlibRegistry {
                 callback: |ctx, args| {
                     if !ctx.config.capabilities.contains(&Capability::FileSystem) {
                         return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation("Security policy violation: FileSystem capability is denied".to_string()),
+                            RuntimeErrorKind::InvalidOperation(
+                                "Security policy violation: FileSystem capability is denied"
+                                    .to_string(),
+                            ),
                             None,
                             None,
                         ));
@@ -77,7 +81,10 @@ impl StdlibRegistry {
                 callback: |ctx, args| {
                     if !ctx.config.capabilities.contains(&Capability::FileSystem) {
                         return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation("Security policy violation: FileSystem capability is denied".to_string()),
+                            RuntimeErrorKind::InvalidOperation(
+                                "Security policy violation: FileSystem capability is denied"
+                                    .to_string(),
+                            ),
                             None,
                             None,
                         ));
@@ -104,7 +111,10 @@ impl StdlibRegistry {
                 callback: |ctx, args| {
                     if !ctx.config.capabilities.contains(&Capability::FileSystem) {
                         return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation("Security policy violation: FileSystem capability is denied".to_string()),
+                            RuntimeErrorKind::InvalidOperation(
+                                "Security policy violation: FileSystem capability is denied"
+                                    .to_string(),
+                            ),
                             None,
                             None,
                         ));
@@ -131,7 +141,10 @@ impl StdlibRegistry {
                 callback: |ctx, args| {
                     if !ctx.config.capabilities.contains(&Capability::FileSystem) {
                         return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation("Security policy violation: FileSystem capability is denied".to_string()),
+                            RuntimeErrorKind::InvalidOperation(
+                                "Security policy violation: FileSystem capability is denied"
+                                    .to_string(),
+                            ),
                             None,
                             None,
                         ));
@@ -158,7 +171,10 @@ impl StdlibRegistry {
                 callback: |ctx, args| {
                     if !ctx.config.capabilities.contains(&Capability::FileSystem) {
                         return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation("Security policy violation: FileSystem capability is denied".to_string()),
+                            RuntimeErrorKind::InvalidOperation(
+                                "Security policy violation: FileSystem capability is denied"
+                                    .to_string(),
+                            ),
                             None,
                             None,
                         ));

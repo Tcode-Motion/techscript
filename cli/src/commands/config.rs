@@ -8,7 +8,7 @@ use std::path::PathBuf;
 
 pub fn execute(subcommand_str: Option<&str>) -> ExitCode {
     let sub = subcommand_str.unwrap_or("show").to_lowercase();
-    
+
     let home = match dirs::home_dir() {
         Some(h) => h,
         None => {
@@ -22,10 +22,19 @@ pub fn execute(subcommand_str: Option<&str>) -> ExitCode {
 
     match sub.as_str() {
         "show" => {
-            println!("{}", "=========================================================".bold());
+            println!(
+                "{}",
+                "=========================================================".bold()
+            );
             println!("             TECHSCRIPT 2.0 ACTIVE CONFIGURATION         ");
-            println!("{}", "=========================================================".bold());
-            println!("Config Path: {}\n", config_file.display().to_string().cyan());
+            println!(
+                "{}",
+                "=========================================================".bold()
+            );
+            println!(
+                "Config Path: {}\n",
+                config_file.display().to_string().cyan()
+            );
 
             if config_file.exists() {
                 match std::fs::read_to_string(&config_file) {
@@ -38,18 +47,26 @@ pub fn execute(subcommand_str: Option<&str>) -> ExitCode {
             } else {
                 println!("No global configuration file found. Using default values.");
             }
-            println!("{}", "=========================================================".bold());
+            println!(
+                "{}",
+                "=========================================================".bold()
+            );
         }
         "edit" => {
             if !config_file.exists() {
                 // Bootstrapping default config
-                if std::fs::create_dir_all(&config_dir).is_err() || std::fs::write(&config_file, default_toml_config()).is_err() {
+                if std::fs::create_dir_all(&config_dir).is_err()
+                    || std::fs::write(&config_file, default_toml_config()).is_err()
+                {
                     eprintln!("Error writing default config file.");
                     return ExitCode::IoError;
                 }
             }
-            println!("Opening configuration editor: {}", config_file.display().to_string().cyan());
-            
+            println!(
+                "Opening configuration editor: {}",
+                config_file.display().to_string().cyan()
+            );
+
             let status = if cfg!(windows) {
                 std::process::Command::new("notepad")
                     .arg(&config_file)
@@ -67,14 +84,24 @@ pub fn execute(subcommand_str: Option<&str>) -> ExitCode {
             }
         }
         "reset" => {
-            if std::fs::create_dir_all(&config_dir).is_err() || std::fs::write(&config_file, default_toml_config()).is_err() {
+            if std::fs::create_dir_all(&config_dir).is_err()
+                || std::fs::write(&config_file, default_toml_config()).is_err()
+            {
                 eprintln!("Error writing default config file.");
                 return ExitCode::IoError;
             }
-            println!("{}", "✓ Global configuration reset to default settings.".green().bold());
+            println!(
+                "{}",
+                "✓ Global configuration reset to default settings."
+                    .green()
+                    .bold()
+            );
         }
         other => {
-            eprintln!("Error: Unknown config subcommand '{}'. Choose from: show, edit, reset.", other);
+            eprintln!(
+                "Error: Unknown config subcommand '{}'. Choose from: show, edit, reset.",
+                other
+            );
             return ExitCode::InvalidUsage;
         }
     }

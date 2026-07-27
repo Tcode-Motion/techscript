@@ -3,18 +3,28 @@ use crate::interpreter::Interpreter;
 use crate::visitor::AstVisitor;
 use std::cell::RefCell;
 use std::rc::Rc;
-use techscript_runtime::{Callable, Environment, RuntimeError, RuntimeValue, UserFunction};
 use techscript_ast::Expression;
+use techscript_runtime::{Callable, Environment, RuntimeError, RuntimeValue, UserFunction};
 
 impl Interpreter {
     /// Bridges a UserFunction from the runtime crate to a Callable executing via AST visitor.
-pub fn bridge_user_function(&self, user_func: UserFunction) -> BridgedFunction {
+    pub fn bridge_user_function(&self, user_func: UserFunction) -> BridgedFunction {
         let defaults = vec![None; user_func.params.len()];
-        BridgedFunction { user_func, defaults }
+        BridgedFunction {
+            user_func,
+            defaults,
+        }
     }
 
-    pub fn bridge_declared_function(&self, user_func: UserFunction, defaults: Vec<Option<Expression>>) -> BridgedFunction {
-        BridgedFunction { user_func, defaults }
+    pub fn bridge_declared_function(
+        &self,
+        user_func: UserFunction,
+        defaults: Vec<Option<Expression>>,
+    ) -> BridgedFunction {
+        BridgedFunction {
+            user_func,
+            defaults,
+        }
     }
 }
 
@@ -33,7 +43,11 @@ impl Callable for BridgedFunction {
     }
 
     fn accepts_arity(&self, count: usize) -> bool {
-        let required = self.defaults.iter().filter(|default| default.is_none()).count();
+        let required = self
+            .defaults
+            .iter()
+            .filter(|default| default.is_none())
+            .count();
         (required..=self.user_func.params.len()).contains(&count)
     }
 
@@ -64,7 +78,9 @@ impl Callable for BridgedFunction {
         }
         for (index, param) in self.user_func.params.iter().enumerate().skip(provided) {
             if let Some(default) = self.defaults.get(index).and_then(|value| value.as_ref()) {
-                let value = interpreter.with_scope(Rc::clone(&local_env), |interp| interp.visit_expression(default))?;
+                let value = interpreter.with_scope(Rc::clone(&local_env), |interp| {
+                    interp.visit_expression(default)
+                })?;
                 local_env.borrow_mut().define(param.clone(), value, false);
             }
         }

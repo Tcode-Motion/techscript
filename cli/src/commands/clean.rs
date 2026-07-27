@@ -31,7 +31,10 @@ pub fn execute(all: bool) -> ExitCode {
             if cache_dir.exists() {
                 if std::fs::remove_dir_all(&cache_dir).is_ok() {
                     std::fs::create_dir_all(&cache_dir).ok();
-                    println!("{}", "✓ Global package caches successfully cleared.".green());
+                    println!(
+                        "{}",
+                        "✓ Global package caches successfully cleared.".green()
+                    );
                 } else {
                     eprintln!("Error: Could not clear global package caches.");
                     success = false;

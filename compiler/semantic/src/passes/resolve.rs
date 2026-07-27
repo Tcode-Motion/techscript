@@ -3,8 +3,8 @@ use crate::pipeline::Pass;
 use crate::symbol_table::Symbol;
 use crate::types::Type;
 use techscript_ast::{
-    Block, ConstDecl, DSLBlock, DSLChild, Expression, FuncDecl, MethodDecl, MethodKeyword, ModelDecl,
-    Pattern, Program, Statement, VarDecl,
+    Block, ConstDecl, DSLBlock, DSLChild, Expression, FuncDecl, MethodDecl, MethodKeyword,
+    ModelDecl, Pattern, Program, Statement, VarDecl,
 };
 use techscript_common::Ident;
 use techscript_errors::{Diagnostic, DiagnosticLevel, ErrorCode};

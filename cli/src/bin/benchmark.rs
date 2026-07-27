@@ -1,7 +1,7 @@
 // cli/src/bin/benchmark.rs
-use std::time::Instant;
 use std::fs;
 use std::path::Path;
+use std::time::Instant;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Starting TechScript 2.0 compiler performance benchmark...");
@@ -38,7 +38,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let start_semantic = Instant::now();
     let _checked = techscript_semantic::analyze(program.clone(), &mut reporter);
     let duration_semantic = start_semantic.elapsed();
-    println!("- Semantic Analysis: {:.3} ms", duration_semantic.as_secs_f64() * 1000.0);
+    println!(
+        "- Semantic Analysis: {:.3} ms",
+        duration_semantic.as_secs_f64() * 1000.0
+    );
 
     // 4. Benchmark IR lowering & optimization
     let start_ir = Instant::now();
@@ -47,20 +50,29 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let opt_ctx = techscript_optimizer::OptimizationContext::new();
     let _opt_res = techscript_optimizer::optimize(&mut module, &opt_ctx);
     let duration_ir = start_ir.elapsed();
-    println!("- IR Lowering & Optimization: {:.3} ms", duration_ir.as_secs_f64() * 1000.0);
+    println!(
+        "- IR Lowering & Optimization: {:.3} ms",
+        duration_ir.as_secs_f64() * 1000.0
+    );
 
     // 5. Benchmark Bytecode Generation
     let start_bytecode = Instant::now();
     let bytecode = techscript_bytecode::compile(&module);
     let duration_bytecode = start_bytecode.elapsed();
-    println!("- Bytecode Generation: {:.3} ms", duration_bytecode.as_secs_f64() * 1000.0);
+    println!(
+        "- Bytecode Generation: {:.3} ms",
+        duration_bytecode.as_secs_f64() * 1000.0
+    );
 
     // 6. Benchmark VM Execution
     let start_vm = Instant::now();
     let mut vm = techscript_vm::VM::new(bytecode);
     let vm_res = vm.run();
     let duration_vm = start_vm.elapsed();
-    println!("- VM Execution (Fibonacci 25): {:.3} ms", duration_vm.as_secs_f64() * 1000.0);
+    println!(
+        "- VM Execution (Fibonacci 25): {:.3} ms",
+        duration_vm.as_secs_f64() * 1000.0
+    );
 
     if let Ok(res) = vm_res {
         println!("  Result value: {}", res);

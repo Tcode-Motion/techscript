@@ -35,7 +35,10 @@ pub fn execute(package: &str) -> ExitCode {
 
     let mut deps = manifest.dependencies.unwrap_or_default();
     if deps.remove(package).is_none() {
-        println!("Warning: Package '{}' not found in dependencies list.", package);
+        println!(
+            "Warning: Package '{}' not found in dependencies list.",
+            package
+        );
     }
     manifest.dependencies = Some(deps);
 

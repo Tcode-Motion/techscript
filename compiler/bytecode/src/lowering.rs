@@ -64,7 +64,11 @@ impl BytecodeLowerer {
         // Pre-populate catch_vars
         for block in &func.blocks {
             for inst in &block.instructions {
-                if let Op::Try { catch_block, catch_var } = &inst.op {
+                if let Op::Try {
+                    catch_block,
+                    catch_var,
+                } = &inst.op
+                {
                     self.catch_vars.insert(*catch_block, *catch_var);
                 }
             }
@@ -314,20 +318,12 @@ impl BytecodeLowerer {
                 catch_var: _,
             } => {
                 let catch_lbl = self.block_labels[catch_block];
-                self.builder.emit_jump(
-                    Opcode::Try,
-                    catch_lbl,
-                    inst.span,
-                    inst.id,
-                );
+                self.builder
+                    .emit_jump(Opcode::Try, catch_lbl, inst.span, inst.id);
             }
             Op::EndTry => {
-                self.builder.emit(
-                    Opcode::EndTry,
-                    Vec::new(),
-                    inst.span,
-                    inst.id,
-                );
+                self.builder
+                    .emit(Opcode::EndTry, Vec::new(), inst.span, inst.id);
             }
             _ => {
                 // Default NoOp for unimplemented placeholders

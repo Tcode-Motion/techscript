@@ -2,7 +2,9 @@ use crate::block::BasicBlock;
 use crate::function::Function;
 use crate::instruction::{Instruction, InstructionMetadata, Op, Terminator, TerminatorKind};
 use crate::module::{DslBlockIR, Module};
-use crate::types::{BlockId, DslBlockId, FunctionId, GlobalId, IRType, InstructionId, LocalId, ValueId};
+use crate::types::{
+    BlockId, DslBlockId, FunctionId, GlobalId, IRType, InstructionId, LocalId, ValueId,
+};
 
 use std::collections::HashMap;
 use techscript_ast::LiteralVal;
@@ -207,7 +209,8 @@ impl IRBuilder {
 
     /// Returns true if the current block already has a terminator.
     pub fn has_terminator(&self) -> bool {
-        self.current_block.as_ref()
+        self.current_block
+            .as_ref()
             .and_then(|b| b.terminator.as_ref())
             .is_some()
     }

@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
 use techscript_package_manager::{
-    CapabilityValidator, DependencySolver, Lockfile, Manifest, PackageVerifier, Registry,
-    RegistryPackageVersion, Version, VersionConstraint, LockedPackage, DependencyConfig,
+    CapabilityValidator, DependencyConfig, DependencySolver, LockedPackage, Lockfile, Manifest,
+    PackageVerifier, Registry, RegistryPackageVersion, Version, VersionConstraint,
 };
 
 pub fn execute(package: &str) -> ExitCode {
@@ -41,7 +41,11 @@ pub fn execute(package: &str) -> ExitCode {
     let mut registry = Registry::new();
     registry.register(RegistryPackageVersion {
         name: "log".to_string(),
-        version: Version { major: 1, minor: 0, patch: 0 },
+        version: Version {
+            major: 1,
+            minor: 0,
+            patch: 0,
+        },
         dependencies: HashMap::new(),
         required_capabilities: vec!["FileSystem".to_string()],
         checksum: "sha_log_100".to_string(),
@@ -49,7 +53,11 @@ pub fn execute(package: &str) -> ExitCode {
     });
     registry.register(RegistryPackageVersion {
         name: "http".to_string(),
-        version: Version { major: 2, minor: 1, patch: 0 },
+        version: Version {
+            major: 2,
+            minor: 1,
+            patch: 0,
+        },
         dependencies: HashMap::new(),
         required_capabilities: vec!["Network".to_string()],
         checksum: "sha_http_210".to_string(),
@@ -74,7 +82,10 @@ pub fn execute(package: &str) -> ExitCode {
 
     // Update dependencies in manifest
     let mut deps = manifest.dependencies.unwrap_or_default();
-    deps.insert(name.clone(), DependencyConfig::SimpleVersion(constraint_str.clone()));
+    deps.insert(
+        name.clone(),
+        DependencyConfig::SimpleVersion(constraint_str.clone()),
+    );
     manifest.dependencies = Some(deps.clone());
 
     // Resolve dependencies using package manager solver
@@ -83,7 +94,9 @@ pub fn execute(package: &str) -> ExitCode {
     for (k, d_config) in &deps {
         let constraint_val = match d_config {
             DependencyConfig::SimpleVersion(s) => s.as_str(),
-            DependencyConfig::Detailed { version: Some(s), .. } => s.as_str(),
+            DependencyConfig::Detailed {
+                version: Some(s), ..
+            } => s.as_str(),
             _ => "*",
         };
         if let Ok(c) = VersionConstraint::parse(constraint_val) {
@@ -101,7 +114,11 @@ pub fn execute(package: &str) -> ExitCode {
 
     // Perform verification checks
     let parent_caps = manifest.package.capabilities.clone().unwrap_or_default();
-    let allowed_elevation = manifest.package.allow_capability_elevation.clone().unwrap_or_default();
+    let allowed_elevation = manifest
+        .package
+        .allow_capability_elevation
+        .clone()
+        .unwrap_or_default();
 
     for pkg in &resolved {
         // Sandboxing capability elevation checks
@@ -116,12 +133,9 @@ pub fn execute(package: &str) -> ExitCode {
         }
 
         // Digital signature verification
-        if let Err(e) = PackageVerifier::verify_signature(
-            &pkg.name,
-            &pkg.checksum,
-            &pkg.signature,
-            "pubkey",
-        ) {
+        if let Err(e) =
+            PackageVerifier::verify_signature(&pkg.name, &pkg.checksum, &pkg.signature, "pubkey")
+        {
             eprintln!("Error: {}", e);
             return ExitCode::Failure;
         }
@@ -135,12 +149,15 @@ pub fn execute(package: &str) -> ExitCode {
     for pkg in &resolved {
         let pkg_path = packages_dir.join(&pkg.name);
         fs::create_dir_all(&pkg_path).ok();
-        
+
         // Write mock entry file for the dependency
         let entry_file = pkg_path.join("lib.txs");
-        let mock_src = format!("// Mock package: {}\npub function version() {{ return \"{}\"; }}\n", pkg.name, pkg.version);
+        let mock_src = format!(
+            "// Mock package: {}\npub function version() {{ return \"{}\"; }}\n",
+            pkg.name, pkg.version
+        );
         fs::write(entry_file, mock_src).ok();
-        
+
         let pkg_manifest = pkg_path.join("tech.toml");
         let pkg_toml = format!(
             "[package]\nname = \"{}\"\nversion = \"{}\"\nentry = \"lib.txs\"\n",
@@ -171,7 +188,9 @@ pub fn execute(package: &str) -> ExitCode {
     }
 
     // Write lockfile
-    let lockfile = Lockfile { package: locked_packages };
+    let lockfile = Lockfile {
+        package: locked_packages,
+    };
     let lockfile_toml = match toml::to_string(&lockfile) {
         Ok(s) => s,
         Err(e) => {

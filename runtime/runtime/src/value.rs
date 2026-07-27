@@ -296,7 +296,14 @@ impl fmt::Debug for RuntimeValue {
                 m.borrow().fields
             ),
             Self::Function(func) => write!(f, "Function({})", func.name()),
-            Self::DslBlock(dsl) => write!(f, "DslBlock({}, {} args, {} props, {} children)", dsl.kind, dsl.args.len(), dsl.properties.len(), dsl.children.len()),
+            Self::DslBlock(dsl) => write!(
+                f,
+                "DslBlock({}, {} args, {} props, {} children)",
+                dsl.kind,
+                dsl.args.len(),
+                dsl.properties.len(),
+                dsl.children.len()
+            ),
         }
     }
 }

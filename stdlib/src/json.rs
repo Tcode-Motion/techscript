@@ -1,16 +1,17 @@
+use crate::{StdFunction, StdlibModule, StdlibRegistry};
+use indexmap::IndexMap;
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
-use std::cell::RefCell;
-use indexmap::IndexMap;
 use techscript_runtime::{
     error::{RuntimeError, RuntimeErrorKind},
     value::RuntimeValue,
 };
-use crate::{StdFunction, StdlibModule, StdlibRegistry};
 
 impl StdlibRegistry {
     pub fn register_json(&mut self) {
-        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> = HashMap::new();
+        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
+            HashMap::new();
 
         exports.insert(
             "stringify".to_string(),

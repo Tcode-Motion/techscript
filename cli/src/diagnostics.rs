@@ -350,7 +350,11 @@ impl<'a> DiagnosticRenderer<'a> {
                 out.push_str(&format!(
                     "  {}: For more details see: {}\n",
                     "note".cyan().bold(),
-                    format!("https://github.com/Tcode-Motion/techscript/blob/main/docs/errors.md#{:?}", code).underline()
+                    format!(
+                        "https://github.com/Tcode-Motion/techscript/blob/main/docs/errors.md#{:?}",
+                        code
+                    )
+                    .underline()
                 ));
             } else {
                 out.push_str(&format!(

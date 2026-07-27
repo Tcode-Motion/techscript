@@ -1,14 +1,12 @@
+use crate::{StdFunction, StdlibModule, StdlibRegistry};
 use std::collections::HashMap;
 use std::rc::Rc;
-use techscript_runtime::{
-    error::RuntimeError,
-    value::RuntimeValue,
-};
-use crate::{StdFunction, StdlibModule, StdlibRegistry};
+use techscript_runtime::{error::RuntimeError, value::RuntimeValue};
 
 impl StdlibRegistry {
     pub fn register_io(&mut self) {
-        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> = HashMap::new();
+        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
+            HashMap::new();
 
         exports.insert(
             "print".to_string(),

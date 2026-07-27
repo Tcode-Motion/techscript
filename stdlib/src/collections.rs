@@ -1,14 +1,15 @@
+use crate::{StdFunction, StdlibModule, StdlibRegistry};
 use std::collections::HashMap;
 use std::rc::Rc;
 use techscript_runtime::{
     error::{RuntimeError, RuntimeErrorKind},
     value::RuntimeValue,
 };
-use crate::{StdFunction, StdlibModule, StdlibRegistry};
 
 impl StdlibRegistry {
     pub fn register_collections(&mut self) {
-        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> = HashMap::new();
+        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
+            HashMap::new();
 
         exports.insert(
             "push".to_string(),
@@ -115,28 +116,38 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "insert".to_string(),
                 arity: 3,
-                callback: |_ctx, args| {
-                    match &args[0] {
-                        RuntimeValue::List { items, is_const } => {
-                            if *is_const {
-                                return Err(RuntimeError::new(RuntimeErrorKind::InvalidOperation("Const".to_string()), None, None));
-                            }
-                            let idx = args[1].try_into_int()? as usize;
-                            if idx <= items.borrow().len() {
-                                items.borrow_mut().insert(idx, args[2].clone());
-                            }
-                            Ok(RuntimeValue::Null)
+                callback: |_ctx, args| match &args[0] {
+                    RuntimeValue::List { items, is_const } => {
+                        if *is_const {
+                            return Err(RuntimeError::new(
+                                RuntimeErrorKind::InvalidOperation("Const".to_string()),
+                                None,
+                                None,
+                            ));
                         }
-                        RuntimeValue::Map { entries, is_const } => {
-                            if *is_const {
-                                return Err(RuntimeError::new(RuntimeErrorKind::InvalidOperation("Const".to_string()), None, None));
-                            }
-                            let key = args[1].try_into_string()?;
-                            entries.borrow_mut().insert(key, args[2].clone());
-                            Ok(RuntimeValue::Null)
+                        let idx = args[1].try_into_int()? as usize;
+                        if idx <= items.borrow().len() {
+                            items.borrow_mut().insert(idx, args[2].clone());
                         }
-                        _ => Err(RuntimeError::new(RuntimeErrorKind::InvalidOperation("Type error".to_string()), None, None))
+                        Ok(RuntimeValue::Null)
                     }
+                    RuntimeValue::Map { entries, is_const } => {
+                        if *is_const {
+                            return Err(RuntimeError::new(
+                                RuntimeErrorKind::InvalidOperation("Const".to_string()),
+                                None,
+                                None,
+                            ));
+                        }
+                        let key = args[1].try_into_string()?;
+                        entries.borrow_mut().insert(key, args[2].clone());
+                        Ok(RuntimeValue::Null)
+                    }
+                    _ => Err(RuntimeError::new(
+                        RuntimeErrorKind::InvalidOperation("Type error".to_string()),
+                        None,
+                        None,
+                    )),
                 },
             }),
         );
@@ -146,30 +157,43 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "remove".to_string(),
                 arity: 2,
-                callback: |_ctx, args| {
-                    match &args[0] {
-                        RuntimeValue::List { items, is_const } => {
-                            if *is_const {
-                                return Err(RuntimeError::new(RuntimeErrorKind::InvalidOperation("Const".to_string()), None, None));
-                            }
-                            let idx = args[1].try_into_int()? as usize;
-                            if idx < items.borrow().len() {
-                                let val = items.borrow_mut().remove(idx);
-                                Ok(val)
-                            } else {
-                                Ok(RuntimeValue::Null)
-                            }
+                callback: |_ctx, args| match &args[0] {
+                    RuntimeValue::List { items, is_const } => {
+                        if *is_const {
+                            return Err(RuntimeError::new(
+                                RuntimeErrorKind::InvalidOperation("Const".to_string()),
+                                None,
+                                None,
+                            ));
                         }
-                        RuntimeValue::Map { entries, is_const } => {
-                            if *is_const {
-                                return Err(RuntimeError::new(RuntimeErrorKind::InvalidOperation("Const".to_string()), None, None));
-                            }
-                            let key = args[1].try_into_string()?;
-                            let val = entries.borrow_mut().swap_remove(&key).unwrap_or(RuntimeValue::Null);
+                        let idx = args[1].try_into_int()? as usize;
+                        if idx < items.borrow().len() {
+                            let val = items.borrow_mut().remove(idx);
                             Ok(val)
+                        } else {
+                            Ok(RuntimeValue::Null)
                         }
-                        _ => Err(RuntimeError::new(RuntimeErrorKind::InvalidOperation("Type error".to_string()), None, None))
                     }
+                    RuntimeValue::Map { entries, is_const } => {
+                        if *is_const {
+                            return Err(RuntimeError::new(
+                                RuntimeErrorKind::InvalidOperation("Const".to_string()),
+                                None,
+                                None,
+                            ));
+                        }
+                        let key = args[1].try_into_string()?;
+                        let val = entries
+                            .borrow_mut()
+                            .swap_remove(&key)
+                            .unwrap_or(RuntimeValue::Null);
+                        Ok(val)
+                    }
+                    _ => Err(RuntimeError::new(
+                        RuntimeErrorKind::InvalidOperation("Type error".to_string()),
+                        None,
+                        None,
+                    )),
                 },
             }),
         );
@@ -199,11 +223,23 @@ impl StdlibRegistry {
                 callback: |_ctx, args| {
                     match &args[0] {
                         RuntimeValue::List { items, is_const } => {
-                            if *is_const { return Err(RuntimeError::new(RuntimeErrorKind::InvalidOperation("Const".to_string()), None, None)); }
+                            if *is_const {
+                                return Err(RuntimeError::new(
+                                    RuntimeErrorKind::InvalidOperation("Const".to_string()),
+                                    None,
+                                    None,
+                                ));
+                            }
                             items.borrow_mut().clear();
                         }
                         RuntimeValue::Map { entries, is_const } => {
-                            if *is_const { return Err(RuntimeError::new(RuntimeErrorKind::InvalidOperation("Const".to_string()), None, None)); }
+                            if *is_const {
+                                return Err(RuntimeError::new(
+                                    RuntimeErrorKind::InvalidOperation("Const".to_string()),
+                                    None,
+                                    None,
+                                ));
+                            }
                             entries.borrow_mut().clear();
                         }
                         _ => {}
@@ -220,13 +256,20 @@ impl StdlibRegistry {
                 arity: 1,
                 callback: |_ctx, args| {
                     if let RuntimeValue::Map { entries, .. } = &args[0] {
-                        let k_list: Vec<RuntimeValue> = entries.borrow().keys().map(|k| RuntimeValue::Str(k.clone())).collect();
+                        let k_list: Vec<RuntimeValue> = entries
+                            .borrow()
+                            .keys()
+                            .map(|k| RuntimeValue::Str(k.clone()))
+                            .collect();
                         Ok(RuntimeValue::List {
                             items: Rc::new(std::cell::RefCell::new(k_list)),
                             is_const: false,
                         })
                     } else {
-                        Ok(RuntimeValue::List { items: Rc::new(std::cell::RefCell::new(vec![])), is_const: false })
+                        Ok(RuntimeValue::List {
+                            items: Rc::new(std::cell::RefCell::new(vec![])),
+                            is_const: false,
+                        })
                     }
                 },
             }),
@@ -239,13 +282,17 @@ impl StdlibRegistry {
                 arity: 1,
                 callback: |_ctx, args| {
                     if let RuntimeValue::Map { entries, .. } = &args[0] {
-                        let v_list: Vec<RuntimeValue> = entries.borrow().values().cloned().collect();
+                        let v_list: Vec<RuntimeValue> =
+                            entries.borrow().values().cloned().collect();
                         Ok(RuntimeValue::List {
                             items: Rc::new(std::cell::RefCell::new(v_list)),
                             is_const: false,
                         })
                     } else {
-                        Ok(RuntimeValue::List { items: Rc::new(std::cell::RefCell::new(vec![])), is_const: false })
+                        Ok(RuntimeValue::List {
+                            items: Rc::new(std::cell::RefCell::new(vec![])),
+                            is_const: false,
+                        })
                     }
                 },
             }),
@@ -258,14 +305,15 @@ impl StdlibRegistry {
                 arity: 2,
                 callback: |_ctx, args| {
                     let found = match &args[0] {
-                        RuntimeValue::List { items, .. } => {
-                            items.borrow().iter().any(|x| x.try_into_string().unwrap_or_default() == args[1].try_into_string().unwrap_or_default())
-                        }
+                        RuntimeValue::List { items, .. } => items.borrow().iter().any(|x| {
+                            x.try_into_string().unwrap_or_default()
+                                == args[1].try_into_string().unwrap_or_default()
+                        }),
                         RuntimeValue::Map { entries, .. } => {
                             let k = args[1].try_into_string().unwrap_or_default();
                             entries.borrow().contains_key(&k)
                         }
-                        _ => false
+                        _ => false,
                     };
                     Ok(RuntimeValue::Bool(found))
                 },

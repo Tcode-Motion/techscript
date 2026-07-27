@@ -1,21 +1,18 @@
-use std::collections::HashMap;
-use std::rc::Rc;
+use crate::{StdFunction, StdlibModule, StdlibRegistry};
 use aes_gcm::{
     aead::{Aead, KeyInit},
-    Aes256Gcm, Nonce
+    Aes256Gcm, Nonce,
 };
-use sha2::Digest;
 use bcrypt;
-use techscript_runtime::{
-    error::RuntimeError,
-    error::RuntimeErrorKind,
-    value::RuntimeValue,
-};
-use crate::{StdFunction, StdlibModule, StdlibRegistry};
+use sha2::Digest;
+use std::collections::HashMap;
+use std::rc::Rc;
+use techscript_runtime::{error::RuntimeError, error::RuntimeErrorKind, value::RuntimeValue};
 
 impl StdlibRegistry {
     pub fn register_crypto(&mut self) {
-        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> = HashMap::new();
+        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
+            HashMap::new();
 
         exports.insert(
             "aes_encrypt".to_string(),
@@ -33,7 +30,10 @@ impl StdlibRegistry {
 
                     let cipher = Aes256Gcm::new_from_slice(&hashed_key).map_err(|e| {
                         RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("AES key init error: {}", e)),
+                            RuntimeErrorKind::InvalidOperation(format!(
+                                "AES key init error: {}",
+                                e
+                            )),
                             None,
                             None,
                         )
@@ -44,14 +44,20 @@ impl StdlibRegistry {
 
                     let ciphertext = cipher.encrypt(nonce, text.as_bytes()).map_err(|e| {
                         RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("AES encryption error: {}", e)),
+                            RuntimeErrorKind::InvalidOperation(format!(
+                                "AES encryption error: {}",
+                                e
+                            )),
                             None,
                             None,
                         )
                     })?;
 
                     // Hex encode ciphertext
-                    let hex_ciphertext = ciphertext.iter().map(|b| format!("{:02x}", b)).collect::<String>();
+                    let hex_ciphertext = ciphertext
+                        .iter()
+                        .map(|b| format!("{:02x}", b))
+                        .collect::<String>();
                     Ok(RuntimeValue::Str(hex_ciphertext))
                 },
             }),
@@ -70,11 +76,13 @@ impl StdlibRegistry {
                     let mut ciphertext = Vec::new();
                     for i in (0..hex_ciphertext.len()).step_by(2) {
                         if i + 2 <= hex_ciphertext.len() {
-                            if let Ok(byte) = u8::from_str_radix(&hex_ciphertext[i..i+2], 16) {
+                            if let Ok(byte) = u8::from_str_radix(&hex_ciphertext[i..i + 2], 16) {
                                 ciphertext.push(byte);
                             } else {
                                 return Err(RuntimeError::new(
-                                    RuntimeErrorKind::InvalidOperation("Invalid hex ciphertext".to_string()),
+                                    RuntimeErrorKind::InvalidOperation(
+                                        "Invalid hex ciphertext".to_string(),
+                                    ),
                                     None,
                                     None,
                                 ));
@@ -88,7 +96,10 @@ impl StdlibRegistry {
 
                     let cipher = Aes256Gcm::new_from_slice(&hashed_key).map_err(|e| {
                         RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("AES key init error: {}", e)),
+                            RuntimeErrorKind::InvalidOperation(format!(
+                                "AES key init error: {}",
+                                e
+                            )),
                             None,
                             None,
                         )
@@ -96,17 +107,24 @@ impl StdlibRegistry {
 
                     let nonce = Nonce::from_slice(&[0u8; 12]);
 
-                    let plaintext_bytes = cipher.decrypt(nonce, ciphertext.as_slice()).map_err(|e| {
-                        RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("AES decryption error: {}", e)),
-                            None,
-                            None,
-                        )
-                    })?;
+                    let plaintext_bytes =
+                        cipher.decrypt(nonce, ciphertext.as_slice()).map_err(|e| {
+                            RuntimeError::new(
+                                RuntimeErrorKind::InvalidOperation(format!(
+                                    "AES decryption error: {}",
+                                    e
+                                )),
+                                None,
+                                None,
+                            )
+                        })?;
 
                     let plaintext = String::from_utf8(plaintext_bytes).map_err(|e| {
                         RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("Invalid UTF-8 in plaintext: {}", e)),
+                            RuntimeErrorKind::InvalidOperation(format!(
+                                "Invalid UTF-8 in plaintext: {}",
+                                e
+                            )),
                             None,
                             None,
                         )
@@ -147,7 +165,10 @@ impl StdlibRegistry {
                     let hash = args[1].try_into_string()?;
                     let matches = bcrypt::verify(&password, &hash).map_err(|e| {
                         RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("Bcrypt verify error: {}", e)),
+                            RuntimeErrorKind::InvalidOperation(format!(
+                                "Bcrypt verify error: {}",
+                                e
+                            )),
                             None,
                             None,
                         )

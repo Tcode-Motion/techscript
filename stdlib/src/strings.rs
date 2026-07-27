@@ -1,15 +1,12 @@
+use crate::{StdFunction, StdlibModule, StdlibRegistry};
 use std::collections::HashMap;
 use std::rc::Rc;
-use techscript_runtime::{
-    error::RuntimeError,
-    error::RuntimeErrorKind,
-    value::RuntimeValue,
-};
-use crate::{StdFunction, StdlibModule, StdlibRegistry};
+use techscript_runtime::{error::RuntimeError, error::RuntimeErrorKind, value::RuntimeValue};
 
 impl StdlibRegistry {
     pub fn register_strings(&mut self) {
-        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> = HashMap::new();
+        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
+            HashMap::new();
 
         exports.insert(
             "trim".to_string(),

@@ -44,10 +44,37 @@ fn main() {
     if parsed_args.len() >= 2 {
         let first_arg = &parsed_args[1];
         let subcommands = [
-            "run", "build", "check", "fmt", "lint", "migrate", "clean", "init", "new",
-            "doc", "test", "repl", "publish", "install", "uninstall", "update", "doctor",
-            "dump-ast", "dump-ir", "dump-bytecode", "emit-ir", "emit-llvm", "emit-asm", "emit-obj",
-            "benchmark", "completion", "examples", "docs", "config", "self", "help"
+            "run",
+            "build",
+            "check",
+            "fmt",
+            "lint",
+            "migrate",
+            "clean",
+            "init",
+            "new",
+            "doc",
+            "test",
+            "repl",
+            "publish",
+            "install",
+            "uninstall",
+            "update",
+            "doctor",
+            "dump-ast",
+            "dump-ir",
+            "dump-bytecode",
+            "emit-ir",
+            "emit-llvm",
+            "emit-asm",
+            "emit-obj",
+            "benchmark",
+            "completion",
+            "examples",
+            "docs",
+            "config",
+            "self",
+            "help",
         ];
         if !subcommands.contains(&first_arg.as_str()) && !first_arg.starts_with('-') {
             let path = std::path::Path::new(first_arg);
@@ -76,7 +103,9 @@ fn main() {
             }
 
             // Unknown subcommand fuzzy suggestion
-            if e.kind() == clap::error::ErrorKind::InvalidSubcommand || e.kind() == clap::error::ErrorKind::UnknownArgument {
+            if e.kind() == clap::error::ErrorKind::InvalidSubcommand
+                || e.kind() == clap::error::ErrorKind::UnknownArgument
+            {
                 let unknown_cmd = &args[1];
                 if !unknown_cmd.starts_with('-') {
                     suggest_subcommand(unknown_cmd);
@@ -163,7 +192,9 @@ fn main() {
         Commands::Examples => crate::commands::examples::execute(),
         Commands::Docs { section } => crate::commands::docs::execute(section.as_deref()),
         Commands::Config { subcommand } => crate::commands::config::execute(subcommand.as_deref()),
-        Commands::SelfCmd { subcommand } => crate::commands::self_cmd::execute(subcommand.as_deref()),
+        Commands::SelfCmd { subcommand } => {
+            crate::commands::self_cmd::execute(subcommand.as_deref())
+        }
     };
 
     // 4. Exit with status
@@ -174,18 +205,33 @@ fn perform_first_run_check() {
     if let Some(home) = dirs::home_dir() {
         let config_dir = home.join(".techscript");
         let config_file = config_dir.join("config.toml");
-        
+
         if !config_file.exists() {
             // First run onboarding
-            println!("{}", "========================================================".green().bold());
-            println!("{}", "            Welcome to TechScript 2.0!                  ".green().bold());
-            println!("{}", "========================================================".green().bold());
+            println!(
+                "{}",
+                "========================================================"
+                    .green()
+                    .bold()
+            );
+            println!(
+                "{}",
+                "            Welcome to TechScript 2.0!                  "
+                    .green()
+                    .bold()
+            );
+            println!(
+                "{}",
+                "========================================================"
+                    .green()
+                    .bold()
+            );
             println!("Initializing global user folders and config presets...\n");
-            
+
             std::fs::create_dir_all(&config_dir).ok();
             std::fs::create_dir_all(config_dir.join("cache")).ok();
             std::fs::create_dir_all(config_dir.join("packages")).ok();
-            
+
             let default_config = r#"# TechScript 2.0 Global Configuration File
 # Located at ~/.techscript/config.toml
 
@@ -201,11 +247,22 @@ parallel_jobs = 4
 capabilities = ["FileSystem", "Environment", "Process", "Network"]
 "#;
             std::fs::write(&config_file, default_config).ok();
-            
-            println!("✓ Created global configurations directory at: {}", config_dir.display().to_string().cyan());
-            println!("✓ Default settings written to: {}", config_file.display().to_string().cyan());
+
+            println!(
+                "✓ Created global configurations directory at: {}",
+                config_dir.display().to_string().cyan()
+            );
+            println!(
+                "✓ Default settings written to: {}",
+                config_file.display().to_string().cyan()
+            );
             println!("\nRun 'tsc' or 'tsc --help' to get started.");
-            println!("{}", "========================================================\n".green().bold());
+            println!(
+                "{}",
+                "========================================================\n"
+                    .green()
+                    .bold()
+            );
         }
     }
 }
@@ -233,10 +290,36 @@ fn levenshtein(a: &str, b: &str) -> usize {
 
 fn suggest_subcommand(unknown: &str) {
     const SUBCOMMANDS: &[&str] = &[
-        "run", "build", "check", "fmt", "lint", "clean", "init", "new", "doc", "test",
-        "repl", "publish", "install", "uninstall", "update", "doctor", "version",
-        "dump-ast", "dump-ir", "dump-bytecode", "emit-ir", "emit-llvm", "emit-asm",
-        "emit-obj", "benchmark", "completion", "examples", "docs", "config", "self"
+        "run",
+        "build",
+        "check",
+        "fmt",
+        "lint",
+        "clean",
+        "init",
+        "new",
+        "doc",
+        "test",
+        "repl",
+        "publish",
+        "install",
+        "uninstall",
+        "update",
+        "doctor",
+        "version",
+        "dump-ast",
+        "dump-ir",
+        "dump-bytecode",
+        "emit-ir",
+        "emit-llvm",
+        "emit-asm",
+        "emit-obj",
+        "benchmark",
+        "completion",
+        "examples",
+        "docs",
+        "config",
+        "self",
     ];
 
     let mut matches = Vec::new();
@@ -258,10 +341,30 @@ fn suggest_subcommand(unknown: &str) {
 }
 
 fn show_welcome_screen() {
-    println!("{}", "========================================================".cyan().bold());
-    println!("{}", "                 TechScript 2.0                         ".cyan().bold());
-    println!("{}", "   Modern Programming Language & Toolchain              ".cyan().bold());
-    println!("{}", "========================================================".cyan().bold());
+    println!(
+        "{}",
+        "========================================================"
+            .cyan()
+            .bold()
+    );
+    println!(
+        "{}",
+        "                 TechScript 2.0                         "
+            .cyan()
+            .bold()
+    );
+    println!(
+        "{}",
+        "   Modern Programming Language & Toolchain              "
+            .cyan()
+            .bold()
+    );
+    println!(
+        "{}",
+        "========================================================"
+            .cyan()
+            .bold()
+    );
     println!("Version: v{}", techscript_common::TECHSCRIPT_VERSION);
     println!("\nUsage:");
     println!("  tsc <command> [options]");
@@ -286,14 +389,39 @@ fn show_welcome_screen() {
     println!("  • Interactive project scaffolding wizards");
     println!("  • Dynamic terminal themes auto-detection");
     println!("\nFor a complete list of commands, try: tsc --help");
-    println!("{}", "========================================================".cyan().bold());
+    println!(
+        "{}",
+        "========================================================"
+            .cyan()
+            .bold()
+    );
 }
 
 fn show_custom_help() {
-    println!("{}", "========================================================".cyan().bold());
-    println!("{}", "                 TechScript 2.0                         ".cyan().bold());
-    println!("{}", "   Modern Programming Language & Toolchain              ".cyan().bold());
-    println!("{}", "========================================================".cyan().bold());
+    println!(
+        "{}",
+        "========================================================"
+            .cyan()
+            .bold()
+    );
+    println!(
+        "{}",
+        "                 TechScript 2.0                         "
+            .cyan()
+            .bold()
+    );
+    println!(
+        "{}",
+        "   Modern Programming Language & Toolchain              "
+            .cyan()
+            .bold()
+    );
+    println!(
+        "{}",
+        "========================================================"
+            .cyan()
+            .bold()
+    );
     println!("Version: v{}", techscript_common::TECHSCRIPT_VERSION);
     println!("\nUsage:");
     println!("  tsc <command> [options]");
@@ -348,7 +476,12 @@ fn show_custom_help() {
     println!("  tsc doctor                Check environment health");
     println!("\nDocumentation: https://github.com/Tcode-Motion/techscript/tree/main/docs");
     println!("GitHub:        https://github.com/Tcode-Motion/techscript");
-    println!("{}", "========================================================".cyan().bold());
+    println!(
+        "{}",
+        "========================================================"
+            .cyan()
+            .bold()
+    );
 }
 
 use techscript_cli::commands;

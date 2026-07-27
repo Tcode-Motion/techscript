@@ -1,14 +1,12 @@
+use crate::{StdFunction, StdlibModule, StdlibRegistry};
 use std::collections::HashMap;
 use std::rc::Rc;
-use techscript_runtime::{
-    error::RuntimeError,
-    value::RuntimeValue,
-};
-use crate::{StdFunction, StdlibModule, StdlibRegistry};
+use techscript_runtime::{error::RuntimeError, value::RuntimeValue};
 
 impl StdlibRegistry {
     pub fn register_path(&mut self) {
-        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> = HashMap::new();
+        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
+            HashMap::new();
 
         exports.insert(
             "join".to_string(),
@@ -18,7 +16,10 @@ impl StdlibRegistry {
                 callback: |_ctx, args| {
                     let p1 = args[0].try_into_string()?;
                     let p2 = args[1].try_into_string()?;
-                    let path = std::path::Path::new(&p1).join(&p2).to_string_lossy().to_string();
+                    let path = std::path::Path::new(&p1)
+                        .join(&p2)
+                        .to_string_lossy()
+                        .to_string();
                     Ok(RuntimeValue::Str(path))
                 },
             }),
@@ -31,7 +32,11 @@ impl StdlibRegistry {
                 arity: 1,
                 callback: |_ctx, args| {
                     let p = args[0].try_into_string()?;
-                    let base = std::path::Path::new(&p).file_name().unwrap_or_default().to_string_lossy().to_string();
+                    let base = std::path::Path::new(&p)
+                        .file_name()
+                        .unwrap_or_default()
+                        .to_string_lossy()
+                        .to_string();
                     Ok(RuntimeValue::Str(base))
                 },
             }),
@@ -44,7 +49,11 @@ impl StdlibRegistry {
                 arity: 1,
                 callback: |_ctx, args| {
                     let p = args[0].try_into_string()?;
-                    let ext = std::path::Path::new(&p).extension().unwrap_or_default().to_string_lossy().to_string();
+                    let ext = std::path::Path::new(&p)
+                        .extension()
+                        .unwrap_or_default()
+                        .to_string_lossy()
+                        .to_string();
                     Ok(RuntimeValue::Str(ext))
                 },
             }),

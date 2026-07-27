@@ -1,17 +1,18 @@
+use crate::{StdFunction, StdlibModule, StdlibRegistry};
+use indexmap::IndexMap;
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
-use std::cell::RefCell;
-use indexmap::IndexMap;
 use techscript_runtime::{
     context::Capability,
     error::{RuntimeError, RuntimeErrorKind},
     value::RuntimeValue,
 };
-use crate::{StdFunction, StdlibModule, StdlibRegistry};
 
 impl StdlibRegistry {
     pub fn register_database(&mut self) {
-        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> = HashMap::new();
+        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
+            HashMap::new();
 
         exports.insert(
             "connect".to_string(),
@@ -70,40 +71,61 @@ impl StdlibRegistry {
 
                     let resources = ctx.resources.clone();
                     let resources_borrow = resources.borrow();
-                    let conn = resources_borrow.get::<rusqlite::Connection>(handle).ok_or_else(|| {
-                        RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("Invalid database connection handle: {}", handle)),
-                            None,
-                            None,
-                        )
-                    })?;
+                    let conn = resources_borrow
+                        .get::<rusqlite::Connection>(handle)
+                        .ok_or_else(|| {
+                            RuntimeError::new(
+                                RuntimeErrorKind::InvalidOperation(format!(
+                                    "Invalid database connection handle: {}",
+                                    handle
+                                )),
+                                None,
+                                None,
+                            )
+                        })?;
 
                     let mut stmt = conn.prepare(&sql).map_err(|e| {
                         RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("Database prepare error: {}", e)),
+                            RuntimeErrorKind::InvalidOperation(format!(
+                                "Database prepare error: {}",
+                                e
+                            )),
                             None,
                             None,
                         )
                     })?;
 
-                    let params_converted: Vec<rusqlite::types::Value> = params_list.iter().map(|p| {
-                        match p {
+                    let params_converted: Vec<rusqlite::types::Value> = params_list
+                        .iter()
+                        .map(|p| match p {
                             RuntimeValue::Null => rusqlite::types::Value::Null,
-                            RuntimeValue::Bool(b) => rusqlite::types::Value::Integer(if *b { 1 } else { 0 }),
+                            RuntimeValue::Bool(b) => {
+                                rusqlite::types::Value::Integer(if *b { 1 } else { 0 })
+                            }
                             RuntimeValue::Int(i) => rusqlite::types::Value::Integer(*i),
                             RuntimeValue::Float(f) => rusqlite::types::Value::Real(*f),
                             RuntimeValue::Str(s) => rusqlite::types::Value::Text(s.clone()),
                             _ => rusqlite::types::Value::Null,
-                        }
-                    }).collect();
+                        })
+                        .collect();
 
-                    let column_names: Vec<String> = stmt.column_names().into_iter().map(|s| s.to_string()).collect();
+                    let column_names: Vec<String> = stmt
+                        .column_names()
+                        .into_iter()
+                        .map(|s| s.to_string())
+                        .collect();
 
-                    let params_refs: Vec<&dyn rusqlite::types::ToSql> = params_converted.iter().map(|p| p as &dyn rusqlite::types::ToSql).collect();
+                    let params_refs: Vec<&dyn rusqlite::types::ToSql> = params_converted
+                        .iter()
+                        .map(|p| p as &dyn rusqlite::types::ToSql)
+                        .collect();
 
                     let mut rows = stmt.query(params_refs.as_slice()).map_err(|e| {
                         RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("Database query error: {}", e)),
+                            RuntimeErrorKind::InvalidOperation(format!(
+                                "Database query error: {}",
+                                e
+                            )),
                             None,
                             None,
                         )
@@ -113,7 +135,10 @@ impl StdlibRegistry {
 
                     while let Some(row) = rows.next().map_err(|e| {
                         RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("Database row fetch error: {}", e)),
+                            RuntimeErrorKind::InvalidOperation(format!(
+                                "Database row fetch error: {}",
+                                e
+                            )),
                             None,
                             None,
                         )
@@ -122,7 +147,10 @@ impl StdlibRegistry {
                         for (idx, name) in column_names.iter().enumerate() {
                             let value = match row.get_ref(idx).map_err(|e| {
                                 RuntimeError::new(
-                                    RuntimeErrorKind::InvalidOperation(format!("Database column get error: {}", e)),
+                                    RuntimeErrorKind::InvalidOperation(format!(
+                                        "Database column get error: {}",
+                                        e
+                                    )),
                                     None,
                                     None,
                                 )
@@ -175,34 +203,49 @@ impl StdlibRegistry {
 
                     let resources = ctx.resources.clone();
                     let resources_borrow = resources.borrow();
-                    let conn = resources_borrow.get::<rusqlite::Connection>(handle).ok_or_else(|| {
-                        RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("Invalid database connection handle: {}", handle)),
-                            None,
-                            None,
-                        )
-                    })?;
+                    let conn = resources_borrow
+                        .get::<rusqlite::Connection>(handle)
+                        .ok_or_else(|| {
+                            RuntimeError::new(
+                                RuntimeErrorKind::InvalidOperation(format!(
+                                    "Invalid database connection handle: {}",
+                                    handle
+                                )),
+                                None,
+                                None,
+                            )
+                        })?;
 
-                    let params_converted: Vec<rusqlite::types::Value> = params_list.iter().map(|p| {
-                        match p {
+                    let params_converted: Vec<rusqlite::types::Value> = params_list
+                        .iter()
+                        .map(|p| match p {
                             RuntimeValue::Null => rusqlite::types::Value::Null,
-                            RuntimeValue::Bool(b) => rusqlite::types::Value::Integer(if *b { 1 } else { 0 }),
+                            RuntimeValue::Bool(b) => {
+                                rusqlite::types::Value::Integer(if *b { 1 } else { 0 })
+                            }
                             RuntimeValue::Int(i) => rusqlite::types::Value::Integer(*i),
                             RuntimeValue::Float(f) => rusqlite::types::Value::Real(*f),
                             RuntimeValue::Str(s) => rusqlite::types::Value::Text(s.clone()),
                             _ => rusqlite::types::Value::Null,
-                        }
-                    }).collect();
+                        })
+                        .collect();
 
-                    let params_refs: Vec<&dyn rusqlite::types::ToSql> = params_converted.iter().map(|p| p as &dyn rusqlite::types::ToSql).collect();
+                    let params_refs: Vec<&dyn rusqlite::types::ToSql> = params_converted
+                        .iter()
+                        .map(|p| p as &dyn rusqlite::types::ToSql)
+                        .collect();
 
-                    let rows_affected = conn.execute(&sql, params_refs.as_slice()).map_err(|e| {
-                        RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("Database execute error: {}", e)),
-                            None,
-                            None,
-                        )
-                    })?;
+                    let rows_affected =
+                        conn.execute(&sql, params_refs.as_slice()).map_err(|e| {
+                            RuntimeError::new(
+                                RuntimeErrorKind::InvalidOperation(format!(
+                                    "Database execute error: {}",
+                                    e
+                                )),
+                                None,
+                                None,
+                            )
+                        })?;
 
                     Ok(RuntimeValue::Int(rows_affected as i64))
                 },
@@ -216,7 +259,10 @@ impl StdlibRegistry {
                 arity: 1,
                 callback: |ctx, args| {
                     let handle = args[0].try_into_int()? as u32;
-                    let removed = ctx.resources.borrow_mut().remove::<rusqlite::Connection>(handle);
+                    let removed = ctx
+                        .resources
+                        .borrow_mut()
+                        .remove::<rusqlite::Connection>(handle);
                     if removed.is_some() {
                         Ok(RuntimeValue::Bool(true))
                     } else {

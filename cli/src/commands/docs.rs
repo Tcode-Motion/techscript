@@ -8,7 +8,7 @@ use std::path::PathBuf;
 
 pub fn execute(section: Option<&str>) -> ExitCode {
     let current_dir = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
-    
+
     // Resolve home directory path candidates
     let home_path = std::env::var("TECHSCRIPT_HOME")
         .map(PathBuf::from)
@@ -17,7 +17,12 @@ pub fn execute(section: Option<&str>) -> ExitCode {
     let docs_dir = home_path.join("docs").join("html").join("index.html");
 
     if !docs_dir.exists() {
-        eprintln!("{}", "Error: Offline documentation file index.html not found inside TECHSCRIPT_HOME.".red().bold());
+        eprintln!(
+            "{}",
+            "Error: Offline documentation file index.html not found inside TECHSCRIPT_HOME."
+                .red()
+                .bold()
+        );
         return ExitCode::IoError;
     }
 
@@ -29,7 +34,10 @@ pub fn execute(section: Option<&str>) -> ExitCode {
             "compiler" => "#compiler",
             "guide" => "#guide",
             other => {
-                eprintln!("Warning: Unknown docs section '{}'. Defaulting to guide index.", other);
+                eprintln!(
+                    "Warning: Unknown docs section '{}'. Defaulting to guide index.",
+                    other
+                );
                 ""
             }
         };
@@ -52,13 +60,9 @@ fn open_browser(url: &str) -> std::io::Result<()> {
             .args(&["/C", "start", url])
             .status()?;
     } else if cfg!(target_os = "macos") {
-        std::process::Command::new("open")
-            .arg(url)
-            .status()?;
+        std::process::Command::new("open").arg(url).status()?;
     } else {
-        std::process::Command::new("xdg-open")
-            .arg(url)
-            .status()?;
+        std::process::Command::new("xdg-open").arg(url).status()?;
     }
     Ok(())
 }

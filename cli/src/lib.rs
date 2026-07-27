@@ -17,12 +17,12 @@ pub mod logging;
 pub mod pipeline;
 pub mod plugin;
 pub mod profiler;
+pub mod progress;
 pub mod project;
 pub mod scheduler;
 pub mod templates;
-pub mod watch;
-pub mod progress;
 pub mod theme;
+pub mod watch;
 
 use clap::{Parser as ClapParser, Subcommand};
 
@@ -267,24 +267,16 @@ pub enum Commands {
     },
 
     /// Emit lowered IR representation (.ir)
-    EmitIr {
-        file: String,
-    },
+    EmitIr { file: String },
 
     /// Emit LLVM IR representation (.ll)
-    EmitLlvm {
-        file: String,
-    },
+    EmitLlvm { file: String },
 
     /// Emit assembly representation (.s)
-    EmitAsm {
-        file: String,
-    },
+    EmitAsm { file: String },
 
     /// Emit object file representation (.o or .obj)
-    EmitObj {
-        file: String,
-    },
+    EmitObj { file: String },
 
     /// Runs benchmark suite comparing VM, native, and JIT
     Benchmark,

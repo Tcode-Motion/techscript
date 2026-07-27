@@ -50,7 +50,11 @@ pub fn execute(path_str: Option<&str>) -> ExitCode {
                 let formatted = formatter.format_source(&content);
                 // In skeletal phase, if format_source returns empty, we just skip writing to avoid wiping out files.
                 // In future phase, the formatting AST walker will produce real output.
-                if !formatted.is_empty() && formatted != content && !formatted.contains("<stmt>") && !formatted.contains("<pat>") {
+                if !formatted.is_empty()
+                    && formatted != content
+                    && !formatted.contains("<stmt>")
+                    && !formatted.contains("<pat>")
+                {
                     if let Err(e) = std::fs::write(&file, formatted) {
                         eprintln!("Error writing formatted file {:?}: {}", file, e);
                     } else {

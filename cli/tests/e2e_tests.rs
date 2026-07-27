@@ -1,14 +1,14 @@
 // cli/tests/e2e_tests.rs
 use std::collections::HashSet;
 use techscript_errors::DiagnosticReporter;
-use techscript_runtime::value::RuntimeValue;
 use techscript_runtime::context::Capability;
+use techscript_runtime::value::RuntimeValue;
 
 fn run_src(src: &str, capabilities: Vec<Capability>) -> Result<RuntimeValue, String> {
     let mut reporter = DiagnosticReporter::new();
     let tokens = techscript_lexer::lex_recovered(src, &mut reporter);
     let program = techscript_parser::parse_recovered(&tokens, &mut reporter);
-    
+
     // Check syntax errors
     if reporter.has_errors() {
         return Err(format!("Parsing failed: {:?}", reporter.get_diagnostics()));
@@ -17,7 +17,10 @@ fn run_src(src: &str, capabilities: Vec<Capability>) -> Result<RuntimeValue, Str
     let mut semantic_reporter = DiagnosticReporter::new();
     let checked = techscript_semantic::analyze(program.clone(), &mut semantic_reporter);
     if checked.is_err() || semantic_reporter.has_errors() {
-        return Err(format!("Semantic failed: {:?}", semantic_reporter.get_diagnostics()));
+        return Err(format!(
+            "Semantic failed: {:?}",
+            semantic_reporter.get_diagnostics()
+        ));
     }
 
     let lowered = techscript_ir::lower(&program, "main");
@@ -80,17 +83,20 @@ fn test_e2e_collections_lists_and_maps() {
         build main() {
             make list = [1, 2];
             push(list, 3);
-            
+
             make map = {"key": "value"};
             insert(map, "count", len(list));
-            
+
             return map;
         }
     "#;
     let res = run_src(src, vec![]).unwrap();
     if let RuntimeValue::Map { entries, .. } = res {
         let borrow = entries.borrow();
-        assert_eq!(borrow.get("key").unwrap().try_into_string().unwrap(), "value");
+        assert_eq!(
+            borrow.get("key").unwrap().try_into_string().unwrap(),
+            "value"
+        );
         assert_eq!(borrow.get("count").unwrap().try_into_int().unwrap(), 3);
     } else {
         panic!("Expected Map");

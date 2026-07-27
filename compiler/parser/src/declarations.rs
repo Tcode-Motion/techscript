@@ -93,7 +93,8 @@ impl<'a> Parser<'a> {
             reporter.report(techscript_errors::Diagnostic::new(
                 techscript_errors::DiagnosticLevel::Warning,
                 techscript_errors::ErrorCode::TSW1001,
-                "Warning TSW1001: 'keep' is deprecated. Use 'const' to declare constant variables.".to_string(),
+                "Warning TSW1001: 'keep' is deprecated. Use 'const' to declare constant variables."
+                    .to_string(),
                 kw_span,
             ));
         }
@@ -239,7 +240,11 @@ impl<'a> Parser<'a> {
             while self.match_token(TokenKind::Newline) || self.match_token(TokenKind::Semicolon) {}
         }
 
-        let end_kind = if is_brace { TokenKind::RightBrace } else { TokenKind::End };
+        let end_kind = if is_brace {
+            TokenKind::RightBrace
+        } else {
+            TokenKind::End
+        };
         let mut fields = Vec::new();
         while !self.check(end_kind) && !self.is_at_end() {
             while self.match_token(TokenKind::Newline) || self.match_token(TokenKind::Semicolon) {}
@@ -282,7 +287,11 @@ impl<'a> Parser<'a> {
             while self.match_token(TokenKind::Newline) || self.match_token(TokenKind::Semicolon) {}
         }
 
-        let end_kind = if is_brace { TokenKind::RightBrace } else { TokenKind::End };
+        let end_kind = if is_brace {
+            TokenKind::RightBrace
+        } else {
+            TokenKind::End
+        };
         let mut variants = Vec::new();
         while !self.check(end_kind) && !self.is_at_end() {
             while self.match_token(TokenKind::Newline) || self.match_token(TokenKind::Semicolon) {}
@@ -341,14 +350,20 @@ impl<'a> Parser<'a> {
         let is_brace = self.match_token(TokenKind::LeftBrace);
         if !is_brace {
             if !self.match_token(TokenKind::Then) {
-                while self.match_token(TokenKind::Newline) || self.match_token(TokenKind::Semicolon) {}
+                while self.match_token(TokenKind::Newline) || self.match_token(TokenKind::Semicolon)
+                {
+                }
             }
         }
 
         let mut fields = Vec::new();
         let mut methods = Vec::new();
 
-        let end_kind = if is_brace { TokenKind::RightBrace } else { TokenKind::End };
+        let end_kind = if is_brace {
+            TokenKind::RightBrace
+        } else {
+            TokenKind::End
+        };
 
         while !self.check(end_kind) && !self.is_at_end() {
             while self.match_token(TokenKind::Newline) || self.match_token(TokenKind::Semicolon) {}
@@ -399,12 +414,12 @@ impl<'a> Parser<'a> {
                 // Parse plain field declaration
                 let field_start = self.peek().span.start;
                 let name_ident = self.parse_identifier(reporter)?;
-                
+
                 let mut type_ann = None;
                 if self.match_token(TokenKind::Colon) {
                     type_ann = Some(self.parse_type_spec(reporter)?);
                 }
-                
+
                 if !self.match_token(TokenKind::Equal) {
                     self.consume(
                         TokenKind::Be,
@@ -413,10 +428,11 @@ impl<'a> Parser<'a> {
                         reporter,
                     )?;
                 }
-                let initializer = self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
+                let initializer =
+                    self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
                 self.consume_terminator(reporter)?;
                 let field_span = Span::new(field_start, self.previous().span.end);
-                
+
                 let f_decl = VarDecl::new(
                     self.next_id(),
                     Pattern::Single(name_ident),

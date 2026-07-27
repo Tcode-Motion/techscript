@@ -273,7 +273,9 @@ impl VM {
                         let mut is_future = false;
                         {
                             let entries_borrow = entries.borrow();
-                            if entries_borrow.contains_key("state") && entries_borrow.contains_key("value") {
+                            if entries_borrow.contains_key("state")
+                                && entries_borrow.contains_key("value")
+                            {
                                 is_future = true;
                             }
                         }
@@ -281,7 +283,10 @@ impl VM {
                             loop {
                                 let state = {
                                     let entries_borrow = entries.borrow();
-                                    entries_borrow.get("state").cloned().unwrap_or(RuntimeValue::Null)
+                                    entries_borrow
+                                        .get("state")
+                                        .cloned()
+                                        .unwrap_or(RuntimeValue::Null)
                                 };
                                 if let RuntimeValue::Str(s) = &state {
                                     if s == "pending" {
@@ -289,12 +294,23 @@ impl VM {
                                         std::thread::yield_now();
                                         continue;
                                     } else if s == "resolved" {
-                                        let resolved_val = entries.borrow().get("value").cloned().unwrap_or(RuntimeValue::Null);
+                                        let resolved_val = entries
+                                            .borrow()
+                                            .get("value")
+                                            .cloned()
+                                            .unwrap_or(RuntimeValue::Null);
                                         self.stack.push(resolved_val)?;
                                         break;
                                     } else if s == "rejected" {
-                                        let err_val = entries.borrow().get("value").cloned().unwrap_or(RuntimeValue::Null);
-                                        return Err(VMError::RuntimeException(format!("Awaited future was rejected: {:?}", err_val)));
+                                        let err_val = entries
+                                            .borrow()
+                                            .get("value")
+                                            .cloned()
+                                            .unwrap_or(RuntimeValue::Null);
+                                        return Err(VMError::RuntimeException(format!(
+                                            "Awaited future was rejected: {:?}",
+                                            err_val
+                                        )));
                                     }
                                 }
                                 self.stack.push(val.clone())?;
@@ -353,13 +369,15 @@ impl VM {
                 Opcode::Or => {
                     let right = self.stack.pop()?;
                     let left = self.stack.pop()?;
-                    self.stack.push(RuntimeValue::Bool(left.is_truthy() || right.is_truthy()))?;
+                    self.stack
+                        .push(RuntimeValue::Bool(left.is_truthy() || right.is_truthy()))?;
                 }
 
                 Opcode::And => {
                     let right = self.stack.pop()?;
                     let left = self.stack.pop()?;
-                    self.stack.push(RuntimeValue::Bool(left.is_truthy() && right.is_truthy()))?;
+                    self.stack
+                        .push(RuntimeValue::Bool(left.is_truthy() && right.is_truthy()))?;
                 }
 
                 Opcode::Less => {
@@ -497,22 +515,28 @@ impl VM {
                             }
                             RuntimeValue::Function(func) => {
                                 if func.name() == "spawn_async" {
-                                    if let Some(RuntimeValue::Str(func_name)) = args.first().cloned() {
+                                    if let Some(RuntimeValue::Str(func_name)) =
+                                        args.first().cloned()
+                                    {
                                         let target_idx = self
                                             .module
                                             .functions
                                             .iter()
                                             .position(|f| f.name == func_name)
                                             .ok_or(VMError::InvalidFunction(0))?;
-                                        
+
                                         let mut sub_vm = VM::new(self.module.clone());
-                                        sub_vm.ctx.config.capabilities = self.ctx.config.capabilities.clone();
+                                        sub_vm.ctx.config.capabilities =
+                                            self.ctx.config.capabilities.clone();
                                         sub_vm.frames.push(CallFrame::new(target_idx as u32, 0));
                                         sub_vm.running = true;
                                         let val = sub_vm.execute_loop()?;
-                                        
+
                                         let mut fut_map = indexmap::IndexMap::new();
-                                        fut_map.insert("state".to_string(), RuntimeValue::Str("resolved".to_string()));
+                                        fut_map.insert(
+                                            "state".to_string(),
+                                            RuntimeValue::Str("resolved".to_string()),
+                                        );
                                         fut_map.insert("value".to_string(), val);
                                         let future = RuntimeValue::Map {
                                             entries: Rc::new(RefCell::new(fut_map)),
@@ -523,24 +547,30 @@ impl VM {
                                     }
                                 }
                                 if func.name() == "spawn" {
-                                    if let Some(RuntimeValue::Str(func_name)) = args.first().cloned() {
+                                    if let Some(RuntimeValue::Str(func_name)) =
+                                        args.first().cloned()
+                                    {
                                         let target_idx = self
                                             .module
                                             .functions
                                             .iter()
                                             .position(|f| f.name == func_name)
                                             .ok_or(VMError::InvalidFunction(0))?;
-                                        
+
                                         let module_clone = self.module.clone();
-                                        let capabilities_clone = self.ctx.config.capabilities.clone();
+                                        let capabilities_clone =
+                                            self.ctx.config.capabilities.clone();
                                         let handle = std::thread::spawn(move || {
                                             let mut sub_vm = VM::new(module_clone);
                                             sub_vm.ctx.config.capabilities = capabilities_clone;
-                                            sub_vm.frames.push(CallFrame::new(target_idx as u32, 0));
+                                            sub_vm
+                                                .frames
+                                                .push(CallFrame::new(target_idx as u32, 0));
                                             sub_vm.running = true;
                                             sub_vm.execute_loop().ok();
                                         });
-                                        let handle_id = self.ctx.resources.borrow_mut().insert(handle);
+                                        let handle_id =
+                                            self.ctx.resources.borrow_mut().insert(handle);
                                         self.stack.push(RuntimeValue::Int(handle_id as i64))?;
                                         continue;
                                     }
@@ -746,17 +776,16 @@ impl VM {
 
                         let base = self.stack.pop()?;
                         let res = match &base {
-                            RuntimeValue::Map { .. } => {
-                                collections::map_get(&base, name)
-                                    .map_err(|e| VMError::RuntimeException(e.to_string()))?
-                            }
+                            RuntimeValue::Map { .. } => collections::map_get(&base, name)
+                                .map_err(|e| VMError::RuntimeException(e.to_string()))?,
                             RuntimeValue::ModelInstance(inst) => {
                                 if let Some(val) = inst.borrow().fields.get(name) {
                                     val.clone()
                                 } else {
                                     return Err(VMError::RuntimeException(format!(
                                         "Field or method '{}' not found on model '{}'",
-                                        name, inst.borrow().name
+                                        name,
+                                        inst.borrow().name
                                     )));
                                 }
                             }
@@ -766,7 +795,8 @@ impl VM {
                                 } else {
                                     return Err(VMError::RuntimeException(format!(
                                         "Field '{}' not found on struct '{}'",
-                                        name, inst.borrow().name
+                                        name,
+                                        inst.borrow().name
                                     )));
                                 }
                             }
@@ -813,7 +843,7 @@ impl VM {
                             RuntimeValue::StructInstance(inst) => {
                                 if inst.borrow().is_const {
                                     return Err(VMError::RuntimeException(
-                                        "Cannot mutate const struct instance".to_string()
+                                        "Cannot mutate const struct instance".to_string(),
                                     ));
                                 }
                                 inst.borrow_mut().fields.insert(name.clone(), value.clone());

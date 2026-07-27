@@ -4,14 +4,29 @@
 //! Maintains persistent interpreter environments and exposes metacommands.
 
 use crate::exit_code::ExitCode;
+use colored::Colorize;
 use rustyline::error::ReadlineError;
 use rustyline::DefaultEditor;
-use colored::Colorize;
 
 pub fn execute() -> ExitCode {
-    println!("{}", "=========================================================".cyan().bold());
-    println!("{}", "                 TechScript v2.0 REPL                    ".cyan().bold());
-    println!("{}", "=========================================================".cyan().bold());
+    println!(
+        "{}",
+        "========================================================="
+            .cyan()
+            .bold()
+    );
+    println!(
+        "{}",
+        "                 TechScript v2.0 REPL                    "
+            .cyan()
+            .bold()
+    );
+    println!(
+        "{}",
+        "========================================================="
+            .cyan()
+            .bold()
+    );
     println!("Type ':help' or ':h' for metacommands assistance.");
     println!("Type ':quit' or ':q' to exit the shell.\n");
 
@@ -43,7 +58,7 @@ pub fn execute() -> ExitCode {
                 }
                 let _ = rl.add_history_entry(trimmed);
                 session_history.push(trimmed.to_string());
-                
+
                 // Save history incrementally
                 if let Some(ref path) = history_path {
                     rl.save_history(path).ok();

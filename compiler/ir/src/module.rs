@@ -1,5 +1,5 @@
 use crate::function::Function;
-use crate::types::{BlockId, FunctionId, GlobalId, IRType, ValueId, DslBlockId};
+use crate::types::{BlockId, DslBlockId, FunctionId, GlobalId, IRType, ValueId};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use techscript_ast::LiteralVal;

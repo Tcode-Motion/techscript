@@ -69,10 +69,7 @@ impl Interpreter {
             let short_name = mod_key.strip_prefix("std.").unwrap_or(mod_key.as_str());
             let mut module_map = IndexMap::new();
             for (func_name, func) in &module.exports {
-                module_map.insert(
-                    func_name.clone(),
-                    RuntimeValue::Function(Rc::clone(func)),
-                );
+                module_map.insert(func_name.clone(), RuntimeValue::Function(Rc::clone(func)));
             }
             self.env.borrow_mut().define(
                 short_name.to_string(),
@@ -129,7 +126,7 @@ impl Interpreter {
                 FlowSignal::Throw(err) => return Err(err),
             }
         }
-        
+
         // Auto-execute main function if defined in environment
         let main_val = self.env.borrow().lookup("main");
         if let Ok(RuntimeValue::Function(main_func)) = main_val {

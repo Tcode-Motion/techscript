@@ -191,9 +191,9 @@ impl Callable for TypeOfNative {
         // v1.0.8 type names: `str` for strings, `dict` for maps.
         // All other type names (`int`, `float`, `bool`, `list`, `null`, etc.) match.
         let type_name = match &args[0] {
-            RuntimeValue::Str(_)        => "str".to_string(),
-            RuntimeValue::Map { .. }    => "dict".to_string(),
-            other                       => other.runtime_type().to_string(),
+            RuntimeValue::Str(_) => "str".to_string(),
+            RuntimeValue::Map { .. } => "dict".to_string(),
+            other => other.runtime_type().to_string(),
         };
         Ok(RuntimeValue::Str(type_name))
     }

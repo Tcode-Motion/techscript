@@ -54,7 +54,12 @@ impl LLVMBackend {
         options: &LLVMBackendOptions,
         out_path: &Path,
     ) -> Result<(), LLVMCodegenError> {
-        Self::emit_to_file(ir_module, options, out_path, llvm_sys::target_machine::LLVMCodeGenFileType::LLVMObjectFile)
+        Self::emit_to_file(
+            ir_module,
+            options,
+            out_path,
+            llvm_sys::target_machine::LLVMCodeGenFileType::LLVMObjectFile,
+        )
     }
 
     /// Compiles a TechScript IR Module to a native assembly file (`.s` or `.asm`) at the given output path.
@@ -64,15 +69,17 @@ impl LLVMBackend {
         options: &LLVMBackendOptions,
         out_path: &Path,
     ) -> Result<(), LLVMCodegenError> {
-        Self::emit_to_file(ir_module, options, out_path, llvm_sys::target_machine::LLVMCodeGenFileType::LLVMAssemblyFile)
+        Self::emit_to_file(
+            ir_module,
+            options,
+            out_path,
+            llvm_sys::target_machine::LLVMCodeGenFileType::LLVMAssemblyFile,
+        )
     }
 
     /// Emits textual LLVM IR representation (`.ll`) at the given output path.
     #[cfg(feature = "llvm")]
-    pub fn emit_llvm_ir(
-        ir_module: &Module,
-        out_path: &Path,
-    ) -> Result<(), LLVMCodegenError> {
+    pub fn emit_llvm_ir(ir_module: &Module, out_path: &Path) -> Result<(), LLVMCodegenError> {
         use crate::codegen::CodegenEngine;
         use crate::context::CodegenContext;
         use std::ffi::CString;
@@ -86,9 +93,12 @@ impl LLVMBackend {
 
             let out_str = CString::new(out_path.to_string_lossy().to_string()).unwrap();
             let mut err_msg = std::ptr::null_mut();
-            let status = llvm_sys::core::LLVMPrintModuleToFile(ctx.module, out_str.as_ptr(), &mut err_msg);
+            let status =
+                llvm_sys::core::LLVMPrintModuleToFile(ctx.module, out_str.as_ptr(), &mut err_msg);
             if status != 0 {
-                let err_str = std::ffi::CStr::from_ptr(err_msg).to_string_lossy().into_owned();
+                let err_str = std::ffi::CStr::from_ptr(err_msg)
+                    .to_string_lossy()
+                    .into_owned();
                 libc::free(err_msg as *mut libc::c_void);
                 return Err(LLVMCodegenError::FileError(err_str));
             }
@@ -177,7 +187,10 @@ impl LLVMBackend {
         let pm_builder = LLVMPassManagerBuilderCreate();
         LLVMPassManagerBuilderSetOptLevel(pm_builder, opt_level_u32);
         LLVMPassManagerBuilderSetSizeLevel(pm_builder, if opt_level_u32 == 2 { 1 } else { 0 }); // Os equivalent
-        LLVMPassManagerBuilderUseInlinerWithThreshold(pm_builder, if opt_level_u32 > 0 { 275 } else { 0 });
+        LLVMPassManagerBuilderUseInlinerWithThreshold(
+            pm_builder,
+            if opt_level_u32 > 0 { 275 } else { 0 },
+        );
 
         let mpm = llvm_sys::core::LLVMCreatePassManager();
         LLVMPassManagerBuilderPopulateModulePassManager(pm_builder, mpm);
@@ -247,17 +260,14 @@ impl LLVMBackend {
         _out_path: &Path,
     ) -> Result<(), LLVMCodegenError> {
         Err(LLVMCodegenError::CompilationError(
-            "LLVM backend was compiled without LLVM support.".to_string()
+            "LLVM backend was compiled without LLVM support.".to_string(),
         ))
     }
 
     #[cfg(not(feature = "llvm"))]
-    pub fn emit_llvm_ir(
-        _ir_module: &Module,
-        _out_path: &Path,
-    ) -> Result<(), LLVMCodegenError> {
+    pub fn emit_llvm_ir(_ir_module: &Module, _out_path: &Path) -> Result<(), LLVMCodegenError> {
         Err(LLVMCodegenError::CompilationError(
-            "LLVM backend was compiled without LLVM support.".to_string()
+            "LLVM backend was compiled without LLVM support.".to_string(),
         ))
     }
 }

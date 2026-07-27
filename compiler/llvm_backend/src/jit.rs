@@ -5,12 +5,12 @@
 #![cfg(feature = "llvm")]
 
 use llvm_sys::core::*;
-use llvm_sys::prelude::*;
 use llvm_sys::orc2::*;
-use std::ffi::CString;
-use std::ptr;
+use llvm_sys::prelude::*;
 use std::collections::HashMap;
+use std::ffi::CString;
 use std::os::raw::c_void;
+use std::ptr;
 
 use crate::codegen::CodegenEngine;
 use crate::context::CodegenContext;
@@ -61,11 +61,11 @@ impl LLVMJitEngine {
 
         // 3. Set host target triple
         let host_triple = LLVMOrcLLJITGetExecutionSession(self.jit); // session triple fallback
-        // We can just keep the default LLVM target triple
-        
+                                                                     // We can just keep the default LLVM target triple
+
         // 4. Wrap Module in ThreadSafeModule
         let tsm = LLVMOrcCreateThreadSafeModule(ctx.module, self.ts_ctx);
-        
+
         // Relinquish ownership of ctx.module because LLVMOrcCreateThreadSafeModule takes it
         ctx.module = ptr::null_mut();
 

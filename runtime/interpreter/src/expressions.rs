@@ -134,12 +134,19 @@ impl AstVisitor for Interpreter {
                     } else if ident.name == "json" {
                         let arg = self.visit_expression(&call.args[0])?;
                         let std_val = self.env.borrow().lookup("std")?;
-                        let file_val = self.eval_member_access(std_val.clone(), "file", call.span)?;
+                        let file_val =
+                            self.eval_member_access(std_val.clone(), "file", call.span)?;
                         let read_val = self.eval_member_access(file_val, "read", call.span)?;
                         let content = if let RuntimeValue::Function(func) = read_val {
                             func.call(&mut self.ctx, vec![arg])?
                         } else {
-                            return Err(RuntimeError::new(RuntimeErrorKind::InvalidOperation("file.read not found".to_string()), Some(call.span), None));
+                            return Err(RuntimeError::new(
+                                RuntimeErrorKind::InvalidOperation(
+                                    "file.read not found".to_string(),
+                                ),
+                                Some(call.span),
+                                None,
+                            ));
                         };
                         let json_val = self.eval_member_access(std_val, "json", call.span)?;
                         let parse_val = self.eval_member_access(json_val, "parse", call.span)?;
@@ -241,7 +248,9 @@ impl AstVisitor for Interpreter {
                 // Both tokens produce an inclusive range — always add 1 for the
                 // exclusive Rust range iterator.
                 let final_end = end.saturating_add(1);
-                let list = (start..final_end).map(RuntimeValue::Int).collect::<Vec<_>>();
+                let list = (start..final_end)
+                    .map(RuntimeValue::Int)
+                    .collect::<Vec<_>>();
                 Ok(RuntimeValue::List {
                     items: Rc::new(RefCell::new(list)),
                     is_const: false,

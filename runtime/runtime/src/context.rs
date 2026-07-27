@@ -1,9 +1,9 @@
 use crate::environment::Environment;
 use crate::native_function::NativeRegistry;
+use std::any::Any;
 use std::cell::RefCell;
 use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
-use std::any::Any;
 
 /// Security capabilities for sandboxing standard library system APIs.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
@@ -61,11 +61,15 @@ impl ResourceTable {
     }
 
     pub fn get<T: Any>(&self, id: u32) -> Option<&T> {
-        self.resources.get(&id).and_then(|any| any.downcast_ref::<T>())
+        self.resources
+            .get(&id)
+            .and_then(|any| any.downcast_ref::<T>())
     }
 
     pub fn get_mut<T: Any>(&mut self, id: u32) -> Option<&mut T> {
-        self.resources.get_mut(&id).and_then(|any| any.downcast_mut::<T>())
+        self.resources
+            .get_mut(&id)
+            .and_then(|any| any.downcast_mut::<T>())
     }
 
     pub fn remove<T: Any>(&mut self, id: u32) -> Option<T> {

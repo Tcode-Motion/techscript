@@ -1,9 +1,9 @@
 use crate::context::SemanticContext;
 use crate::dsl_schema::build_dsl_registry;
 use crate::pipeline::Pass;
+use techscript_ast::Program;
 use techscript_ast::{DSLBlock, DSLChild, Statement};
 use techscript_errors::{Diagnostic, DiagnosticLevel, ErrorCode};
-use techscript_ast::Program;
 
 pub struct ValidateDSL;
 

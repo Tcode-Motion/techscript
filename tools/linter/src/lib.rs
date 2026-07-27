@@ -43,7 +43,10 @@ impl DslBlockLintRule {
             diags.push(Diagnostic::new(
                 DiagnosticLevel::Warning,
                 ErrorCode::E0400,
-                format!("DSL block '{}' is empty — add properties or children, or remove it", block.kind),
+                format!(
+                    "DSL block '{}' is empty — add properties or children, or remove it",
+                    block.kind
+                ),
                 block.span,
             ));
         }

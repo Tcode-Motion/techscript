@@ -1,3 +1,4 @@
+use crate::{StdFunction, StdlibModule, StdlibRegistry};
 use std::collections::HashMap;
 use std::rc::Rc;
 use techscript_runtime::{
@@ -5,11 +6,11 @@ use techscript_runtime::{
     error::RuntimeError,
     value::RuntimeValue,
 };
-use crate::{StdFunction, StdlibModule, StdlibRegistry};
 
 impl StdlibRegistry {
     pub fn register_thread(&mut self) {
-        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> = HashMap::new();
+        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
+            HashMap::new();
 
         exports.insert(
             "spawn".to_string(),
@@ -21,8 +22,13 @@ impl StdlibRegistry {
                     if let RuntimeValue::Function(func) = callback {
                         let func_ptr = Box::into_raw(Box::new(func)) as usize;
                         let handle = std::thread::spawn(move || {
-                            let func = unsafe { Box::from_raw(func_ptr as *mut Rc<dyn techscript_runtime::function::Callable>) };
-                            let mut ctx = RuntimeContext::new(techscript_runtime::RuntimeConfig::default());
+                            let func = unsafe {
+                                Box::from_raw(
+                                    func_ptr as *mut Rc<dyn techscript_runtime::function::Callable>,
+                                )
+                            };
+                            let mut ctx =
+                                RuntimeContext::new(techscript_runtime::RuntimeConfig::default());
                             func.call(&mut ctx, vec![]).ok();
                         });
                         let handle_id = ctx.resources.borrow_mut().insert(handle);
@@ -40,7 +46,11 @@ impl StdlibRegistry {
                 arity: 1,
                 callback: |ctx, args| {
                     let handle_id = args[0].try_into_int()? as u32;
-                    if let Some(handle) = ctx.resources.borrow_mut().remove::<std::thread::JoinHandle<()>>(handle_id) {
+                    if let Some(handle) = ctx
+                        .resources
+                        .borrow_mut()
+                        .remove::<std::thread::JoinHandle<()>>(handle_id)
+                    {
                         handle.join().ok();
                     }
                     Ok(RuntimeValue::Null)

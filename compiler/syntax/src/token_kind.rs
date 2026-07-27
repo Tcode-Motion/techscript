@@ -416,11 +416,7 @@ impl TokenKind {
     pub fn is_future_reserved_keyword(&self) -> bool {
         matches!(
             self,
-            TokenKind::Type
-                | TokenKind::Yield
-                | TokenKind::Spawn
-                | TokenKind::Pub
-                | TokenKind::Mut
+            TokenKind::Type | TokenKind::Yield | TokenKind::Spawn | TokenKind::Pub | TokenKind::Mut
         )
     }
 
@@ -643,7 +639,7 @@ impl TokenKind {
             TokenKind::Pub => Some("pub"),
             TokenKind::Mut => Some("mut"),
 
-            TokenKind::FStringStart => Some("$\""),  // canonical; `f"` is a deprecated alias
+            TokenKind::FStringStart => Some("$\""), // canonical; `f"` is a deprecated alias
             TokenKind::FStringExprStart => Some("{"),
             TokenKind::FStringExprEnd => Some("}"),
             TokenKind::FStringEnd => Some("\""),
@@ -830,80 +826,80 @@ impl fmt::Display for TokenKind {
 pub fn lookup_keyword(lexeme: &str) -> Option<TokenKind> {
     match lexeme {
         // ── Canonical 2.0 Keywords ───────────────────────────────────────────────
-        "do"       => Some(TokenKind::Do),
-        "send"     => Some(TokenKind::Send),
-        "when"     => Some(TokenKind::When),
-        "loop"     => Some(TokenKind::Loop),
-        "repeat"   => Some(TokenKind::Repeat),
-        "for"      => Some(TokenKind::For),
-        "in"       => Some(TokenKind::In),
-        "match"    => Some(TokenKind::Match),
-        "case"     => Some(TokenKind::Case),
-        "default"  => Some(TokenKind::Default),
-        "try"      => Some(TokenKind::Try),
-        "catch"    => Some(TokenKind::Catch),
-        "throw"    => Some(TokenKind::Throw),
-        "use"      => Some(TokenKind::Use),
-        "class"    => Some(TokenKind::Class),
-        "struct"   => Some(TokenKind::Struct),
-        "enum"     => Some(TokenKind::Enum),
-        "trait"    => Some(TokenKind::Trait),
+        "do" => Some(TokenKind::Do),
+        "send" => Some(TokenKind::Send),
+        "when" => Some(TokenKind::When),
+        "loop" => Some(TokenKind::Loop),
+        "repeat" => Some(TokenKind::Repeat),
+        "for" => Some(TokenKind::For),
+        "in" => Some(TokenKind::In),
+        "match" => Some(TokenKind::Match),
+        "case" => Some(TokenKind::Case),
+        "default" => Some(TokenKind::Default),
+        "try" => Some(TokenKind::Try),
+        "catch" => Some(TokenKind::Catch),
+        "throw" => Some(TokenKind::Throw),
+        "use" => Some(TokenKind::Use),
+        "class" => Some(TokenKind::Class),
+        "struct" => Some(TokenKind::Struct),
+        "enum" => Some(TokenKind::Enum),
+        "trait" => Some(TokenKind::Trait),
         "interface" => Some(TokenKind::Interface),
-        "const"    => Some(TokenKind::Const),
-        "null"     => Some(TokenKind::Null),
-        "say"      => Some(TokenKind::Say),
-        "ask"      => Some(TokenKind::Ask),
-        "break"    => Some(TokenKind::Break),
+        "const" => Some(TokenKind::Const),
+        "null" => Some(TokenKind::Null),
+        "say" => Some(TokenKind::Say),
+        "ask" => Some(TokenKind::Ask),
+        "break" => Some(TokenKind::Break),
         "continue" => Some(TokenKind::Continue),
-        "else"     => Some(TokenKind::Else),
-        "async"    => Some(TokenKind::Async),
-        "await"    => Some(TokenKind::Await),
+        "else" => Some(TokenKind::Else),
+        "async" => Some(TokenKind::Async),
+        "await" => Some(TokenKind::Await),
         "parallel" => Some(TokenKind::Parallel),
-        "end"      => Some(TokenKind::End),
-        "export"   => Some(TokenKind::Export),
-        "new"      => Some(TokenKind::New),
-        "self"     => Some(TokenKind::SelfKw),
-        "true"     => Some(TokenKind::True),
-        "false"    => Some(TokenKind::False),
-        "typeof"   => Some(TokenKind::Typeof),
-        "with"     => Some(TokenKind::With),
+        "end" => Some(TokenKind::End),
+        "export" => Some(TokenKind::Export),
+        "new" => Some(TokenKind::New),
+        "self" => Some(TokenKind::SelfKw),
+        "true" => Some(TokenKind::True),
+        "false" => Some(TokenKind::False),
+        "typeof" => Some(TokenKind::Typeof),
+        "with" => Some(TokenKind::With),
 
         // ── Deprecated / Alias Keywords (TSW1xxx) ───────────────────────────────
-        "build"    => Some(TokenKind::Build),    // TSW1002 → do
-        "make"     => Some(TokenKind::Make),     // TSW1001 → plain assignment
-        "return"   => Some(TokenKind::Return),   // TSW1003 → send
-        "model"    => Some(TokenKind::Model),    // TSW1013 → class
-        "if"       => Some(TokenKind::If),       // TSW1007 → when
-        "elif"     => Some(TokenKind::Elif),     // TSW1007 → else when
-        "while"    => Some(TokenKind::While),    // TSW1008 → repeat
-        "import"   => Some(TokenKind::Import),   // TSW1009 → use
-        "from"     => Some(TokenKind::From),     // TSW1009 → use
-        "let"      => Some(TokenKind::Let),      // TSW1001 → plain assignment
-        "var"      => Some(TokenKind::Var),      // TSW1001 → plain assignment
-        "fun"      => Some(TokenKind::Fun),      // TSW1002 → do
+        "build" => Some(TokenKind::Build),       // TSW1002 → do
+        "make" => Some(TokenKind::Make),         // TSW1001 → plain assignment
+        "return" => Some(TokenKind::Return),     // TSW1003 → send
+        "model" => Some(TokenKind::Model),       // TSW1013 → class
+        "if" => Some(TokenKind::If),             // TSW1007 → when
+        "elif" => Some(TokenKind::Elif),         // TSW1007 → else when
+        "while" => Some(TokenKind::While),       // TSW1008 → repeat
+        "import" => Some(TokenKind::Import),     // TSW1009 → use
+        "from" => Some(TokenKind::From),         // TSW1009 → use
+        "let" => Some(TokenKind::Let),           // TSW1001 → plain assignment
+        "var" => Some(TokenKind::Var),           // TSW1001 → plain assignment
+        "fun" => Some(TokenKind::Fun),           // TSW1002 → do
         "function" => Some(TokenKind::Function), // TSW1002 → do
-        "attempt"  => Some(TokenKind::Attempt),  // TSW1004 → try
-        "none"     => Some(TokenKind::None),     // TSW1011 → null
-        "keep"     => Some(TokenKind::Keep),     // → const
-        "give"     => Some(TokenKind::Give),     // TSW1005 → send
-        "stop"     => Some(TokenKind::Stop),     // → break
-        "skip"     => Some(TokenKind::Skip),     // → continue
-        "each"     => Some(TokenKind::Each),     // TSW1010 → for
-        "switch"   => Some(TokenKind::Switch),   // → match
-        "be"       => Some(TokenKind::Be),
-        "equals"   => Some(TokenKind::Equals),
-        "then"     => Some(TokenKind::Then),     // TSW1006 → (removed)
+        "attempt" => Some(TokenKind::Attempt),   // TSW1004 → try
+        "none" => Some(TokenKind::None),         // TSW1011 → null
+        "keep" => Some(TokenKind::Keep),         // → const
+        "give" => Some(TokenKind::Give),         // TSW1005 → send
+        "stop" => Some(TokenKind::Stop),         // → break
+        "skip" => Some(TokenKind::Skip),         // → continue
+        "each" => Some(TokenKind::Each),         // TSW1010 → for
+        "switch" => Some(TokenKind::Switch),     // → match
+        "be" => Some(TokenKind::Be),
+        "equals" => Some(TokenKind::Equals),
+        "then" => Some(TokenKind::Then), // TSW1006 → (removed)
 
         // ── Reserved / Meta Keywords ───────────────────────────────────────────────
-        "type"     => Some(TokenKind::Type),
-        "yield"    => Some(TokenKind::Yield),
-        "spawn"    => Some(TokenKind::Spawn),
-        "pub"      => Some(TokenKind::Pub),
-        "mut"      => Some(TokenKind::Mut),
+        "type" => Some(TokenKind::Type),
+        "yield" => Some(TokenKind::Yield),
+        "spawn" => Some(TokenKind::Spawn),
+        "pub" => Some(TokenKind::Pub),
+        "mut" => Some(TokenKind::Mut),
 
         // ── Word Operator Aliases (logical) ───────────────────────────────────────
         "and" => Some(TokenKind::And),
-        "or"  => Some(TokenKind::Or),
+        "or" => Some(TokenKind::Or),
         "not" => Some(TokenKind::Not),
 
         _ => None,

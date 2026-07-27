@@ -99,8 +99,20 @@ impl<'a> Parser<'a> {
     pub(crate) fn register_dsl_keywords(&mut self, module: &str) {
         match module {
             "canvas" | "std.canvas" => {
-                for kw in &["logo", "rings", "emblem", "core", "letter", "circuits",
-                             "title", "subtitle", "tagline", "theme", "animation", "export"] {
+                for kw in &[
+                    "logo",
+                    "rings",
+                    "emblem",
+                    "core",
+                    "letter",
+                    "circuits",
+                    "title",
+                    "subtitle",
+                    "tagline",
+                    "theme",
+                    "animation",
+                    "export",
+                ] {
                     self.dsl_keywords.insert(kw.to_string());
                 }
                 // Only blocks that can nest children go into dsl_sub_blocks
@@ -109,14 +121,16 @@ impl<'a> Parser<'a> {
                 }
             }
             "web" | "std.web" => {
-                for kw in &["website", "page", "hero", "section", "card", "footer",
-                             "button", "link", "input", "form", "nav", "header", "main", "aside",
-                             "start"] {
+                for kw in &[
+                    "website", "page", "hero", "section", "card", "footer", "button", "link",
+                    "input", "form", "nav", "header", "main", "aside", "start",
+                ] {
                     self.dsl_keywords.insert(kw.to_string());
                 }
-                for kw in &["website", "page", "hero", "section", "card", "footer",
-                             "button", "link", "input", "form",
-                             "nav", "header", "main", "aside", "start"] {
+                for kw in &[
+                    "website", "page", "hero", "section", "card", "footer", "button", "link",
+                    "input", "form", "nav", "header", "main", "aside", "start",
+                ] {
                     self.dsl_sub_blocks.insert(kw.to_string());
                 }
             }

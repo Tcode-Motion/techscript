@@ -13,10 +13,10 @@ use crate::pipeline::{BuildProfile, CompilationPipeline, ExecutionBackend, Pipel
 use crate::profiler::TimingProfiler;
 use crate::project::ProjectBuildGraph;
 use crate::watch::FileWatcher;
-use std::path::{Path, PathBuf};
-use std::time::Instant;
 use colored::Colorize;
 use std::collections::HashMap;
+use std::path::{Path, PathBuf};
+use std::time::Instant;
 
 pub fn execute(
     file_path: Option<&str>,
@@ -225,7 +225,11 @@ fn invoke_linker(current_dir: &Path, name: &str) -> Result<(), anyhow::Error> {
         .find(|p| p.join("Cargo.toml").exists())
         .unwrap_or(current_dir);
 
-    let build_profile = if cfg!(debug_assertions) { "debug" } else { "release" };
+    let build_profile = if cfg!(debug_assertions) {
+        "debug"
+    } else {
+        "release"
+    };
     let mut runtime_lib = None;
 
     let candidates = vec![
@@ -253,12 +257,15 @@ fn invoke_linker(current_dir: &Path, name: &str) -> Result<(), anyhow::Error> {
     let build_dir = current_dir.join("build");
     let obj_ext = if cfg!(windows) { "obj" } else { "o" };
     let exec_ext = if cfg!(windows) { ".exe" } else { "" };
-    
+
     let obj_path = build_dir.join(format!("{}.{}", name, obj_ext));
     let exec_path = build_dir.join(format!("{}{}", name, exec_ext));
 
     if !obj_path.exists() {
-        return Err(anyhow::anyhow!("Compiled object file not found at {:?}", obj_path));
+        return Err(anyhow::anyhow!(
+            "Compiled object file not found at {:?}",
+            obj_path
+        ));
     }
 
     println!("Linking {}...", name);
@@ -309,7 +316,10 @@ fn invoke_linker(current_dir: &Path, name: &str) -> Result<(), anyhow::Error> {
             println!("Successfully linked executable: {:?}", exec_path);
             Ok(())
         }
-        Ok(s) => Err(anyhow::anyhow!("Linker exited with error code: {:?}", s.code())),
+        Ok(s) => Err(anyhow::anyhow!(
+            "Linker exited with error code: {:?}",
+            s.code()
+        )),
         Err(e) => Err(anyhow::anyhow!("Failed to run linker command: {}", e)),
     }
 }

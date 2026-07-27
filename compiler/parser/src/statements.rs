@@ -40,7 +40,10 @@ impl<'a> Parser<'a> {
         if self.check(TokenKind::If) || self.check(TokenKind::When) {
             let stmt = self.parse_if_stmt(reporter)?;
             Ok(Statement::If(stmt))
-        } else if self.check(TokenKind::For) || self.check(TokenKind::Each) || self.check(TokenKind::In) {
+        } else if self.check(TokenKind::For)
+            || self.check(TokenKind::Each)
+            || self.check(TokenKind::In)
+        {
             let stmt = self.parse_for_stmt(reporter)?;
             Ok(Statement::For(stmt))
         } else if self.check(TokenKind::While) {
@@ -59,21 +62,26 @@ impl<'a> Parser<'a> {
             self.consume_terminator(reporter)?;
             let span = Span::new(start_pos, self.previous().span.end);
             Ok(Statement::Say(SayStmt::new(self.next_id(), value, span)))
-        } else if self.check(TokenKind::Return) || self.check(TokenKind::Give) || self.check(TokenKind::Send) {
+        } else if self.check(TokenKind::Return)
+            || self.check(TokenKind::Give)
+            || self.check(TokenKind::Send)
+        {
             let start_pos = self.peek().span.start;
             let kw_token = self.peek().clone();
             if kw_token.kind == TokenKind::Return {
                 reporter.report(techscript_errors::Diagnostic::new(
                     techscript_errors::DiagnosticLevel::Warning,
                     techscript_errors::ErrorCode::TSW1003,
-                    "Warning TSW1003: 'return' is deprecated. Use 'send' to return values.".to_string(),
+                    "Warning TSW1003: 'return' is deprecated. Use 'send' to return values."
+                        .to_string(),
                     kw_token.span,
                 ));
             } else if kw_token.kind == TokenKind::Give {
                 reporter.report(techscript_errors::Diagnostic::new(
                     techscript_errors::DiagnosticLevel::Warning,
                     techscript_errors::ErrorCode::TSW1005,
-                    "Warning TSW1005: 'give' is deprecated. Use 'send' to return values.".to_string(),
+                    "Warning TSW1005: 'give' is deprecated. Use 'send' to return values."
+                        .to_string(),
                     kw_token.span,
                 ));
             }
@@ -136,7 +144,9 @@ impl<'a> Parser<'a> {
         } else if self.check(TokenKind::LeftBrace) {
             let block = self.parse_block(reporter)?;
             Ok(Statement::Block(block))
-        } else if self.check(TokenKind::Identifier) && self.dsl_keywords.contains(&self.peek().lexeme) {
+        } else if self.check(TokenKind::Identifier)
+            && self.dsl_keywords.contains(&self.peek().lexeme)
+        {
             let block = self.parse_dsl_block(reporter)?;
             Ok(Statement::DSL(block))
         } else {
@@ -144,11 +154,27 @@ impl<'a> Parser<'a> {
             let mut expr = self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
             // v1.0.8 permits the readable one-argument call `greet "World"`.
             if matches!(expr, techscript_ast::Expression::Identifier(_))
-                && matches!(self.peek().kind, TokenKind::StringLiteral | TokenKind::FStringStart | TokenKind::IntLiteral | TokenKind::FloatLiteral | TokenKind::True | TokenKind::False | TokenKind::LeftBracket | TokenKind::LeftBrace)
+                && matches!(
+                    self.peek().kind,
+                    TokenKind::StringLiteral
+                        | TokenKind::FStringStart
+                        | TokenKind::IntLiteral
+                        | TokenKind::FloatLiteral
+                        | TokenKind::True
+                        | TokenKind::False
+                        | TokenKind::LeftBracket
+                        | TokenKind::LeftBrace
+                )
             {
-                let argument = self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
+                let argument =
+                    self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
                 let span = Span::new(expr.span().start, argument.span().end);
-                expr = techscript_ast::Expression::Call(techscript_ast::CallExpr::new(self.next_id(), Box::new(expr), vec![argument], span));
+                expr = techscript_ast::Expression::Call(techscript_ast::CallExpr::new(
+                    self.next_id(),
+                    Box::new(expr),
+                    vec![argument],
+                    span,
+                ));
             }
             self.consume_terminator(reporter)?;
             let span = Span::new(start_pos, self.previous().span.end);
@@ -160,7 +186,10 @@ impl<'a> Parser<'a> {
         }
     }
 
-    pub fn parse_block_or_then_end(&mut self, reporter: &mut DiagnosticReporter) -> ParseResult<Block> {
+    pub fn parse_block_or_then_end(
+        &mut self,
+        reporter: &mut DiagnosticReporter,
+    ) -> ParseResult<Block> {
         while self.match_token(TokenKind::Newline) {}
         let start_pos = self.peek().span.start;
         if self.check(TokenKind::LeftBrace) {
@@ -478,7 +507,11 @@ impl<'a> Parser<'a> {
         self.consume_terminator(reporter)?;
 
         // Register DSL keywords from the imported module
-        let module_name = path.iter().map(|i| i.name.as_str()).collect::<Vec<_>>().join(".");
+        let module_name = path
+            .iter()
+            .map(|i| i.name.as_str())
+            .collect::<Vec<_>>()
+            .join(".");
         self.register_dsl_keywords(&module_name);
 
         let span = Span::new(start_pos, self.previous().span.end);
@@ -504,11 +537,21 @@ impl<'a> Parser<'a> {
         let (properties, children) = self.parse_dsl_body(reporter)?;
 
         let span = Span::new(start_pos, self.previous().span.end);
-        Ok(DSLBlock::new(self.next_id(), kind, args, properties, children, span))
+        Ok(DSLBlock::new(
+            self.next_id(),
+            kind,
+            args,
+            properties,
+            children,
+            span,
+        ))
     }
 
     /// Parse the body of a DSL block: zero or more properties and sub-blocks, terminated by `end`.
-    fn parse_dsl_body(&mut self, reporter: &mut DiagnosticReporter) -> ParseResult<(Vec<DSLProperty>, Vec<DSLChild>)> {
+    fn parse_dsl_body(
+        &mut self,
+        reporter: &mut DiagnosticReporter,
+    ) -> ParseResult<(Vec<DSLProperty>, Vec<DSLChild>)> {
         let mut properties = Vec::new();
         let mut children = Vec::new();
 
@@ -545,7 +588,9 @@ impl<'a> Parser<'a> {
                     }
                     match self.parse_statement(reporter) {
                         Ok(stmt) => statements.push(stmt),
-                        Err(_) => { self.synchronize(); }
+                        Err(_) => {
+                            self.synchronize();
+                        }
                     }
                 }
                 self.consume(
@@ -578,7 +623,10 @@ impl<'a> Parser<'a> {
     }
 
     /// Parse a DSL property: `name [value...]` terminated by newline/semicolon.
-    pub fn parse_dsl_property(&mut self, reporter: &mut DiagnosticReporter) -> ParseResult<DSLProperty> {
+    pub fn parse_dsl_property(
+        &mut self,
+        reporter: &mut DiagnosticReporter,
+    ) -> ParseResult<DSLProperty> {
         let start_pos = self.peek().span.start;
         let name = self.parse_identifier(reporter)?.name;
 

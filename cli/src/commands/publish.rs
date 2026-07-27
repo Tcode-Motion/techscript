@@ -31,9 +31,12 @@ pub fn execute() -> ExitCode {
         }
     };
 
-    println!("Packaging and publishing TechScript project '{}'...", manifest.package.name);
+    println!(
+        "Packaging and publishing TechScript project '{}'...",
+        manifest.package.name
+    );
     println!("Generating digital signature and checksums...");
-    
+
     // Simulate hashing and signing
     let pkg_name = &manifest.package.name;
     let pkg_ver = &manifest.package.version;

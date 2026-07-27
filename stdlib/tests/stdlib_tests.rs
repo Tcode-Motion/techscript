@@ -314,7 +314,9 @@ fn test_math_limits_and_conversions() {
     assert_eq!(res.as_float(), Some(f64::INFINITY));
 
     let to_float = math.exports.get("to_float").unwrap();
-    let res = to_float.call(&mut ctx, vec![RuntimeValue::Int(123)]).unwrap();
+    let res = to_float
+        .call(&mut ctx, vec![RuntimeValue::Int(123)])
+        .unwrap();
     assert_eq!(res.as_float(), Some(123.0));
 }
 
@@ -329,22 +331,33 @@ fn test_path_validations() {
     let extname = path.exports.get("extname").unwrap();
 
     // 1. Path joining
-    let res = join.call(&mut ctx, vec![
-        RuntimeValue::Str("foo".to_string()),
-        RuntimeValue::Str("bar.txt".to_string()),
-    ]).unwrap();
+    let res = join
+        .call(
+            &mut ctx,
+            vec![
+                RuntimeValue::Str("foo".to_string()),
+                RuntimeValue::Str("bar.txt".to_string()),
+            ],
+        )
+        .unwrap();
     let path_str = res.as_string().unwrap();
     assert!(path_str.contains("foo") && path_str.contains("bar.txt"));
 
     // 2. Basename & extension extraction
-    let res = basename.call(&mut ctx, vec![
-        RuntimeValue::Str("foo/bar/baz.txs".to_string()),
-    ]).unwrap();
+    let res = basename
+        .call(
+            &mut ctx,
+            vec![RuntimeValue::Str("foo/bar/baz.txs".to_string())],
+        )
+        .unwrap();
     assert_eq!(res.as_string(), Some("baz.txs"));
 
-    let res = extname.call(&mut ctx, vec![
-        RuntimeValue::Str("foo/bar/baz.txs".to_string()),
-    ]).unwrap();
+    let res = extname
+        .call(
+            &mut ctx,
+            vec![RuntimeValue::Str("foo/bar/baz.txs".to_string())],
+        )
+        .unwrap();
     assert_eq!(res.as_string(), Some("txs"));
 }
 
@@ -358,24 +371,39 @@ fn test_regex_operations() {
     let r_replace = regex.exports.get("replace").unwrap();
 
     // 1. Regex Match (substring fallback check)
-    let res = r_match.call(&mut ctx, vec![
-        RuntimeValue::Str("hello".to_string()),
-        RuntimeValue::Str("hello world".to_string()),
-    ]).unwrap();
+    let res = r_match
+        .call(
+            &mut ctx,
+            vec![
+                RuntimeValue::Str("hello".to_string()),
+                RuntimeValue::Str("hello world".to_string()),
+            ],
+        )
+        .unwrap();
     assert_eq!(res, RuntimeValue::Bool(true));
 
-    let res = r_match.call(&mut ctx, vec![
-        RuntimeValue::Str("missing".to_string()),
-        RuntimeValue::Str("hello world".to_string()),
-    ]).unwrap();
+    let res = r_match
+        .call(
+            &mut ctx,
+            vec![
+                RuntimeValue::Str("missing".to_string()),
+                RuntimeValue::Str("hello world".to_string()),
+            ],
+        )
+        .unwrap();
     assert_eq!(res, RuntimeValue::Bool(false));
 
     // 2. Regex Replace (replacement check)
-    let res = r_replace.call(&mut ctx, vec![
-        RuntimeValue::Str("world".to_string()),
-        RuntimeValue::Str("hello world".to_string()),
-        RuntimeValue::Str("TechScript".to_string()),
-    ]).unwrap();
+    let res = r_replace
+        .call(
+            &mut ctx,
+            vec![
+                RuntimeValue::Str("world".to_string()),
+                RuntimeValue::Str("hello world".to_string()),
+                RuntimeValue::Str("TechScript".to_string()),
+            ],
+        )
+        .unwrap();
     assert_eq!(res.as_string(), Some("hello TechScript"));
 }
 
@@ -422,7 +450,10 @@ fn test_http_module() {
     if let RuntimeValue::Map { entries, .. } = res {
         let entries_borrow = entries.borrow();
         assert_eq!(entries_borrow.get("status").unwrap().as_int(), Some(200));
-        assert_eq!(entries_borrow.get("body").unwrap().as_string(), Some("Hello Server!"));
+        assert_eq!(
+            entries_borrow.get("body").unwrap().as_string(),
+            Some("Hello Server!")
+        );
     } else {
         panic!("get did not return a Map");
     }
@@ -479,7 +510,7 @@ fn test_system_diagnostics_and_process_execution() {
     } else {
         vec![RuntimeValue::Str("hello".to_string())]
     };
-    
+
     let res = run
         .call(
             &mut ctx,
@@ -517,16 +548,23 @@ fn test_csv_module() {
     let stringify = csv.exports.get("stringify").unwrap();
 
     let csv_str = "a,b\nc,d";
-    let res = parse.call(&mut ctx, vec![RuntimeValue::Str(csv_str.to_string())]).unwrap();
+    let res = parse
+        .call(&mut ctx, vec![RuntimeValue::Str(csv_str.to_string())])
+        .unwrap();
 
     if let RuntimeValue::List { items, .. } = res {
         let list = items.borrow();
         assert_eq!(list.len(), 2);
         // Test stringify
-        let back = stringify.call(&mut ctx, vec![RuntimeValue::List {
-            items: items.clone(),
-            is_const: false,
-        }]).unwrap();
+        let back = stringify
+            .call(
+                &mut ctx,
+                vec![RuntimeValue::List {
+                    items: items.clone(),
+                    is_const: false,
+                }],
+            )
+            .unwrap();
         assert_eq!(back.as_string().unwrap(), "a,b\nc,d");
     } else {
         panic!("parse did not return a List");
@@ -543,16 +581,26 @@ fn test_xml_module() {
     let stringify = xml.exports.get("stringify").unwrap();
 
     let xml_str = "<user>Tanmoy</user>";
-    let res = parse.call(&mut ctx, vec![RuntimeValue::Str(xml_str.to_string())]).unwrap();
+    let res = parse
+        .call(&mut ctx, vec![RuntimeValue::Str(xml_str.to_string())])
+        .unwrap();
 
     if let RuntimeValue::Map { entries, .. } = res {
         let entries_borrow = entries.borrow();
-        assert_eq!(entries_borrow.get("user").unwrap().as_string(), Some("Tanmoy"));
+        assert_eq!(
+            entries_borrow.get("user").unwrap().as_string(),
+            Some("Tanmoy")
+        );
 
-        let back = stringify.call(&mut ctx, vec![RuntimeValue::Map {
-            entries: entries.clone(),
-            is_const: false,
-        }]).unwrap();
+        let back = stringify
+            .call(
+                &mut ctx,
+                vec![RuntimeValue::Map {
+                    entries: entries.clone(),
+                    is_const: false,
+                }],
+            )
+            .unwrap();
         assert_eq!(back.as_string().unwrap(), "<user>Tanmoy</user>");
     } else {
         panic!("parse did not return a Map");
@@ -569,16 +617,26 @@ fn test_yaml_module() {
     let stringify = yaml.exports.get("stringify").unwrap();
 
     let yaml_str = "name: Tanmoy\nage: 25\n";
-    let res = parse.call(&mut ctx, vec![RuntimeValue::Str(yaml_str.to_string())]).unwrap();
+    let res = parse
+        .call(&mut ctx, vec![RuntimeValue::Str(yaml_str.to_string())])
+        .unwrap();
 
     if let RuntimeValue::Map { entries, .. } = res {
         let entries_borrow = entries.borrow();
-        assert_eq!(entries_borrow.get("name").unwrap().as_string(), Some("Tanmoy"));
+        assert_eq!(
+            entries_borrow.get("name").unwrap().as_string(),
+            Some("Tanmoy")
+        );
 
-        let back = stringify.call(&mut ctx, vec![RuntimeValue::Map {
-            entries: entries.clone(),
-            is_const: false,
-        }]).unwrap();
+        let back = stringify
+            .call(
+                &mut ctx,
+                vec![RuntimeValue::Map {
+                    entries: entries.clone(),
+                    is_const: false,
+                }],
+            )
+            .unwrap();
         assert!(back.as_string().unwrap().contains("name: Tanmoy"));
     } else {
         panic!("parse did not return a Map");
@@ -595,17 +653,30 @@ fn test_toml_module() {
     let stringify = toml.exports.get("stringify").unwrap();
 
     let toml_str = "title = \"TOML Example\"\n[owner]\nname = \"Tanmoy\"\n";
-    let res = parse.call(&mut ctx, vec![RuntimeValue::Str(toml_str.to_string())]).unwrap();
+    let res = parse
+        .call(&mut ctx, vec![RuntimeValue::Str(toml_str.to_string())])
+        .unwrap();
 
     if let RuntimeValue::Map { entries, .. } = res {
         let entries_borrow = entries.borrow();
-        assert_eq!(entries_borrow.get("title").unwrap().as_string(), Some("TOML Example"));
+        assert_eq!(
+            entries_borrow.get("title").unwrap().as_string(),
+            Some("TOML Example")
+        );
 
-        let back = stringify.call(&mut ctx, vec![RuntimeValue::Map {
-            entries: entries.clone(),
-            is_const: false,
-        }]).unwrap();
-        assert!(back.as_string().unwrap().contains("title = \"TOML Example\""));
+        let back = stringify
+            .call(
+                &mut ctx,
+                vec![RuntimeValue::Map {
+                    entries: entries.clone(),
+                    is_const: false,
+                }],
+            )
+            .unwrap();
+        assert!(back
+            .as_string()
+            .unwrap()
+            .contains("title = \"TOML Example\""));
     } else {
         panic!("parse did not return a Map");
     }
@@ -615,7 +686,7 @@ fn test_toml_module() {
 fn test_database_module() {
     let registry = StdlibRegistry::new();
     let db = registry.get_module("std.database").unwrap();
-    
+
     // Grant FileSystem capability
     let mut caps = HashSet::new();
     caps.insert(Capability::FileSystem);
@@ -632,39 +703,58 @@ fn test_database_module() {
     let close = db.exports.get("close").unwrap();
 
     // 1. Connect in-memory
-    let conn_handle = connect.call(&mut ctx, vec![RuntimeValue::Str(":memory:".to_string())]).unwrap();
+    let conn_handle = connect
+        .call(&mut ctx, vec![RuntimeValue::Str(":memory:".to_string())])
+        .unwrap();
     assert!(conn_handle.as_int().is_some());
 
     // 2. Create table
-    let res = execute.call(&mut ctx, vec![
-        conn_handle.clone(),
-        RuntimeValue::Str("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)".to_string()),
-    ]).unwrap();
+    let res = execute
+        .call(
+            &mut ctx,
+            vec![
+                conn_handle.clone(),
+                RuntimeValue::Str(
+                    "CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)".to_string(),
+                ),
+            ],
+        )
+        .unwrap();
     assert_eq!(res.as_int(), Some(0));
 
     // 3. Insert user
-    let res = execute.call(&mut ctx, vec![
-        conn_handle.clone(),
-        RuntimeValue::Str("INSERT INTO users (id, name) VALUES (?, ?)".to_string()),
-        RuntimeValue::List {
-            items: Rc::new(RefCell::new(vec![
-                RuntimeValue::Int(42),
-                RuntimeValue::Str("Tanmoy".to_string()),
-            ])),
-            is_const: false,
-        }
-    ]).unwrap();
+    let res = execute
+        .call(
+            &mut ctx,
+            vec![
+                conn_handle.clone(),
+                RuntimeValue::Str("INSERT INTO users (id, name) VALUES (?, ?)".to_string()),
+                RuntimeValue::List {
+                    items: Rc::new(RefCell::new(vec![
+                        RuntimeValue::Int(42),
+                        RuntimeValue::Str("Tanmoy".to_string()),
+                    ])),
+                    is_const: false,
+                },
+            ],
+        )
+        .unwrap();
     assert_eq!(res.as_int(), Some(1));
 
     // 4. Query user
-    let res = query.call(&mut ctx, vec![
-        conn_handle.clone(),
-        RuntimeValue::Str("SELECT id, name FROM users WHERE id = ?".to_string()),
-        RuntimeValue::List {
-            items: Rc::new(RefCell::new(vec![RuntimeValue::Int(42)])),
-            is_const: false,
-        }
-    ]).unwrap();
+    let res = query
+        .call(
+            &mut ctx,
+            vec![
+                conn_handle.clone(),
+                RuntimeValue::Str("SELECT id, name FROM users WHERE id = ?".to_string()),
+                RuntimeValue::List {
+                    items: Rc::new(RefCell::new(vec![RuntimeValue::Int(42)])),
+                    is_const: false,
+                },
+            ],
+        )
+        .unwrap();
 
     if let RuntimeValue::List { items, .. } = res {
         let list = items.borrow();
@@ -672,7 +762,10 @@ fn test_database_module() {
         if let RuntimeValue::Map { entries, .. } = &list[0] {
             let entries_borrow = entries.borrow();
             assert_eq!(entries_borrow.get("id").unwrap().as_int(), Some(42));
-            assert_eq!(entries_borrow.get("name").unwrap().as_string(), Some("Tanmoy"));
+            assert_eq!(
+                entries_borrow.get("name").unwrap().as_string(),
+                Some("Tanmoy")
+            );
         } else {
             panic!("row is not a Map");
         }
@@ -702,7 +795,9 @@ fn test_async_and_channels() {
     let chan = make_channel.call(&mut ctx, vec![]).unwrap();
 
     // Send a value
-    send_channel.call(&mut ctx, vec![chan.clone(), RuntimeValue::Int(100)]).unwrap();
+    send_channel
+        .call(&mut ctx, vec![chan.clone(), RuntimeValue::Int(100)])
+        .unwrap();
 
     // Receive a value
     let val = recv_channel.call(&mut ctx, vec![chan]).unwrap();
@@ -712,16 +807,19 @@ fn test_async_and_channels() {
     let callback = Rc::new(techscript_stdlib::StdFunction {
         name: "cb".to_string(),
         arity: 0,
-        callback: |_ctx, _args| {
-            Ok(RuntimeValue::Str("Async Work Done".to_string()))
-        }
+        callback: |_ctx, _args| Ok(RuntimeValue::Str("Async Work Done".to_string())),
     });
 
-    let future = spawn_async.call(&mut ctx, vec![RuntimeValue::Function(callback)]).unwrap();
-    
+    let future = spawn_async
+        .call(&mut ctx, vec![RuntimeValue::Function(callback)])
+        .unwrap();
+
     // Check initial state
     if let RuntimeValue::Map { entries, .. } = &future {
-        assert_eq!(entries.borrow().get("state").unwrap().as_string(), Some("pending"));
+        assert_eq!(
+            entries.borrow().get("state").unwrap().as_string(),
+            Some("pending")
+        );
     }
 
     // Tick the async runtime
@@ -729,8 +827,14 @@ fn test_async_and_channels() {
 
     // Check completed state
     if let RuntimeValue::Map { entries, .. } = &future {
-        assert_eq!(entries.borrow().get("state").unwrap().as_string(), Some("resolved"));
-        assert_eq!(entries.borrow().get("value").unwrap().as_string(), Some("Async Work Done"));
+        assert_eq!(
+            entries.borrow().get("state").unwrap().as_string(),
+            Some("resolved")
+        );
+        assert_eq!(
+            entries.borrow().get("value").unwrap().as_string(),
+            Some("Async Work Done")
+        );
     }
 }
 
@@ -742,24 +846,44 @@ fn test_crypto_hash_and_compression() {
     let compress = registry.get_module("std.compress").unwrap();
 
     let mut config_unprivileged = RuntimeConfig::default();
-    config_unprivileged.capabilities.remove(&Capability::FileSystem);
+    config_unprivileged
+        .capabilities
+        .remove(&Capability::FileSystem);
     let mut ctx_unprivileged = RuntimeContext::new(config_unprivileged);
-    
+
     let mut config_fs = RuntimeConfig::default();
     config_fs.capabilities.insert(Capability::FileSystem);
     let mut ctx_fs = RuntimeContext::new(config_fs);
 
     // 1. Test hash operations
     let md5_fn = hash.exports.get("md5").unwrap();
-    let val = md5_fn.call(&mut ctx_unprivileged, vec![RuntimeValue::Str("hello".to_string())]).unwrap();
+    let val = md5_fn
+        .call(
+            &mut ctx_unprivileged,
+            vec![RuntimeValue::Str("hello".to_string())],
+        )
+        .unwrap();
     assert_eq!(val.as_string(), Some("5d41402abc4b2a76b9719d911017c592"));
 
     let sha256_fn = hash.exports.get("sha256").unwrap();
-    let val = sha256_fn.call(&mut ctx_unprivileged, vec![RuntimeValue::Str("hello".to_string())]).unwrap();
-    assert_eq!(val.as_string(), Some("2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"));
+    let val = sha256_fn
+        .call(
+            &mut ctx_unprivileged,
+            vec![RuntimeValue::Str("hello".to_string())],
+        )
+        .unwrap();
+    assert_eq!(
+        val.as_string(),
+        Some("2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824")
+    );
 
     let crc32_fn = hash.exports.get("crc32").unwrap();
-    let val = crc32_fn.call(&mut ctx_unprivileged, vec![RuntimeValue::Str("hello".to_string())]).unwrap();
+    let val = crc32_fn
+        .call(
+            &mut ctx_unprivileged,
+            vec![RuntimeValue::Str("hello".to_string())],
+        )
+        .unwrap();
     assert!(val.as_int().is_some());
 
     // 2. Test crypto operations (AES-GCM & Bcrypt)
@@ -769,24 +893,35 @@ fn test_crypto_hash_and_compression() {
     let key = RuntimeValue::Str("my_secret_key_123".to_string());
     let plain = RuntimeValue::Str("hello crypto world".to_string());
 
-    let encrypted = aes_enc.call(&mut ctx_unprivileged, vec![key.clone(), plain]).unwrap();
-    let decrypted = aes_dec.call(&mut ctx_unprivileged, vec![key, encrypted]).unwrap();
+    let encrypted = aes_enc
+        .call(&mut ctx_unprivileged, vec![key.clone(), plain])
+        .unwrap();
+    let decrypted = aes_dec
+        .call(&mut ctx_unprivileged, vec![key, encrypted])
+        .unwrap();
     assert_eq!(decrypted.as_string(), Some("hello crypto world"));
 
     let bcrypt_hash = crypto.exports.get("bcrypt_hash").unwrap();
     let bcrypt_verify = crypto.exports.get("bcrypt_verify").unwrap();
-    
+
     let pass = RuntimeValue::Str("super_secure_pass".to_string());
-    let hashed = bcrypt_hash.call(&mut ctx_unprivileged, vec![pass.clone(), RuntimeValue::Int(4)]).unwrap();
+    let hashed = bcrypt_hash
+        .call(
+            &mut ctx_unprivileged,
+            vec![pass.clone(), RuntimeValue::Int(4)],
+        )
+        .unwrap();
     assert!(hashed.as_string().is_some());
 
-    let is_valid = bcrypt_verify.call(&mut ctx_unprivileged, vec![pass, hashed.clone()]).unwrap();
+    let is_valid = bcrypt_verify
+        .call(&mut ctx_unprivileged, vec![pass, hashed.clone()])
+        .unwrap();
     assert_eq!(is_valid.as_bool(), Some(true));
 
     // 3. Test compression capabilities & operations
     let temp_dir = std::env::temp_dir().join("techscript_archive_test");
     std::fs::create_dir_all(&temp_dir).ok();
-    
+
     let test_file = temp_dir.join("test.txt");
     std::fs::write(&test_file, "archiving content here").ok();
 
@@ -794,26 +929,35 @@ fn test_crypto_hash_and_compression() {
     let unzip_fn = compress.exports.get("unzip").unwrap();
 
     let archive = temp_dir.join("archive.zip");
-    
+
     // Unprivileged context should fail
-    let res = zip_fn.call(&mut ctx_unprivileged, vec![
-        RuntimeValue::Str(temp_dir.to_string_lossy().to_string()),
-        RuntimeValue::Str(archive.to_string_lossy().to_string())
-    ]);
+    let res = zip_fn.call(
+        &mut ctx_unprivileged,
+        vec![
+            RuntimeValue::Str(temp_dir.to_string_lossy().to_string()),
+            RuntimeValue::Str(archive.to_string_lossy().to_string()),
+        ],
+    );
     assert!(res.is_err());
 
     // Privileged context should succeed
-    let res = zip_fn.call(&mut ctx_fs, vec![
-        RuntimeValue::Str(temp_dir.to_string_lossy().to_string()),
-        RuntimeValue::Str(archive.to_string_lossy().to_string())
-    ]);
+    let res = zip_fn.call(
+        &mut ctx_fs,
+        vec![
+            RuntimeValue::Str(temp_dir.to_string_lossy().to_string()),
+            RuntimeValue::Str(archive.to_string_lossy().to_string()),
+        ],
+    );
     assert!(res.is_ok());
 
     let extract_dir = temp_dir.join("extracted");
-    let res = unzip_fn.call(&mut ctx_fs, vec![
-        RuntimeValue::Str(archive.to_string_lossy().to_string()),
-        RuntimeValue::Str(extract_dir.to_string_lossy().to_string())
-    ]);
+    let res = unzip_fn.call(
+        &mut ctx_fs,
+        vec![
+            RuntimeValue::Str(archive.to_string_lossy().to_string()),
+            RuntimeValue::Str(extract_dir.to_string_lossy().to_string()),
+        ],
+    );
     assert!(res.is_ok());
 
     let extracted_file = extract_dir.join("test.txt");
@@ -831,9 +975,11 @@ fn test_graphics_canvas_drawing() {
     let graphics = registry.get_module("std.graphics").unwrap();
 
     let mut config_unprivileged = RuntimeConfig::default();
-    config_unprivileged.capabilities.remove(&Capability::FileSystem);
+    config_unprivileged
+        .capabilities
+        .remove(&Capability::FileSystem);
     let mut ctx_unprivileged = RuntimeContext::new(config_unprivileged);
-    
+
     let mut config_fs = RuntimeConfig::default();
     config_fs.capabilities.insert(Capability::FileSystem);
     let mut ctx_fs = RuntimeContext::new(config_fs);
@@ -845,65 +991,90 @@ fn test_graphics_canvas_drawing() {
     let save_png_fn = graphics.exports.get("save_png").unwrap();
 
     // 1. Create a 100x100 canvas
-    let canvas_handle_val = create_canvas_fn.call(&mut ctx_unprivileged, vec![
-        RuntimeValue::Int(100),
-        RuntimeValue::Int(100)
-    ]).unwrap();
+    let canvas_handle_val = create_canvas_fn
+        .call(
+            &mut ctx_unprivileged,
+            vec![RuntimeValue::Int(100), RuntimeValue::Int(100)],
+        )
+        .unwrap();
     let handle = canvas_handle_val.as_int().unwrap();
     assert!(handle > 0);
 
     // 2. Draw some shapes
     // Draw red rectangle
-    draw_rect_fn.call(&mut ctx_unprivileged, vec![
-        RuntimeValue::Int(handle),
-        RuntimeValue::Int(10), // x
-        RuntimeValue::Int(10), // y
-        RuntimeValue::Int(50), // w
-        RuntimeValue::Int(30), // h
-        RuntimeValue::Str("#ff0000".to_string()) // color
-    ]).unwrap();
+    draw_rect_fn
+        .call(
+            &mut ctx_unprivileged,
+            vec![
+                RuntimeValue::Int(handle),
+                RuntimeValue::Int(10),                    // x
+                RuntimeValue::Int(10),                    // y
+                RuntimeValue::Int(50),                    // w
+                RuntimeValue::Int(30),                    // h
+                RuntimeValue::Str("#ff0000".to_string()), // color
+            ],
+        )
+        .unwrap();
 
     // Draw green circle
-    draw_circle_fn.call(&mut ctx_unprivileged, vec![
-        RuntimeValue::Int(handle),
-        RuntimeValue::Int(50), // cx
-        RuntimeValue::Int(50), // cy
-        RuntimeValue::Int(20), // r
-        RuntimeValue::Str("#00ff00".to_string())
-    ]).unwrap();
+    draw_circle_fn
+        .call(
+            &mut ctx_unprivileged,
+            vec![
+                RuntimeValue::Int(handle),
+                RuntimeValue::Int(50), // cx
+                RuntimeValue::Int(50), // cy
+                RuntimeValue::Int(20), // r
+                RuntimeValue::Str("#00ff00".to_string()),
+            ],
+        )
+        .unwrap();
 
     // Draw blue line
-    draw_line_fn.call(&mut ctx_unprivileged, vec![
-        RuntimeValue::Int(handle),
-        RuntimeValue::Int(0),  // x1
-        RuntimeValue::Int(0),  // y1
-        RuntimeValue::Int(99), // x2
-        RuntimeValue::Int(99), // y2
-        RuntimeValue::Str("#0000ff".to_string())
-    ]).unwrap();
+    draw_line_fn
+        .call(
+            &mut ctx_unprivileged,
+            vec![
+                RuntimeValue::Int(handle),
+                RuntimeValue::Int(0),  // x1
+                RuntimeValue::Int(0),  // y1
+                RuntimeValue::Int(99), // x2
+                RuntimeValue::Int(99), // y2
+                RuntimeValue::Str("#0000ff".to_string()),
+            ],
+        )
+        .unwrap();
 
     // 3. Save to PNG file (requires FileSystem capability)
     let temp_file = std::env::temp_dir().join("test_canvas.png");
     let temp_file_str = temp_file.to_string_lossy().to_string();
 
     // Unprivileged should fail (due to missing FileSystem capability)
-    let res = save_png_fn.call(&mut ctx_unprivileged, vec![
-        RuntimeValue::Int(handle),
-        RuntimeValue::Str(temp_file_str.clone())
-    ]);
+    let res = save_png_fn.call(
+        &mut ctx_unprivileged,
+        vec![
+            RuntimeValue::Int(handle),
+            RuntimeValue::Str(temp_file_str.clone()),
+        ],
+    );
     assert!(res.is_err(), "Expected security error, got: {:?}", res);
 
     // Privileged should succeed (creating and saving canvas under ctx_fs)
-    let canvas_fs_val = create_canvas_fn.call(&mut ctx_fs, vec![
-        RuntimeValue::Int(10),
-        RuntimeValue::Int(10)
-    ]).unwrap();
+    let canvas_fs_val = create_canvas_fn
+        .call(
+            &mut ctx_fs,
+            vec![RuntimeValue::Int(10), RuntimeValue::Int(10)],
+        )
+        .unwrap();
     let handle_fs = canvas_fs_val.as_int().unwrap();
 
-    let res = save_png_fn.call(&mut ctx_fs, vec![
-        RuntimeValue::Int(handle_fs),
-        RuntimeValue::Str(temp_file_str.clone())
-    ]);
+    let res = save_png_fn.call(
+        &mut ctx_fs,
+        vec![
+            RuntimeValue::Int(handle_fs),
+            RuntimeValue::Str(temp_file_str.clone()),
+        ],
+    );
     assert!(res.is_ok(), "Expected success, got error: {:?}", res.err());
 
     assert!(temp_file.exists());
@@ -916,44 +1087,50 @@ fn test_ai_generate_text() {
     let ai = registry.get_module("std.ai").unwrap();
 
     let mut config_unprivileged = RuntimeConfig::default();
-    config_unprivileged.capabilities.remove(&Capability::Environment);
-    config_unprivileged.capabilities.remove(&Capability::Network);
+    config_unprivileged
+        .capabilities
+        .remove(&Capability::Environment);
+    config_unprivileged
+        .capabilities
+        .remove(&Capability::Network);
     let mut ctx_unprivileged = RuntimeContext::new(config_unprivileged);
 
     let mut config_privileged = RuntimeConfig::default();
-    config_privileged.capabilities.insert(Capability::Environment);
+    config_privileged
+        .capabilities
+        .insert(Capability::Environment);
     config_privileged.capabilities.insert(Capability::Network);
     let mut ctx_privileged = RuntimeContext::new(config_privileged);
 
     let generate_text_fn = ai.exports.get("generate_text").unwrap();
 
     // 1. Unprivileged context should fail with security policy violation
-    let res = generate_text_fn.call(&mut ctx_unprivileged, vec![
-        RuntimeValue::Str("openai".to_string()),
-        RuntimeValue::Str("What is 2+2?".to_string()),
-        RuntimeValue::Map {
-            entries: Rc::new(RefCell::new(indexmap::IndexMap::new())),
-            is_const: false,
-        }
-    ]);
+    let res = generate_text_fn.call(
+        &mut ctx_unprivileged,
+        vec![
+            RuntimeValue::Str("openai".to_string()),
+            RuntimeValue::Str("What is 2+2?".to_string()),
+            RuntimeValue::Map {
+                entries: Rc::new(RefCell::new(indexmap::IndexMap::new())),
+                is_const: false,
+            },
+        ],
+    );
     assert!(res.is_err());
 
     // 2. Privileged context should succeed (with mock fallback or real API calls)
-    let res = generate_text_fn.call(&mut ctx_privileged, vec![
-        RuntimeValue::Str("openai".to_string()),
-        RuntimeValue::Str("What is 2+2?".to_string()),
-        RuntimeValue::Map {
-            entries: Rc::new(RefCell::new(indexmap::IndexMap::new())),
-            is_const: false,
-        }
-    ]);
+    let res = generate_text_fn.call(
+        &mut ctx_privileged,
+        vec![
+            RuntimeValue::Str("openai".to_string()),
+            RuntimeValue::Str("What is 2+2?".to_string()),
+            RuntimeValue::Map {
+                entries: Rc::new(RefCell::new(indexmap::IndexMap::new())),
+                is_const: false,
+            },
+        ],
+    );
     assert!(res.is_ok());
     let val = res.unwrap();
     assert!(val.as_string().unwrap().contains("Prompt: What is 2+2?"));
 }
-
-
-
-
-
-

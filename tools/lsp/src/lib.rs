@@ -14,17 +14,17 @@
     clippy::single_char_add_str
 )]
 
-use tower_lsp::jsonrpc::Result;
-use tower_lsp::lsp_types::*;
-use tower_lsp::lsp_types::request::{
-    GotoTypeDefinitionParams, GotoTypeDefinitionResponse, GotoImplementationParams, GotoImplementationResponse,
-    GotoDeclarationParams, GotoDeclarationResponse,
-};
-use tower_lsp::{Client, LanguageServer};
-use std::sync::Mutex;
 use std::collections::HashMap;
-use techscript_syntax::{TokenKind};
+use std::sync::Mutex;
 use techscript_errors::{Diagnostic as TsDiagnostic, DiagnosticLevel, DiagnosticReporter};
+use techscript_syntax::TokenKind;
+use tower_lsp::jsonrpc::Result;
+use tower_lsp::lsp_types::request::{
+    GotoDeclarationParams, GotoDeclarationResponse, GotoImplementationParams,
+    GotoImplementationResponse, GotoTypeDefinitionParams, GotoTypeDefinitionResponse,
+};
+use tower_lsp::lsp_types::*;
+use tower_lsp::{Client, LanguageServer};
 
 /// Resolved declaration symbol details for outline / hover / goto def.
 struct LocalDecl {
@@ -47,7 +47,15 @@ impl Backend {
         }
     }
 
-    fn analyze_document(&self, _uri: &Url, content: &str) -> (Option<techscript_ast::Program>, Option<techscript_semantic::CheckedProgram>, Vec<TsDiagnostic>) {
+    fn analyze_document(
+        &self,
+        _uri: &Url,
+        content: &str,
+    ) -> (
+        Option<techscript_ast::Program>,
+        Option<techscript_semantic::CheckedProgram>,
+        Vec<TsDiagnostic>,
+    ) {
         let mut reporter = DiagnosticReporter::new();
         // Syntax-error-resilient lexing and parsing
         let tokens = techscript_lexer::lex_recovered(content, &mut reporter);
@@ -119,7 +127,9 @@ impl Backend {
 
     fn get_word_at_offset(&self, content: &str, offset: usize) -> String {
         let chars: Vec<char> = content.chars().collect();
-        if chars.is_empty() { return String::new(); }
+        if chars.is_empty() {
+            return String::new();
+        }
         let mut start = offset;
         if start >= chars.len() {
             start = chars.len() - 1;
@@ -181,7 +191,11 @@ impl Backend {
                 indent_level += open_count;
             } else {
                 let next_indent = indent_level as isize + diff;
-                indent_level = if next_indent < 0 { 0 } else { next_indent as usize };
+                indent_level = if next_indent < 0 {
+                    0
+                } else {
+                    next_indent as usize
+                };
             }
         }
         formatted
@@ -349,16 +363,46 @@ fn collect_stmt_decls(stmt: &techscript_ast::Statement, decls: &mut Vec<LocalDec
 
 fn is_keyword_kind(kind: TokenKind) -> bool {
     match kind {
-        TokenKind::Make | TokenKind::Const | TokenKind::Say | TokenKind::Ask |
-        TokenKind::Build | TokenKind::Return | TokenKind::Fun | TokenKind::Model |
-        TokenKind::SelfKw | TokenKind::New | TokenKind::When | TokenKind::Else |
-        TokenKind::For | TokenKind::In | TokenKind::Repeat | TokenKind::While |
-        TokenKind::Break | TokenKind::Continue | TokenKind::Attempt | TokenKind::Try |
-        TokenKind::Catch | TokenKind::Throw | TokenKind::Import | TokenKind::From |
-        TokenKind::Export | TokenKind::True | TokenKind::False | TokenKind::None |
-        TokenKind::Null | TokenKind::And | TokenKind::Or | TokenKind::Not |
-        TokenKind::Is | TokenKind::Let | TokenKind::Var | TokenKind::Function |
-        TokenKind::Class | TokenKind::Async | TokenKind::Await | TokenKind::Use => true,
+        TokenKind::Make
+        | TokenKind::Const
+        | TokenKind::Say
+        | TokenKind::Ask
+        | TokenKind::Build
+        | TokenKind::Return
+        | TokenKind::Fun
+        | TokenKind::Model
+        | TokenKind::SelfKw
+        | TokenKind::New
+        | TokenKind::When
+        | TokenKind::Else
+        | TokenKind::For
+        | TokenKind::In
+        | TokenKind::Repeat
+        | TokenKind::While
+        | TokenKind::Break
+        | TokenKind::Continue
+        | TokenKind::Attempt
+        | TokenKind::Try
+        | TokenKind::Catch
+        | TokenKind::Throw
+        | TokenKind::Import
+        | TokenKind::From
+        | TokenKind::Export
+        | TokenKind::True
+        | TokenKind::False
+        | TokenKind::None
+        | TokenKind::Null
+        | TokenKind::And
+        | TokenKind::Or
+        | TokenKind::Not
+        | TokenKind::Is
+        | TokenKind::Let
+        | TokenKind::Var
+        | TokenKind::Function
+        | TokenKind::Class
+        | TokenKind::Async
+        | TokenKind::Await
+        | TokenKind::Use => true,
         _ => false,
     }
 }
@@ -389,7 +433,9 @@ impl LanguageServer for Backend {
                 document_symbol_provider: Some(OneOf::Left(true)),
                 workspace_symbol_provider: Some(OneOf::Left(true)),
                 folding_range_provider: Some(FoldingRangeProviderCapability::Simple(true)),
-                code_lens_provider: Some(CodeLensOptions { resolve_provider: Some(true) }),
+                code_lens_provider: Some(CodeLensOptions {
+                    resolve_provider: Some(true),
+                }),
                 selection_range_provider: Some(SelectionRangeProviderCapability::Simple(true)),
                 inlay_hint_provider: Some(OneOf::Left(true)),
                 call_hierarchy_provider: Some(CallHierarchyServerCapability::Simple(true)),
@@ -446,7 +492,10 @@ impl LanguageServer for Backend {
     async fn did_open(&self, params: DidOpenTextDocumentParams) {
         let uri = params.text_document.uri;
         let text = params.text_document.text;
-        self.documents.lock().unwrap().insert(uri.clone(), text.clone());
+        self.documents
+            .lock()
+            .unwrap()
+            .insert(uri.clone(), text.clone());
         self.validate_document(uri, &text).await;
     }
 
@@ -575,7 +624,10 @@ impl LanguageServer for Backend {
         Ok(None)
     }
 
-    async fn goto_definition(&self, params: GotoDefinitionParams) -> Result<Option<GotoDefinitionResponse>> {
+    async fn goto_definition(
+        &self,
+        params: GotoDefinitionParams,
+    ) -> Result<Option<GotoDefinitionResponse>> {
         let uri = params.text_document_position_params.text_document.uri;
         let pos = params.text_document_position_params.position;
 
@@ -607,7 +659,10 @@ impl LanguageServer for Backend {
         Ok(None)
     }
 
-    async fn goto_declaration(&self, params: GotoDeclarationParams) -> Result<Option<GotoDeclarationResponse>> {
+    async fn goto_declaration(
+        &self,
+        params: GotoDeclarationParams,
+    ) -> Result<Option<GotoDeclarationResponse>> {
         // Declaration is equivalent to definition in TechScript
         let def_params = GotoDefinitionParams {
             text_document_position_params: params.text_document_position_params,
@@ -617,7 +672,10 @@ impl LanguageServer for Backend {
         self.goto_definition(def_params).await
     }
 
-    async fn goto_type_definition(&self, params: GotoTypeDefinitionParams) -> Result<Option<GotoTypeDefinitionResponse>> {
+    async fn goto_type_definition(
+        &self,
+        params: GotoTypeDefinitionParams,
+    ) -> Result<Option<GotoTypeDefinitionResponse>> {
         let uri = params.text_document_position_params.text_document.uri;
         let pos = params.text_document_position_params.position;
 
@@ -640,7 +698,11 @@ impl LanguageServer for Backend {
                 let type_name = format!("{:?}", symbol.type_id);
                 let decls = collect_local_decls(&program);
                 for decl in decls {
-                    if decl.name == type_name || decl.detail.contains(&format!("Struct: `struct {}`", type_name)) {
+                    if decl.name == type_name
+                        || decl
+                            .detail
+                            .contains(&format!("Struct: `struct {}`", type_name))
+                    {
                         let range = self.span_to_range(content, decl.span);
                         return Ok(Some(GotoTypeDefinitionResponse::Scalar(Location {
                             uri: uri.clone(),
@@ -654,7 +716,10 @@ impl LanguageServer for Backend {
         Ok(None)
     }
 
-    async fn goto_implementation(&self, params: GotoImplementationParams) -> Result<Option<GotoImplementationResponse>> {
+    async fn goto_implementation(
+        &self,
+        params: GotoImplementationParams,
+    ) -> Result<Option<GotoImplementationResponse>> {
         // Implementation fallback to definition
         let def_params = GotoDefinitionParams {
             text_document_position_params: params.text_document_position_params,
@@ -686,11 +751,17 @@ impl LanguageServer for Backend {
             let mut start_pos = 0;
             while let Some(pos_in_line) = line[start_pos..].find(&word) {
                 let actual_pos = start_pos + pos_in_line;
-                let char_before = if actual_pos > 0 { line.chars().nth(actual_pos - 1) } else { None };
+                let char_before = if actual_pos > 0 {
+                    line.chars().nth(actual_pos - 1)
+                } else {
+                    None
+                };
                 let char_after = line.chars().nth(actual_pos + word_len);
 
-                let is_boundary_before = char_before.map_or(true, |c| !c.is_alphanumeric() && c != '_');
-                let is_boundary_after = char_after.map_or(true, |c| !c.is_alphanumeric() && c != '_');
+                let is_boundary_before =
+                    char_before.map_or(true, |c| !c.is_alphanumeric() && c != '_');
+                let is_boundary_after =
+                    char_after.map_or(true, |c| !c.is_alphanumeric() && c != '_');
 
                 if is_boundary_before && is_boundary_after {
                     locations.push(Location {
@@ -731,11 +802,17 @@ impl LanguageServer for Backend {
             let mut start_pos = 0;
             while let Some(pos_in_line) = line[start_pos..].find(&word) {
                 let actual_pos = start_pos + pos_in_line;
-                let char_before = if actual_pos > 0 { line.chars().nth(actual_pos - 1) } else { None };
+                let char_before = if actual_pos > 0 {
+                    line.chars().nth(actual_pos - 1)
+                } else {
+                    None
+                };
                 let char_after = line.chars().nth(actual_pos + word_len);
 
-                let is_boundary_before = char_before.map_or(true, |c| !c.is_alphanumeric() && c != '_');
-                let is_boundary_after = char_after.map_or(true, |c| !c.is_alphanumeric() && c != '_');
+                let is_boundary_before =
+                    char_before.map_or(true, |c| !c.is_alphanumeric() && c != '_');
+                let is_boundary_after =
+                    char_after.map_or(true, |c| !c.is_alphanumeric() && c != '_');
 
                 if is_boundary_before && is_boundary_after {
                     edits.push(TextEdit {
@@ -759,17 +836,22 @@ impl LanguageServer for Backend {
         }))
     }
 
-    async fn symbol(&self, params: WorkspaceSymbolParams) -> Result<Option<Vec<SymbolInformation>>> {
+    async fn symbol(
+        &self,
+        params: WorkspaceSymbolParams,
+    ) -> Result<Option<Vec<SymbolInformation>>> {
         let mut symbols = Vec::new();
         let docs = self.documents.lock().unwrap();
-        
+
         for (uri, content) in docs.iter() {
             if let (Some(program), _, _) = self.analyze_document(uri, content) {
                 let decls = collect_local_decls(&program);
                 for decl in decls {
                     if decl.name.contains(&params.query) {
                         let range = self.span_to_range(content, decl.span);
-                        let kind = if decl.detail.starts_with("Function") || decl.detail.starts_with("Model Method") {
+                        let kind = if decl.detail.starts_with("Function")
+                            || decl.detail.starts_with("Model Method")
+                        {
                             SymbolKind::FUNCTION
                         } else if decl.detail.starts_with("Model") {
                             SymbolKind::CLASS
@@ -797,11 +879,14 @@ impl LanguageServer for Backend {
                 }
             }
         }
-        
+
         Ok(Some(symbols))
     }
 
-    async fn document_symbol(&self, params: DocumentSymbolParams) -> Result<Option<DocumentSymbolResponse>> {
+    async fn document_symbol(
+        &self,
+        params: DocumentSymbolParams,
+    ) -> Result<Option<DocumentSymbolResponse>> {
         let uri = params.text_document.uri;
 
         let docs = self.documents.lock().unwrap();
@@ -815,7 +900,9 @@ impl LanguageServer for Backend {
             let decls = collect_local_decls(&program);
             for decl in decls {
                 let range = self.span_to_range(content, decl.span);
-                let kind = if decl.detail.starts_with("Function") || decl.detail.starts_with("Model Method") {
+                let kind = if decl.detail.starts_with("Function")
+                    || decl.detail.starts_with("Model Method")
+                {
                     SymbolKind::FUNCTION
                 } else if decl.detail.starts_with("Model") {
                     SymbolKind::CLASS
@@ -853,8 +940,8 @@ impl LanguageServer for Backend {
         let keywords = vec![
             "make", "const", "say", "ask", "build", "return", "fun", "model", "self", "new",
             "when", "else", "each", "in", "repeat", "while", "break", "continue", "attempt",
-            "catch", "throw", "import", "from", "export", "use", "true", "false", "none", "and", "or",
-            "not", "is"
+            "catch", "throw", "import", "from", "export", "use", "true", "false", "none", "and",
+            "or", "not", "is",
         ];
         for kw in keywords {
             items.push(CompletionItem {
@@ -892,7 +979,9 @@ impl LanguageServer for Backend {
             if let (Some(program), _, _) = self.analyze_document(&uri, content) {
                 let decls = collect_local_decls(&program);
                 for decl in decls {
-                    let kind = if decl.detail.starts_with("Function") || decl.detail.starts_with("Model Method") {
+                    let kind = if decl.detail.starts_with("Function")
+                        || decl.detail.starts_with("Model Method")
+                    {
                         CompletionItemKind::FUNCTION
                     } else if decl.detail.starts_with("Model") {
                         CompletionItemKind::CLASS
@@ -919,17 +1008,17 @@ impl LanguageServer for Backend {
     async fn signature_help(&self, _params: SignatureHelpParams) -> Result<Option<SignatureHelp>> {
         // Basic signature help support for build functions
         Ok(Some(SignatureHelp {
-            signatures: vec![
-                SignatureInformation {
-                    label: "say(value)".to_string(),
-                    documentation: Some(Documentation::String("Prints the evaluated value to standard output.".to_string())),
-                    parameters: Some(vec![ParameterInformation {
-                        label: ParameterLabel::Simple("value".to_string()),
-                        documentation: Some(Documentation::String("The value to print".to_string())),
-                    }]),
-                    active_parameter: Some(0),
-                }
-            ],
+            signatures: vec![SignatureInformation {
+                label: "say(value)".to_string(),
+                documentation: Some(Documentation::String(
+                    "Prints the evaluated value to standard output.".to_string(),
+                )),
+                parameters: Some(vec![ParameterInformation {
+                    label: ParameterLabel::Simple("value".to_string()),
+                    documentation: Some(Documentation::String("The value to print".to_string())),
+                }]),
+                active_parameter: Some(0),
+            }],
             active_signature: Some(0),
             active_parameter: Some(0),
         }))
@@ -1004,7 +1093,10 @@ impl LanguageServer for Backend {
         Ok(Some(lenses))
     }
 
-    async fn selection_range(&self, params: SelectionRangeParams) -> Result<Option<Vec<SelectionRange>>> {
+    async fn selection_range(
+        &self,
+        params: SelectionRangeParams,
+    ) -> Result<Option<Vec<SelectionRange>>> {
         let mut selection_ranges = Vec::new();
         for pos in params.positions {
             selection_ranges.push(SelectionRange {
@@ -1037,7 +1129,9 @@ impl LanguageServer for Backend {
                         label: InlayHintLabel::String(": Any".to_string()),
                         kind: Some(InlayHintKind::TYPE),
                         text_edits: None,
-                        tooltip: Some(InlayHintTooltip::String("Inferred dynamic type".to_string())),
+                        tooltip: Some(InlayHintTooltip::String(
+                            "Inferred dynamic type".to_string(),
+                        )),
                         padding_left: Some(true),
                         padding_right: Some(false),
                         data: None,
@@ -1049,7 +1143,10 @@ impl LanguageServer for Backend {
         Ok(Some(hints))
     }
 
-    async fn prepare_call_hierarchy(&self, params: CallHierarchyPrepareParams) -> Result<Option<Vec<CallHierarchyItem>>> {
+    async fn prepare_call_hierarchy(
+        &self,
+        params: CallHierarchyPrepareParams,
+    ) -> Result<Option<Vec<CallHierarchyItem>>> {
         let uri = params.text_document_position_params.text_document.uri;
         let pos = params.text_document_position_params.position;
         let docs = self.documents.lock().unwrap();
@@ -1060,7 +1157,9 @@ impl LanguageServer for Backend {
 
         let offset = self.position_to_offset(content, pos);
         let word = self.get_word_at_offset(content, offset);
-        if word.is_empty() { return Ok(None); }
+        if word.is_empty() {
+            return Ok(None);
+        }
 
         Ok(Some(vec![CallHierarchyItem {
             name: word.clone(),
@@ -1068,21 +1167,36 @@ impl LanguageServer for Backend {
             tags: None,
             detail: Some("Function".to_string()),
             uri,
-            range: Range { start: pos, end: pos },
-            selection_range: Range { start: pos, end: pos },
+            range: Range {
+                start: pos,
+                end: pos,
+            },
+            selection_range: Range {
+                start: pos,
+                end: pos,
+            },
             data: None,
         }]))
     }
 
-    async fn incoming_calls(&self, _params: CallHierarchyIncomingCallsParams) -> Result<Option<Vec<CallHierarchyIncomingCall>>> {
+    async fn incoming_calls(
+        &self,
+        _params: CallHierarchyIncomingCallsParams,
+    ) -> Result<Option<Vec<CallHierarchyIncomingCall>>> {
         Ok(Some(vec![]))
     }
 
-    async fn outgoing_calls(&self, _params: CallHierarchyOutgoingCallsParams) -> Result<Option<Vec<CallHierarchyOutgoingCall>>> {
+    async fn outgoing_calls(
+        &self,
+        _params: CallHierarchyOutgoingCallsParams,
+    ) -> Result<Option<Vec<CallHierarchyOutgoingCall>>> {
         Ok(Some(vec![]))
     }
 
-    async fn prepare_type_hierarchy(&self, params: TypeHierarchyPrepareParams) -> Result<Option<Vec<TypeHierarchyItem>>> {
+    async fn prepare_type_hierarchy(
+        &self,
+        params: TypeHierarchyPrepareParams,
+    ) -> Result<Option<Vec<TypeHierarchyItem>>> {
         let uri = params.text_document_position_params.text_document.uri;
         let pos = params.text_document_position_params.position;
         let docs = self.documents.lock().unwrap();
@@ -1093,7 +1207,9 @@ impl LanguageServer for Backend {
 
         let offset = self.position_to_offset(content, pos);
         let word = self.get_word_at_offset(content, offset);
-        if word.is_empty() { return Ok(None); }
+        if word.is_empty() {
+            return Ok(None);
+        }
 
         Ok(Some(vec![TypeHierarchyItem {
             name: word.clone(),
@@ -1101,17 +1217,29 @@ impl LanguageServer for Backend {
             tags: None,
             detail: Some("Model Type".to_string()),
             uri,
-            range: Range { start: pos, end: pos },
-            selection_range: Range { start: pos, end: pos },
+            range: Range {
+                start: pos,
+                end: pos,
+            },
+            selection_range: Range {
+                start: pos,
+                end: pos,
+            },
             data: None,
         }]))
     }
 
-    async fn supertypes(&self, _params: TypeHierarchySupertypesParams) -> Result<Option<Vec<TypeHierarchyItem>>> {
+    async fn supertypes(
+        &self,
+        _params: TypeHierarchySupertypesParams,
+    ) -> Result<Option<Vec<TypeHierarchyItem>>> {
         Ok(Some(vec![]))
     }
 
-    async fn subtypes(&self, _params: TypeHierarchySubtypesParams) -> Result<Option<Vec<TypeHierarchyItem>>> {
+    async fn subtypes(
+        &self,
+        _params: TypeHierarchySubtypesParams,
+    ) -> Result<Option<Vec<TypeHierarchyItem>>> {
         Ok(Some(vec![]))
     }
 
@@ -1131,7 +1259,11 @@ impl LanguageServer for Backend {
 
         let lines: Vec<&str> = content.lines().collect();
         let last_line_idx = if lines.is_empty() { 0 } else { lines.len() - 1 };
-        let last_char_idx = if lines.is_empty() { 0 } else { lines[last_line_idx].len() };
+        let last_char_idx = if lines.is_empty() {
+            0
+        } else {
+            lines[last_line_idx].len()
+        };
 
         Ok(Some(vec![TextEdit {
             range: Range {
@@ -1142,7 +1274,10 @@ impl LanguageServer for Backend {
         }]))
     }
 
-    async fn range_formatting(&self, params: DocumentRangeFormattingParams) -> Result<Option<Vec<TextEdit>>> {
+    async fn range_formatting(
+        &self,
+        params: DocumentRangeFormattingParams,
+    ) -> Result<Option<Vec<TextEdit>>> {
         let uri = params.text_document.uri;
         let range = params.range;
 
@@ -1169,7 +1304,10 @@ impl LanguageServer for Backend {
         }]))
     }
 
-    async fn on_type_formatting(&self, params: DocumentOnTypeFormattingParams) -> Result<Option<Vec<TextEdit>>> {
+    async fn on_type_formatting(
+        &self,
+        params: DocumentOnTypeFormattingParams,
+    ) -> Result<Option<Vec<TextEdit>>> {
         let formatting_params = DocumentFormattingParams {
             text_document: params.text_document_position.text_document,
             options: params.options,
@@ -1178,7 +1316,10 @@ impl LanguageServer for Backend {
         self.formatting(formatting_params).await
     }
 
-    async fn semantic_tokens_full(&self, params: SemanticTokensParams) -> Result<Option<SemanticTokensResult>> {
+    async fn semantic_tokens_full(
+        &self,
+        params: SemanticTokensParams,
+    ) -> Result<Option<SemanticTokensResult>> {
         let uri = params.text_document.uri;
 
         let docs = self.documents.lock().unwrap();
@@ -1300,7 +1441,8 @@ impl LanguageServer for Backend {
                         changes2.insert(uri.clone(), const_edits);
 
                         actions.push(CodeActionOrCommand::CodeAction(CodeAction {
-                            title: "Change mutable variable 'make' to immutable 'const'".to_string(),
+                            title: "Change mutable variable 'make' to immutable 'const'"
+                                .to_string(),
                             kind: Some(CodeActionKind::QUICKFIX),
                             edit: Some(WorkspaceEdit {
                                 changes: Some(changes2),

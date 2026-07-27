@@ -1,16 +1,17 @@
+use crate::{StdFunction, StdlibModule, StdlibRegistry};
+use indexmap::IndexMap;
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
-use std::cell::RefCell;
-use indexmap::IndexMap;
 use techscript_runtime::{
     error::{RuntimeError, RuntimeErrorKind},
     value::RuntimeValue,
 };
-use crate::{StdFunction, StdlibModule, StdlibRegistry};
 
 impl StdlibRegistry {
     pub fn register_toml(&mut self) {
-        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> = HashMap::new();
+        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
+            HashMap::new();
 
         exports.insert(
             "parse".to_string(),
@@ -40,7 +41,10 @@ impl StdlibRegistry {
                     let toml_val = to_toml_value(&args[0])?;
                     let toml_str = toml::to_string(&toml_val).map_err(|e| {
                         RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("TOML stringify error: {}", e)),
+                            RuntimeErrorKind::InvalidOperation(format!(
+                                "TOML stringify error: {}",
+                                e
+                            )),
                             None,
                             None,
                         )
@@ -85,17 +89,13 @@ pub fn parse_toml_value(v: toml::Value) -> RuntimeValue {
                 is_const: false,
             }
         }
-        toml::Value::Datetime(dt) => {
-            RuntimeValue::Str(dt.to_string())
-        }
+        toml::Value::Datetime(dt) => RuntimeValue::Str(dt.to_string()),
     }
 }
 
 pub fn to_toml_value(val: &RuntimeValue) -> Result<toml::Value, RuntimeError> {
     match val {
-        RuntimeValue::Null => {
-            Ok(toml::Value::String("none".to_string()))
-        }
+        RuntimeValue::Null => Ok(toml::Value::String("none".to_string())),
         RuntimeValue::Bool(b) => Ok(toml::Value::Boolean(*b)),
         RuntimeValue::Int(i) => Ok(toml::Value::Integer(*i)),
         RuntimeValue::Float(f) => Ok(toml::Value::Float(*f)),

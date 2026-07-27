@@ -1,18 +1,19 @@
-use std::collections::HashMap;
-use std::rc::Rc;
-use std::cell::RefCell;
-use std::process::Command;
+use crate::{StdFunction, StdlibModule, StdlibRegistry};
 use indexmap::IndexMap;
+use std::cell::RefCell;
+use std::collections::HashMap;
+use std::process::Command;
+use std::rc::Rc;
 use techscript_runtime::{
     context::Capability,
     error::{RuntimeError, RuntimeErrorKind},
     value::RuntimeValue,
 };
-use crate::{StdFunction, StdlibModule, StdlibRegistry};
 
 impl StdlibRegistry {
     pub fn register_process(&mut self) {
-        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> = HashMap::new();
+        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
+            HashMap::new();
 
         exports.insert(
             "run".to_string(),
@@ -23,7 +24,8 @@ impl StdlibRegistry {
                     if !ctx.config.capabilities.contains(&Capability::Process) {
                         return Err(RuntimeError::new(
                             RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Process capability is denied".to_string(),
+                                "Security policy violation: Process capability is denied"
+                                    .to_string(),
                             ),
                             None,
                             None,
@@ -50,19 +52,16 @@ impl StdlibRegistry {
                         }
                     };
 
-                    let output = Command::new(cmd)
-                        .args(args_list)
-                        .output()
-                        .map_err(|e| {
-                            RuntimeError::new(
-                                RuntimeErrorKind::InvalidOperation(format!(
-                                    "Failed to execute command: {}",
-                                    e
-                                )),
-                                None,
-                                None,
-                            )
-                        })?;
+                    let output = Command::new(cmd).args(args_list).output().map_err(|e| {
+                        RuntimeError::new(
+                            RuntimeErrorKind::InvalidOperation(format!(
+                                "Failed to execute command: {}",
+                                e
+                            )),
+                            None,
+                            None,
+                        )
+                    })?;
 
                     let mut res_map = IndexMap::new();
                     res_map.insert(
@@ -95,7 +94,8 @@ impl StdlibRegistry {
                     if !ctx.config.capabilities.contains(&Capability::Process) {
                         return Err(RuntimeError::new(
                             RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Process capability is denied".to_string(),
+                                "Security policy violation: Process capability is denied"
+                                    .to_string(),
                             ),
                             None,
                             None,
@@ -103,15 +103,27 @@ impl StdlibRegistry {
                     }
                     let cmd = match &args[0] {
                         RuntimeValue::Str(s) => s.clone(),
-                        _ => return Err(RuntimeError::new(
-                            RuntimeErrorKind::TypeMismatch { expected: "string".to_string(), found: "other".to_string() },
-                            None, None,
-                        )),
+                        _ => {
+                            return Err(RuntimeError::new(
+                                RuntimeErrorKind::TypeMismatch {
+                                    expected: "string".to_string(),
+                                    found: "other".to_string(),
+                                },
+                                None,
+                                None,
+                            ))
+                        }
                     };
                     Command::new("cmd")
                         .args(["/C", &cmd])
                         .spawn()
-                        .map_err(|e| RuntimeError::new(RuntimeErrorKind::InvalidOperation(e.to_string()), None, None))?;
+                        .map_err(|e| {
+                            RuntimeError::new(
+                                RuntimeErrorKind::InvalidOperation(e.to_string()),
+                                None,
+                                None,
+                            )
+                        })?;
                     Ok(RuntimeValue::Null)
                 },
             }),
@@ -134,9 +146,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "pid".to_string(),
                 arity: 0,
-                callback: |_ctx, _args| {
-                    Ok(RuntimeValue::Int(std::process::id() as i64))
-                },
+                callback: |_ctx, _args| Ok(RuntimeValue::Int(std::process::id() as i64)),
             }),
         );
 

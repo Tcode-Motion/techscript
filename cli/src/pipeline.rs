@@ -3,12 +3,12 @@
 //! Wires together Lexer → Parser → Semantic → IR Lowering → Optimization → Bytecode
 //! Emits CompilationEvents to the EventBus at each stage boundary.
 
+use colored::Colorize;
 use std::path::{Path, PathBuf};
 use std::time::{Duration, Instant};
 use techscript_bytecode::BytecodeModule;
 use techscript_common::{FileId, SourceManager};
 use techscript_runtime::RuntimeValue;
-use colored::Colorize;
 
 use crate::artifacts::{ArtifactManager, BuildManifest, BuildOutput};
 use crate::cache::BuildCache;
@@ -278,10 +278,18 @@ impl CompilationPipeline {
             #[cfg(feature = "llvm")]
             {
                 let opt_level = match opts.profile {
-                    BuildProfile::Debug => techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelNone,
-                    BuildProfile::Release => techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelDefault,
-                    BuildProfile::ReleaseFast => techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelAggressive,
-                    BuildProfile::ReleaseSmall => techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelDefault,
+                    BuildProfile::Debug => {
+                        techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelNone
+                    }
+                    BuildProfile::Release => {
+                        techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelDefault
+                    }
+                    BuildProfile::ReleaseFast => {
+                        techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelAggressive
+                    }
+                    BuildProfile::ReleaseSmall => {
+                        techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelDefault
+                    }
                 };
 
                 let llvm_opts = techscript_llvm_backend::LLVMBackendOptions {
@@ -359,10 +367,9 @@ impl CompilationPipeline {
     ) -> anyhow::Result<RuntimeValue> {
         match opts.backend {
             ExecutionBackend::Vm => {
-                let bytecode = result
-                    .bytecode
-                    .as_ref()
-                    .ok_or_else(|| anyhow::anyhow!("Cannot execute compiled unit: Compilation failed."))?;
+                let bytecode = result.bytecode.as_ref().ok_or_else(|| {
+                    anyhow::anyhow!("Cannot execute compiled unit: Compilation failed.")
+                })?;
                 // Run using VM
                 techscript_vm::run(bytecode.clone())
                     .map_err(|e| anyhow::anyhow!("VM Runtime Error: {:?}", e))
@@ -394,33 +401,44 @@ impl CompilationPipeline {
                         .map_err(|e| anyhow::anyhow!("Semantic error: {:?}", e))?;
                     let lowered = techscript_ir::lower(&checked.program, "main");
                     let mut module = lowered.module;
-                    
+
                     let opt_level = match opts.profile {
-                        BuildProfile::Debug => techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelNone,
-                        BuildProfile::Release => techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelDefault,
-                        BuildProfile::ReleaseFast => techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelAggressive,
-                        BuildProfile::ReleaseSmall => techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelDefault,
+                        BuildProfile::Debug => {
+                            techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelNone
+                        }
+                        BuildProfile::Release => {
+                            techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelDefault
+                        }
+                        BuildProfile::ReleaseFast => {
+                            techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelAggressive
+                        }
+                        BuildProfile::ReleaseSmall => {
+                            techscript_llvm_backend::LLVMCodeGenOptLevel::LLVMCodeGenLevelDefault
+                        }
                     };
-                    
+
                     let llvm_opts = techscript_llvm_backend::LLVMBackendOptions {
                         target_triple: get_host_target_triple(),
                         opt_level,
                         debug_symbols: false,
                     };
-                    
+
                     unsafe {
                         let mut jit = techscript_llvm_backend::jit::LLVMJitEngine::new()
                             .map_err(|e| anyhow::anyhow!("Failed to init JIT: {}", e))?;
                         jit.compile(&module, &llvm_opts)
                             .map_err(|e| anyhow::anyhow!("JIT Compile Error: {}", e))?;
-                        let res_code = jit.execute("main")
+                        let res_code = jit
+                            .execute("main")
                             .map_err(|e| anyhow::anyhow!("JIT Execution Error: {}", e))?;
                         Ok(RuntimeValue::Int(res_code))
                     }
                 }
                 #[cfg(not(feature = "llvm"))]
                 {
-                    Err(anyhow::anyhow!("JIT execution requires LLVM feature enabled."))
+                    Err(anyhow::anyhow!(
+                        "JIT execution requires LLVM feature enabled."
+                    ))
                 }
             }
         }

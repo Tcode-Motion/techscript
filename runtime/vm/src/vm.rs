@@ -53,7 +53,11 @@ impl VM {
         // Collect all module short names so we can avoid name collisions
         let mut module_names = std::collections::HashSet::new();
         for module in stdlib.modules.values() {
-            let short_name = module.name.strip_prefix("std.").unwrap_or(&module.name).to_string();
+            let short_name = module
+                .name
+                .strip_prefix("std.")
+                .unwrap_or(&module.name)
+                .to_string();
             module_names.insert(short_name.clone());
             let mut entries = indexmap::IndexMap::new();
             for (func_name, func) in &module.exports {

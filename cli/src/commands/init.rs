@@ -5,20 +5,30 @@
 
 use crate::exit_code::ExitCode;
 use crate::templates::ProjectTemplate;
-use std::path::PathBuf;
-use std::io::{self, Write};
 use colored::Colorize;
+use std::io::{self, Write};
+use std::path::PathBuf;
 
 pub fn execute(template_str: Option<&str>) -> ExitCode {
     let current_dir = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
-    
+
     let mut resolved_template = template_str.map(|s| s.to_string());
 
     // 1. Run interactive wizard if template is not provided
     if resolved_template.is_none() {
-        println!("{}", "=========================================================".cyan().bold());
+        println!(
+            "{}",
+            "========================================================="
+                .cyan()
+                .bold()
+        );
         println!("             TECHSCRIPT 2.0 INITIALIZATION               ");
-        println!("{}", "=========================================================".cyan().bold());
+        println!(
+            "{}",
+            "========================================================="
+                .cyan()
+                .bold()
+        );
         println!("Select template structure for this folder:");
         println!("  1) Console   (Standard application entry point)");
         println!("  2) Library   (Shared library module logic)");
@@ -37,7 +47,12 @@ pub fn execute(template_str: Option<&str>) -> ExitCode {
             "5" | "empty" => "empty".to_string(),
             _ => "console".to_string(),
         });
-        println!("{}", "=========================================================\n".cyan().bold());
+        println!(
+            "{}",
+            "=========================================================\n"
+                .cyan()
+                .bold()
+        );
     }
 
     let template_input = resolved_template.as_deref().unwrap_or("console");

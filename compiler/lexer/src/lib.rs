@@ -639,10 +639,7 @@ pub fn lex(source: &str, reporter: &mut DiagnosticReporter) -> Result<Vec<Token>
 
 impl<'a> Lexer<'a> {
     /// Tokenizes the source string, recovering from error states instead of failing.
-    pub fn lex_recovered(
-        &mut self,
-        reporter: &mut DiagnosticReporter,
-    ) -> Vec<Token> {
+    pub fn lex_recovered(&mut self, reporter: &mut DiagnosticReporter) -> Vec<Token> {
         let mut tokens = Vec::new();
 
         while self.pos < self.source.len() || !self.token_queue.is_empty() {
@@ -740,4 +737,3 @@ pub fn lex_recovered(source: &str, reporter: &mut DiagnosticReporter) -> Vec<Tok
     let mut lexer = Lexer::new(source);
     lexer.lex_recovered(reporter)
 }
-

@@ -7,14 +7,17 @@ use clap::CommandFactory;
 
 pub fn execute(shell_str: &str) -> ExitCode {
     let mut cmd = crate::Cli::command();
-    
+
     let shell = match shell_str.to_lowercase().as_str() {
         "bash" => clap_complete::Shell::Bash,
         "zsh" => clap_complete::Shell::Zsh,
         "fish" => clap_complete::Shell::Fish,
         "powershell" => clap_complete::Shell::PowerShell,
         _ => {
-            eprintln!("Error: Unsupported shell '{}'. Choose from: bash, zsh, fish, powershell.", shell_str);
+            eprintln!(
+                "Error: Unsupported shell '{}'. Choose from: bash, zsh, fish, powershell.",
+                shell_str
+            );
             return ExitCode::InvalidUsage;
         }
     };

@@ -9,7 +9,7 @@ fn test_cli_version_output() {
     let output = cmd.output().expect("Failed to execute tsc binary");
     assert!(output.status.success());
     let stdout = String::from_utf8_lossy(&output.stdout);
-    
+
     assert!(stdout.contains("TECHSCRIPT 2.0 TOOLCHAIN VERSION"));
     assert!(stdout.contains("Compiler Driver:"));
     assert!(stdout.contains("Language Standard:"));
@@ -22,7 +22,7 @@ fn test_cli_doctor_output() {
     let output = cmd.output().expect("Failed to execute tsc binary");
     assert!(output.status.success());
     let stdout = String::from_utf8_lossy(&output.stdout);
-    
+
     assert!(stdout.contains("Checking TechScript 2.0 Environment Health..."));
     assert!(stdout.contains("Compiler version check"));
     assert!(stdout.contains("Standard library integrity"));
@@ -35,7 +35,7 @@ fn test_cli_fuzzy_suggestions() {
     let output = cmd.output().expect("Failed to execute tsc binary");
     assert!(!output.status.success());
     let stderr = String::from_utf8_lossy(&output.stderr);
-    
+
     assert!(stderr.contains("Unknown command: 'doctorr'"));
     assert!(stderr.contains("Did you mean?"));
     assert!(stderr.contains("doctor"));

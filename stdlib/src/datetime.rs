@@ -1,14 +1,12 @@
+use crate::{StdFunction, StdlibModule, StdlibRegistry};
 use std::collections::HashMap;
 use std::rc::Rc;
-use techscript_runtime::{
-    error::RuntimeError,
-    value::RuntimeValue,
-};
-use crate::{StdFunction, StdlibModule, StdlibRegistry};
+use techscript_runtime::{error::RuntimeError, value::RuntimeValue};
 
 impl StdlibRegistry {
     pub fn register_datetime(&mut self) {
-        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> = HashMap::new();
+        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
+            HashMap::new();
 
         exports.insert(
             "epoch".to_string(),
@@ -16,7 +14,9 @@ impl StdlibRegistry {
                 name: "epoch".to_string(),
                 arity: 0,
                 callback: |_ctx, _args| {
-                    let dur = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default();
+                    let dur = std::time::SystemTime::now()
+                        .duration_since(std::time::UNIX_EPOCH)
+                        .unwrap_or_default();
                     Ok(RuntimeValue::Float(dur.as_secs_f64()))
                 },
             }),
@@ -30,7 +30,10 @@ impl StdlibRegistry {
                 callback: |_ctx, args| {
                     let epoch = args[0].try_into_float()?;
                     let fmt = args[1].try_into_string()?;
-                    Ok(RuntimeValue::Str(format!("Formatted {} using format {}", epoch, fmt)))
+                    Ok(RuntimeValue::Str(format!(
+                        "Formatted {} using format {}",
+                        epoch, fmt
+                    )))
                 },
             }),
         );

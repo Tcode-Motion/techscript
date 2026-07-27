@@ -214,13 +214,18 @@ fn test_parser_error_recovery() {
 
     // The parser should recover after semicolon and parse `say 42` successfully, but return Err because reporter has errors.
     assert!(reporter.has_errors());
-    let error_count = reporter.get_diagnostics().iter().filter(|d| d.level == techscript_errors::DiagnosticLevel::Error).count();
+    let error_count = reporter
+        .get_diagnostics()
+        .iter()
+        .filter(|d| d.level == techscript_errors::DiagnosticLevel::Error)
+        .count();
     assert_eq!(error_count, 1);
 }
 
 #[test]
 fn test_v108_classic_and_sentence_dialects_can_mix() {
-    let program = parse_source(r#"
+    let program = parse_source(
+        r#"
 keep PI be 3
 make numbers be [1, 2, 3]
 when 1 equals 1 then
@@ -232,7 +237,8 @@ build greet with name then
   give f"Hello {name}"
 end
 use math
-"#);
+"#,
+    );
     assert_eq!(program.statements.len(), 5);
     assert!(matches!(program.statements[0], Statement::ConstDecl(_)));
     assert!(matches!(program.statements[2], Statement::If(_)));
@@ -301,7 +307,9 @@ fn test_dsl_block_with_nested_sub_blocks() {
 
 #[test]
 fn test_dsl_block_with_inline_code() {
-    let program = parse_source("button \"Click Me\"\n  color \"red\"\n  code\n    say \"clicked!\"\n  end\nend");
+    let program = parse_source(
+        "button \"Click Me\"\n  color \"red\"\n  code\n    say \"clicked!\"\n  end\nend",
+    );
     assert_eq!(program.statements.len(), 1);
     if let Statement::DSL(ref block) = program.statements[0] {
         assert_eq!(block.kind, "button");
@@ -385,9 +393,15 @@ fn test_dsl_expression_value() {
     if let Statement::DSL(ref block) = program.statements[0] {
         assert_eq!(block.properties.len(), 2);
         // width: 300 + 50
-        assert!(matches!(block.properties[0].value.as_ref().unwrap(), Expression::Binary(_)));
+        assert!(matches!(
+            block.properties[0].value.as_ref().unwrap(),
+            Expression::Binary(_)
+        ));
         // visible: true and false
-        assert!(matches!(block.properties[1].value.as_ref().unwrap(), Expression::Binary(_)));
+        assert!(matches!(
+            block.properties[1].value.as_ref().unwrap(),
+            Expression::Binary(_)
+        ));
     } else {
         panic!("Expected Statement::DSL");
     }

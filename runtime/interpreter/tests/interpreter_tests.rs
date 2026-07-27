@@ -224,10 +224,22 @@ attempt {
     let mut interpreter = Interpreter::new();
     interpreter.interpret(&checked.program).unwrap();
 
-    assert_eq!(interpreter.env.borrow().lookup("x").unwrap(), RuntimeValue::Int(4));
-    assert_eq!(interpreter.env.borrow().lookup("last").unwrap(), RuntimeValue::Int(3));
-    assert_eq!(interpreter.env.borrow().lookup("greeting").unwrap(), RuntimeValue::Str("Hello TechScript".to_string()));
-    assert_eq!(interpreter.env.borrow().lookup("caught").unwrap(), RuntimeValue::Str("division by zero".to_string()));
+    assert_eq!(
+        interpreter.env.borrow().lookup("x").unwrap(),
+        RuntimeValue::Int(4)
+    );
+    assert_eq!(
+        interpreter.env.borrow().lookup("last").unwrap(),
+        RuntimeValue::Int(3)
+    );
+    assert_eq!(
+        interpreter.env.borrow().lookup("greeting").unwrap(),
+        RuntimeValue::Str("Hello TechScript".to_string())
+    );
+    assert_eq!(
+        interpreter.env.borrow().lookup("caught").unwrap(),
+        RuntimeValue::Str("division by zero".to_string())
+    );
 }
 
 #[test]
@@ -257,7 +269,7 @@ end
             assert_eq!(dsl.kind, "page");
             assert_eq!(dsl.args.len(), 1);
             assert_eq!(dsl.properties.len(), 1); // title "Home"
-            assert_eq!(dsl.children.len(), 1);    // hero sub-block
+            assert_eq!(dsl.children.len(), 1); // hero sub-block
             assert_eq!(dsl.children[0].kind, "hero");
         } else {
             panic!("Expected DslBlock value");

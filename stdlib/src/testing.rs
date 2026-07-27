@@ -1,12 +1,12 @@
+use crate::{MockFunction, StdFunction, StdlibModule, StdlibRegistry};
 use std::collections::HashMap;
 use std::rc::Rc;
 use techscript_runtime::{
     error::{RuntimeError, RuntimeErrorKind},
-    value::RuntimeValue,
     function::Callable,
+    value::RuntimeValue,
     RuntimeContext,
 };
-use crate::{StdFunction, MockFunction, StdlibModule, StdlibRegistry};
 
 impl StdlibRegistry {
     pub fn register_testing(&mut self) {
@@ -22,7 +22,10 @@ impl StdlibRegistry {
                     let msg = args[1].try_into_string()?;
                     if !cond {
                         return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("Assertion failed: {}", msg)),
+                            RuntimeErrorKind::InvalidOperation(format!(
+                                "Assertion failed: {}",
+                                msg
+                            )),
                             None,
                             None,
                         ));
@@ -41,7 +44,7 @@ impl StdlibRegistry {
                     let actual = &args[0];
                     let expected = &args[1];
                     let msg = args[2].try_into_string()?;
-                    
+
                     let is_eq = match (actual, expected) {
                         (RuntimeValue::Int(a), RuntimeValue::Int(b)) => a == b,
                         (RuntimeValue::Float(a), RuntimeValue::Float(b)) => a == b,
@@ -52,7 +55,10 @@ impl StdlibRegistry {
                     };
                     if !is_eq {
                         return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("Assertion failed (actual != expected): {}", msg)),
+                            RuntimeErrorKind::InvalidOperation(format!(
+                                "Assertion failed (actual != expected): {}",
+                                msg
+                            )),
                             None,
                             None,
                         ));
@@ -71,7 +77,7 @@ impl StdlibRegistry {
                     let actual = &args[0];
                     let expected = &args[1];
                     let msg = args[2].try_into_string()?;
-                    
+
                     let is_eq = match (actual, expected) {
                         (RuntimeValue::Int(a), RuntimeValue::Int(b)) => a == b,
                         (RuntimeValue::Float(a), RuntimeValue::Float(b)) => a == b,
@@ -82,7 +88,10 @@ impl StdlibRegistry {
                     };
                     if is_eq {
                         return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("Assertion failed (actual == expected): {}", msg)),
+                            RuntimeErrorKind::InvalidOperation(format!(
+                                "Assertion failed (actual == expected): {}",
+                                msg
+                            )),
                             None,
                             None,
                         ));
@@ -112,9 +121,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "mock_object".to_string(),
                 arity: 1,
-                callback: |_ctx, args| {
-                    Ok(args[0].clone())
-                },
+                callback: |_ctx, args| Ok(args[0].clone()),
             }),
         );
 
@@ -131,7 +138,10 @@ impl StdlibRegistry {
                             func.call(ctx, vec![]).ok();
                         }
                         let elapsed = start.elapsed().as_secs_f64();
-                        println!("Benchmark completed: {} iterations in {:.5}s", iterations, elapsed);
+                        println!(
+                            "Benchmark completed: {} iterations in {:.5}s",
+                            iterations, elapsed
+                        );
                         return Ok(RuntimeValue::Float(elapsed));
                     }
                     Ok(RuntimeValue::Null)

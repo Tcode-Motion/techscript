@@ -1,10 +1,10 @@
+use crate::{StdFunction, StdlibModule, StdlibRegistry};
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
-use std::cell::RefCell;
 use techscript_runtime::{
     context::RuntimeContext, error::RuntimeError, function::Callable, value::RuntimeValue,
 };
-use crate::{StdFunction, StdlibModule, StdlibRegistry};
 
 /// Convert a DslBlockValue to SVG string.
 fn dsl_to_svg(val: &RuntimeValue, is_dragon: bool) -> String {
@@ -14,17 +14,23 @@ fn dsl_to_svg(val: &RuntimeValue, is_dragon: bool) -> String {
             if is_dragon {
                 match dsl.kind.as_str() {
                     "logo" => {
-                        let text = dsl.properties.iter()
+                        let text = dsl
+                            .properties
+                            .iter()
                             .find(|p| p.name == "text")
                             .and_then(|p| p.value.as_ref())
                             .map(|v| v.to_string())
                             .unwrap_or_else(|| "Logo".to_string());
-                        let color = dsl.properties.iter()
+                        let color = dsl
+                            .properties
+                            .iter()
                             .find(|p| p.name == "color")
                             .and_then(|p| p.value.as_ref())
                             .map(|v| v.to_string())
                             .unwrap_or_else(|| "#00d4ff".to_string());
-                        let size = dsl.properties.iter()
+                        let size = dsl
+                            .properties
+                            .iter()
                             .find(|p| p.name == "size")
                             .and_then(|p| p.value.as_ref())
                             .and_then(|v| v.try_into_int().ok())
@@ -68,17 +74,23 @@ fn dsl_to_svg(val: &RuntimeValue, is_dragon: bool) -> String {
                 // RENDER OLD GEOMETRIC LOGO
                 match dsl.kind.as_str() {
                     "logo" => {
-                        let text = dsl.properties.iter()
+                        let text = dsl
+                            .properties
+                            .iter()
                             .find(|p| p.name == "text")
                             .and_then(|p| p.value.as_ref())
                             .map(|v| v.to_string())
                             .unwrap_or_else(|| "Logo".to_string());
-                        let color = dsl.properties.iter()
+                        let color = dsl
+                            .properties
+                            .iter()
                             .find(|p| p.name == "color")
                             .and_then(|p| p.value.as_ref())
                             .map(|v| v.to_string())
                             .unwrap_or_else(|| "#00d4ff".to_string());
-                        let size = dsl.properties.iter()
+                        let size = dsl
+                            .properties
+                            .iter()
                             .find(|p| p.name == "size")
                             .and_then(|p| p.value.as_ref())
                             .and_then(|v| v.try_into_int().ok())
@@ -89,22 +101,30 @@ fn dsl_to_svg(val: &RuntimeValue, is_dragon: bool) -> String {
                         ));
                     }
                     "rings" => {
-                        let count = dsl.properties.iter()
+                        let count = dsl
+                            .properties
+                            .iter()
                             .find(|p| p.name == "count")
                             .and_then(|p| p.value.as_ref())
                             .and_then(|v| v.try_into_int().ok())
                             .unwrap_or(3);
-                        let color = dsl.properties.iter()
+                        let color = dsl
+                            .properties
+                            .iter()
                             .find(|p| p.name == "color")
                             .and_then(|p| p.value.as_ref())
                             .map(|v| v.to_string())
                             .unwrap_or_else(|| "#00d4ff".to_string());
-                        let size = dsl.properties.iter()
+                        let size = dsl
+                            .properties
+                            .iter()
                             .find(|p| p.name == "size")
                             .and_then(|p| p.value.as_ref())
                             .and_then(|v| v.try_into_int().ok())
                             .unwrap_or(40);
-                        let thickness = dsl.properties.iter()
+                        let thickness = dsl
+                            .properties
+                            .iter()
                             .find(|p| p.name == "thickness")
                             .and_then(|p| p.value.as_ref())
                             .and_then(|v| v.try_into_int().ok())
@@ -119,12 +139,16 @@ fn dsl_to_svg(val: &RuntimeValue, is_dragon: bool) -> String {
                         }
                     }
                     "emblem" => {
-                        let color = dsl.properties.iter()
+                        let color = dsl
+                            .properties
+                            .iter()
                             .find(|p| p.name == "color")
                             .and_then(|p| p.value.as_ref())
                             .map(|v| v.to_string())
                             .unwrap_or_else(|| "#0088cc".to_string());
-                        let size = dsl.properties.iter()
+                        let size = dsl
+                            .properties
+                            .iter()
                             .find(|p| p.name == "size")
                             .and_then(|p| p.value.as_ref())
                             .and_then(|v| v.try_into_int().ok())
@@ -137,17 +161,23 @@ fn dsl_to_svg(val: &RuntimeValue, is_dragon: bool) -> String {
                         ));
                     }
                     "letter" => {
-                        let ch = dsl.properties.iter()
+                        let ch = dsl
+                            .properties
+                            .iter()
                             .find(|p| p.name == "char")
                             .and_then(|p| p.value.as_ref())
                             .map(|v| v.to_string())
                             .unwrap_or_else(|| "T".to_string());
-                        let color = dsl.properties.iter()
+                        let color = dsl
+                            .properties
+                            .iter()
                             .find(|p| p.name == "color")
                             .and_then(|p| p.value.as_ref())
                             .map(|v| v.to_string())
                             .unwrap_or_else(|| "#0a0e27".to_string());
-                        let size = dsl.properties.iter()
+                        let size = dsl
+                            .properties
+                            .iter()
                             .find(|p| p.name == "size")
                             .and_then(|p| p.value.as_ref())
                             .and_then(|v| v.try_into_int().ok())
@@ -158,23 +188,30 @@ fn dsl_to_svg(val: &RuntimeValue, is_dragon: bool) -> String {
                         ));
                     }
                     "core" => {
-                        let color = dsl.properties.iter()
+                        let color = dsl
+                            .properties
+                            .iter()
                             .find(|p| p.name == "color")
                             .and_then(|p| p.value.as_ref())
                             .map(|v| v.to_string())
                             .unwrap_or_else(|| "#66e0ff".to_string());
-                        let size = dsl.properties.iter()
+                        let size = dsl
+                            .properties
+                            .iter()
                             .find(|p| p.name == "size")
                             .and_then(|p| p.value.as_ref())
                             .and_then(|v| v.try_into_int().ok())
                             .unwrap_or(40);
                         svg.push_str(&format!(
                             r#"<circle cx="250" cy="180" r="{}" fill="{}" opacity="0.8"/>"#,
-                            size / 2, color
+                            size / 2,
+                            color
                         ));
                     }
                     "circuits" => {
-                        let color = dsl.properties.iter()
+                        let color = dsl
+                            .properties
+                            .iter()
                             .find(|p| p.name == "color")
                             .and_then(|p| p.value.as_ref())
                             .map(|v| v.to_string())
@@ -207,30 +244,55 @@ struct CanvasFn {
 }
 
 enum CanvasOp {
-    Create, Background, Rect, Circle, Text, Polygon, Line,
-    Close, Save, Reset, Content, Append, Stroke,
+    Create,
+    Background,
+    Rect,
+    Circle,
+    Text,
+    Polygon,
+    Line,
+    Close,
+    Save,
+    Reset,
+    Content,
+    Append,
+    Stroke,
 }
 
 impl Callable for CanvasFn {
-    fn name(&self) -> &str { &self.name }
-    fn arity(&self) -> usize { self.min_arity }
+    fn name(&self) -> &str {
+        &self.name
+    }
+    fn arity(&self) -> usize {
+        self.min_arity
+    }
     fn accepts_arity(&self, count: usize) -> bool {
         count >= self.min_arity && count <= self.max_arity
     }
-    fn call(&self, _ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<RuntimeValue, RuntimeError> {
+    fn call(
+        &self,
+        _ctx: &mut RuntimeContext,
+        args: Vec<RuntimeValue>,
+    ) -> Result<RuntimeValue, RuntimeError> {
         let mut buf = self.buffer.borrow_mut();
         match self.kind {
             CanvasOp::Create => {
                 let w = args[0].try_into_int().unwrap_or(800);
                 let h = args[1].try_into_int().unwrap_or(600);
-                *buf = format!(r#"<svg xmlns="http://www.w3.org/2000/svg" width="{}" height="{}" viewBox="0 0 {} {}">"#, w, h, w, h);
+                *buf = format!(
+                    r#"<svg xmlns="http://www.w3.org/2000/svg" width="{}" height="{}" viewBox="0 0 {} {}">"#,
+                    w, h, w, h
+                );
                 Ok(RuntimeValue::Null)
             }
             CanvasOp::Background => {
                 let w = parse_width(&buf);
                 let h = parse_height(&buf);
                 let fill = args[0].to_string();
-                buf.push_str(&format!(r#"<rect x="0" y="0" width="{}" height="{}" fill="{}"/>"#, w, h, fill));
+                buf.push_str(&format!(
+                    r#"<rect x="0" y="0" width="{}" height="{}" fill="{}"/>"#,
+                    w, h, fill
+                ));
                 Ok(RuntimeValue::Null)
             }
             CanvasOp::Rect => {
@@ -239,7 +301,10 @@ impl Callable for CanvasFn {
                 let w = args[2].try_into_int().unwrap_or(100);
                 let h = args[3].try_into_int().unwrap_or(100);
                 let fill = args[4].to_string();
-                buf.push_str(&format!(r#"<rect x="{}" y="{}" width="{}" height="{}" fill="{}"/>"#, x, y, w, h, fill));
+                buf.push_str(&format!(
+                    r#"<rect x="{}" y="{}" width="{}" height="{}" fill="{}"/>"#,
+                    x, y, w, h, fill
+                ));
                 Ok(RuntimeValue::Null)
             }
             CanvasOp::Circle => {
@@ -247,22 +312,36 @@ impl Callable for CanvasFn {
                 let cy = args[1].try_into_int().unwrap_or(50);
                 let r = args[2].try_into_int().unwrap_or(40);
                 let fill = args[3].to_string();
-                buf.push_str(&format!(r#"<circle cx="{}" cy="{}" r="{}" fill="{}"/>"#, cx, cy, r, fill));
+                buf.push_str(&format!(
+                    r#"<circle cx="{}" cy="{}" r="{}" fill="{}"/>"#,
+                    cx, cy, r, fill
+                ));
                 Ok(RuntimeValue::Null)
             }
             CanvasOp::Text => {
                 let x = args[0].try_into_int().unwrap_or(10);
                 let y = args[1].try_into_int().unwrap_or(30);
                 let txt = args[2].to_string();
-                let size = if args.len() > 3 { args[3].try_into_int().unwrap_or(16) } else { 16 };
-                let color = if args.len() > 4 { args[4].to_string() } else { "black".to_string() };
+                let size = if args.len() > 3 {
+                    args[3].try_into_int().unwrap_or(16)
+                } else {
+                    16
+                };
+                let color = if args.len() > 4 {
+                    args[4].to_string()
+                } else {
+                    "black".to_string()
+                };
                 buf.push_str(&format!(r#"<text x="{}" y="{}" font-size="{}" font-family="Arial,sans-serif" fill="{}">{}</text>"#, x, y, size, color, txt));
                 Ok(RuntimeValue::Null)
             }
             CanvasOp::Polygon => {
                 let points = args[0].to_string();
                 let fill = args[1].to_string();
-                buf.push_str(&format!(r#"<polygon points="{}" fill="{}"/>"#, points, fill));
+                buf.push_str(&format!(
+                    r#"<polygon points="{}" fill="{}"/>"#,
+                    points, fill
+                ));
                 Ok(RuntimeValue::Null)
             }
             CanvasOp::Line => {
@@ -271,7 +350,10 @@ impl Callable for CanvasFn {
                 let x2 = args[2].try_into_int().unwrap_or(100);
                 let y2 = args[3].try_into_int().unwrap_or(100);
                 let stroke = args[4].to_string();
-                buf.push_str(&format!(r#"<line x1="{}" y1="{}" x2="{}" y2="{}" stroke="{}" stroke-width="2"/>"#, x1, y1, x2, y2, stroke));
+                buf.push_str(&format!(
+                    r#"<line x1="{}" y1="{}" x2="{}" y2="{}" stroke="{}" stroke-width="2"/>"#,
+                    x1, y1, x2, y2, stroke
+                ));
                 Ok(RuntimeValue::Null)
             }
             CanvasOp::Close => {
@@ -281,8 +363,15 @@ impl Callable for CanvasFn {
             CanvasOp::Save => {
                 let path = args[0].to_string();
                 let content = buf.clone();
-                std::fs::write(&path, &content)
-                    .map_err(|e| RuntimeError::new(techscript_runtime::error::RuntimeErrorKind::InvalidOperation(e.to_string()), None, None))?;
+                std::fs::write(&path, &content).map_err(|e| {
+                    RuntimeError::new(
+                        techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
+                            e.to_string(),
+                        ),
+                        None,
+                        None,
+                    )
+                })?;
                 Ok(RuntimeValue::Str(format!("Saved to {}", path)))
             }
             CanvasOp::Append => {
@@ -294,8 +383,16 @@ impl Callable for CanvasFn {
                 let cy = args[1].try_into_int().unwrap_or(50);
                 let r = args[2].try_into_int().unwrap_or(40);
                 let color = args[3].to_string();
-                let width = if args.len() > 4 { args[4].to_string() } else { "2".to_string() };
-                let opacity = if args.len() > 5 { args[5].to_string() } else { "1".to_string() };
+                let width = if args.len() > 4 {
+                    args[4].to_string()
+                } else {
+                    "2".to_string()
+                };
+                let opacity = if args.len() > 5 {
+                    args[5].to_string()
+                } else {
+                    "1".to_string()
+                };
                 buf.push_str(&format!(r#"<circle cx="{}" cy="{}" r="{}" fill="none" stroke="{}" stroke-width="{}" opacity="{}"/>"#, cx, cy, r, color, width, opacity));
                 Ok(RuntimeValue::Null)
             }
@@ -303,9 +400,7 @@ impl Callable for CanvasFn {
                 *buf = String::new();
                 Ok(RuntimeValue::Null)
             }
-            CanvasOp::Content => {
-                Ok(RuntimeValue::Str(buf.clone()))
-            }
+            CanvasOp::Content => Ok(RuntimeValue::Str(buf.clone())),
         }
     }
 }
@@ -336,42 +431,171 @@ impl StdlibRegistry {
         let mut exports: HashMap<String, Rc<dyn Callable>> = HashMap::new();
 
         let b = buffer.clone();
-        exports.insert("create".to_string(), Rc::new(CanvasFn { name: "create".into(), min_arity: 2, max_arity: 2, buffer: b, kind: CanvasOp::Create }));
+        exports.insert(
+            "create".to_string(),
+            Rc::new(CanvasFn {
+                name: "create".into(),
+                min_arity: 2,
+                max_arity: 2,
+                buffer: b,
+                kind: CanvasOp::Create,
+            }),
+        );
         let b = buffer.clone();
-        exports.insert("background".to_string(), Rc::new(CanvasFn { name: "background".into(), min_arity: 1, max_arity: 1, buffer: b, kind: CanvasOp::Background }));
+        exports.insert(
+            "background".to_string(),
+            Rc::new(CanvasFn {
+                name: "background".into(),
+                min_arity: 1,
+                max_arity: 1,
+                buffer: b,
+                kind: CanvasOp::Background,
+            }),
+        );
         let b = buffer.clone();
-        exports.insert("rect".to_string(), Rc::new(CanvasFn { name: "rect".into(), min_arity: 5, max_arity: 5, buffer: b, kind: CanvasOp::Rect }));
+        exports.insert(
+            "rect".to_string(),
+            Rc::new(CanvasFn {
+                name: "rect".into(),
+                min_arity: 5,
+                max_arity: 5,
+                buffer: b,
+                kind: CanvasOp::Rect,
+            }),
+        );
         let b = buffer.clone();
-        exports.insert("circle".to_string(), Rc::new(CanvasFn { name: "circle".into(), min_arity: 4, max_arity: 4, buffer: b, kind: CanvasOp::Circle }));
+        exports.insert(
+            "circle".to_string(),
+            Rc::new(CanvasFn {
+                name: "circle".into(),
+                min_arity: 4,
+                max_arity: 4,
+                buffer: b,
+                kind: CanvasOp::Circle,
+            }),
+        );
         let b = buffer.clone();
-        exports.insert("text".to_string(), Rc::new(CanvasFn { name: "text".into(), min_arity: 3, max_arity: 5, buffer: b, kind: CanvasOp::Text }));
+        exports.insert(
+            "text".to_string(),
+            Rc::new(CanvasFn {
+                name: "text".into(),
+                min_arity: 3,
+                max_arity: 5,
+                buffer: b,
+                kind: CanvasOp::Text,
+            }),
+        );
         let b = buffer.clone();
-        exports.insert("polygon".to_string(), Rc::new(CanvasFn { name: "polygon".into(), min_arity: 2, max_arity: 2, buffer: b, kind: CanvasOp::Polygon }));
+        exports.insert(
+            "polygon".to_string(),
+            Rc::new(CanvasFn {
+                name: "polygon".into(),
+                min_arity: 2,
+                max_arity: 2,
+                buffer: b,
+                kind: CanvasOp::Polygon,
+            }),
+        );
         let b = buffer.clone();
-        exports.insert("line".to_string(), Rc::new(CanvasFn { name: "line".into(), min_arity: 5, max_arity: 5, buffer: b, kind: CanvasOp::Line }));
+        exports.insert(
+            "line".to_string(),
+            Rc::new(CanvasFn {
+                name: "line".into(),
+                min_arity: 5,
+                max_arity: 5,
+                buffer: b,
+                kind: CanvasOp::Line,
+            }),
+        );
         let b = buffer.clone();
-        exports.insert("close".to_string(), Rc::new(CanvasFn { name: "close".into(), min_arity: 0, max_arity: 0, buffer: b, kind: CanvasOp::Close }));
+        exports.insert(
+            "close".to_string(),
+            Rc::new(CanvasFn {
+                name: "close".into(),
+                min_arity: 0,
+                max_arity: 0,
+                buffer: b,
+                kind: CanvasOp::Close,
+            }),
+        );
         let b = buffer.clone();
-        exports.insert("save".to_string(), Rc::new(CanvasFn { name: "save".into(), min_arity: 1, max_arity: 1, buffer: b, kind: CanvasOp::Save }));
+        exports.insert(
+            "save".to_string(),
+            Rc::new(CanvasFn {
+                name: "save".into(),
+                min_arity: 1,
+                max_arity: 1,
+                buffer: b,
+                kind: CanvasOp::Save,
+            }),
+        );
         let b = buffer.clone();
-        exports.insert("append".to_string(), Rc::new(CanvasFn { name: "append".into(), min_arity: 1, max_arity: 1, buffer: b, kind: CanvasOp::Append }));
+        exports.insert(
+            "append".to_string(),
+            Rc::new(CanvasFn {
+                name: "append".into(),
+                min_arity: 1,
+                max_arity: 1,
+                buffer: b,
+                kind: CanvasOp::Append,
+            }),
+        );
         let b = buffer.clone();
-        exports.insert("stroke".to_string(), Rc::new(CanvasFn { name: "stroke".into(), min_arity: 4, max_arity: 6, buffer: b, kind: CanvasOp::Stroke }));
+        exports.insert(
+            "stroke".to_string(),
+            Rc::new(CanvasFn {
+                name: "stroke".into(),
+                min_arity: 4,
+                max_arity: 6,
+                buffer: b,
+                kind: CanvasOp::Stroke,
+            }),
+        );
         let b = buffer.clone();
-        exports.insert("reset".to_string(), Rc::new(CanvasFn { name: "reset".into(), min_arity: 0, max_arity: 0, buffer: b, kind: CanvasOp::Reset }));
+        exports.insert(
+            "reset".to_string(),
+            Rc::new(CanvasFn {
+                name: "reset".into(),
+                min_arity: 0,
+                max_arity: 0,
+                buffer: b,
+                kind: CanvasOp::Reset,
+            }),
+        );
         let b = buffer.clone();
-        exports.insert("content".to_string(), Rc::new(CanvasFn { name: "content".into(), min_arity: 0, max_arity: 0, buffer: b, kind: CanvasOp::Content }));
-        exports.insert("size".to_string(), Rc::new(CanvasFn { name: "size".into(), min_arity: 2, max_arity: 2, buffer: buffer.clone(), kind: CanvasOp::Create }));
+        exports.insert(
+            "content".to_string(),
+            Rc::new(CanvasFn {
+                name: "content".into(),
+                min_arity: 0,
+                max_arity: 0,
+                buffer: b,
+                kind: CanvasOp::Content,
+            }),
+        );
+        exports.insert(
+            "size".to_string(),
+            Rc::new(CanvasFn {
+                name: "size".into(),
+                min_arity: 2,
+                max_arity: 2,
+                buffer: buffer.clone(),
+                kind: CanvasOp::Create,
+            }),
+        );
 
         // DSL block rendering: convert DSL blocks to SVG
-        exports.insert("render_dsl".to_string(), Rc::new(StdFunction {
-            name: "render_dsl".to_string(),
-            arity: 1,
-            callback: |_ctx, args| {
-                let svg = dsl_to_svg(&args[0], false);
-                Ok(RuntimeValue::Str(svg))
-            },
-        }));
+        exports.insert(
+            "render_dsl".to_string(),
+            Rc::new(StdFunction {
+                name: "render_dsl".to_string(),
+                arity: 1,
+                callback: |_ctx, args| {
+                    let svg = dsl_to_svg(&args[0], false);
+                    Ok(RuntimeValue::Str(svg))
+                },
+            }),
+        );
 
         exports.insert("render_blocks".to_string(), Rc::new(StdFunction {
             name: "render_blocks".to_string(),
@@ -429,11 +653,14 @@ impl StdlibRegistry {
             },
         }));
 
-        self.register_module("std.canvas", StdlibModule {
-            name: "std.canvas".to_string(),
-            version: "1.0.0".to_string(),
-            exports,
-            required_capabilities: Vec::new(),
-        });
+        self.register_module(
+            "std.canvas",
+            StdlibModule {
+                name: "std.canvas".to_string(),
+                version: "1.0.0".to_string(),
+                exports,
+                required_capabilities: Vec::new(),
+            },
+        );
     }
 }

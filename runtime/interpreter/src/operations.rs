@@ -32,7 +32,8 @@ pub fn eval_unary(op: &str, right: RuntimeValue) -> Result<RuntimeValue, Runtime
                 let mut is_future = false;
                 {
                     let entries_borrow = entries.borrow();
-                    if entries_borrow.contains_key("state") && entries_borrow.contains_key("value") {
+                    if entries_borrow.contains_key("state") && entries_borrow.contains_key("value")
+                    {
                         is_future = true;
                     }
                 }
@@ -40,7 +41,10 @@ pub fn eval_unary(op: &str, right: RuntimeValue) -> Result<RuntimeValue, Runtime
                     loop {
                         let state = {
                             let entries_borrow = entries.borrow();
-                            entries_borrow.get("state").cloned().unwrap_or(RuntimeValue::Null)
+                            entries_borrow
+                                .get("state")
+                                .cloned()
+                                .unwrap_or(RuntimeValue::Null)
                         };
                         if let RuntimeValue::Str(s) = &state {
                             if s == "pending" {
@@ -48,12 +52,23 @@ pub fn eval_unary(op: &str, right: RuntimeValue) -> Result<RuntimeValue, Runtime
                                 std::thread::sleep(std::time::Duration::from_millis(1));
                                 continue;
                             } else if s == "resolved" {
-                                let val = entries.borrow().get("value").cloned().unwrap_or(RuntimeValue::Null);
+                                let val = entries
+                                    .borrow()
+                                    .get("value")
+                                    .cloned()
+                                    .unwrap_or(RuntimeValue::Null);
                                 return Ok(val);
                             } else if s == "rejected" {
-                                let err_val = entries.borrow().get("value").cloned().unwrap_or(RuntimeValue::Null);
+                                let err_val = entries
+                                    .borrow()
+                                    .get("value")
+                                    .cloned()
+                                    .unwrap_or(RuntimeValue::Null);
                                 return Err(RuntimeError::new(
-                                    RuntimeErrorKind::InvalidOperation(format!("Awaited future was rejected: {:?}", err_val)),
+                                    RuntimeErrorKind::InvalidOperation(format!(
+                                        "Awaited future was rejected: {:?}",
+                                        err_val
+                                    )),
                                     None,
                                     None,
                                 ));
@@ -273,9 +288,7 @@ pub fn eval_binary(
             (val, RuntimeValue::List { items, .. }) => {
                 Ok(RuntimeValue::Bool(items.borrow().contains(&val)))
             }
-            (val, RuntimeValue::Tuple(elements)) => {
-                Ok(RuntimeValue::Bool(elements.contains(&val)))
-            }
+            (val, RuntimeValue::Tuple(elements)) => Ok(RuntimeValue::Bool(elements.contains(&val))),
             (RuntimeValue::Str(key), RuntimeValue::Map { entries, .. }) => {
                 Ok(RuntimeValue::Bool(entries.borrow().contains_key(&key)))
             }

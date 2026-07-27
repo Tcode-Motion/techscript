@@ -1,17 +1,18 @@
+use crate::{StdFunction, StdlibModule, StdlibRegistry};
+use indexmap::IndexMap;
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
-use std::cell::RefCell;
-use indexmap::IndexMap;
 use techscript_runtime::{
     context::Capability,
     error::{RuntimeError, RuntimeErrorKind},
     value::RuntimeValue,
 };
-use crate::{StdFunction, StdlibModule, StdlibRegistry};
 
 impl StdlibRegistry {
     pub fn register_http(&mut self) {
-        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> = HashMap::new();
+        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
+            HashMap::new();
 
         exports.insert(
             "get".to_string(),
@@ -22,7 +23,8 @@ impl StdlibRegistry {
                     if !ctx.config.capabilities.contains(&Capability::Network) {
                         return Err(RuntimeError::new(
                             RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Network capability is denied".to_string(),
+                                "Security policy violation: Network capability is denied"
+                                    .to_string(),
                             ),
                             None,
                             None,
@@ -31,7 +33,10 @@ impl StdlibRegistry {
                     let url = args[0].try_into_string()?;
                     let response = ureq::get(&url).call().map_err(|e| {
                         RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("HTTP GET request failed: {}", e)),
+                            RuntimeErrorKind::InvalidOperation(format!(
+                                "HTTP GET request failed: {}",
+                                e
+                            )),
                             None,
                             None,
                         )
@@ -39,12 +44,15 @@ impl StdlibRegistry {
                     let status = response.status();
                     let body = response.into_string().map_err(|e| {
                         RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("Failed to read HTTP response body: {}", e)),
+                            RuntimeErrorKind::InvalidOperation(format!(
+                                "Failed to read HTTP response body: {}",
+                                e
+                            )),
                             None,
                             None,
                         )
                     })?;
-                    
+
                     let mut res_map = IndexMap::new();
                     res_map.insert("status".to_string(), RuntimeValue::Int(status as i64));
                     res_map.insert("body".to_string(), RuntimeValue::Str(body));
@@ -65,7 +73,8 @@ impl StdlibRegistry {
                     if !ctx.config.capabilities.contains(&Capability::Network) {
                         return Err(RuntimeError::new(
                             RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Network capability is denied".to_string(),
+                                "Security policy violation: Network capability is denied"
+                                    .to_string(),
                             ),
                             None,
                             None,
@@ -73,24 +82,28 @@ impl StdlibRegistry {
                     }
                     let url = args[0].try_into_string()?;
                     let body = args[1].try_into_string()?;
-                    let response = ureq::post(&url)
-                        .send_string(&body)
-                        .map_err(|e| {
-                            RuntimeError::new(
-                                RuntimeErrorKind::InvalidOperation(format!("HTTP POST request failed: {}", e)),
-                                None,
-                                None,
-                            )
-                        })?;
-                    let status = response.status();
-                    let res_body = response.into_string().map_err(|e| {
+                    let response = ureq::post(&url).send_string(&body).map_err(|e| {
                         RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("Failed to read HTTP response body: {}", e)),
+                            RuntimeErrorKind::InvalidOperation(format!(
+                                "HTTP POST request failed: {}",
+                                e
+                            )),
                             None,
                             None,
                         )
                     })?;
-                    
+                    let status = response.status();
+                    let res_body = response.into_string().map_err(|e| {
+                        RuntimeError::new(
+                            RuntimeErrorKind::InvalidOperation(format!(
+                                "Failed to read HTTP response body: {}",
+                                e
+                            )),
+                            None,
+                            None,
+                        )
+                    })?;
+
                     let mut res_map = IndexMap::new();
                     res_map.insert("status".to_string(), RuntimeValue::Int(status as i64));
                     res_map.insert("body".to_string(), RuntimeValue::Str(res_body));
@@ -119,14 +132,14 @@ impl StdlibRegistry {
                     }
                     let port = args[0].try_into_int()?;
                     let callback = args[1].clone();
-                    
+
                     if let RuntimeValue::Function(func) = callback {
                         let listener = std::net::TcpListener::bind(format!("127.0.0.1:{}", port)).map_err(|e| {
                             RuntimeError::new(RuntimeErrorKind::InvalidOperation(format!("HTTP listen bind error: {}", e)), None, None)
                         })?;
-                        
+
                         listener.set_nonblocking(true).ok();
-                        
+
                         if let Ok((mut stream, _)) = listener.accept() {
                             use std::io::{Read, Write};
                             let mut buf = [0; 1024];
@@ -138,7 +151,7 @@ impl StdlibRegistry {
                                     entries: Rc::new(RefCell::new(req_map)),
                                     is_const: false,
                                 };
-                                
+
                                 if let Ok(res) = func.call(ctx, vec![req_val]) {
                                     let body = res.try_into_string().unwrap_or_else(|_| "Hello".to_string());
                                     let response_str = format!(

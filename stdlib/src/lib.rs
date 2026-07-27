@@ -1,8 +1,8 @@
 use indexmap::IndexMap;
 use std::cell::RefCell;
 use std::collections::HashMap;
-use std::rc::Rc;
 use std::collections::VecDeque;
+use std::rc::Rc;
 use techscript_runtime::{
     context::Capability,
     error::{RuntimeError, RuntimeErrorKind},
@@ -11,87 +11,87 @@ use techscript_runtime::{
     RuntimeContext,
 };
 
-pub mod math;
-pub mod strings;
-pub mod collections;
-pub mod json;
-pub mod io;
-pub mod sys;
-pub mod net;
-pub mod http;
-pub mod xml;
-pub mod csv;
-pub mod yaml;
-pub mod datetime;
-pub mod crypto;
-pub mod hash;
-pub mod random;
-pub mod regex;
-pub mod path;
-pub mod thread;
-pub mod sync;
-pub mod async_mod;
-pub mod testing;
-pub mod logging;
-pub mod compress;
-pub mod encoding;
-pub mod uuid;
-pub mod url;
-pub mod system;
-pub mod toml;
-pub mod database;
-pub mod graphics;
 pub mod ai;
-pub mod os;
-pub mod env;
-pub mod process;
-pub mod file;
-pub mod time;
-pub mod terminal;
-pub mod socket;
-pub mod websocket;
-pub mod dns;
-pub mod email;
-pub mod ftp;
-pub mod sqlite;
-pub mod mysql;
-pub mod postgres;
-pub mod mongodb;
-pub mod redis;
-pub mod jwt;
-pub mod oauth;
-pub mod image;
-pub mod gui;
-pub mod web;
+pub mod async_mod;
 pub mod audio;
-pub mod video;
-pub mod scheduler;
-pub mod cache;
-pub mod binary;
-pub mod ini;
-pub mod docs;
-pub mod config;
-pub mod task;
-pub mod parallel;
-pub mod benchmark;
-pub mod profiler;
-pub mod mock;
-pub mod debug;
-pub mod svg;
-pub mod pdf;
 pub mod barcode;
-pub mod qrcode;
+pub mod benchmark;
+pub mod binary;
+pub mod cache;
+pub mod canvas;
+pub mod charts;
+pub mod collections;
+pub mod compress;
+pub mod config;
+pub mod crypto;
+pub mod csv;
+pub mod database;
+pub mod datetime;
+pub mod debug;
+pub mod dns;
+pub mod docs;
+pub mod email;
+pub mod encoding;
+pub mod env;
+pub mod excel;
+pub mod file;
+pub mod ftp;
+pub mod graphics;
+pub mod gui;
+pub mod hash;
+pub mod http;
+pub mod image;
+pub mod ini;
+pub mod io;
+pub mod json;
+pub mod jwt;
+pub mod localization;
+pub mod logging;
+pub mod math;
+pub mod mock;
+pub mod mongodb;
+pub mod mysql;
+pub mod net;
 pub mod notification;
+pub mod oauth;
+pub mod os;
+pub mod parallel;
+pub mod path;
+pub mod pdf;
+pub mod postgres;
+pub mod powerpoint;
+pub mod process;
+pub mod profiler;
+pub mod qrcode;
+pub mod random;
+pub mod redis;
+pub mod regex;
+pub mod report;
+pub mod scheduler;
 pub mod security;
 pub mod settings;
-pub mod localization;
+pub mod socket;
+pub mod sqlite;
+pub mod strings;
+pub mod svg;
+pub mod sync;
+pub mod sys;
+pub mod system;
+pub mod task;
+pub mod terminal;
+pub mod testing;
 pub mod theme;
-pub mod charts;
-pub mod report;
-pub mod excel;
+pub mod thread;
+pub mod time;
+pub mod toml;
+pub mod url;
+pub mod uuid;
+pub mod video;
+pub mod web;
+pub mod websocket;
 pub mod word;
-pub mod powerpoint;
-pub mod canvas;
+pub mod xml;
+pub mod yaml;
 
 /// Type definition for module function callbacks.
 pub type StdFnCallback =
@@ -208,21 +208,25 @@ pub mod async_runtime {
     }
 
     pub fn tick() {
-        let task_opt = SCHEDULER.with(|sched| {
-            sched.borrow_mut().tasks.pop_front()
-        });
+        let task_opt = SCHEDULER.with(|sched| sched.borrow_mut().tasks.pop_front());
         if let Some(task) = task_opt {
             let res = (task.callback)();
             if let RuntimeValue::Map { entries, .. } = &task.future {
                 match res {
                     Ok(val) => {
                         let mut borrow = entries.borrow_mut();
-                        borrow.insert("state".to_string(), RuntimeValue::Str("resolved".to_string()));
+                        borrow.insert(
+                            "state".to_string(),
+                            RuntimeValue::Str("resolved".to_string()),
+                        );
                         borrow.insert("value".to_string(), val);
                     }
                     Err(err) => {
                         let mut borrow = entries.borrow_mut();
-                        borrow.insert("state".to_string(), RuntimeValue::Str("rejected".to_string()));
+                        borrow.insert(
+                            "state".to_string(),
+                            RuntimeValue::Str("rejected".to_string()),
+                        );
                         borrow.insert("value".to_string(), RuntimeValue::Str(err));
                     }
                 }
@@ -392,18 +396,30 @@ impl StdlibRegistry {
             }
         }
         if let Some(fs) = self.modules.get_mut("std.fs") {
-            if let Some(value) = fs.exports.get("write_file").cloned() { fs.exports.insert("write".to_string(), value); }
-            if let Some(value) = fs.exports.get("read_file").cloned() { fs.exports.insert("read".to_string(), value); }
+            if let Some(value) = fs.exports.get("write_file").cloned() {
+                fs.exports.insert("write".to_string(), value);
+            }
+            if let Some(value) = fs.exports.get("read_file").cloned() {
+                fs.exports.insert("read".to_string(), value);
+            }
         }
         if let Some(random) = self.modules.get_mut("std.random") {
-            if let Some(value) = random.exports.get("int").cloned() { random.exports.insert("randint".to_string(), value); }
-            if let Some(value) = random.exports.get("float").cloned() { random.exports.insert("random".to_string(), value); }
+            if let Some(value) = random.exports.get("int").cloned() {
+                random.exports.insert("randint".to_string(), value);
+            }
+            if let Some(value) = random.exports.get("float").cloned() {
+                random.exports.insert("random".to_string(), value);
+            }
         }
         if let Some(system) = self.modules.get_mut("std.system") {
-            if let Some(value) = system.exports.get("os").cloned() { system.exports.insert("name".to_string(), value); }
+            if let Some(value) = system.exports.get("os").cloned() {
+                system.exports.insert("name".to_string(), value);
+            }
         }
         if let Some(datetime) = self.modules.get_mut("std.datetime") {
-            if let Some(value) = datetime.exports.get("epoch").cloned() { datetime.exports.insert("unix".to_string(), value); }
+            if let Some(value) = datetime.exports.get("epoch").cloned() {
+                datetime.exports.insert("unix".to_string(), value);
+            }
         }
     }
 }

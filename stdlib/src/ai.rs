@@ -1,16 +1,14 @@
+use crate::{StdFunction, StdlibModule, StdlibRegistry};
 use std::collections::HashMap;
 use std::rc::Rc;
 use techscript_runtime::{
-    context::Capability,
-    error::RuntimeError,
-    error::RuntimeErrorKind,
-    value::RuntimeValue,
+    context::Capability, error::RuntimeError, error::RuntimeErrorKind, value::RuntimeValue,
 };
-use crate::{StdFunction, StdlibModule, StdlibRegistry};
 
 impl StdlibRegistry {
     pub fn register_ai(&mut self) {
-        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> = HashMap::new();
+        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
+            HashMap::new();
 
         exports.insert(
             "generate_text".to_string(),
@@ -49,25 +47,25 @@ impl StdlibRegistry {
                             if key.is_empty() {
                                 return Ok(RuntimeValue::Str(format!("[Mock OpenAI Response] Prompt: {}", prompt)));
                             }
-                            
+
                             // Real HTTP call to OpenAI Chat Completion
                             let body = serde_json::json!({
                                 "model": "gpt-4o-mini",
                                 "messages": [{"role": "user", "content": prompt}]
                             });
-                            
+
                             let resp = ureq::post("https://api.openai.com/v1/chat/completions")
                                 .set("Authorization", &format!("Bearer {}", key))
                                 .set("Content-Type", "application/json")
                                 .send_json(body)
                                 .map_err(|e| RuntimeError::new(RuntimeErrorKind::InvalidOperation(format!("OpenAI request failed: {}", e)), None, None))?;
-                                
+
                             let json: serde_json::Value = resp.into_json()
                                 .map_err(|e| RuntimeError::new(RuntimeErrorKind::InvalidOperation(format!("Failed to parse OpenAI JSON response: {}", e)), None, None))?;
-                                
+
                             let content = json["choices"][0]["message"]["content"].as_str()
                                 .ok_or_else(|| RuntimeError::new(RuntimeErrorKind::InvalidOperation("OpenAI response content empty".to_string()), None, None))?;
-                                
+
                             Ok(RuntimeValue::Str(content.to_string()))
                         }
                         "gemini" => {
@@ -75,7 +73,7 @@ impl StdlibRegistry {
                             if key.is_empty() {
                                 return Ok(RuntimeValue::Str(format!("[Mock Gemini Response] Prompt: {}", prompt)));
                             }
-                            
+
                             // Real HTTP call to Gemini API
                             let url = format!("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={}", key);
                             let body = serde_json::json!({
@@ -83,18 +81,18 @@ impl StdlibRegistry {
                                     "parts": [{"text": prompt}]
                                 }]
                             });
-                            
+
                             let resp = ureq::post(&url)
                                 .set("Content-Type", "application/json")
                                 .send_json(body)
                                 .map_err(|e| RuntimeError::new(RuntimeErrorKind::InvalidOperation(format!("Gemini request failed: {}", e)), None, None))?;
-                                
+
                             let json: serde_json::Value = resp.into_json()
                                 .map_err(|e| RuntimeError::new(RuntimeErrorKind::InvalidOperation(format!("Failed to parse Gemini JSON response: {}", e)), None, None))?;
-                                
+
                             let content = json["candidates"][0]["content"]["parts"][0]["text"].as_str()
                                 .ok_or_else(|| RuntimeError::new(RuntimeErrorKind::InvalidOperation("Gemini response content empty".to_string()), None, None))?;
-                                
+
                             Ok(RuntimeValue::Str(content.to_string()))
                         }
                         "local" => {
@@ -104,7 +102,7 @@ impl StdlibRegistry {
                                 "prompt": prompt,
                                 "n_predict": 128
                             });
-                            
+
                             match ureq::post(local_url).set("Content-Type", "application/json").send_json(body) {
                                 Ok(resp) => {
                                     if let Ok(json) = resp.into_json::<serde_json::Value>() {

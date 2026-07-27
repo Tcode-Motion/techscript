@@ -254,7 +254,11 @@ impl ProjectBuildGraph {
                         let manifest_toml = pkg_path.join("tech.toml");
                         if manifest_toml.exists() {
                             if let Ok(toml_content) = std::fs::read_to_string(&manifest_toml) {
-                                if let Ok(manifest) = toml::from_str::<techscript_package_manager::Manifest>(&toml_content) {
+                                if let Ok(manifest) =
+                                    toml::from_str::<techscript_package_manager::Manifest>(
+                                        &toml_content,
+                                    )
+                                {
                                     try_file = pkg_path.join(manifest.package.entry);
                                 }
                             }

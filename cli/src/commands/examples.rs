@@ -8,7 +8,7 @@ use std::path::PathBuf;
 
 pub fn execute() -> ExitCode {
     let current_dir = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
-    
+
     // Resolve home directory path candidates
     let home_path = std::env::var("TECHSCRIPT_HOME")
         .map(PathBuf::from)
@@ -27,13 +27,24 @@ pub fn execute() -> ExitCode {
     };
 
     if !search_dir.exists() {
-        eprintln!("{}", "Error: No examples directory found on this system.".red().bold());
+        eprintln!(
+            "{}",
+            "Error: No examples directory found on this system."
+                .red()
+                .bold()
+        );
         return ExitCode::IoError;
     }
 
-    println!("{}", "=========================================================".bold());
+    println!(
+        "{}",
+        "=========================================================".bold()
+    );
     println!("             TECHSCRIPT 2.0 BUNDLED EXAMPLES             ");
-    println!("{}", "=========================================================".bold());
+    println!(
+        "{}",
+        "=========================================================".bold()
+    );
     println!("Browse and execute the official examples to get started:\n");
 
     let entries = match std::fs::read_dir(&search_dir) {
@@ -52,7 +63,11 @@ pub fn execute() -> ExitCode {
             if name.starts_with('.') {
                 continue;
             }
-            println!("  • {} — Run via: tsc run {}", name.cyan().bold(), format!("examples/{}/main.txs", name).green());
+            println!(
+                "  • {} — Run via: tsc run {}",
+                name.cyan().bold(),
+                format!("examples/{}/main.txs", name).green()
+            );
             count += 1;
         }
     }
@@ -65,7 +80,10 @@ pub fn execute() -> ExitCode {
     println!("  tsc run <file>    Execute a TechScript source file");
     println!("  tsc docs          Open local HTML documentation");
     println!("  tsc new <name>    Create a new project workspace");
-    println!("{}", "=========================================================".bold());
+    println!(
+        "{}",
+        "=========================================================".bold()
+    );
 
     ExitCode::Success
 }

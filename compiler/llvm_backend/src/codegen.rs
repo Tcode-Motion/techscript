@@ -131,17 +131,56 @@ impl<'a> CodegenEngine<'a> {
                     } => {
                         let cond_val = self.codegen_val(cond)?;
                         // Coerce condition to boolean if it's dynamic
-                        let cond_bool = if LLVMGetTypeKind(LLVMTypeOf(cond_val)) == llvm_sys::LLVMTypeKind::LLVMIntegerTypeKind && LLVMGetIntTypeWidth(LLVMTypeOf(cond_val)) == 1 {
+                        let cond_bool = if LLVMGetTypeKind(LLVMTypeOf(cond_val))
+                            == llvm_sys::LLVMTypeKind::LLVMIntegerTypeKind
+                            && LLVMGetIntTypeWidth(LLVMTypeOf(cond_val)) == 1
+                        {
                             cond_val
                         } else {
                             let boxed = self.box_val(cond_val)?;
-                            let fn_val = self.get_or_declare_runtime_fn("ts_cast", LLVMPointerType(LLVMInt8TypeInContext(self.ctx.context), 0), &[LLVMPointerType(LLVMInt8TypeInContext(self.ctx.context), 0), LLVMInt32TypeInContext(self.ctx.context)]);
-                            let cast_val = LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val), fn_val, [boxed, LLVMConstInt(LLVMInt32TypeInContext(self.ctx.context), 1, 0)].as_mut_ptr(), 2, CString::new("cast_bool").unwrap().as_ptr());
+                            let fn_val = self.get_or_declare_runtime_fn(
+                                "ts_cast",
+                                LLVMPointerType(LLVMInt8TypeInContext(self.ctx.context), 0),
+                                &[
+                                    LLVMPointerType(LLVMInt8TypeInContext(self.ctx.context), 0),
+                                    LLVMInt32TypeInContext(self.ctx.context),
+                                ],
+                            );
+                            let cast_val = LLVMBuildCall2(
+                                self.ctx.builder,
+                                LLVMTypeOf(fn_val),
+                                fn_val,
+                                [
+                                    boxed,
+                                    LLVMConstInt(LLVMInt32TypeInContext(self.ctx.context), 1, 0),
+                                ]
+                                .as_mut_ptr(),
+                                2,
+                                CString::new("cast_bool").unwrap().as_ptr(),
+                            );
                             // Now read boolean field (we can call ts_eq to compare with true, or unbox)
                             // A simple way is to check if it matches a boxed true val:
-                            let fn_val2 = self.get_or_declare_runtime_fn("ts_eq", LLVMInt1TypeInContext(self.ctx.context), &[LLVMPointerType(LLVMInt8TypeInContext(self.ctx.context), 0), LLVMPointerType(LLVMInt8TypeInContext(self.ctx.context), 0)]);
-                            let true_box = self.box_val(LLVMConstInt(LLVMInt1TypeInContext(self.ctx.context), 1, 0))?;
-                            LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val2), fn_val2, [cast_val, true_box].as_mut_ptr(), 2, CString::new("is_true").unwrap().as_ptr())
+                            let fn_val2 = self.get_or_declare_runtime_fn(
+                                "ts_eq",
+                                LLVMInt1TypeInContext(self.ctx.context),
+                                &[
+                                    LLVMPointerType(LLVMInt8TypeInContext(self.ctx.context), 0),
+                                    LLVMPointerType(LLVMInt8TypeInContext(self.ctx.context), 0),
+                                ],
+                            );
+                            let true_box = self.box_val(LLVMConstInt(
+                                LLVMInt1TypeInContext(self.ctx.context),
+                                1,
+                                0,
+                            ))?;
+                            LLVMBuildCall2(
+                                self.ctx.builder,
+                                LLVMTypeOf(fn_val2),
+                                fn_val2,
+                                [cast_val, true_box].as_mut_ptr(),
+                                2,
+                                CString::new("is_true").unwrap().as_ptr(),
+                            )
                         };
                         let then_b = self.ctx.get_block(*then_block).unwrap();
                         let else_b = self.ctx.get_block(*else_block).unwrap();
@@ -251,9 +290,20 @@ impl<'a> CodegenEngine<'a> {
                             let rf = self.coerce_to_float(r_val)?;
                             LLVMBuildFAdd(self.ctx.builder, lf, rf, name.as_ptr())
                         } else {
-                            let fn_val = self.get_or_declare_runtime_fn("ts_add", i8_ptr_ty, &[i8_ptr_ty, i8_ptr_ty]);
+                            let fn_val = self.get_or_declare_runtime_fn(
+                                "ts_add",
+                                i8_ptr_ty,
+                                &[i8_ptr_ty, i8_ptr_ty],
+                            );
                             let mut args = [self.box_val(l_val)?, self.box_val(r_val)?];
-                            LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val), fn_val, args.as_mut_ptr(), 2, name.as_ptr())
+                            LLVMBuildCall2(
+                                self.ctx.builder,
+                                LLVMTypeOf(fn_val),
+                                fn_val,
+                                args.as_mut_ptr(),
+                                2,
+                                name.as_ptr(),
+                            )
                         }
                     }
                     TokenKind::Minus => {
@@ -264,9 +314,20 @@ impl<'a> CodegenEngine<'a> {
                             let rf = self.coerce_to_float(r_val)?;
                             LLVMBuildFSub(self.ctx.builder, lf, rf, name.as_ptr())
                         } else {
-                            let fn_val = self.get_or_declare_runtime_fn("ts_sub", i8_ptr_ty, &[i8_ptr_ty, i8_ptr_ty]);
+                            let fn_val = self.get_or_declare_runtime_fn(
+                                "ts_sub",
+                                i8_ptr_ty,
+                                &[i8_ptr_ty, i8_ptr_ty],
+                            );
                             let mut args = [self.box_val(l_val)?, self.box_val(r_val)?];
-                            LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val), fn_val, args.as_mut_ptr(), 2, name.as_ptr())
+                            LLVMBuildCall2(
+                                self.ctx.builder,
+                                LLVMTypeOf(fn_val),
+                                fn_val,
+                                args.as_mut_ptr(),
+                                2,
+                                name.as_ptr(),
+                            )
                         }
                     }
                     TokenKind::Star => {
@@ -277,9 +338,20 @@ impl<'a> CodegenEngine<'a> {
                             let rf = self.coerce_to_float(r_val)?;
                             LLVMBuildFMul(self.ctx.builder, lf, rf, name.as_ptr())
                         } else {
-                            let fn_val = self.get_or_declare_runtime_fn("ts_mul", i8_ptr_ty, &[i8_ptr_ty, i8_ptr_ty]);
+                            let fn_val = self.get_or_declare_runtime_fn(
+                                "ts_mul",
+                                i8_ptr_ty,
+                                &[i8_ptr_ty, i8_ptr_ty],
+                            );
                             let mut args = [self.box_val(l_val)?, self.box_val(r_val)?];
-                            LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val), fn_val, args.as_mut_ptr(), 2, name.as_ptr())
+                            LLVMBuildCall2(
+                                self.ctx.builder,
+                                LLVMTypeOf(fn_val),
+                                fn_val,
+                                args.as_mut_ptr(),
+                                2,
+                                name.as_ptr(),
+                            )
                         }
                     }
                     TokenKind::Slash => {
@@ -290,52 +362,163 @@ impl<'a> CodegenEngine<'a> {
                             let rf = self.coerce_to_float(r_val)?;
                             LLVMBuildFDiv(self.ctx.builder, lf, rf, name.as_ptr())
                         } else {
-                            let fn_val = self.get_or_declare_runtime_fn("ts_div", i8_ptr_ty, &[i8_ptr_ty, i8_ptr_ty]);
+                            let fn_val = self.get_or_declare_runtime_fn(
+                                "ts_div",
+                                i8_ptr_ty,
+                                &[i8_ptr_ty, i8_ptr_ty],
+                            );
                             let mut args = [self.box_val(l_val)?, self.box_val(r_val)?];
-                            LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val), fn_val, args.as_mut_ptr(), 2, name.as_ptr())
+                            LLVMBuildCall2(
+                                self.ctx.builder,
+                                LLVMTypeOf(fn_val),
+                                fn_val,
+                                args.as_mut_ptr(),
+                                2,
+                                name.as_ptr(),
+                            )
                         }
                     }
                     TokenKind::Percent => {
                         if is_int {
                             LLVMBuildSRem(self.ctx.builder, l_val, r_val, name.as_ptr())
                         } else {
-                            let fn_val = self.get_or_declare_runtime_fn("ts_mod", i8_ptr_ty, &[i8_ptr_ty, i8_ptr_ty]);
+                            let fn_val = self.get_or_declare_runtime_fn(
+                                "ts_mod",
+                                i8_ptr_ty,
+                                &[i8_ptr_ty, i8_ptr_ty],
+                            );
                             let mut args = [self.box_val(l_val)?, self.box_val(r_val)?];
-                            LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val), fn_val, args.as_mut_ptr(), 2, name.as_ptr())
+                            LLVMBuildCall2(
+                                self.ctx.builder,
+                                LLVMTypeOf(fn_val),
+                                fn_val,
+                                args.as_mut_ptr(),
+                                2,
+                                name.as_ptr(),
+                            )
                         }
                     }
                     TokenKind::DoubleStar => {
-                        let fn_val = self.get_or_declare_runtime_fn("ts_pow", i8_ptr_ty, &[i8_ptr_ty, i8_ptr_ty]);
+                        let fn_val = self.get_or_declare_runtime_fn(
+                            "ts_pow",
+                            i8_ptr_ty,
+                            &[i8_ptr_ty, i8_ptr_ty],
+                        );
                         let mut args = [self.box_val(l_val)?, self.box_val(r_val)?];
-                        LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val), fn_val, args.as_mut_ptr(), 2, name.as_ptr())
+                        LLVMBuildCall2(
+                            self.ctx.builder,
+                            LLVMTypeOf(fn_val),
+                            fn_val,
+                            args.as_mut_ptr(),
+                            2,
+                            name.as_ptr(),
+                        )
                     }
                     TokenKind::And => {
-                        if l_kind == llvm_sys::LLVMTypeKind::LLVMIntegerTypeKind && LLVMGetIntTypeWidth(LLVMTypeOf(l_val)) == 1 {
+                        if l_kind == llvm_sys::LLVMTypeKind::LLVMIntegerTypeKind
+                            && LLVMGetIntTypeWidth(LLVMTypeOf(l_val)) == 1
+                        {
                             LLVMBuildAnd(self.ctx.builder, l_val, r_val, name.as_ptr())
                         } else {
-                            let fn_val = self.get_or_declare_runtime_fn("ts_cast", i8_ptr_ty, &[i8_ptr_ty, i32_ty]);
-                            let l_b = LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val), fn_val, [self.box_val(l_val)?, LLVMConstInt(i32_ty, 1, 0)].as_mut_ptr(), 2, CString::new("l_bool").unwrap().as_ptr());
-                            let r_b = LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val), fn_val, [self.box_val(r_val)?, LLVMConstInt(i32_ty, 1, 0)].as_mut_ptr(), 2, CString::new("r_bool").unwrap().as_ptr());
-                            let fn_val2 = self.get_or_declare_runtime_fn("ts_eq", i1_ty, &[i8_ptr_ty, i8_ptr_ty]);
+                            let fn_val = self.get_or_declare_runtime_fn(
+                                "ts_cast",
+                                i8_ptr_ty,
+                                &[i8_ptr_ty, i32_ty],
+                            );
+                            let l_b = LLVMBuildCall2(
+                                self.ctx.builder,
+                                LLVMTypeOf(fn_val),
+                                fn_val,
+                                [self.box_val(l_val)?, LLVMConstInt(i32_ty, 1, 0)].as_mut_ptr(),
+                                2,
+                                CString::new("l_bool").unwrap().as_ptr(),
+                            );
+                            let r_b = LLVMBuildCall2(
+                                self.ctx.builder,
+                                LLVMTypeOf(fn_val),
+                                fn_val,
+                                [self.box_val(r_val)?, LLVMConstInt(i32_ty, 1, 0)].as_mut_ptr(),
+                                2,
+                                CString::new("r_bool").unwrap().as_ptr(),
+                            );
+                            let fn_val2 = self.get_or_declare_runtime_fn(
+                                "ts_eq",
+                                i1_ty,
+                                &[i8_ptr_ty, i8_ptr_ty],
+                            );
                             let true_box = self.box_val(LLVMConstInt(i1_ty, 1, 0))?;
-                            let l_bool = LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val2), fn_val2, [l_b, true_box].as_mut_ptr(), 2, CString::new("l_bool_un").unwrap().as_ptr());
-                            let r_bool = LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val2), fn_val2, [r_b, true_box].as_mut_ptr(), 2, CString::new("r_bool_un").unwrap().as_ptr());
-                            let and_res = LLVMBuildAnd(self.ctx.builder, l_bool, r_bool, name.as_ptr());
+                            let l_bool = LLVMBuildCall2(
+                                self.ctx.builder,
+                                LLVMTypeOf(fn_val2),
+                                fn_val2,
+                                [l_b, true_box].as_mut_ptr(),
+                                2,
+                                CString::new("l_bool_un").unwrap().as_ptr(),
+                            );
+                            let r_bool = LLVMBuildCall2(
+                                self.ctx.builder,
+                                LLVMTypeOf(fn_val2),
+                                fn_val2,
+                                [r_b, true_box].as_mut_ptr(),
+                                2,
+                                CString::new("r_bool_un").unwrap().as_ptr(),
+                            );
+                            let and_res =
+                                LLVMBuildAnd(self.ctx.builder, l_bool, r_bool, name.as_ptr());
                             self.box_val(and_res)?
                         }
                     }
                     TokenKind::Or => {
-                        if l_kind == llvm_sys::LLVMTypeKind::LLVMIntegerTypeKind && LLVMGetIntTypeWidth(LLVMTypeOf(l_val)) == 1 {
+                        if l_kind == llvm_sys::LLVMTypeKind::LLVMIntegerTypeKind
+                            && LLVMGetIntTypeWidth(LLVMTypeOf(l_val)) == 1
+                        {
                             LLVMBuildOr(self.ctx.builder, l_val, r_val, name.as_ptr())
                         } else {
-                            let fn_val = self.get_or_declare_runtime_fn("ts_cast", i8_ptr_ty, &[i8_ptr_ty, i32_ty]);
-                            let l_b = LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val), fn_val, [self.box_val(l_val)?, LLVMConstInt(i32_ty, 1, 0)].as_mut_ptr(), 2, CString::new("l_bool").unwrap().as_ptr());
-                            let r_b = LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val), fn_val, [self.box_val(r_val)?, LLVMConstInt(i32_ty, 1, 0)].as_mut_ptr(), 2, CString::new("r_bool").unwrap().as_ptr());
-                            let fn_val2 = self.get_or_declare_runtime_fn("ts_eq", i1_ty, &[i8_ptr_ty, i8_ptr_ty]);
+                            let fn_val = self.get_or_declare_runtime_fn(
+                                "ts_cast",
+                                i8_ptr_ty,
+                                &[i8_ptr_ty, i32_ty],
+                            );
+                            let l_b = LLVMBuildCall2(
+                                self.ctx.builder,
+                                LLVMTypeOf(fn_val),
+                                fn_val,
+                                [self.box_val(l_val)?, LLVMConstInt(i32_ty, 1, 0)].as_mut_ptr(),
+                                2,
+                                CString::new("l_bool").unwrap().as_ptr(),
+                            );
+                            let r_b = LLVMBuildCall2(
+                                self.ctx.builder,
+                                LLVMTypeOf(fn_val),
+                                fn_val,
+                                [self.box_val(r_val)?, LLVMConstInt(i32_ty, 1, 0)].as_mut_ptr(),
+                                2,
+                                CString::new("r_bool").unwrap().as_ptr(),
+                            );
+                            let fn_val2 = self.get_or_declare_runtime_fn(
+                                "ts_eq",
+                                i1_ty,
+                                &[i8_ptr_ty, i8_ptr_ty],
+                            );
                             let true_box = self.box_val(LLVMConstInt(i1_ty, 1, 0))?;
-                            let l_bool = LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val2), fn_val2, [l_b, true_box].as_mut_ptr(), 2, CString::new("l_bool_un").unwrap().as_ptr());
-                            let r_bool = LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val2), fn_val2, [r_b, true_box].as_mut_ptr(), 2, CString::new("r_bool_un").unwrap().as_ptr());
-                            let or_res = LLVMBuildOr(self.ctx.builder, l_bool, r_bool, name.as_ptr());
+                            let l_bool = LLVMBuildCall2(
+                                self.ctx.builder,
+                                LLVMTypeOf(fn_val2),
+                                fn_val2,
+                                [l_b, true_box].as_mut_ptr(),
+                                2,
+                                CString::new("l_bool_un").unwrap().as_ptr(),
+                            );
+                            let r_bool = LLVMBuildCall2(
+                                self.ctx.builder,
+                                LLVMTypeOf(fn_val2),
+                                fn_val2,
+                                [r_b, true_box].as_mut_ptr(),
+                                2,
+                                CString::new("r_bool_un").unwrap().as_ptr(),
+                            );
+                            let or_res =
+                                LLVMBuildOr(self.ctx.builder, l_bool, r_bool, name.as_ptr());
                             self.box_val(or_res)?
                         }
                     }
@@ -354,33 +537,76 @@ impl<'a> CodegenEngine<'a> {
                         } else if r_kind == llvm_sys::LLVMTypeKind::LLVMDoubleTypeKind {
                             LLVMBuildFNeg(self.ctx.builder, r_val, name.as_ptr())
                         } else {
-                            let fn_val = self.get_or_declare_runtime_fn("ts_sub", i8_ptr_ty, &[i8_ptr_ty, i8_ptr_ty]);
+                            let fn_val = self.get_or_declare_runtime_fn(
+                                "ts_sub",
+                                i8_ptr_ty,
+                                &[i8_ptr_ty, i8_ptr_ty],
+                            );
                             let zero = self.box_val(LLVMConstInt(i64_ty, 0, 1))?;
                             let boxed = self.box_val(r_val)?;
                             let mut args = [zero, boxed];
-                            LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val), fn_val, args.as_mut_ptr(), 2, name.as_ptr())
+                            LLVMBuildCall2(
+                                self.ctx.builder,
+                                LLVMTypeOf(fn_val),
+                                fn_val,
+                                args.as_mut_ptr(),
+                                2,
+                                name.as_ptr(),
+                            )
                         }
                     }
                     TokenKind::Not => {
-                        if r_kind == llvm_sys::LLVMTypeKind::LLVMIntegerTypeKind && LLVMGetIntTypeWidth(LLVMTypeOf(r_val)) == 1 {
+                        if r_kind == llvm_sys::LLVMTypeKind::LLVMIntegerTypeKind
+                            && LLVMGetIntTypeWidth(LLVMTypeOf(r_val)) == 1
+                        {
                             LLVMBuildNot(self.ctx.builder, r_val, name.as_ptr())
                         } else {
-                            let fn_val = self.get_or_declare_runtime_fn("ts_cast", i8_ptr_ty, &[i8_ptr_ty, i32_ty]);
+                            let fn_val = self.get_or_declare_runtime_fn(
+                                "ts_cast",
+                                i8_ptr_ty,
+                                &[i8_ptr_ty, i32_ty],
+                            );
                             let boxed = self.box_val(r_val)?;
-                            let cast_bool = LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val), fn_val, [boxed, LLVMConstInt(i32_ty, 1, 0)].as_mut_ptr(), 2, CString::new("cast_bool").unwrap().as_ptr());
-                            let fn_val2 = self.get_or_declare_runtime_fn("ts_eq", i1_ty, &[i8_ptr_ty, i8_ptr_ty]);
+                            let cast_bool = LLVMBuildCall2(
+                                self.ctx.builder,
+                                LLVMTypeOf(fn_val),
+                                fn_val,
+                                [boxed, LLVMConstInt(i32_ty, 1, 0)].as_mut_ptr(),
+                                2,
+                                CString::new("cast_bool").unwrap().as_ptr(),
+                            );
+                            let fn_val2 = self.get_or_declare_runtime_fn(
+                                "ts_eq",
+                                i1_ty,
+                                &[i8_ptr_ty, i8_ptr_ty],
+                            );
                             let true_box = self.box_val(LLVMConstInt(i1_ty, 1, 0))?;
-                            let is_true = LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val2), fn_val2, [cast_bool, true_box].as_mut_ptr(), 2, CString::new("is_true").unwrap().as_ptr());
+                            let is_true = LLVMBuildCall2(
+                                self.ctx.builder,
+                                LLVMTypeOf(fn_val2),
+                                fn_val2,
+                                [cast_bool, true_box].as_mut_ptr(),
+                                2,
+                                CString::new("is_true").unwrap().as_ptr(),
+                            );
                             let not_res = LLVMBuildNot(self.ctx.builder, is_true, name.as_ptr());
                             self.box_val(not_res)?
                         }
                     }
                     TokenKind::Await => {
                         let i8_ptr_ty = LLVMPointerType(LLVMInt8TypeInContext(self.ctx.context), 0);
-                        let fn_val = self.get_or_declare_runtime_fn("ts_await", i8_ptr_ty, &[i8_ptr_ty]);
+                        let fn_val =
+                            self.get_or_declare_runtime_fn("ts_await", i8_ptr_ty, &[i8_ptr_ty]);
                         let boxed = self.box_val(r_val)?;
                         let mut args = [boxed];
-                        LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val), fn_val, args.as_mut_ptr(), 1, name.as_ptr())
+                        LLVMBuildCall2(
+                            self.ctx.builder,
+                            LLVMTypeOf(fn_val),
+                            fn_val,
+                            args.as_mut_ptr(),
+                            1,
+                            name.as_ptr(),
+                        )
                     }
                     _ => return Err(format!("Unsupported LLVM unary op: {:?}", op)),
                 }
@@ -400,8 +626,12 @@ impl<'a> CodegenEngine<'a> {
 
                 if is_int {
                     let pred = match op {
-                        TokenKind::EqualEqual | TokenKind::TripleEqual => llvm_sys::LLVMIntPredicate::LLVMIntEQ,
-                        TokenKind::BangEqual | TokenKind::BangEqualEqual => llvm_sys::LLVMIntPredicate::LLVMIntNE,
+                        TokenKind::EqualEqual | TokenKind::TripleEqual => {
+                            llvm_sys::LLVMIntPredicate::LLVMIntEQ
+                        }
+                        TokenKind::BangEqual | TokenKind::BangEqualEqual => {
+                            llvm_sys::LLVMIntPredicate::LLVMIntNE
+                        }
                         TokenKind::Less => llvm_sys::LLVMIntPredicate::LLVMIntSLT,
                         TokenKind::LessEqual => llvm_sys::LLVMIntPredicate::LLVMIntSLE,
                         TokenKind::Greater => llvm_sys::LLVMIntPredicate::LLVMIntSGT,
@@ -411,8 +641,12 @@ impl<'a> CodegenEngine<'a> {
                     LLVMBuildICmp(self.ctx.builder, pred, l_val, r_val, name.as_ptr())
                 } else if is_float {
                     let pred = match op {
-                        TokenKind::EqualEqual | TokenKind::TripleEqual => llvm_sys::LLVMRealPredicate::LLVMRealOEQ,
-                        TokenKind::BangEqual | TokenKind::BangEqualEqual => llvm_sys::LLVMRealPredicate::LLVMRealUNE,
+                        TokenKind::EqualEqual | TokenKind::TripleEqual => {
+                            llvm_sys::LLVMRealPredicate::LLVMRealOEQ
+                        }
+                        TokenKind::BangEqual | TokenKind::BangEqualEqual => {
+                            llvm_sys::LLVMRealPredicate::LLVMRealUNE
+                        }
                         TokenKind::Less => llvm_sys::LLVMRealPredicate::LLVMRealOLT,
                         TokenKind::LessEqual => llvm_sys::LLVMRealPredicate::LLVMRealOLE,
                         TokenKind::Greater => llvm_sys::LLVMRealPredicate::LLVMRealOGT,
@@ -432,9 +666,17 @@ impl<'a> CodegenEngine<'a> {
                         TokenKind::GreaterEqual => ("ts_ge", i1_ty),
                         _ => ("ts_eq", i1_ty),
                     };
-                    let fn_val = self.get_or_declare_runtime_fn(fn_name, ret_ty, &[i8_ptr_ty, i8_ptr_ty]);
+                    let fn_val =
+                        self.get_or_declare_runtime_fn(fn_name, ret_ty, &[i8_ptr_ty, i8_ptr_ty]);
                     let mut args = [self.box_val(l_val)?, self.box_val(r_val)?];
-                    LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val), fn_val, args.as_mut_ptr(), 2, name.as_ptr())
+                    LLVMBuildCall2(
+                        self.ctx.builder,
+                        LLVMTypeOf(fn_val),
+                        fn_val,
+                        args.as_mut_ptr(),
+                        2,
+                        name.as_ptr(),
+                    )
                 }
             }
             Op::Allocate(ty) => {
@@ -521,7 +763,11 @@ impl<'a> CodegenEngine<'a> {
                     field_cstr.as_ptr(),
                     CString::new("field_name").unwrap().as_ptr(),
                 );
-                let fn_val = self.get_or_declare_runtime_fn("ts_struct_get", i8_ptr_ty, &[i8_ptr_ty, i8_ptr_ty]);
+                let fn_val = self.get_or_declare_runtime_fn(
+                    "ts_struct_get",
+                    i8_ptr_ty,
+                    &[i8_ptr_ty, i8_ptr_ty],
+                );
                 LLVMBuildCall2(
                     self.ctx.builder,
                     LLVMTypeOf(fn_val),
@@ -542,7 +788,11 @@ impl<'a> CodegenEngine<'a> {
                     field_cstr.as_ptr(),
                     CString::new("field_name").unwrap().as_ptr(),
                 );
-                let fn_val = self.get_or_declare_runtime_fn("ts_struct_set", LLVMVoidTypeInContext(context), &[i8_ptr_ty, i8_ptr_ty, i8_ptr_ty]);
+                let fn_val = self.get_or_declare_runtime_fn(
+                    "ts_struct_set",
+                    LLVMVoidTypeInContext(context),
+                    &[i8_ptr_ty, i8_ptr_ty, i8_ptr_ty],
+                );
                 LLVMBuildCall2(
                     self.ctx.builder,
                     LLVMTypeOf(fn_val),
@@ -558,7 +808,11 @@ impl<'a> CodegenEngine<'a> {
                 let index_val = self.codegen_val(index)?;
                 let boxed_base = self.box_val(base_val)?;
                 let boxed_index = self.box_val(index_val)?;
-                let fn_val = self.get_or_declare_runtime_fn("ts_index_get", i8_ptr_ty, &[i8_ptr_ty, i8_ptr_ty]);
+                let fn_val = self.get_or_declare_runtime_fn(
+                    "ts_index_get",
+                    i8_ptr_ty,
+                    &[i8_ptr_ty, i8_ptr_ty],
+                );
                 LLVMBuildCall2(
                     self.ctx.builder,
                     LLVMTypeOf(fn_val),
@@ -575,7 +829,11 @@ impl<'a> CodegenEngine<'a> {
                 let boxed_base = self.box_val(base_val)?;
                 let boxed_index = self.box_val(index_val)?;
                 let boxed_val = self.box_val(val_val)?;
-                let fn_val = self.get_or_declare_runtime_fn("ts_index_set", LLVMVoidTypeInContext(context), &[i8_ptr_ty, i8_ptr_ty, i8_ptr_ty]);
+                let fn_val = self.get_or_declare_runtime_fn(
+                    "ts_index_set",
+                    LLVMVoidTypeInContext(context),
+                    &[i8_ptr_ty, i8_ptr_ty, i8_ptr_ty],
+                );
                 LLVMBuildCall2(
                     self.ctx.builder,
                     LLVMTypeOf(fn_val),
@@ -593,7 +851,8 @@ impl<'a> CodegenEngine<'a> {
                     name_cstr.as_ptr(),
                     CString::new("struct_name").unwrap().as_ptr(),
                 );
-                let fn_val = self.get_or_declare_runtime_fn("ts_alloc_struct", i8_ptr_ty, &[i8_ptr_ty]);
+                let fn_val =
+                    self.get_or_declare_runtime_fn("ts_alloc_struct", i8_ptr_ty, &[i8_ptr_ty]);
                 let struct_val = LLVMBuildCall2(
                     self.ctx.builder,
                     LLVMTypeOf(fn_val),
@@ -612,7 +871,11 @@ impl<'a> CodegenEngine<'a> {
                         f_name_cstr.as_ptr(),
                         CString::new("field_name").unwrap().as_ptr(),
                     );
-                    let fn_set = self.get_or_declare_runtime_fn("ts_struct_set", LLVMVoidTypeInContext(context), &[i8_ptr_ty, i8_ptr_ty, i8_ptr_ty]);
+                    let fn_set = self.get_or_declare_runtime_fn(
+                        "ts_struct_set",
+                        LLVMVoidTypeInContext(context),
+                        &[i8_ptr_ty, i8_ptr_ty, i8_ptr_ty],
+                    );
                     LLVMBuildCall2(
                         self.ctx.builder,
                         LLVMTypeOf(fn_set),
@@ -631,7 +894,8 @@ impl<'a> CodegenEngine<'a> {
                     name_cstr.as_ptr(),
                     CString::new("model_name").unwrap().as_ptr(),
                 );
-                let fn_val = self.get_or_declare_runtime_fn("ts_alloc_model", i8_ptr_ty, &[i8_ptr_ty]);
+                let fn_val =
+                    self.get_or_declare_runtime_fn("ts_alloc_model", i8_ptr_ty, &[i8_ptr_ty]);
                 let model_val = LLVMBuildCall2(
                     self.ctx.builder,
                     LLVMTypeOf(fn_val),
@@ -650,7 +914,11 @@ impl<'a> CodegenEngine<'a> {
                         f_name_cstr.as_ptr(),
                         CString::new("field_name").unwrap().as_ptr(),
                     );
-                    let fn_set = self.get_or_declare_runtime_fn("ts_struct_set", LLVMVoidTypeInContext(context), &[i8_ptr_ty, i8_ptr_ty, i8_ptr_ty]);
+                    let fn_set = self.get_or_declare_runtime_fn(
+                        "ts_struct_set",
+                        LLVMVoidTypeInContext(context),
+                        &[i8_ptr_ty, i8_ptr_ty, i8_ptr_ty],
+                    );
                     LLVMBuildCall2(
                         self.ctx.builder,
                         LLVMTypeOf(fn_set),
@@ -662,18 +930,34 @@ impl<'a> CodegenEngine<'a> {
                 }
                 model_val
             }
-            Op::MakeEnum { name, variant, value } => {
+            Op::MakeEnum {
+                name,
+                variant,
+                value,
+            } => {
                 let name_cstr = CString::new(name.as_str()).unwrap();
-                let name_ptr = LLVMBuildGlobalStringPtr(self.ctx.builder, name_cstr.as_ptr(), CString::new("enum_name").unwrap().as_ptr());
+                let name_ptr = LLVMBuildGlobalStringPtr(
+                    self.ctx.builder,
+                    name_cstr.as_ptr(),
+                    CString::new("enum_name").unwrap().as_ptr(),
+                );
                 let var_cstr = CString::new(variant.as_str()).unwrap();
-                let var_ptr = LLVMBuildGlobalStringPtr(self.ctx.builder, var_cstr.as_ptr(), CString::new("enum_variant").unwrap().as_ptr());
+                let var_ptr = LLVMBuildGlobalStringPtr(
+                    self.ctx.builder,
+                    var_cstr.as_ptr(),
+                    CString::new("enum_variant").unwrap().as_ptr(),
+                );
                 let payload_ptr = if let Some(v) = value {
                     let val_val = self.codegen_val(v)?;
                     self.box_val(val_val)?
                 } else {
                     LLVMConstNull(i8_ptr_ty)
                 };
-                let fn_val = self.get_or_declare_runtime_fn("ts_alloc_enum", i8_ptr_ty, &[i8_ptr_ty, i8_ptr_ty, i8_ptr_ty]);
+                let fn_val = self.get_or_declare_runtime_fn(
+                    "ts_alloc_enum",
+                    i8_ptr_ty,
+                    &[i8_ptr_ty, i8_ptr_ty, i8_ptr_ty],
+                );
                 LLVMBuildCall2(
                     self.ctx.builder,
                     LLVMTypeOf(fn_val),
@@ -697,7 +981,11 @@ impl<'a> CodegenEngine<'a> {
                 for item in elements {
                     let val_val = self.codegen_val(item)?;
                     let boxed_val = self.box_val(val_val)?;
-                    let fn_push = self.get_or_declare_runtime_fn("ts_list_push", LLVMVoidTypeInContext(context), &[i8_ptr_ty, i8_ptr_ty]);
+                    let fn_push = self.get_or_declare_runtime_fn(
+                        "ts_list_push",
+                        LLVMVoidTypeInContext(context),
+                        &[i8_ptr_ty, i8_ptr_ty],
+                    );
                     LLVMBuildCall2(
                         self.ctx.builder,
                         LLVMTypeOf(fn_push),
@@ -725,7 +1013,11 @@ impl<'a> CodegenEngine<'a> {
                     let v_val = self.codegen_val(v)?;
                     let boxed_k = self.box_val(k_val)?;
                     let boxed_v = self.box_val(v_val)?;
-                    let fn_set = self.get_or_declare_runtime_fn("ts_map_set", LLVMVoidTypeInContext(context), &[i8_ptr_ty, i8_ptr_ty, i8_ptr_ty]);
+                    let fn_set = self.get_or_declare_runtime_fn(
+                        "ts_map_set",
+                        LLVMVoidTypeInContext(context),
+                        &[i8_ptr_ty, i8_ptr_ty, i8_ptr_ty],
+                    );
                     LLVMBuildCall2(
                         self.ctx.builder,
                         LLVMTypeOf(fn_set),
@@ -747,7 +1039,8 @@ impl<'a> CodegenEngine<'a> {
                     IRType::String => 4,
                     _ => 0,
                 };
-                let fn_val = self.get_or_declare_runtime_fn("ts_cast", i8_ptr_ty, &[i8_ptr_ty, i32_ty]);
+                let fn_val =
+                    self.get_or_declare_runtime_fn("ts_cast", i8_ptr_ty, &[i8_ptr_ty, i32_ty]);
                 LLVMBuildCall2(
                     self.ctx.builder,
                     LLVMTypeOf(fn_val),
@@ -846,24 +1139,62 @@ impl<'a> CodegenEngine<'a> {
             llvm_sys::LLVMTypeKind::LLVMIntegerTypeKind => {
                 let width = LLVMGetIntTypeWidth(ty);
                 if width == 1 {
-                    let fn_val = self.get_or_declare_runtime_fn("ts_alloc_bool", i8_ptr_ty, &[LLVMInt1TypeInContext(context)]);
+                    let fn_val = self.get_or_declare_runtime_fn(
+                        "ts_alloc_bool",
+                        i8_ptr_ty,
+                        &[LLVMInt1TypeInContext(context)],
+                    );
                     let mut args = [val];
-                    Ok(LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val), fn_val, args.as_mut_ptr(), 1, CString::new("box_bool").unwrap().as_ptr()))
+                    Ok(LLVMBuildCall2(
+                        self.ctx.builder,
+                        LLVMTypeOf(fn_val),
+                        fn_val,
+                        args.as_mut_ptr(),
+                        1,
+                        CString::new("box_bool").unwrap().as_ptr(),
+                    ))
                 } else {
-                    let fn_val = self.get_or_declare_runtime_fn("ts_alloc_int", i8_ptr_ty, &[LLVMInt64TypeInContext(context)]);
+                    let fn_val = self.get_or_declare_runtime_fn(
+                        "ts_alloc_int",
+                        i8_ptr_ty,
+                        &[LLVMInt64TypeInContext(context)],
+                    );
                     let val_i64 = if width != 64 {
-                        LLVMBuildSExt(self.ctx.builder, val, LLVMInt64TypeInContext(context), CString::new("sext").unwrap().as_ptr())
+                        LLVMBuildSExt(
+                            self.ctx.builder,
+                            val,
+                            LLVMInt64TypeInContext(context),
+                            CString::new("sext").unwrap().as_ptr(),
+                        )
                     } else {
                         val
                     };
                     let mut args = [val_i64];
-                    Ok(LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val), fn_val, args.as_mut_ptr(), 1, CString::new("box_int").unwrap().as_ptr()))
+                    Ok(LLVMBuildCall2(
+                        self.ctx.builder,
+                        LLVMTypeOf(fn_val),
+                        fn_val,
+                        args.as_mut_ptr(),
+                        1,
+                        CString::new("box_int").unwrap().as_ptr(),
+                    ))
                 }
             }
             llvm_sys::LLVMTypeKind::LLVMDoubleTypeKind => {
-                let fn_val = self.get_or_declare_runtime_fn("ts_alloc_float", i8_ptr_ty, &[LLVMDoubleTypeInContext(context)]);
+                let fn_val = self.get_or_declare_runtime_fn(
+                    "ts_alloc_float",
+                    i8_ptr_ty,
+                    &[LLVMDoubleTypeInContext(context)],
+                );
                 let mut args = [val];
-                Ok(LLVMBuildCall2(self.ctx.builder, LLVMTypeOf(fn_val), fn_val, args.as_mut_ptr(), 1, CString::new("box_float").unwrap().as_ptr()))
+                Ok(LLVMBuildCall2(
+                    self.ctx.builder,
+                    LLVMTypeOf(fn_val),
+                    fn_val,
+                    args.as_mut_ptr(),
+                    1,
+                    CString::new("box_float").unwrap().as_ptr(),
+                ))
             }
             _ => Err(format!("Cannot box value of type kind {:?}", kind)),
         }
@@ -875,16 +1206,19 @@ impl<'a> CodegenEngine<'a> {
         let kind = LLVMGetTypeKind(ty);
         match kind {
             llvm_sys::LLVMTypeKind::LLVMDoubleTypeKind => Ok(val),
-            llvm_sys::LLVMTypeKind::LLVMIntegerTypeKind => {
-                Ok(LLVMBuildSIToFP(self.ctx.builder, val, LLVMDoubleTypeInContext(context), CString::new("sitofp").unwrap().as_ptr()))
-            }
+            llvm_sys::LLVMTypeKind::LLVMIntegerTypeKind => Ok(LLVMBuildSIToFP(
+                self.ctx.builder,
+                val,
+                LLVMDoubleTypeInContext(context),
+                CString::new("sitofp").unwrap().as_ptr(),
+            )),
             _ => Err("Cannot coerce to float".to_string()),
         }
     }
 
     unsafe fn resolve_function_by_name(&mut self, name: &str) -> Option<(LLVMValueRef, bool)> {
         let name_cstr = CString::new(name).unwrap();
-        
+
         // 1. Check user-defined functions
         let user_func = LLVMGetNamedFunction(self.ctx.module, name_cstr.as_ptr());
         if !user_func.is_null() && !name.starts_with("ts_") {
@@ -910,8 +1244,16 @@ impl<'a> CodegenEngine<'a> {
         if let Some(m_name) = mapped_name {
             let context = self.ctx.context;
             let i8_ptr_ty = LLVMPointerType(LLVMInt8TypeInContext(context), 0);
-            let ret_ty = if m_name == "ts_say" { LLVMVoidTypeInContext(context) } else { i8_ptr_ty };
-            let arg_tys = if m_name == "ts_range" { vec![i8_ptr_ty, i8_ptr_ty] } else { vec![i8_ptr_ty] };
+            let ret_ty = if m_name == "ts_say" {
+                LLVMVoidTypeInContext(context)
+            } else {
+                i8_ptr_ty
+            };
+            let arg_tys = if m_name == "ts_range" {
+                vec![i8_ptr_ty, i8_ptr_ty]
+            } else {
+                vec![i8_ptr_ty]
+            };
             let fn_val = self.get_or_declare_runtime_fn(m_name, ret_ty, &arg_tys);
             return Some((fn_val, true));
         }

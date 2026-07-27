@@ -207,11 +207,8 @@ fn test_network_whitelist_validation() {
     let dep_hosts = vec!["api.example.com".to_string(), "malicious.com".to_string()];
 
     // 1. Should fail because malicious.com is not whitelisted by the parent
-    let res = CapabilityValidator::validate_network_whitelist(
-        &root_hosts,
-        &dep_hosts,
-        "malicious_dep",
-    );
+    let res =
+        CapabilityValidator::validate_network_whitelist(&root_hosts, &dep_hosts, "malicious_dep");
     assert!(res.is_err());
     assert!(res
         .unwrap_err()
@@ -220,11 +217,8 @@ fn test_network_whitelist_validation() {
 
     // 2. Should pass if root_hosts matches all dependencies
     let safe_hosts = vec!["api.example.com".to_string()];
-    let safe_res = CapabilityValidator::validate_network_whitelist(
-        &root_hosts,
-        &safe_hosts,
-        "safe_dep",
-    );
+    let safe_res =
+        CapabilityValidator::validate_network_whitelist(&root_hosts, &safe_hosts, "safe_dep");
     assert!(safe_res.is_ok());
 
     // 3. Should pass if root allows wildcard *
@@ -279,5 +273,3 @@ fn test_fetch_package_index() {
     assert_eq!(log_pkg[0].version.to_string(), "1.0.0");
     assert_eq!(log_pkg[0].checksum, "sha_log_100");
 }
-
-

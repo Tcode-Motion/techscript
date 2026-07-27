@@ -94,10 +94,15 @@ impl Interpreter {
                 // v1 `repeat condition` is a while loop; retain the 2.0
                 // numeric repeat-count extension for integer expressions.
                 let first = self.visit_expression(&repeat_stmt.count)?;
-                let mut remaining = match first { RuntimeValue::Int(count) => Some(count), _ => None };
+                let mut remaining = match first {
+                    RuntimeValue::Int(count) => Some(count),
+                    _ => None,
+                };
                 loop {
                     if let Some(count) = remaining {
-                        if count <= 0 { break; }
+                        if count <= 0 {
+                            break;
+                        }
                         remaining = Some(count - 1);
                     } else if !self.visit_expression(&repeat_stmt.count)?.is_truthy() {
                         break;
@@ -143,14 +148,24 @@ impl Interpreter {
                 // so that `err.message` works in catch blocks.
                 let catch_env = Rc::new(RefCell::new(Environment::new(Some(Rc::clone(&self.env)))));
                 let mut err_map = IndexMap::new();
-                err_map.insert("message".to_string(), RuntimeValue::Str(err.message.clone()));
-                err_map.insert("kind".to_string(), RuntimeValue::Str(format!("{:?}", err.kind)));
+                err_map.insert(
+                    "message".to_string(),
+                    RuntimeValue::Str(err.message.clone()),
+                );
+                err_map.insert(
+                    "kind".to_string(),
+                    RuntimeValue::Str(format!("{:?}", err.kind)),
+                );
                 let err_val = RuntimeValue::Map {
                     entries: Rc::new(RefCell::new(err_map)),
                     is_const: false,
                 };
-                catch_env.borrow_mut().define(try_stmt.catch_var.name.clone(), err_val, false);
-                self.with_scope(catch_env, |interp| interp.execute_block(&try_stmt.catch_body))
+                catch_env
+                    .borrow_mut()
+                    .define(try_stmt.catch_var.name.clone(), err_val, false);
+                self.with_scope(catch_env, |interp| {
+                    interp.execute_block(&try_stmt.catch_body)
+                })
             }
             Statement::Say(say_stmt) => {
                 let val = self.visit_expression(&say_stmt.value)?;
@@ -170,7 +185,11 @@ impl Interpreter {
                     body: techscript_runtime::FunctionBody::Ast(decl.body.clone()),
                     closure: Rc::clone(&self.env),
                 };
-                let defaults = decl.params.iter().map(|param| param.default.clone()).collect();
+                let defaults = decl
+                    .params
+                    .iter()
+                    .map(|param| param.default.clone())
+                    .collect();
                 let callable = Rc::new(self.bridge_declared_function(user_func, defaults));
                 self.env
                     .borrow_mut()
@@ -265,7 +284,12 @@ impl Interpreter {
             Statement::DSL(dsl) => {
                 let block_val = self.eval_dsl_block(dsl)?;
                 let blocks_list_key = "_dsl_blocks".to_string();
-                let has_list = self.ctx.global_env.borrow().lookup(&blocks_list_key).is_ok();
+                let has_list = self
+                    .ctx
+                    .global_env
+                    .borrow()
+                    .lookup(&blocks_list_key)
+                    .is_ok();
                 if has_list {
                     let env = self.ctx.global_env.borrow();
                     if let Ok(RuntimeValue::List { items, .. }) = env.lookup(&blocks_list_key) {
@@ -284,10 +308,21 @@ impl Interpreter {
                 Ok(FlowSignal::Normal)
             }
             Statement::Import(import) => {
-                let requested = import.path.iter().map(|part| part.name.as_str()).collect::<Vec<_>>().join(".");
+                let requested = import
+                    .path
+                    .iter()
+                    .map(|part| part.name.as_str())
+                    .collect::<Vec<_>>()
+                    .join(".");
                 let std_name = match requested.as_str() {
-                    "math" => "math", "crypto" => "crypto", "json" => "json", "fs" => "fs",
-                    "os" => "system", "random" => "random", "date" => "datetime", other => other,
+                    "math" => "math",
+                    "crypto" => "crypto",
+                    "json" => "json",
+                    "fs" => "fs",
+                    "os" => "system",
+                    "random" => "random",
+                    "date" => "datetime",
+                    other => other,
                 };
                 let std = self.env.borrow().lookup("std")?;
                 let module = self.eval_member_access(std, std_name, import.span)?;
@@ -298,7 +333,10 @@ impl Interpreter {
     }
 
     /// Evaluate a DSL block to a DslBlockValue at runtime.
-    pub fn eval_dsl_block(&mut self, dsl: &techscript_ast::DSLBlock) -> Result<RuntimeValue, RuntimeError> {
+    pub fn eval_dsl_block(
+        &mut self,
+        dsl: &techscript_ast::DSLBlock,
+    ) -> Result<RuntimeValue, RuntimeError> {
         let mut args = Vec::new();
         for expr in &dsl.args {
             args.push(self.visit_expression(expr)?);

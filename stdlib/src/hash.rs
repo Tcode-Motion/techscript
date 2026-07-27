@@ -1,18 +1,16 @@
+use crate::{StdFunction, StdlibModule, StdlibRegistry};
+use crc::{Crc, CRC_32_ISO_HDLC};
+use md5;
+use sha1::Sha1;
+use sha2::{Digest, Sha256};
 use std::collections::HashMap;
 use std::rc::Rc;
-use sha2::{Sha256, Digest};
-use sha1::Sha1;
-use md5;
-use crc::{Crc, CRC_32_ISO_HDLC};
-use techscript_runtime::{
-    error::RuntimeError,
-    value::RuntimeValue,
-};
-use crate::{StdFunction, StdlibModule, StdlibRegistry};
+use techscript_runtime::{error::RuntimeError, value::RuntimeValue};
 
 impl StdlibRegistry {
     pub fn register_hash(&mut self) {
-        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> = HashMap::new();
+        let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
+            HashMap::new();
 
         exports.insert(
             "md5".to_string(),

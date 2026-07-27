@@ -820,26 +820,43 @@ impl LoweringContext {
         }
     }
 
-    fn lower_std_call(&mut self, module: &str, method: &str, args: Vec<Value>, span: Span) -> Value {
+    fn lower_std_call(
+        &mut self,
+        module: &str,
+        method: &str,
+        args: Vec<Value>,
+        span: Span,
+    ) -> Value {
         let std_ty = IRType::Any;
-        let std_global_id = self.builder.declare_global("std".to_string(), std_ty.clone());
+        let std_global_id = self
+            .builder
+            .declare_global("std".to_string(), std_ty.clone());
         let std_val = Value::Temp(self.builder.emit_instruction(
             Op::Load(Value::Global(std_global_id)),
             std_ty,
             span,
         ));
         let mod_val = Value::Temp(self.builder.emit_instruction(
-            Op::FieldLoad { base: std_val, field: module.to_string() },
+            Op::FieldLoad {
+                base: std_val,
+                field: module.to_string(),
+            },
             IRType::Any,
             span,
         ));
         let method_val = Value::Temp(self.builder.emit_instruction(
-            Op::FieldLoad { base: mod_val, field: method.to_string() },
+            Op::FieldLoad {
+                base: mod_val,
+                field: method.to_string(),
+            },
             IRType::Any,
             span,
         ));
         let temp = self.builder.emit_instruction(
-            Op::Call { callee: method_val, args },
+            Op::Call {
+                callee: method_val,
+                args,
+            },
             IRType::Any,
             span,
         );
@@ -899,7 +916,8 @@ impl LoweringContext {
                         return self.lower_std_call("file", "read", vec![arg_val], call.span);
                     } else if ident.name == "json" {
                         let file_arg = self.lower_expression(&call.args[0]);
-                        let read_val = self.lower_std_call("file", "read", vec![file_arg], call.span);
+                        let read_val =
+                            self.lower_std_call("file", "read", vec![file_arg], call.span);
                         return self.lower_std_call("json", "parse", vec![read_val], call.span);
                     }
                 }
@@ -1216,7 +1234,8 @@ impl LoweringContext {
                         self.symbol_map.insert(ident.name.clone(), b.clone());
                         b
                     } else {
-                        let global_id = self.builder.declare_global(ident.name.clone(), IRType::Any);
+                        let global_id =
+                            self.builder.declare_global(ident.name.clone(), IRType::Any);
                         let b = SymbolBinding::Global(global_id, IRType::Any);
                         self.symbol_map.insert(ident.name.clone(), b.clone());
                         b

@@ -17,7 +17,7 @@ impl Theme {
     pub fn detect() -> Self {
         // Detect if color is disabled or if we should use raw ASCII symbols
         let use_unicode = true; // Most modern terminals support Unicode.
-        
+
         // Auto-detect ASCII fallback if running inside a legacy environment or if requested
         if use_unicode {
             Self {

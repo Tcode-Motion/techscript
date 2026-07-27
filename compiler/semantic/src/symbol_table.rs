@@ -63,7 +63,7 @@ impl SymbolTable {
             );
         };
 
-                // ── Core native-registry built-ins ──────────────────────────────────
+        // ── Core native-registry built-ins ──────────────────────────────────
         add("say");
         add("ask");
         add("len");
@@ -80,10 +80,10 @@ impl SymbolTable {
         add("panic");
 
         // ── Type-conversion aliases used in v1.0.8 code ─────────────────────
-        add("str");    // same as to_str
-        add("int");    // same as to_int
-        add("float");  // same as to_float
-        add("bool");   // same as to_bool
+        add("str"); // same as to_str
+        add("int"); // same as to_int
+        add("float"); // same as to_float
+        add("bool"); // same as to_bool
 
         // ── Stdlib module-level globals ──────────────────────────────────────
         add("std");
@@ -147,7 +147,6 @@ impl SymbolTable {
             scopes: vec![global_scope],
         }
     }
-
 
     pub fn push_scope(&mut self) {
         self.scopes.push(Scope::new());

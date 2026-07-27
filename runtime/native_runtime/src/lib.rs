@@ -3,8 +3,8 @@
 
 use std::collections::HashMap;
 use std::ffi::{CStr, CString};
-use std::os::raw::{c_char, c_void};
 use std::io::{self, Write};
+use std::os::raw::{c_char, c_void};
 
 #[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -158,7 +158,11 @@ pub extern "C" fn ts_alloc_model(name: *const c_char) -> *mut TsValue {
 }
 
 #[no_mangle]
-pub extern "C" fn ts_alloc_enum(name: *const c_char, variant: *const c_char, val_opt: *mut TsValue) -> *mut TsValue {
+pub extern "C" fn ts_alloc_enum(
+    name: *const c_char,
+    variant: *const c_char,
+    val_opt: *mut TsValue,
+) -> *mut TsValue {
     let name_str = unsafe { CStr::from_ptr(name).to_string_lossy().into_owned() };
     let variant_str = unsafe { CStr::from_ptr(variant).to_string_lossy().into_owned() };
     let ts_enum = TsEnum {
@@ -316,7 +320,9 @@ pub unsafe extern "C" fn ts_len(val: *mut TsValue) -> *mut TsValue {
 // List operations
 #[no_mangle]
 pub unsafe extern "C" fn ts_list_push(list_val: *mut TsValue, item_val: *mut TsValue) {
-    if list_val.is_null() { return; }
+    if list_val.is_null() {
+        return;
+    }
     let v = &mut *list_val;
     if v.tag == TsTag::List as u32 {
         let list = &mut *(v.data.pointer as *mut Vec<*mut TsValue>);
@@ -325,8 +331,13 @@ pub unsafe extern "C" fn ts_list_push(list_val: *mut TsValue, item_val: *mut TsV
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn ts_list_get(list_val: *mut TsValue, index_val: *mut TsValue) -> *mut TsValue {
-    if list_val.is_null() || index_val.is_null() { return ts_alloc_null(); }
+pub unsafe extern "C" fn ts_list_get(
+    list_val: *mut TsValue,
+    index_val: *mut TsValue,
+) -> *mut TsValue {
+    if list_val.is_null() || index_val.is_null() {
+        return ts_alloc_null();
+    }
     let v = &*list_val;
     let idx_v = &*index_val;
     if v.tag == TsTag::List as u32 && idx_v.tag == TsTag::Int as u32 {
@@ -340,8 +351,14 @@ pub unsafe extern "C" fn ts_list_get(list_val: *mut TsValue, index_val: *mut TsV
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn ts_list_set(list_val: *mut TsValue, index_val: *mut TsValue, item_val: *mut TsValue) {
-    if list_val.is_null() || index_val.is_null() { return; }
+pub unsafe extern "C" fn ts_list_set(
+    list_val: *mut TsValue,
+    index_val: *mut TsValue,
+    item_val: *mut TsValue,
+) {
+    if list_val.is_null() || index_val.is_null() {
+        return;
+    }
     let v = &mut *list_val;
     let idx_v = &*index_val;
     if v.tag == TsTag::List as u32 && idx_v.tag == TsTag::Int as u32 {
@@ -356,7 +373,9 @@ pub unsafe extern "C" fn ts_list_set(list_val: *mut TsValue, index_val: *mut TsV
 // Map operations
 #[no_mangle]
 pub unsafe extern "C" fn ts_map_get(map_val: *mut TsValue, key_val: *mut TsValue) -> *mut TsValue {
-    if map_val.is_null() || key_val.is_null() { return ts_alloc_null(); }
+    if map_val.is_null() || key_val.is_null() {
+        return ts_alloc_null();
+    }
     let v = &*map_val;
     let k_v = &*key_val;
     if v.tag == TsTag::Map as u32 && k_v.tag == TsTag::String as u32 {
@@ -370,8 +389,14 @@ pub unsafe extern "C" fn ts_map_get(map_val: *mut TsValue, key_val: *mut TsValue
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn ts_map_set(map_val: *mut TsValue, key_val: *mut TsValue, item_val: *mut TsValue) {
-    if map_val.is_null() || key_val.is_null() { return; }
+pub unsafe extern "C" fn ts_map_set(
+    map_val: *mut TsValue,
+    key_val: *mut TsValue,
+    item_val: *mut TsValue,
+) {
+    if map_val.is_null() || key_val.is_null() {
+        return;
+    }
     let v = &mut *map_val;
     let k_v = &*key_val;
     if v.tag == TsTag::Map as u32 && k_v.tag == TsTag::String as u32 {
@@ -383,8 +408,13 @@ pub unsafe extern "C" fn ts_map_set(map_val: *mut TsValue, key_val: *mut TsValue
 
 // Struct/Model property access
 #[no_mangle]
-pub unsafe extern "C" fn ts_struct_get(struct_val: *mut TsValue, field: *const c_char) -> *mut TsValue {
-    if struct_val.is_null() || field.is_null() { return ts_alloc_null(); }
+pub unsafe extern "C" fn ts_struct_get(
+    struct_val: *mut TsValue,
+    field: *const c_char,
+) -> *mut TsValue {
+    if struct_val.is_null() || field.is_null() {
+        return ts_alloc_null();
+    }
     let v = &*struct_val;
     let field_str = CStr::from_ptr(field).to_string_lossy().into_owned();
     if v.tag == TsTag::Struct as u32 {
@@ -402,8 +432,14 @@ pub unsafe extern "C" fn ts_struct_get(struct_val: *mut TsValue, field: *const c
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn ts_struct_set(struct_val: *mut TsValue, field: *const c_char, item_val: *mut TsValue) {
-    if struct_val.is_null() || field.is_null() { return; }
+pub unsafe extern "C" fn ts_struct_set(
+    struct_val: *mut TsValue,
+    field: *const c_char,
+    item_val: *mut TsValue,
+) {
+    if struct_val.is_null() || field.is_null() {
+        return;
+    }
     let v = &mut *struct_val;
     let field_str = CStr::from_ptr(field).to_string_lossy().into_owned();
     if v.tag == TsTag::Struct as u32 {
@@ -418,10 +454,12 @@ pub unsafe extern "C" fn ts_struct_set(struct_val: *mut TsValue, field: *const c
 // Dynamic Arithmetic operations
 #[no_mangle]
 pub unsafe extern "C" fn ts_add(left: *mut TsValue, right: *mut TsValue) -> *mut TsValue {
-    if left.is_null() || right.is_null() { return ts_alloc_null(); }
+    if left.is_null() || right.is_null() {
+        return ts_alloc_null();
+    }
     let l = &*left;
     let r = &*right;
-    
+
     // Concatenation if either is a string
     if l.tag == TsTag::String as u32 || r.tag == TsTag::String as u32 {
         let l_str = value_to_string(left);
@@ -435,8 +473,16 @@ pub unsafe extern "C" fn ts_add(left: *mut TsValue, right: *mut TsValue) -> *mut
         return ts_alloc_int(l.data.integer + r.data.integer);
     }
     if l.tag == TsTag::Float as u32 || r.tag == TsTag::Float as u32 {
-        let lf = if l.tag == TsTag::Int as u32 { l.data.integer as f64 } else { l.data.float };
-        let rf = if r.tag == TsTag::Int as u32 { r.data.integer as f64 } else { r.data.float };
+        let lf = if l.tag == TsTag::Int as u32 {
+            l.data.integer as f64
+        } else {
+            l.data.float
+        };
+        let rf = if r.tag == TsTag::Int as u32 {
+            r.data.integer as f64
+        } else {
+            r.data.float
+        };
         return ts_alloc_float(lf + rf);
     }
     ts_alloc_null()
@@ -444,15 +490,25 @@ pub unsafe extern "C" fn ts_add(left: *mut TsValue, right: *mut TsValue) -> *mut
 
 #[no_mangle]
 pub unsafe extern "C" fn ts_sub(left: *mut TsValue, right: *mut TsValue) -> *mut TsValue {
-    if left.is_null() || right.is_null() { return ts_alloc_null(); }
+    if left.is_null() || right.is_null() {
+        return ts_alloc_null();
+    }
     let l = &*left;
     let r = &*right;
     if l.tag == TsTag::Int as u32 && r.tag == TsTag::Int as u32 {
         return ts_alloc_int(l.data.integer - r.data.integer);
     }
     if l.tag == TsTag::Float as u32 || r.tag == TsTag::Float as u32 {
-        let lf = if l.tag == TsTag::Int as u32 { l.data.integer as f64 } else { l.data.float };
-        let rf = if r.tag == TsTag::Int as u32 { r.data.integer as f64 } else { r.data.float };
+        let lf = if l.tag == TsTag::Int as u32 {
+            l.data.integer as f64
+        } else {
+            l.data.float
+        };
+        let rf = if r.tag == TsTag::Int as u32 {
+            r.data.integer as f64
+        } else {
+            r.data.float
+        };
         return ts_alloc_float(lf - rf);
     }
     ts_alloc_null()
@@ -460,15 +516,25 @@ pub unsafe extern "C" fn ts_sub(left: *mut TsValue, right: *mut TsValue) -> *mut
 
 #[no_mangle]
 pub unsafe extern "C" fn ts_mul(left: *mut TsValue, right: *mut TsValue) -> *mut TsValue {
-    if left.is_null() || right.is_null() { return ts_alloc_null(); }
+    if left.is_null() || right.is_null() {
+        return ts_alloc_null();
+    }
     let l = &*left;
     let r = &*right;
     if l.tag == TsTag::Int as u32 && r.tag == TsTag::Int as u32 {
         return ts_alloc_int(l.data.integer * r.data.integer);
     }
     if l.tag == TsTag::Float as u32 || r.tag == TsTag::Float as u32 {
-        let lf = if l.tag == TsTag::Int as u32 { l.data.integer as f64 } else { l.data.float };
-        let rf = if r.tag == TsTag::Int as u32 { r.data.integer as f64 } else { r.data.float };
+        let lf = if l.tag == TsTag::Int as u32 {
+            l.data.integer as f64
+        } else {
+            l.data.float
+        };
+        let rf = if r.tag == TsTag::Int as u32 {
+            r.data.integer as f64
+        } else {
+            r.data.float
+        };
         return ts_alloc_float(lf * rf);
     }
     ts_alloc_null()
@@ -476,12 +542,22 @@ pub unsafe extern "C" fn ts_mul(left: *mut TsValue, right: *mut TsValue) -> *mut
 
 #[no_mangle]
 pub unsafe extern "C" fn ts_div(left: *mut TsValue, right: *mut TsValue) -> *mut TsValue {
-    if left.is_null() || right.is_null() { return ts_alloc_null(); }
+    if left.is_null() || right.is_null() {
+        return ts_alloc_null();
+    }
     let l = &*left;
     let r = &*right;
-    
-    let lf = if l.tag == TsTag::Int as u32 { l.data.integer as f64 } else { l.data.float };
-    let rf = if r.tag == TsTag::Int as u32 { r.data.integer as f64 } else { r.data.float };
+
+    let lf = if l.tag == TsTag::Int as u32 {
+        l.data.integer as f64
+    } else {
+        l.data.float
+    };
+    let rf = if r.tag == TsTag::Int as u32 {
+        r.data.integer as f64
+    } else {
+        r.data.float
+    };
     if rf == 0.0 {
         return ts_alloc_null(); // Avoid division by zero panic
     }
@@ -493,11 +569,15 @@ pub unsafe extern "C" fn ts_div(left: *mut TsValue, right: *mut TsValue) -> *mut
 
 #[no_mangle]
 pub unsafe extern "C" fn ts_mod(left: *mut TsValue, right: *mut TsValue) -> *mut TsValue {
-    if left.is_null() || right.is_null() { return ts_alloc_null(); }
+    if left.is_null() || right.is_null() {
+        return ts_alloc_null();
+    }
     let l = &*left;
     let r = &*right;
     if l.tag == TsTag::Int as u32 && r.tag == TsTag::Int as u32 {
-        if r.data.integer == 0 { return ts_alloc_null(); }
+        if r.data.integer == 0 {
+            return ts_alloc_null();
+        }
         return ts_alloc_int(l.data.integer % r.data.integer);
     }
     ts_alloc_null()
@@ -505,32 +585,61 @@ pub unsafe extern "C" fn ts_mod(left: *mut TsValue, right: *mut TsValue) -> *mut
 
 #[no_mangle]
 pub unsafe extern "C" fn ts_pow(left: *mut TsValue, right: *mut TsValue) -> *mut TsValue {
-    if left.is_null() || right.is_null() { return ts_alloc_null(); }
-    let lf = if (&*left).tag == TsTag::Int as u32 { (&*left).data.integer as f64 } else { (&*left).data.float };
-    let rf = if (&*right).tag == TsTag::Int as u32 { (&*right).data.integer as f64 } else { (&*right).data.float };
+    if left.is_null() || right.is_null() {
+        return ts_alloc_null();
+    }
+    let lf = if (&*left).tag == TsTag::Int as u32 {
+        (&*left).data.integer as f64
+    } else {
+        (&*left).data.float
+    };
+    let rf = if (&*right).tag == TsTag::Int as u32 {
+        (&*right).data.integer as f64
+    } else {
+        (&*right).data.float
+    };
     ts_alloc_float(lf.powf(rf))
 }
 
 // Dynamic Comparison helpers
 #[no_mangle]
 pub unsafe extern "C" fn ts_eq(left: *mut TsValue, right: *mut TsValue) -> bool {
-    if left.is_null() || right.is_null() { return left == right; }
+    if left.is_null() || right.is_null() {
+        return left == right;
+    }
     let l = &*left;
     let r = &*right;
     if l.tag != r.tag {
         // Coerce numbers
-        if (l.tag == TsTag::Int as u32 || l.tag == TsTag::Float as u32) &&
-           (r.tag == TsTag::Int as u32 || r.tag == TsTag::Float as u32) {
-            let lf = if l.tag == TsTag::Int as u32 { l.data.integer as f64 } else { l.data.float };
-            let rf = if r.tag == TsTag::Int as u32 { r.data.integer as f64 } else { r.data.float };
+        if (l.tag == TsTag::Int as u32 || l.tag == TsTag::Float as u32)
+            && (r.tag == TsTag::Int as u32 || r.tag == TsTag::Float as u32)
+        {
+            let lf = if l.tag == TsTag::Int as u32 {
+                l.data.integer as f64
+            } else {
+                l.data.float
+            };
+            let rf = if r.tag == TsTag::Int as u32 {
+                r.data.integer as f64
+            } else {
+                r.data.float
+            };
             return lf == rf;
         }
         return false;
     }
-    if l.tag == TsTag::Null as u32 { return true; }
-    if l.tag == TsTag::Bool as u32 { return l.data.boolean == r.data.boolean; }
-    if l.tag == TsTag::Int as u32 { return l.data.integer == r.data.integer; }
-    if l.tag == TsTag::Float as u32 { return l.data.float == r.data.float; }
+    if l.tag == TsTag::Null as u32 {
+        return true;
+    }
+    if l.tag == TsTag::Bool as u32 {
+        return l.data.boolean == r.data.boolean;
+    }
+    if l.tag == TsTag::Int as u32 {
+        return l.data.integer == r.data.integer;
+    }
+    if l.tag == TsTag::Float as u32 {
+        return l.data.float == r.data.float;
+    }
     if l.tag == TsTag::String as u32 {
         let ls = &*(l.data.pointer as *const String);
         let rs = &*(r.data.pointer as *const String);
@@ -546,16 +655,27 @@ pub unsafe extern "C" fn ts_ne(left: *mut TsValue, right: *mut TsValue) -> bool 
 
 #[no_mangle]
 pub unsafe extern "C" fn ts_lt(left: *mut TsValue, right: *mut TsValue) -> bool {
-    if left.is_null() || right.is_null() { return false; }
+    if left.is_null() || right.is_null() {
+        return false;
+    }
     let l = &*left;
     let r = &*right;
     if l.tag == TsTag::Int as u32 && r.tag == TsTag::Int as u32 {
         return l.data.integer < r.data.integer;
     }
-    if (l.tag == TsTag::Int as u32 || l.tag == TsTag::Float as u32) &&
-       (r.tag == TsTag::Int as u32 || r.tag == TsTag::Float as u32) {
-        let lf = if l.tag == TsTag::Int as u32 { l.data.integer as f64 } else { l.data.float };
-        let rf = if r.tag == TsTag::Int as u32 { r.data.integer as f64 } else { r.data.float };
+    if (l.tag == TsTag::Int as u32 || l.tag == TsTag::Float as u32)
+        && (r.tag == TsTag::Int as u32 || r.tag == TsTag::Float as u32)
+    {
+        let lf = if l.tag == TsTag::Int as u32 {
+            l.data.integer as f64
+        } else {
+            l.data.float
+        };
+        let rf = if r.tag == TsTag::Int as u32 {
+            r.data.integer as f64
+        } else {
+            r.data.float
+        };
         return lf < rf;
     }
     false
@@ -563,22 +683,35 @@ pub unsafe extern "C" fn ts_lt(left: *mut TsValue, right: *mut TsValue) -> bool 
 
 #[no_mangle]
 pub unsafe extern "C" fn ts_le(left: *mut TsValue, right: *mut TsValue) -> bool {
-    if left.is_null() || right.is_null() { return false; }
+    if left.is_null() || right.is_null() {
+        return false;
+    }
     ts_lt(left, right) || ts_eq(left, right)
 }
 
 #[no_mangle]
 pub unsafe extern "C" fn ts_gt(left: *mut TsValue, right: *mut TsValue) -> bool {
-    if left.is_null() || right.is_null() { return false; }
+    if left.is_null() || right.is_null() {
+        return false;
+    }
     let l = &*left;
     let r = &*right;
     if l.tag == TsTag::Int as u32 && r.tag == TsTag::Int as u32 {
         return l.data.integer > r.data.integer;
     }
-    if (l.tag == TsTag::Int as u32 || l.tag == TsTag::Float as u32) &&
-       (r.tag == TsTag::Int as u32 || r.tag == TsTag::Float as u32) {
-        let lf = if l.tag == TsTag::Int as u32 { l.data.integer as f64 } else { l.data.float };
-        let rf = if r.tag == TsTag::Int as u32 { r.data.integer as f64 } else { r.data.float };
+    if (l.tag == TsTag::Int as u32 || l.tag == TsTag::Float as u32)
+        && (r.tag == TsTag::Int as u32 || r.tag == TsTag::Float as u32)
+    {
+        let lf = if l.tag == TsTag::Int as u32 {
+            l.data.integer as f64
+        } else {
+            l.data.float
+        };
+        let rf = if r.tag == TsTag::Int as u32 {
+            r.data.integer as f64
+        } else {
+            r.data.float
+        };
         return lf > rf;
     }
     false
@@ -586,14 +719,18 @@ pub unsafe extern "C" fn ts_gt(left: *mut TsValue, right: *mut TsValue) -> bool 
 
 #[no_mangle]
 pub unsafe extern "C" fn ts_ge(left: *mut TsValue, right: *mut TsValue) -> bool {
-    if left.is_null() || right.is_null() { return false; }
+    if left.is_null() || right.is_null() {
+        return false;
+    }
     ts_gt(left, right) || ts_eq(left, right)
 }
 
 // Cast operator
 #[no_mangle]
 pub unsafe extern "C" fn ts_cast(val: *mut TsValue, target_tag: u32) -> *mut TsValue {
-    if val.is_null() { return ts_alloc_null(); }
+    if val.is_null() {
+        return ts_alloc_null();
+    }
     let v = &*val;
     if v.tag == target_tag {
         return val;
@@ -645,7 +782,9 @@ pub unsafe extern "C" fn ts_cast(val: *mut TsValue, target_tag: u32) -> *mut TsV
 // Math builtins
 #[no_mangle]
 pub unsafe extern "C" fn ts_math_abs(val: *mut TsValue) -> *mut TsValue {
-    if val.is_null() { return ts_alloc_null(); }
+    if val.is_null() {
+        return ts_alloc_null();
+    }
     let v = &*val;
     if v.tag == TsTag::Int as u32 {
         ts_alloc_int(v.data.integer.abs())
@@ -658,56 +797,94 @@ pub unsafe extern "C" fn ts_math_abs(val: *mut TsValue) -> *mut TsValue {
 
 #[no_mangle]
 pub unsafe extern "C" fn ts_math_sin(val: *mut TsValue) -> *mut TsValue {
-    if val.is_null() { return ts_alloc_null(); }
+    if val.is_null() {
+        return ts_alloc_null();
+    }
     let v = &*val;
-    let lf = if v.tag == TsTag::Int as u32 { v.data.integer as f64 } else { v.data.float };
+    let lf = if v.tag == TsTag::Int as u32 {
+        v.data.integer as f64
+    } else {
+        v.data.float
+    };
     ts_alloc_float(lf.sin())
 }
 
 #[no_mangle]
 pub unsafe extern "C" fn ts_math_cos(val: *mut TsValue) -> *mut TsValue {
-    if val.is_null() { return ts_alloc_null(); }
+    if val.is_null() {
+        return ts_alloc_null();
+    }
     let v = &*val;
-    let lf = if v.tag == TsTag::Int as u32 { v.data.integer as f64 } else { v.data.float };
+    let lf = if v.tag == TsTag::Int as u32 {
+        v.data.integer as f64
+    } else {
+        v.data.float
+    };
     ts_alloc_float(lf.cos())
 }
 
 #[no_mangle]
 pub unsafe extern "C" fn ts_math_tan(val: *mut TsValue) -> *mut TsValue {
-    if val.is_null() { return ts_alloc_null(); }
+    if val.is_null() {
+        return ts_alloc_null();
+    }
     let v = &*val;
-    let lf = if v.tag == TsTag::Int as u32 { v.data.integer as f64 } else { v.data.float };
+    let lf = if v.tag == TsTag::Int as u32 {
+        v.data.integer as f64
+    } else {
+        v.data.float
+    };
     ts_alloc_float(lf.tan())
 }
 
 #[no_mangle]
 pub unsafe extern "C" fn ts_math_log(val: *mut TsValue) -> *mut TsValue {
-    if val.is_null() { return ts_alloc_null(); }
+    if val.is_null() {
+        return ts_alloc_null();
+    }
     let v = &*val;
-    let lf = if v.tag == TsTag::Int as u32 { v.data.integer as f64 } else { v.data.float };
+    let lf = if v.tag == TsTag::Int as u32 {
+        v.data.integer as f64
+    } else {
+        v.data.float
+    };
     ts_alloc_float(lf.ln())
 }
 
 #[no_mangle]
 pub unsafe extern "C" fn ts_math_exp(val: *mut TsValue) -> *mut TsValue {
-    if val.is_null() { return ts_alloc_null(); }
+    if val.is_null() {
+        return ts_alloc_null();
+    }
     let v = &*val;
-    let lf = if v.tag == TsTag::Int as u32 { v.data.integer as f64 } else { v.data.float };
+    let lf = if v.tag == TsTag::Int as u32 {
+        v.data.integer as f64
+    } else {
+        v.data.float
+    };
     ts_alloc_float(lf.exp())
 }
 
 #[no_mangle]
 pub unsafe extern "C" fn ts_math_sqrt(val: *mut TsValue) -> *mut TsValue {
-    if val.is_null() { return ts_alloc_null(); }
+    if val.is_null() {
+        return ts_alloc_null();
+    }
     let v = &*val;
-    let lf = if v.tag == TsTag::Int as u32 { v.data.integer as f64 } else { v.data.float };
+    let lf = if v.tag == TsTag::Int as u32 {
+        v.data.integer as f64
+    } else {
+        v.data.float
+    };
     ts_alloc_float(lf.sqrt())
 }
 
 // Range function helper (say 0..5 returns List of Ints)
 #[no_mangle]
 pub unsafe extern "C" fn ts_range(start_val: *mut TsValue, end_val: *mut TsValue) -> *mut TsValue {
-    if start_val.is_null() || end_val.is_null() { return ts_alloc_list(); }
+    if start_val.is_null() || end_val.is_null() {
+        return ts_alloc_list();
+    }
     let s_v = &*start_val;
     let e_v = &*end_val;
     if s_v.tag == TsTag::Int as u32 && e_v.tag == TsTag::Int as u32 {
@@ -725,7 +902,9 @@ pub unsafe extern "C" fn ts_range(start_val: *mut TsValue, end_val: *mut TsValue
 // Unified indexing helpers
 #[no_mangle]
 pub unsafe extern "C" fn ts_index_get(base: *mut TsValue, index: *mut TsValue) -> *mut TsValue {
-    if base.is_null() || index.is_null() { return ts_alloc_null(); }
+    if base.is_null() || index.is_null() {
+        return ts_alloc_null();
+    }
     let b = &*base;
     if b.tag == TsTag::List as u32 {
         return ts_list_get(base, index);
@@ -750,7 +929,9 @@ pub unsafe extern "C" fn ts_index_get(base: *mut TsValue, index: *mut TsValue) -
 
 #[no_mangle]
 pub unsafe extern "C" fn ts_index_set(base: *mut TsValue, index: *mut TsValue, val: *mut TsValue) {
-    if base.is_null() || index.is_null() { return; }
+    if base.is_null() || index.is_null() {
+        return;
+    }
     let b = &mut *base;
     if b.tag == TsTag::List as u32 {
         ts_list_set(base, index, val);
@@ -794,5 +975,3 @@ pub unsafe extern "C" fn ts_await(val: *mut TsValue) -> *mut TsValue {
     }
     val
 }
-
-

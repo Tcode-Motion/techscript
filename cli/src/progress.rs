@@ -2,8 +2,8 @@
 //!
 //! Renders visual progress bars in-place inside terminal environments.
 
-use std::io::Write;
 use colored::Colorize;
+use std::io::Write;
 
 pub struct ProgressBar {
     width: usize,
@@ -21,20 +21,17 @@ impl ProgressBar {
         let color_enabled = colored::control::SHOULD_COLORIZE.should_colorize();
 
         let bar_str = if color_enabled {
-            format!(
-                "{}{}",
-                "=".repeat(filled).cyan(),
-                " ".repeat(empty)
-            )
+            format!("{}{}", "=".repeat(filled).cyan(), " ".repeat(empty))
         } else {
-            format!(
-                "{}{}",
-                "=".repeat(filled),
-                " ".repeat(empty)
-            )
+            format!("{}{}", "=".repeat(filled), " ".repeat(empty))
         };
 
-        print!("\r  [{}] {:>3}% — Compiling: {}", bar_str, percent, label.bold());
+        print!(
+            "\r  [{}] {:>3}% — Compiling: {}",
+            bar_str,
+            percent,
+            label.bold()
+        );
         std::io::stdout().flush().ok();
     }
 

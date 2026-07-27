@@ -32,8 +32,8 @@
 3. [Key Differentiators](#-key-differentiators)
 4. [Syntax at a Glance](#-syntax-at-a-glance)
 5. [Architecture Design](#-architecture-design)
-6. [Quick Start](#-quick-start)
-7. [Installation](#-installation)
+6. [Installation](#-installation)
+7. [Quick Start](#-quick-start)
 8. [Language Guide](#-language-guide)
 9. [Standard Library & Modules](#-standard-library--modules)
 10. [CLI Commands](#-cli-commands)
@@ -113,22 +113,6 @@ graph TD
 
 ---
 
-## 🚀 Quick Start
-
-Once TechScript is installed on your system, you can scaffold and execute a new project in under 10 seconds:
-
-1. **Scaffold a Project**:
-   ```bash
-   tsc new hello_world
-   cd hello_world
-   ```
-2. **Compile and Run**:
-   ```bash
-   tsc run
-   ```
-
----
-
 ## 📦 Installation
 
 ### 1. 🪟 Windows Setup
@@ -168,6 +152,28 @@ techscript install
 The PyPI package auto-detects your OS/architecture and downloads the correct native binary from GitHub Releases.
 
 > **Homebrew** (`brew install techscript`), **Winget**, and **Scoop** support coming soon!
+
+---
+
+## 🚀 Quick Start
+
+Once TechScript is installed, you can write and execute your first script in under 10 seconds:
+
+1. **Create and Enter a Project Directory**:
+   ```bash
+   mkdir hello_world
+   cd hello_world
+   ```
+2. **Create a Script File**:
+   Create a new file named `hello.txs` and add:
+   ```txs
+   say "Hello, World! 🌍"
+   ```
+3. **Compile and Run**:
+   Run the file using the `tsc` compiler driver:
+   ```bash
+   tsc run hello.txs
+   ```
 
 ---
 

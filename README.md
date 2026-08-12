@@ -12,6 +12,10 @@
 
 **The plain-English programming language. Zero symbols. Zero overhead.**
 
+**Author:** Tcode-Motion
+
+> **Status:** Pre-release / Under Development. Architecture modules are currently being built and tested.
+
 [![Build Status](https://img.shields.io/github/actions/workflow/status/Tcode-Motion/techscript/build.yml?branch=main&style=for-the-badge&logo=github&label=Build)](https://github.com/Tcode-Motion/techscript/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-059669?style=for-the-badge&logo=license)](LICENSE)
 [![Latest Release](https://img.shields.io/github/v/release/Tcode-Motion/techscript?style=for-the-badge&color=0DF28B&label=Release)](https://github.com/Tcode-Motion/techscript/releases)
@@ -348,7 +352,6 @@ techscript/
 ├── .github/             # GitHub templates and workflows
 ├── .vscode/             # Editor settings
 ├── assets/              # Logos and graphics
-├── benchmarks/          # Performance benchmarks
 ├── cli/                 # Crate for the `tsc` compiler driver CLI
 ├── compiler/            # Crate subfolders for language compiler phases
 │   ├── ast/             # Abstract Syntax Tree representation
@@ -367,7 +370,6 @@ techscript/
 ├── editors/             # VS Code extension source and VSIX packages
 ├── examples/            # Sample projects and code snippets
 ├── installer/           # Script files for compiling installer executables
-├── licenses/            # Licenses of standard library dependencies
 ├── runtime/             # Crate subfolders for program execution
 │   ├── builtins/        # Standard library module implementations
 │   ├── gc/              # NaN-boxed VM Garbage Collector
@@ -378,7 +380,6 @@ techscript/
 ├── scripts/             # Utility and platform installation scripts
 ├── stdlib/              # Standard library header definitions
 ├── templates/           # New project templates
-├── third_party/         # Extracted third-party sources
 └── tools/               # Ecosystem tools
     ├── formatter/       # Formatter engine (`tsfmt`)
     ├── linter/          # Linter analyzer (`tslint`)

@@ -72,3 +72,12 @@ releases/
 graphify-out/
 
 
+
+# Executables & Binaries
+*.exe
+*.bin
+*.out
+*.app
+bin/
+build/
+dist/

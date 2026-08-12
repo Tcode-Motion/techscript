@@ -7,6 +7,6 @@ description = "Dependency resolver and package manager registry client for TechS
 [dependencies]
 serde = { workspace = true }
 serde_json = { workspace = true }
-toml = "0.8"
+toml = "1.1"
 anyhow = { workspace = true }
-ureq = { version = "2.9" }
+ureq = { version = "3.3" }

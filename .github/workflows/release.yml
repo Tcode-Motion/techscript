@@ -59,7 +59,7 @@ jobs:
           fi
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.release_name }}
           path: ${{ matrix.release_name }}.*

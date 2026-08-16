@@ -162,7 +162,7 @@ impl<'a> Parser<'a> {
     }
 
     /// Advances the cursor and returns the previous token.
-    pub(crate) fn advance(&mut self) -> &Token {
+    pub(crate) fn advance(&mut self) -> &'a Token {
         if !self.is_at_end() {
             self.pos += 1;
         }
@@ -170,7 +170,7 @@ impl<'a> Parser<'a> {
     }
 
     /// Returns the previous token.
-    pub(crate) fn previous(&self) -> &Token {
+    pub(crate) fn previous(&self) -> &'a Token {
         &self.tokens[self.pos - 1]
     }
 

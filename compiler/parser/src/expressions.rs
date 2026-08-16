@@ -15,7 +15,7 @@ impl<'a> Parser<'a> {
         reporter: &mut DiagnosticReporter,
     ) -> ParseResult<Expression> {
         let token = self.advance();
-        let mut left = self.parse_prefix(&token, reporter)?;
+        let mut left = self.parse_prefix(token, reporter)?;
 
         while !self.is_at_end() {
             let next_prec = self.peek().kind.precedence();
@@ -42,7 +42,7 @@ impl<'a> Parser<'a> {
             }
 
             let next_token = self.advance();
-            left = self.parse_infix(left, &next_token, reporter)?;
+            left = self.parse_infix(left, next_token, reporter)?;
         }
 
         Ok(left)

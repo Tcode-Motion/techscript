@@ -55,46 +55,50 @@ plugins:
 
 nav:
   - Home: index.md
-  - Getting Started: getting-started.md
-  - Installation: Installation.md
-  - Language Guide:
-    - Variables: variables.md
-    - Types & Operators: types.md
-    - Operators: operators.md
-    - Control Flow & Loops: syntax.md
-    - Functions: functions.md
-    - Closures: closures.md
-    - Arrays: arrays.md
-    - Maps: maps.md
-    - Classes & OOP: classes.md
-    - Inheritance: inheritance.md
-    - Interfaces: interfaces.md
-    - Traits: traits.md
-    - Pattern Matching: pattern-matching.md
-    - Error Handling: exceptions.md
-  - Advanced concepts:
-    - Memory & Ownership: ownership.md
-    - Imports & Modules: imports.md
-    - Packages: packages.md
-    - Multithreading: multithreading.md
-    - Async: async.md
-    - FFI: ffi.md
-  - Architecture & Compiler:
-    - Compiler Architecture: CompilerArchitecture.md
-    - LLVM Backend: llvm-backend.md
-    - Bytecode VM: vm.md
-    - Bytecode Format: bytecode.md
-    - Memory Model: memory-model.md
-  - Toolchain Tools:
-    - CLI Command Reference: cli.md
-    - Formatter (tsfmt): formatter.md
-    - Package Manager (tspm): package-manager.md
-    - Unit Testing: testing.md
+  - Getting Started:
+    - getting-started/getting-started.md
+    - getting-started/installation.md
+  - Language:
+    - language/overview.md
+    - language/variables.md
+    - language/types.md
+    - language/operators.md
+    - language/control-flow.md
+    - language/functions.md
+    - language/closures.md
+    - language/classes.md
+    - language/inheritance.md
+    - language/interfaces.md
+    - language/traits.md
+    - language/pattern-matching.md
+    - language/error-handling.md
+    - language/memory.md
+    - language/arrays.md
+    - language/maps.md
+    - language/imports-exports.md
+    - language/packages.md
+    - language/concurrency.md
+    - language/async.md
+  - Specification:
+    - specification/ffi.md
+    - specification/bytecode.md
+    - specification/memory-model.md
+  - Compiler:
+    - compiler/architecture.md
+    - compiler/llvm-backend.md
+    - compiler/vm.md
+  - Tooling:
+    - tooling/cli.md
+    - tooling/formatter.md
+    - tooling/package-manager.md
+    - tooling/test-runner.md
+  - Reference:
+    - reference/APIReference.md
+    - reference/StdlibReference.md
+  - Guides:
+    - guides/ExamplesGuide.md
+    - guides/BestPractices.md
   - Resources:
-    - API Reference: APIReference.md
-    - Stdlib Reference: StdlibReference.md
-    - Examples Guide: ExamplesGuide.md
-    - Best Practices: BestPractices.md
-    - FAQ: FAQ.md
-    - Release Notes: ReleaseNotes.md
-    - Roadmap: Roadmap.md
+    - faq.md
+    - ReleaseNotes.md
+    - Roadmap.md

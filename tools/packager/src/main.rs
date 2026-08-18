@@ -328,7 +328,8 @@ fn package_vsix(root_dir: &Path, dest_vsix: &Path, version: &str) -> anyhow::Res
 
     let file = File::create(dest_vsix)?;
     let mut zip = ZipWriter::new(file);
-    let options = FileOptions::default().compression_method(zip::CompressionMethod::Deflated);
+    let options: FileOptions<()> =
+        FileOptions::default().compression_method(zip::CompressionMethod::Deflated);
 
     zip.start_file("[Content_Types].xml", options)?;
     let content_types = r#"<?xml version="1.0" encoding="utf-8"?>
@@ -403,7 +404,8 @@ fn package_vsix(root_dir: &Path, dest_vsix: &Path, version: &str) -> anyhow::Res
 fn zip_release_folder(release_dir: &Path, dst_zip: &Path) -> anyhow::Result<()> {
     let file = File::create(dst_zip)?;
     let mut zip = ZipWriter::new(file);
-    let options = FileOptions::default().compression_method(zip::CompressionMethod::Deflated);
+    let options: FileOptions<()> =
+        FileOptions::default().compression_method(zip::CompressionMethod::Deflated);
 
     let folders = ["docs", "examples", "tools", "runtime"];
     for folder in &folders {
@@ -440,7 +442,8 @@ fn zip_release_folder(release_dir: &Path, dst_zip: &Path) -> anyhow::Result<()> 
 fn zip_sub_directory(src_dir: &Path, dst_zip: &Path) -> anyhow::Result<()> {
     let file = File::create(dst_zip)?;
     let mut zip = ZipWriter::new(file);
-    let options = FileOptions::default().compression_method(zip::CompressionMethod::Deflated);
+    let options: FileOptions<()> =
+        FileOptions::default().compression_method(zip::CompressionMethod::Deflated);
 
     let files = walk_dir(src_dir)?;
     for file_path in files {

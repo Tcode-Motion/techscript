@@ -27,7 +27,10 @@ impl VM {
                 let inst = &func.chunk.instructions[frame.ip];
                 let current_ip = frame.ip;
                 frame.ip += 1;
-                (inst.clone(), current_ip)
+                // Avoid cloning the instruction on every tick
+                // Since this loop handles execution, cloning Instruction (which contains a Vec of Operands)
+                // is extremely slow and allocates on every fetch.
+                (inst, current_ip)
             };
 
             // Diagnostics and tracing
@@ -37,7 +40,7 @@ impl VM {
             let current_func =
                 &self.module.functions[self.frames.last().unwrap().function_idx as usize];
             self.debugger
-                .trace_instruction(current_func, ip, &inst, &self.stack.get_dump());
+                .trace_instruction(current_func, ip, inst, &self.stack.get_dump());
 
             match inst.op {
                 Opcode::NoOp => {}

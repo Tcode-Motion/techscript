@@ -1,5 +1,7 @@
 # Types in TechScript
 
+**Status: Implemented**
+
 TechScript is dynamically typed. Variables do not have fixed types, but values do.
 
 ---
@@ -62,7 +64,7 @@ configs = {
 
 ## 🔴 Custom Types
 
-### Class / Model
+### Class
 Objects instantiated using `class` and `new`:
 ```txs
 class Dog

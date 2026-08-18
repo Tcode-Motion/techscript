@@ -1,5 +1,5 @@
 use std::collections::HashSet;
-use techscript_bytecode::{BytecodeFunction, BytecodeInstruction, Operand};
+use techscript_bytecode::{BytecodeFunction, Operand};
 
 /// VM debugger supporting breakpoint registries and opcode single-step tracing.
 pub struct VMDebugger {
@@ -23,6 +23,10 @@ impl VMDebugger {
     }
 
     /// Toggles active trace logging.
+    pub fn is_enabled(&self) -> bool {
+        self.enabled
+    }
+
     pub fn set_enabled(&mut self, enabled: bool) {
         self.enabled = enabled;
     }
@@ -42,17 +46,18 @@ impl VMDebugger {
         &self,
         func: &BytecodeFunction,
         ip: usize,
-        inst: &BytecodeInstruction,
+        op_code: techscript_bytecode::Opcode,
+        operands: &[techscript_bytecode::Operand],
         stack_dump: &[techscript_runtime::RuntimeValue],
     ) {
         if !self.enabled {
             return;
         }
 
-        let op_str = format!("{:?}", inst.op);
+        let op_str = format!("{:?}", op_code);
         let mut operands_str = String::new();
 
-        for op in &inst.operands {
+        for op in operands {
             match op {
                 Operand::ConstantIndex(c_idx) => {
                     if let Some(lit) = func.chunk.constants.get(*c_idx) {

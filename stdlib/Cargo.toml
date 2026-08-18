@@ -9,7 +9,7 @@ techscript_runtime = { path = "../runtime/runtime" }
 serde_json = { workspace = true }
 serde = { workspace = true }
 indexmap = { version = "2", features = ["serde"] }
-ureq = { version = "3.3", features = ["json"] }
+ureq = { version = "2.9", features = ["json"] }
 toml = { workspace = true }
 rusqlite = { version = "0.40", features = ["bundled"] }
 md5 = "0.8"
@@ -35,3 +35,4 @@ printpdf = "0.12"
 uuid = { version = "1", features = ["v4"] }
 rustls = { version = "0.23", optional = true }
 tokio = { version = "1", features = ["rt", "macros", "sync", "time"], optional = true }
+hex = "0.4.3"

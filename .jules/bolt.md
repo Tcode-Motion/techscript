@@ -1,0 +1,7 @@
+## 2026-08-18 - Avoid cloning `BytecodeInstruction` in VM hot loop
+**Learning:** `BytecodeInstruction` contains a `Vec<Operand>`. Because the VM (`execute_loop`) runs millions of times per second, calling `inst.clone()` on every iteration creates a severe performance bottleneck due to continuous allocation and garbage collection. Furthermore, `self.debugger.trace_instruction` computes `self.stack.get_dump()` (which allocates a new `Vec`) on every iteration even when tracing is disabled.
+**Action:** Extract `op` (which is `Copy`) and borrow `operands` as a slice instead of cloning the entire instruction. Always place trace/debug logging calls behind an explicit `is_enabled()` check to prevent lazy evaluation of expensive arguments on the hot path.
+
+## 2026-08-18 - Be cautious with Cargo workspace dependencies
+**Learning:** The TechScript repository's dependency graph is highly sensitive to external package version upgrades. Bumping core dependencies like `bincode`, `ureq`, `zip`, or `rusqlite` can introduce unstable `cfg_select` errors or mismatched trait bounds across the `techscript_cli`, `techscript_stdlib`, and `techscript_packager` crates.
+**Action:** When debugging compilation errors introduced during optimization, do not blindly bump dependency versions unless absolutely necessary. Rollback to known-good versions from the `Cargo.toml` if external crates fail to compile on `cargo check`.

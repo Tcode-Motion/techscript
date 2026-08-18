@@ -3853,6 +3853,7 @@ dependencies = [
  "crc",
  "csv",
  "flate2",
+ "hex",
  "image",
  "indexmap",
  "md5",

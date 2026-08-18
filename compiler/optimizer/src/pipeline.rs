@@ -74,7 +74,7 @@ impl OptimizationPipeline {
         }
 
         if overall_changed {
-            OptimizationResult::changed(self.manager.stats.clone())
+            OptimizationResult::changed(self.manager.stats)
         } else {
             OptimizationResult::unchanged("pipeline")
         }

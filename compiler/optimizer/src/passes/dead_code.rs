@@ -19,7 +19,7 @@ impl OptimizationPass for DeadCode {
 
         for func in &mut module.functions {
             // Retrieve Use-Def analysis
-            let use_def = analyses.get_use_def(func).clone();
+            let use_def = analyses.get_use_def(func);
 
             for block in &mut func.blocks {
                 block.instructions.retain(|inst| {

@@ -1,4 +1,0 @@
-## 2024-01-20 - Lifetime Refactoring in Parser to Eliminate Token Cloning
-**Learning:** In the Rust parser (`compiler/parser/src/parser.rs`), methods like `advance()` and `previous()` originally returned a reference tied to `&mut self`. Because `Token` was still borrowing `self` mutably, the parser couldn't call methods like `self.parse_prefix` (which requires another `&mut self` borrow) without first calling `.clone()` on the token to drop the initial borrow.
-**Action:** By explicitly defining the return lifetime as `&'a Token` (tied to the lifetime of the underlying token slice `&'a [Token]`, rather than the `Parser` instance), the mutable borrow of `self` ends immediately. This elegantly satisfies the borrow checker while removing the overhead of cloning tokens throughout `expressions.rs` and `statements.rs`. Look for similar lifetime constraints elsewhere in the compiler that force unnecessary copies.
-

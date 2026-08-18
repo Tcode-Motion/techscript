@@ -50,7 +50,7 @@ impl PassManager {
             let res = pass.run(module, &mut self.analyses);
             let duration = start.elapsed();
 
-            let mut pass_stats = res.stats.clone();
+            let mut pass_stats = res.stats;
             pass_stats.time_taken_ns = duration.as_nanos();
 
             self.stats.combine(&pass_stats);

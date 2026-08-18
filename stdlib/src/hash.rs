@@ -1,7 +1,7 @@
 use crate::{StdFunction, StdlibModule, StdlibRegistry};
 use crc::{Crc, CRC_32_ISO_HDLC};
 use md5;
-use sha1::Sha1;
+use sha1::{Digest as _, Sha1};
 use sha2::{Digest, Sha256};
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -35,7 +35,7 @@ impl StdlibRegistry {
                     let mut hasher = Sha256::new();
                     hasher.update(text.as_bytes());
                     let result = hasher.finalize();
-                    Ok(RuntimeValue::Str(format!("{:x}", result)))
+                    Ok(RuntimeValue::Str(hex::encode(result)))
                 },
             }),
         );
@@ -50,7 +50,7 @@ impl StdlibRegistry {
                     let mut hasher = Sha1::new();
                     hasher.update(text.as_bytes());
                     let result = hasher.finalize();
-                    Ok(RuntimeValue::Str(format!("{:x}", result)))
+                    Ok(RuntimeValue::Str(hex::encode(result)))
                 },
             }),
         );

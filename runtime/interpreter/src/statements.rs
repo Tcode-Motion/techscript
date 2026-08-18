@@ -58,7 +58,7 @@ impl Interpreter {
                 let iter_val = self.visit_expression(&for_stmt.iterable)?;
                 let items = match iter_val {
                     RuntimeValue::List { items, .. } => items.borrow().clone(),
-                    RuntimeValue::Tuple(elements) => elements.clone(),
+                    RuntimeValue::Tuple(elements) => elements,
                     other => {
                         return Err(RuntimeError::new(
                             RuntimeErrorKind::TypeMismatch {

@@ -9,12 +9,12 @@ techscript_runtime = { path = "../runtime/runtime" }
 serde_json = { workspace = true }
 serde = { workspace = true }
 indexmap = { version = "2", features = ["serde"] }
-ureq = { version = "3.3", features = ["json"] }
+ureq = { version = "2.9", features = ["json"] }
 toml = { workspace = true }
 rusqlite = { version = "0.40", features = ["bundled"] }
 md5 = "0.8"
-sha2 = "0.11"
-sha-1 = "0.10"
+sha2 = "0.10"
+sha-1 = "0.10.1"
 aes-gcm = "0.11"
 bcrypt = "0.19"
 zip = "2.1"

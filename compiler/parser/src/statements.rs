@@ -67,7 +67,7 @@ impl<'a> Parser<'a> {
             || self.check(TokenKind::Send)
         {
             let start_pos = self.peek().span.start;
-            let kw_token = self.peek().clone();
+            let kw_token = self.peek();
             if kw_token.kind == TokenKind::Return {
                 reporter.report(techscript_errors::Diagnostic::new(
                     techscript_errors::DiagnosticLevel::Warning,

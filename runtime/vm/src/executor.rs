@@ -11,39 +11,53 @@ impl VM {
     /// Inner instruction fetch-decode-execute loop.
     pub(crate) fn execute_loop(&mut self) -> Result<RuntimeValue, VMError> {
         while self.running {
-            let (inst, ip) = {
-                let frame = self.frames.last_mut().ok_or(VMError::StackUnderflow)?;
-                let func = &self.module.functions[frame.function_idx as usize];
+            let frame = self.frames.last_mut().ok_or(VMError::StackUnderflow)?;
+            let func = &self.module.functions[frame.function_idx as usize];
 
-                if frame.ip >= func.chunk.instructions.len() {
-                    // Implicit return from function
-                    if self.frames.pop().is_none() {
-                        self.running = false;
-                        return Ok(RuntimeValue::Null);
-                    }
-                    continue;
+            if frame.ip >= func.chunk.instructions.len() {
+                // Implicit return from function
+                if self.frames.pop().is_none() {
+                    self.running = false;
+                    return Ok(RuntimeValue::Null);
                 }
+                continue;
+            }
 
-                let inst = &func.chunk.instructions[frame.ip];
-                let current_ip = frame.ip;
-                frame.ip += 1;
-                (inst.clone(), current_ip)
-            };
+            let inst = &func.chunk.instructions[frame.ip];
+            let inst_op = inst.op;
+            let ip = frame.ip;
+            frame.ip += 1;
+
+            let inst_operands = self.module.functions
+                [self.frames.last().unwrap().function_idx as usize]
+                .chunk
+                .instructions[ip]
+                .operands
+                .as_slice();
 
             // Diagnostics and tracing
             self.profiler.record_instruction();
             self.profiler.record_stack_height(self.stack.len());
 
-            let current_func =
-                &self.module.functions[self.frames.last().unwrap().function_idx as usize];
-            self.debugger
-                .trace_instruction(current_func, ip, &inst, &self.stack.get_dump());
+            if self.debugger.is_enabled() {
+                let current_func =
+                    &self.module.functions[self.frames.last().unwrap().function_idx as usize];
+                self.debugger.trace_instruction(
+                    current_func,
+                    ip,
+                    inst_op,
+                    inst_operands,
+                    &self.stack.get_dump(),
+                );
+            }
 
-            match inst.op {
+            match inst_op {
                 Opcode::NoOp => {}
 
                 Opcode::LoadConst => {
-                    if let Some(Operand::ConstantIndex(c_idx)) = inst.operands.first() {
+                    if let Some(Operand::ConstantIndex(c_idx)) = inst_operands.first() {
+                        let current_func = &self.module.functions
+                            [self.frames.last().unwrap().function_idx as usize];
                         let lit = current_func
                             .chunk
                             .constants
@@ -63,7 +77,7 @@ impl VM {
                 }
 
                 Opcode::LoadLocal => {
-                    if let Some(Operand::LocalIndex(l_idx)) = inst.operands.first() {
+                    if let Some(Operand::LocalIndex(l_idx)) = inst_operands.first() {
                         let bp = self.frames.last().unwrap().base_pointer;
                         let val = self.stack.get(bp + *l_idx as usize)?;
                         self.stack.push(val.clone())?;
@@ -73,7 +87,7 @@ impl VM {
                 }
 
                 Opcode::StoreLocal => {
-                    if let Some(Operand::LocalIndex(l_idx)) = inst.operands.first() {
+                    if let Some(Operand::LocalIndex(l_idx)) = inst_operands.first() {
                         let bp = self.frames.last().unwrap().base_pointer;
                         let val = self.stack.pop()?;
                         self.stack.set(bp + *l_idx as usize, val)?;
@@ -83,7 +97,7 @@ impl VM {
                 }
 
                 Opcode::LoadGlobal => {
-                    if let Some(Operand::GlobalIndex(g_idx)) = inst.operands.first() {
+                    if let Some(Operand::GlobalIndex(g_idx)) = inst_operands.first() {
                         let name = match *g_idx {
                             999 => "say".to_string(),
                             998 => "range".to_string(),
@@ -116,7 +130,7 @@ impl VM {
                 }
 
                 Opcode::StoreGlobal => {
-                    if let Some(Operand::GlobalIndex(g_idx)) = inst.operands.first() {
+                    if let Some(Operand::GlobalIndex(g_idx)) = inst_operands.first() {
                         let name = match *g_idx {
                             999 => "say".to_string(),
                             998 => "range".to_string(),
@@ -445,7 +459,7 @@ impl VM {
                 }
 
                 Opcode::Jump => {
-                    if let Some(Operand::JumpOffset(offset)) = inst.operands.first() {
+                    if let Some(Operand::JumpOffset(offset)) = inst_operands.first() {
                         let frame = self.frames.last_mut().ok_or(VMError::StackUnderflow)?;
                         frame.ip = ((frame.ip as i32 - 1) + offset) as usize;
                     } else {
@@ -454,7 +468,7 @@ impl VM {
                 }
 
                 Opcode::JumpIfTrue => {
-                    if let Some(Operand::JumpOffset(offset)) = inst.operands.first() {
+                    if let Some(Operand::JumpOffset(offset)) = inst_operands.first() {
                         let cond = self.stack.pop()?;
                         if cond.is_truthy() {
                             let frame = self.frames.last_mut().ok_or(VMError::StackUnderflow)?;
@@ -466,7 +480,7 @@ impl VM {
                 }
 
                 Opcode::JumpIfFalse => {
-                    if let Some(Operand::JumpOffset(offset)) = inst.operands.first() {
+                    if let Some(Operand::JumpOffset(offset)) = inst_operands.first() {
                         let cond = self.stack.pop()?;
                         if !cond.is_truthy() {
                             let frame = self.frames.last_mut().ok_or(VMError::StackUnderflow)?;
@@ -478,7 +492,7 @@ impl VM {
                 }
 
                 Opcode::Call => {
-                    if let Some(Operand::Count(arg_count)) = inst.operands.first() {
+                    if let Some(Operand::Count(arg_count)) = inst_operands.first() {
                         let mut args = Vec::new();
                         for _ in 0..*arg_count {
                             args.push(self.stack.pop()?);
@@ -638,7 +652,7 @@ impl VM {
                 }
 
                 Opcode::Try => {
-                    if let Some(Operand::JumpOffset(offset)) = inst.operands.first() {
+                    if let Some(Operand::JumpOffset(offset)) = inst_operands.first() {
                         let frame = self.frames.last_mut().ok_or(VMError::StackUnderflow)?;
                         let catch_ip = ((frame.ip as i32 - 1) + offset) as usize;
                         frame.handlers.push(ExceptionHandler {
@@ -685,7 +699,7 @@ impl VM {
                 }
 
                 Opcode::MakeList => {
-                    if let Some(Operand::Count(n)) = inst.operands.first() {
+                    if let Some(Operand::Count(n)) = inst_operands.first() {
                         let mut items = Vec::new();
                         for _ in 0..*n {
                             items.push(self.stack.pop()?);
@@ -701,7 +715,7 @@ impl VM {
                 }
 
                 Opcode::MakeMap => {
-                    if let Some(Operand::Count(n)) = inst.operands.first() {
+                    if let Some(Operand::Count(n)) = inst_operands.first() {
                         let mut entries = indexmap::IndexMap::new();
                         for _ in 0..*n {
                             let val = self.stack.pop()?;
@@ -758,7 +772,9 @@ impl VM {
                 }
 
                 Opcode::FieldLoad => {
-                    if let Some(Operand::ConstantIndex(c_idx)) = inst.operands.first() {
+                    if let Some(Operand::ConstantIndex(c_idx)) = inst_operands.first() {
+                        let current_func = &self.module.functions
+                            [self.frames.last().unwrap().function_idx as usize];
                         let lit = current_func
                             .chunk
                             .constants
@@ -814,7 +830,9 @@ impl VM {
                 }
 
                 Opcode::FieldStore => {
-                    if let Some(Operand::ConstantIndex(c_idx)) = inst.operands.first() {
+                    if let Some(Operand::ConstantIndex(c_idx)) = inst_operands.first() {
+                        let current_func = &self.module.functions
+                            [self.frames.last().unwrap().function_idx as usize];
                         let lit = current_func
                             .chunk
                             .constants

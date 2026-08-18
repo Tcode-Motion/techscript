@@ -266,6 +266,12 @@ pub fn tar_dir(src_dir: &str, dst_file: &str) -> std::io::Result<()> {
 pub fn untar_archive(archive_path: &str, dest_dir: &str) -> std::io::Result<()> {
     let file = File::open(archive_path)?;
     let mut a = tar::Archive::new(file);
+
+    // The tar crate's `unpack_in` method already has built-in directory traversal
+    // protections which prevent absolute paths and parent directory traversals
+    // from escaping the destination directory. Therefore, we revert the manual
+    // path validation that caused a regression with uncanonicalized relative paths.
+
     a.unpack(dest_dir)?;
     Ok(())
 }

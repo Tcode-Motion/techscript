@@ -13,8 +13,8 @@ ureq = { version = "2.9", features = ["json"] }
 toml = { workspace = true }
 rusqlite = { version = "0.40", features = ["bundled"] }
 md5 = "0.8"
-sha2 = "0.11"
-sha-1 = "0.10"
+sha2 = "0.10"
+sha-1 = "0.10.1"
 aes-gcm = "0.11"
 bcrypt = "0.19"
 zip = "2.1"
@@ -35,4 +35,3 @@ printpdf = "0.12"
 uuid = { version = "1", features = ["v4"] }
 rustls = { version = "0.23", optional = true }
 tokio = { version = "1", features = ["rt", "macros", "sync", "time"], optional = true }
-hex = "0.4.3"

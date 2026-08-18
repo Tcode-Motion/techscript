@@ -129,7 +129,11 @@ pub extern "C" fn ts_alloc_map() -> *mut TsValue {
 
 #[no_mangle]
 pub extern "C" fn ts_alloc_struct(name: *const c_char) -> *mut TsValue {
-    let name_str = if name.is_null() { String::new() } else { unsafe { CStr::from_ptr(name).to_string_lossy().into_owned() } };
+    let name_str = if name.is_null() {
+        String::new()
+    } else {
+        unsafe { CStr::from_ptr(name).to_string_lossy().into_owned() }
+    };
     let ts_struct = TsStruct {
         name: name_str,
         fields: HashMap::new(),
@@ -144,7 +148,11 @@ pub extern "C" fn ts_alloc_struct(name: *const c_char) -> *mut TsValue {
 
 #[no_mangle]
 pub extern "C" fn ts_alloc_model(name: *const c_char) -> *mut TsValue {
-    let name_str = if name.is_null() { String::new() } else { unsafe { CStr::from_ptr(name).to_string_lossy().into_owned() } };
+    let name_str = if name.is_null() {
+        String::new()
+    } else {
+        unsafe { CStr::from_ptr(name).to_string_lossy().into_owned() }
+    };
     let ts_model = TsModel {
         name: name_str,
         fields: HashMap::new(),
@@ -163,8 +171,16 @@ pub extern "C" fn ts_alloc_enum(
     variant: *const c_char,
     val_opt: *mut TsValue,
 ) -> *mut TsValue {
-    let name_str = if name.is_null() { String::new() } else { unsafe { CStr::from_ptr(name).to_string_lossy().into_owned() } };
-    let variant_str = if variant.is_null() { String::new() } else { unsafe { CStr::from_ptr(variant).to_string_lossy().into_owned() } };
+    let name_str = if name.is_null() {
+        String::new()
+    } else {
+        unsafe { CStr::from_ptr(name).to_string_lossy().into_owned() }
+    };
+    let variant_str = if variant.is_null() {
+        String::new()
+    } else {
+        unsafe { CStr::from_ptr(variant).to_string_lossy().into_owned() }
+    };
     let ts_enum = TsEnum {
         name: name_str,
         variant: variant_str,

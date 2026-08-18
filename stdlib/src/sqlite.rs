@@ -66,7 +66,9 @@ impl StdlibRegistry {
                             Ok(())
                         } else {
                             Err(RuntimeError::new(
-                                RuntimeErrorKind::InvalidOperation("Invalid connection handle".to_string()),
+                                RuntimeErrorKind::InvalidOperation(
+                                    "Invalid connection handle".to_string(),
+                                ),
                                 None,
                                 None,
                             ))
@@ -112,7 +114,8 @@ impl StdlibRegistry {
                                     let mut map = IndexMap::new();
                                     for i in 0..col_count {
                                         let name = col_names[i].clone();
-                                        let val: String = row.get::<_, String>(i).unwrap_or_default();
+                                        let val: String =
+                                            row.get::<_, String>(i).unwrap_or_default();
                                         map.insert(name, RuntimeValue::Str(val));
                                     }
                                     Ok(map)
@@ -135,7 +138,9 @@ impl StdlibRegistry {
                             Ok(rows)
                         } else {
                             Err(RuntimeError::new(
-                                RuntimeErrorKind::InvalidOperation("Invalid connection handle".to_string()),
+                                RuntimeErrorKind::InvalidOperation(
+                                    "Invalid connection handle".to_string(),
+                                ),
                                 None,
                                 None,
                             ))

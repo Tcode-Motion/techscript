@@ -214,7 +214,7 @@ impl AstVisitor for Interpreter {
             Expression::Index(idx) => {
                 let obj_val = self.visit_expression(&idx.object)?;
                 let idx_val = self.visit_expression(&idx.index)?;
-                self.eval_index_access(obj_val, idx_val, idx.span)
+                self.eval_index_access(&obj_val, &idx_val, idx.span)
             }
             Expression::New(new_expr) => {
                 // Instantiate model constructor
@@ -332,8 +332,8 @@ impl Interpreter {
 
     fn eval_index_access(
         &mut self,
-        obj_val: RuntimeValue,
-        idx_val: RuntimeValue,
+        obj_val: &RuntimeValue,
+        idx_val: &RuntimeValue,
         span: techscript_common::Span,
     ) -> EvalResult {
         match obj_val {
@@ -407,7 +407,7 @@ impl Interpreter {
                 let final_val = if op == "=" {
                     value_val
                 } else {
-                    let current = self.eval_index_access(obj_val.clone(), idx_val.clone(), span)?;
+                    let current = self.eval_index_access(&obj_val, &idx_val, span)?;
                     let basic_op = &op[0..op.len() - 1];
                     eval_binary(basic_op, current, value_val)?
                 };
@@ -524,7 +524,7 @@ impl Interpreter {
             Expression::Index(idx) => {
                 // e.g. a ?. [idx]
                 let idx_val = self.visit_expression(&idx.index)?;
-                self.eval_index_access(left_val, idx_val, idx.span)
+                self.eval_index_access(&left_val, &idx_val, idx.span)
             }
             Expression::Call(call) => {
                 // Method call: e.g. a ?. greet() or a ?. b.greet()

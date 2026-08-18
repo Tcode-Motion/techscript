@@ -35,3 +35,4 @@ printpdf = "0.12"
 uuid = { version = "1", features = ["v4"] }
 rustls = { version = "0.23", optional = true }
 tokio = { version = "1", features = ["rt", "macros", "sync", "time"], optional = true }
+hex = "0.4.3"

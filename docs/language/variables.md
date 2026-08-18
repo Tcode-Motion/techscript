@@ -1,5 +1,7 @@
 # Variables in TechScript
 
+**Status: Implemented**
+
 Variables in TechScript are dynamically typed, and they are defined on their first assignment.
 
 ---

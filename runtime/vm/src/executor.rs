@@ -28,12 +28,7 @@ impl VM {
             let ip = frame.ip;
             frame.ip += 1;
 
-            let inst_operands = self.module.functions
-                [self.frames.last().unwrap().function_idx as usize]
-                .chunk
-                .instructions[ip]
-                .operands
-                .as_slice();
+            let inst_operands = inst.operands.as_slice();
 
             // Diagnostics and tracing
             self.profiler.record_instruction();

@@ -447,7 +447,11 @@ fn zip_sub_directory(src_dir: &Path, dst_zip: &Path) -> anyhow::Result<()> {
 
     let files = walk_dir(src_dir)?;
     for file_path in files {
-        let rel_path = file_path.strip_prefix(src_dir.parent().expect("Source directory must have a parent"))?;
+        let rel_path = file_path.strip_prefix(
+            src_dir
+                .parent()
+                .expect("Source directory must have a parent"),
+        )?;
         zip.start_file(rel_path.to_string_lossy().replace("\\", "/"), options)?;
         let mut f = File::open(&file_path)?;
         let mut buffer = Vec::new();
@@ -1262,13 +1266,19 @@ fn compile_inno_installer(iss_path: &Path, out_exe: &Path) -> anyhow::Result<()>
         let status = Command::new(compiler).arg(iss_path).status()?;
 
         if status.success() {
-            let file_name = iss_path.file_stem().expect("Failed to get file stem from iss_path").to_string_lossy();
+            let file_name = iss_path
+                .file_stem()
+                .expect("Failed to get file stem from iss_path")
+                .to_string_lossy();
             let base_name = if file_name.contains("online") {
                 "TechScript_Online_Setup.exe"
             } else {
                 "TechScript_Setup.exe"
             };
-            let generated_setup = iss_path.parent().expect("Failed to get parent directory of iss_path").join(base_name);
+            let generated_setup = iss_path
+                .parent()
+                .expect("Failed to get parent directory of iss_path")
+                .join(base_name);
 
             if generated_setup.exists() {
                 fs::copy(&generated_setup, out_exe)?;
@@ -1398,8 +1408,18 @@ fn generate_checksums_txt(release_dir: &Path) -> anyhow::Result<()> {
             let hash = hasher.finalize();
 
             // Format to show filename relative to the release root
-            let filename = if file_path.parent().expect("File path must have a parent").ends_with("tools") {
-                format!("tools/{}", file_path.file_name().expect("File path must have a file name").to_string_lossy())
+            let filename = if file_path
+                .parent()
+                .expect("File path must have a parent")
+                .ends_with("tools")
+            {
+                format!(
+                    "tools/{}",
+                    file_path
+                        .file_name()
+                        .expect("File path must have a file name")
+                        .to_string_lossy()
+                )
             } else {
                 file_path
                     .file_name()

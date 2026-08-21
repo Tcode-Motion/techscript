@@ -104,13 +104,23 @@ def download_file(url: str, dest_path: str, show_progress: bool = True) -> None:
 
 def extract_archive(archive_path: str, dest_dir: str) -> None:
     """Extract .tar.gz or .zip archive to dest_dir."""
+    dest_dir_real = os.path.realpath(dest_dir)
+
     if archive_path.endswith(".tar.gz") or archive_path.endswith(".tgz"):
         import tarfile
         with tarfile.open(archive_path, "r:gz") as tf:
+            for member in tf.getmembers():
+                member_path = os.path.realpath(os.path.join(dest_dir, member.name))
+                if not os.path.commonpath([member_path, dest_dir_real]) == dest_dir_real:
+                    raise RuntimeError(f"Attempted path traversal in archive: {member.name}")
             tf.extractall(dest_dir)
     elif archive_path.endswith(".zip"):
         import zipfile
         with zipfile.ZipFile(archive_path, "r") as zf:
+            for member in zf.namelist():
+                member_path = os.path.realpath(os.path.join(dest_dir, member))
+                if not os.path.commonpath([member_path, dest_dir_real]) == dest_dir_real:
+                    raise RuntimeError(f"Attempted path traversal in archive: {member}")
             zf.extractall(dest_dir)
     else:
         raise RuntimeError(f"Unknown archive format: {archive_path}")

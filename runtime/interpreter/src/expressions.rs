@@ -258,7 +258,7 @@ impl AstVisitor for Interpreter {
             }
             Expression::Ask(ask) => {
                 let prompt_val = self.visit_expression(&ask.prompt)?;
-                let ask_fn = self.ctx.registry.lookup("ask").unwrap();
+                let ask_fn = self.ctx.registry.lookup("ask").ok_or_else(|| crate::RuntimeError::new(crate::RuntimeErrorKind::UndefinedVariable("ask".to_string()), None, None))?;
                 ask_fn.call(&mut self.ctx, vec![prompt_val])
             }
             Expression::Lambda(lambda) => {

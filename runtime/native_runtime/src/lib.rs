@@ -201,6 +201,9 @@ pub unsafe extern "C" fn ts_free_value(val: *mut TsValue) {
         return;
     }
     let value = Box::from_raw(val);
+    if value.data.pointer.is_null() {
+        return;
+    }
     if value.tag == TsTag::String as u32 {
         let _ = Box::from_raw(value.data.pointer as *mut String);
     } else if value.tag == TsTag::List as u32 {
@@ -244,41 +247,65 @@ unsafe fn value_to_string(val: *mut TsValue) -> String {
     } else if v.tag == TsTag::Float as u32 {
         v.data.float.to_string()
     } else if v.tag == TsTag::String as u32 {
-        (*(v.data.pointer as *const String)).clone()
-    } else if v.tag == TsTag::List as u32 {
-        let list = &*(v.data.pointer as *const Vec<*mut TsValue>);
-        let mut parts = Vec::new();
-        for &item in list {
-            parts.push(value_to_string(item));
-        }
-        format!("[{}]", parts.join(", "))
-    } else if v.tag == TsTag::Map as u32 {
-        let map = &*(v.data.pointer as *const HashMap<String, *mut TsValue>);
-        let mut parts = Vec::new();
-        for (k, &val) in map {
-            parts.push(format!("{}: {}", k, value_to_string(val)));
-        }
-        format!("{{{}}}", parts.join(", "))
-    } else if v.tag == TsTag::Struct as u32 {
-        let s = &*(v.data.pointer as *const TsStruct);
-        let mut parts = Vec::new();
-        for (k, &val) in &s.fields {
-            parts.push(format!("{}: {}", k, value_to_string(val)));
-        }
-        format!("{} {{{}}}", s.name, parts.join(", "))
-    } else if v.tag == TsTag::Model as u32 {
-        let m = &*(v.data.pointer as *const TsModel);
-        let mut parts = Vec::new();
-        for (k, &val) in &m.fields {
-            parts.push(format!("{}: {}", k, value_to_string(val)));
-        }
-        format!("{} {{{}}}", m.name, parts.join(", "))
-    } else if v.tag == TsTag::Enum as u32 {
-        let e = &*(v.data.pointer as *const TsEnum);
-        if e.value.is_null() {
-            format!("{}.{}", e.name, e.variant)
+        if v.data.pointer.is_null() {
+            "null".to_string()
         } else {
-            format!("{}.{}({})", e.name, e.variant, value_to_string(e.value))
+            (*(v.data.pointer as *const String)).clone()
+        }
+    } else if v.tag == TsTag::List as u32 {
+        if v.data.pointer.is_null() {
+            "[]".to_string()
+        } else {
+            let list = &*(v.data.pointer as *const Vec<*mut TsValue>);
+            let mut parts = Vec::new();
+            for &item in list {
+                parts.push(value_to_string(item));
+            }
+            format!("[{}]", parts.join(", "))
+        }
+    } else if v.tag == TsTag::Map as u32 {
+        if v.data.pointer.is_null() {
+            "{}".to_string()
+        } else {
+            let map = &*(v.data.pointer as *const HashMap<String, *mut TsValue>);
+            let mut parts = Vec::new();
+            for (k, &val) in map {
+                parts.push(format!("{}: {}", k, value_to_string(val)));
+            }
+            format!("{{{}}}", parts.join(", "))
+        }
+    } else if v.tag == TsTag::Struct as u32 {
+        if v.data.pointer.is_null() {
+            "unknown struct".to_string()
+        } else {
+            let s = &*(v.data.pointer as *const TsStruct);
+            let mut parts = Vec::new();
+            for (k, &val) in &s.fields {
+                parts.push(format!("{}: {}", k, value_to_string(val)));
+            }
+            format!("{} {{{}}}", s.name, parts.join(", "))
+        }
+    } else if v.tag == TsTag::Model as u32 {
+        if v.data.pointer.is_null() {
+            "unknown model".to_string()
+        } else {
+            let m = &*(v.data.pointer as *const TsModel);
+            let mut parts = Vec::new();
+            for (k, &val) in &m.fields {
+                parts.push(format!("{}: {}", k, value_to_string(val)));
+            }
+            format!("{} {{{}}}", m.name, parts.join(", "))
+        }
+    } else if v.tag == TsTag::Enum as u32 {
+        if v.data.pointer.is_null() {
+            "unknown enum".to_string()
+        } else {
+            let e = &*(v.data.pointer as *const TsEnum);
+            if e.value.is_null() {
+                format!("{}.{}", e.name, e.variant)
+            } else {
+                format!("{}.{}({})", e.name, e.variant, value_to_string(e.value))
+            }
         }
     } else {
         "unknown".to_string()

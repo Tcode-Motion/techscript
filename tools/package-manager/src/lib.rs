@@ -431,18 +431,21 @@ impl DocExtractor {
                         let sym_name = raw_name
                             .split('(')
                             .next()
-                            .unwrap()
+                            .unwrap_or("")
                             .split('{')
                             .next()
-                            .unwrap()
+                            .unwrap_or("")
                             .split('=')
                             .next()
-                            .unwrap()
+                            .unwrap_or("")
                             .trim();
-                        items.push(DocItem {
-                            name: sym_name.to_string(),
-                            doc: active_doc.join("\n"),
-                        });
+
+                        if !sym_name.is_empty() {
+                            items.push(DocItem {
+                                name: sym_name.to_string(),
+                                doc: active_doc.join("\n"),
+                            });
+                        }
                     }
                     active_doc.clear();
                 }

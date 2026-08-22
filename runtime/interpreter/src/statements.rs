@@ -169,7 +169,7 @@ impl Interpreter {
             }
             Statement::Say(say_stmt) => {
                 let val = self.visit_expression(&say_stmt.value)?;
-                let say_func = self.ctx.registry.lookup("say").unwrap();
+                let say_func = self.ctx.registry.lookup("say").ok_or_else(|| RuntimeError::new(RuntimeErrorKind::UndefinedVariable("say".to_string()), None, None))?;
                 say_func.call(&mut self.ctx, vec![val])?;
                 Ok(FlowSignal::Normal)
             }
@@ -241,7 +241,7 @@ impl Interpreter {
                                 })
                             }
                         }
-                        let arity = variant.payload.as_ref().unwrap().len();
+                        let arity = variant.payload.as_ref().map_or(0, |p| p.len());
                         entries.insert(
                             var_name.clone(),
                             RuntimeValue::Function(Rc::new(VariantConstructor {

@@ -8,13 +8,15 @@ use llvm_sys::core::*;
 use llvm_sys::prelude::*;
 use std::collections::HashMap;
 use std::ffi::CString;
-use techscript_ir::{BlockId, ValueId};
+use techscript_ir::{BlockId, GlobalId, LocalId, ValueId};
 
 pub struct CodegenContext {
     pub context: LLVMContextRef,
     pub module: LLVMModuleRef,
     pub builder: LLVMBuilderRef,
     pub values: HashMap<ValueId, LLVMValueRef>,
+    pub globals: HashMap<GlobalId, LLVMValueRef>,
+    pub locals: HashMap<LocalId, LLVMValueRef>,
     pub blocks: HashMap<BlockId, LLVMBasicBlockRef>,
 }
 
@@ -30,11 +32,29 @@ impl CodegenContext {
             module,
             builder,
             values: HashMap::new(),
+            globals: HashMap::new(),
+            locals: HashMap::new(),
             blocks: HashMap::new(),
         }
     }
 
     /// Looks up an LLVM value for the given ValueId.
+    pub fn get_global(&self, id: GlobalId) -> Option<LLVMValueRef> {
+        self.globals.get(&id).copied()
+    }
+
+    pub fn register_global(&mut self, id: GlobalId, val: LLVMValueRef) {
+        self.globals.insert(id, val);
+    }
+
+    pub fn get_local(&self, id: LocalId) -> Option<LLVMValueRef> {
+        self.locals.get(&id).copied()
+    }
+
+    pub fn register_local(&mut self, id: LocalId, val: LLVMValueRef) {
+        self.locals.insert(id, val);
+    }
+
     pub fn get_value(&self, id: ValueId) -> Option<LLVMValueRef> {
         self.values.get(&id).copied()
     }

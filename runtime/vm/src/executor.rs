@@ -35,8 +35,12 @@ impl VM {
             self.profiler.record_stack_height(self.stack.len());
 
             if self.debugger.is_enabled() {
-                let current_func =
-                    &self.module.functions[self.frames.last().ok_or(crate::error::VMError::StackUnderflow)?.function_idx as usize];
+                let current_func = &self.module.functions[self
+                    .frames
+                    .last()
+                    .ok_or(crate::error::VMError::StackUnderflow)?
+                    .function_idx
+                    as usize];
                 self.debugger.trace_instruction(
                     current_func,
                     ip,
@@ -51,8 +55,12 @@ impl VM {
 
                 Opcode::LoadConst => {
                     if let Some(Operand::ConstantIndex(c_idx)) = inst_operands.first() {
-                        let current_func = &self.module.functions
-                            [self.frames.last().ok_or(crate::error::VMError::StackUnderflow)?.function_idx as usize];
+                        let current_func = &self.module.functions[self
+                            .frames
+                            .last()
+                            .ok_or(crate::error::VMError::StackUnderflow)?
+                            .function_idx
+                            as usize];
                         let lit = current_func
                             .chunk
                             .constants
@@ -73,7 +81,11 @@ impl VM {
 
                 Opcode::LoadLocal => {
                     if let Some(Operand::LocalIndex(l_idx)) = inst_operands.first() {
-                        let bp = self.frames.last().ok_or(crate::error::VMError::StackUnderflow)?.base_pointer;
+                        let bp = self
+                            .frames
+                            .last()
+                            .ok_or(crate::error::VMError::StackUnderflow)?
+                            .base_pointer;
                         let val = self.stack.get(bp + *l_idx as usize)?;
                         self.stack.push(val.clone())?;
                     } else {
@@ -83,7 +95,11 @@ impl VM {
 
                 Opcode::StoreLocal => {
                     if let Some(Operand::LocalIndex(l_idx)) = inst_operands.first() {
-                        let bp = self.frames.last().ok_or(crate::error::VMError::StackUnderflow)?.base_pointer;
+                        let bp = self
+                            .frames
+                            .last()
+                            .ok_or(crate::error::VMError::StackUnderflow)?
+                            .base_pointer;
                         let val = self.stack.pop()?;
                         self.stack.set(bp + *l_idx as usize, val)?;
                     } else {
@@ -768,8 +784,12 @@ impl VM {
 
                 Opcode::FieldLoad => {
                     if let Some(Operand::ConstantIndex(c_idx)) = inst_operands.first() {
-                        let current_func = &self.module.functions
-                            [self.frames.last().ok_or(crate::error::VMError::StackUnderflow)?.function_idx as usize];
+                        let current_func = &self.module.functions[self
+                            .frames
+                            .last()
+                            .ok_or(crate::error::VMError::StackUnderflow)?
+                            .function_idx
+                            as usize];
                         let lit = current_func
                             .chunk
                             .constants
@@ -826,8 +846,12 @@ impl VM {
 
                 Opcode::FieldStore => {
                     if let Some(Operand::ConstantIndex(c_idx)) = inst_operands.first() {
-                        let current_func = &self.module.functions
-                            [self.frames.last().ok_or(crate::error::VMError::StackUnderflow)?.function_idx as usize];
+                        let current_func = &self.module.functions[self
+                            .frames
+                            .last()
+                            .ok_or(crate::error::VMError::StackUnderflow)?
+                            .function_idx
+                            as usize];
                         let lit = current_func
                             .chunk
                             .constants

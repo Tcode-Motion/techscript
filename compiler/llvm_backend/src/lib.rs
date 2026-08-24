@@ -44,6 +44,17 @@ pub struct LLVMBackendOptions {
     pub debug_symbols: bool,
 }
 
+#[cfg(feature = "llvm")]
+pub fn get_host_target_triple() -> String {
+    unsafe {
+        let raw = llvm_sys::target_machine::LLVMGetDefaultTargetTriple();
+        let cstr = std::ffi::CStr::from_ptr(raw);
+        let s = cstr.to_string_lossy().into_owned();
+        llvm_sys::core::LLVMDisposeMessage(raw);
+        s
+    }
+}
+
 pub struct LLVMBackend;
 
 impl LLVMBackend {
@@ -54,12 +65,14 @@ impl LLVMBackend {
         options: &LLVMBackendOptions,
         out_path: &Path,
     ) -> Result<(), LLVMCodegenError> {
-        Self::emit_to_file(
-            ir_module,
-            options,
-            out_path,
-            llvm_sys::target_machine::LLVMCodeGenFileType::LLVMObjectFile,
-        )
+        unsafe {
+            Self::emit_to_file(
+                ir_module,
+                options,
+                out_path,
+                llvm_sys::target_machine::LLVMCodeGenFileType::LLVMObjectFile,
+            )
+        }
     }
 
     /// Compiles a TechScript IR Module to a native assembly file (`.s` or `.asm`) at the given output path.
@@ -69,12 +82,14 @@ impl LLVMBackend {
         options: &LLVMBackendOptions,
         out_path: &Path,
     ) -> Result<(), LLVMCodegenError> {
-        Self::emit_to_file(
-            ir_module,
-            options,
-            out_path,
-            llvm_sys::target_machine::LLVMCodeGenFileType::LLVMAssemblyFile,
-        )
+        unsafe {
+            Self::emit_to_file(
+                ir_module,
+                options,
+                out_path,
+                llvm_sys::target_machine::LLVMCodeGenFileType::LLVMAssemblyFile,
+            )
+        }
     }
 
     /// Emits textual LLVM IR representation (`.ll`) at the given output path.
@@ -117,7 +132,6 @@ impl LLVMBackend {
         use crate::context::CodegenContext;
         use llvm_sys::target::*;
         use llvm_sys::target_machine::*;
-        use llvm_sys::transforms::pass_manager_builder::*;
         use std::ffi::{CStr, CString};
 
         // 1. Initialize LLVM targets
@@ -172,48 +186,37 @@ impl LLVMBackend {
 
         // Set module target triple and data layout
         let layout = LLVMCreateTargetDataLayout(target_machine);
-        let layout_str = LLVMCopyStringRepOfTargetData(layout);
-        LLVMSetDataLayout(ctx.module, layout_str);
-        LLVMSetTarget(ctx.module, triple_cstr.as_ptr());
+        let layout_str = llvm_sys::target::LLVMCopyStringRepOfTargetData(layout);
+        llvm_sys::core::LLVMSetDataLayout(ctx.module, layout_str);
+        llvm_sys::core::LLVMSetTarget(ctx.module, triple_cstr.as_ptr());
 
         // 5. Setup Pass Manager Optimizations
-        let opt_level_u32 = match options.opt_level {
-            LLVMCodeGenOptLevel::LLVMCodeGenLevelNone => 0,
-            LLVMCodeGenOptLevel::LLVMCodeGenLevelLess => 1,
-            LLVMCodeGenOptLevel::LLVMCodeGenLevelDefault => 2,
-            LLVMCodeGenOptLevel::LLVMCodeGenLevelAggressive => 3,
-        };
+        let pb_options = llvm_sys::transforms::pass_builder::LLVMCreatePassBuilderOptions();
 
-        let pm_builder = LLVMPassManagerBuilderCreate();
-        LLVMPassManagerBuilderSetOptLevel(pm_builder, opt_level_u32);
-        LLVMPassManagerBuilderSetSizeLevel(pm_builder, if opt_level_u32 == 2 { 1 } else { 0 }); // Os equivalent
-        LLVMPassManagerBuilderUseInlinerWithThreshold(
-            pm_builder,
-            if opt_level_u32 > 0 { 275 } else { 0 },
+        let passes = match options.opt_level {
+            LLVMCodeGenOptLevel::LLVMCodeGenLevelNone => "default<O0>",
+            LLVMCodeGenOptLevel::LLVMCodeGenLevelLess => "default<O1>",
+            LLVMCodeGenOptLevel::LLVMCodeGenLevelDefault => "default<O2>",
+            LLVMCodeGenOptLevel::LLVMCodeGenLevelAggressive => "default<O3>",
+        };
+        let passes_cstr = CString::new(passes).unwrap();
+
+        if let LLVMCodeGenOptLevel::LLVMCodeGenLevelNone = options.opt_level {
+            // No extra options
+        } else {
+            llvm_sys::transforms::pass_builder::LLVMPassBuilderOptionsSetInlinerThreshold(
+                pb_options, 275,
+            );
+        }
+
+        llvm_sys::transforms::pass_builder::LLVMRunPasses(
+            ctx.module,
+            passes_cstr.as_ptr(),
+            target_machine,
+            pb_options,
         );
 
-        let mpm = llvm_sys::core::LLVMCreatePassManager();
-        LLVMPassManagerBuilderPopulateModulePassManager(pm_builder, mpm);
-
-        let fpm = llvm_sys::core::LLVMCreateFunctionPassManagerForModule(ctx.module);
-        LLVMPassManagerBuilderPopulateFunctionPassManager(pm_builder, fpm);
-
-        LLVMPassManagerBuilderDispose(pm_builder);
-
-        // Run function-level optimizations
-        llvm_sys::core::LLVMInitializeFunctionPassManager(fpm);
-        let mut func = llvm_sys::core::LLVMGetFirstFunction(ctx.module);
-        while !func.is_null() {
-            llvm_sys::core::LLVMRunFunctionPassManager(fpm, func);
-            func = llvm_sys::core::LLVMGetNextFunction(func);
-        }
-        llvm_sys::core::LLVMFinalizeFunctionPassManager(fpm);
-
-        // Run module-level optimizations
-        llvm_sys::core::LLVMRunPassManager(mpm, ctx.module);
-
-        llvm_sys::core::LLVMDisposePassManager(fpm);
-        llvm_sys::core::LLVMDisposePassManager(mpm);
+        llvm_sys::transforms::pass_builder::LLVMDisposePassBuilderOptions(pb_options);
 
         // 6. Emit target file (object or assembly)
         let out_str = CString::new(out_path.to_string_lossy().to_string()).unwrap();
@@ -228,8 +231,7 @@ impl LLVMBackend {
         );
 
         // Clean up target layouts and machines
-        LLVMDisposeTargetString(layout_str);
-        LLVMDisposeTargetData(layout);
+        llvm_sys::target::LLVMDisposeTargetData(layout);
         LLVMDisposeTargetMachine(target_machine);
 
         if status != 0 {

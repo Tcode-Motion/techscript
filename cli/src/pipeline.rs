@@ -37,12 +37,8 @@ pub enum ExecutionBackend {
 /// Helper to resolve target triple.
 pub fn get_host_target_triple() -> String {
     #[cfg(feature = "llvm")]
-    unsafe {
-        let raw = llvm_sys::target_machine::LLVMGetDefaultTargetTriple();
-        let cstr = std::ffi::CStr::from_ptr(raw);
-        let s = cstr.to_string_lossy().into_owned();
-        llvm_sys::core::LLVMDisposeMessage(raw);
-        s
+    {
+        techscript_llvm_backend::get_host_target_triple()
     }
     #[cfg(not(feature = "llvm"))]
     {

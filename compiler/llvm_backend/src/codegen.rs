@@ -10,7 +10,7 @@ use std::collections::HashMap;
 use std::ffi::CString;
 use techscript_ast::LiteralVal;
 use techscript_ir::types::{BlockId, GlobalId, IRType, ValueId};
-use techscript_ir::{BasicBlock, Function, Instruction, Module, Op, TerminatorKind, Value};
+use techscript_ir::{Function, Instruction, Module, Op, TerminatorKind, Value};
 use techscript_syntax::TokenKind;
 
 use crate::context::CodegenContext;
@@ -44,7 +44,7 @@ impl<'a> CodegenEngine<'a> {
                 llvm_ty,
                 CString::new(name.as_str()).unwrap().as_ptr(),
             );
-            self.ctx.register_value(*global_id, global_var);
+            self.ctx.register_global(*global_id, global_var);
             self.global_names.insert(*global_id, name.clone());
         }
 
@@ -95,7 +95,7 @@ impl<'a> CodegenEngine<'a> {
         // Register function parameter variables
         for (idx, &(local_id, _, _)) in func.params.iter().enumerate() {
             let param_val = LLVMGetParam(llvm_func, idx as u32);
-            self.ctx.register_value(local_id, param_val);
+            self.ctx.register_local(local_id, param_val);
         }
 
         // Allocate basic blocks
@@ -123,6 +123,10 @@ impl<'a> CodegenEngine<'a> {
                     TerminatorKind::Jump(dest) => {
                         let dest_block = self.ctx.get_block(*dest).unwrap();
                         LLVMBuildBr(self.ctx.builder, dest_block);
+                    }
+                    TerminatorKind::Throw(_) => {
+                        // TODO: Implement exception handling or unwind
+                        LLVMBuildUnreachable(self.ctx.builder);
                     }
                     TerminatorKind::ConditionalJump {
                         cond,
@@ -695,14 +699,17 @@ impl<'a> CodegenEngine<'a> {
                 // Handle direct calls to global/user/standard functions
                 let mut resolved_func = None;
                 if let Value::Global(global_id) = callee {
-                    if let Some(global_name) = self.global_names.get(global_id) {
-                        resolved_func = self.resolve_function_by_name(global_name);
+                    let name = self.global_names.get(global_id).cloned();
+                    if let Some(n) = name {
+                        resolved_func = self.resolve_function_by_name(&n);
                     }
                 } else if let Value::Temp(temp_id) = callee {
+                    let mut name = None;
                     if let Some(global_id) = self.temp_to_global.get(temp_id) {
-                        if let Some(global_name) = self.global_names.get(global_id) {
-                            resolved_func = self.resolve_function_by_name(global_name);
-                        }
+                        name = self.global_names.get(global_id).cloned();
+                    }
+                    if let Some(n) = name {
+                        resolved_func = self.resolve_function_by_name(&n);
                     }
                 }
 
@@ -1030,6 +1037,7 @@ impl<'a> CodegenEngine<'a> {
                 map_val
             }
             Op::Cast { value, target_type } => {
+                let _double_ty = double_ty; // avoid unused warning
                 let val_val = self.codegen_val(value)?;
                 let boxed_val = self.box_val(val_val)?;
                 let tag = match target_type {
@@ -1050,7 +1058,7 @@ impl<'a> CodegenEngine<'a> {
                     CString::new("cast").unwrap().as_ptr(),
                 )
             }
-            Op::NoOp => return Ok(()),
+            Op::Try { .. } | Op::EndTry | Op::MakeDslBlock { .. } | Op::NoOp => return Ok(()),
         };
 
         if let Some(res_id) = inst.result {
@@ -1068,14 +1076,14 @@ impl<'a> CodegenEngine<'a> {
                 .ok_or_else(|| format!("ValueId {:?} not found", id)),
             Value::Local(id) => self
                 .ctx
-                .get_value(*id)
+                .get_local(*id)
                 .ok_or_else(|| format!("LocalId {:?} not found", id)),
             Value::Global(id) => self
                 .ctx
-                .get_value(*id)
+                .get_global(*id)
                 .ok_or_else(|| format!("GlobalId {:?} not found", id)),
             Value::Const(lit) => self.codegen_literal(lit),
-            Value::Null => Ok(LLVMConstNull(LLVMPointerType(
+            Value::Null | Value::DslBlock { .. } => Ok(LLVMConstNull(LLVMPointerType(
                 LLVMInt8TypeInContext(self.ctx.context),
                 0,
             ))),
@@ -1106,7 +1114,7 @@ impl<'a> CodegenEngine<'a> {
                     name.as_ptr(),
                 ))
             }
-            LiteralVal::Null => Ok(LLVMConstNull(LLVMPointerType(
+            LiteralVal::None => Ok(LLVMConstNull(LLVMPointerType(
                 LLVMInt8TypeInContext(self.ctx.context),
                 0,
             ))),
@@ -1274,7 +1282,7 @@ impl TypeInfo for Value {
                 LiteralVal::Float(_) => IRType::Float64,
                 LiteralVal::Bool(_) => IRType::Bool,
                 LiteralVal::Str(_) => IRType::String,
-                LiteralVal::Null => IRType::Any,
+                LiteralVal::None => IRType::Any,
             },
             _ => IRType::Any,
         }

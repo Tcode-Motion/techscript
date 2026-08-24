@@ -25,6 +25,7 @@ pub unsafe fn to_llvm_type(context: LLVMContextRef, ty: &IRType) -> LLVMTypeRef 
         IRType::Struct(_) => LLVMPointerType(LLVMInt8TypeInContext(context), 0),
         IRType::Enum(_) => LLVMPointerType(LLVMInt8TypeInContext(context), 0),
         IRType::Model(_) => LLVMPointerType(LLVMInt8TypeInContext(context), 0),
+        IRType::DslBlock(_) => LLVMPointerType(LLVMInt8TypeInContext(context), 0),
         IRType::Any => LLVMPointerType(LLVMInt8TypeInContext(context), 0),
     }
 }

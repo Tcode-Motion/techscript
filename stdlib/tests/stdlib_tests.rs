@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 use std::collections::HashSet;
 use std::rc::Rc;
-use techscript_runtime::{context::Capability, value::RuntimeValue, RuntimeConfig, RuntimeContext};
+use techscript_runtime::{context::Capability, value::RuntimeValue, RuntimeConfig, RuntimeContext, error::RuntimeErrorKind};
 use techscript_stdlib::StdlibRegistry;
 
 #[test]
@@ -1133,4 +1133,43 @@ fn test_ai_generate_text() {
     assert!(res.is_ok());
     let val = res.unwrap();
     assert!(val.as_string().unwrap().contains("Prompt: What is 2+2?"));
+}
+
+#[test]
+fn test_process_spawn_parsing() {
+    let registry = StdlibRegistry::new();
+    let process_module = registry.get_module("std.process").unwrap();
+
+    let mut config = RuntimeConfig::default();
+    config.capabilities.insert(Capability::Process);
+    let mut ctx = RuntimeContext::new(config);
+
+    let spawn_fn = process_module.exports.get("spawn").unwrap();
+
+    // Valid command
+    let res = spawn_fn.call(
+        &mut ctx,
+        vec![RuntimeValue::Str("echo 'hello world'".to_string())],
+    );
+    assert!(res.is_ok());
+
+    // Empty command
+    let res_empty = spawn_fn.call(&mut ctx, vec![RuntimeValue::Str("   ".to_string())]);
+    assert!(res_empty.is_err());
+    let err = res_empty.unwrap_err();
+    if let RuntimeErrorKind::InvalidOperation(msg) = err.kind.clone() {
+        assert_eq!(msg, "Empty command string");
+    } else {
+        panic!("Expected InvalidOperation error");
+    }
+
+    // Invalid shell string (missing closing quote)
+    let res_invalid = spawn_fn.call(&mut ctx, vec![RuntimeValue::Str("echo 'hello".to_string())]);
+    assert!(res_invalid.is_err());
+    let err = res_invalid.unwrap_err();
+    if let RuntimeErrorKind::InvalidOperation(msg) = err.kind.clone() {
+        assert_eq!(msg, "Failed to parse command string");
+    } else {
+        panic!("Expected InvalidOperation error");
+    }
 }

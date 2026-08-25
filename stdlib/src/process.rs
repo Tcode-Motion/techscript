@@ -114,8 +114,25 @@ impl StdlibRegistry {
                             ))
                         }
                     };
-                    Command::new("cmd")
-                        .args(["/C", &cmd])
+
+                    let parsed = shlex::split(&cmd).ok_or_else(|| {
+                        RuntimeError::new(
+                            RuntimeErrorKind::InvalidOperation("Failed to parse command string".to_string()),
+                            None,
+                            None,
+                        )
+                    })?;
+
+                    if parsed.is_empty() {
+                         return Err(RuntimeError::new(
+                            RuntimeErrorKind::InvalidOperation("Empty command string".to_string()),
+                            None,
+                            None,
+                        ));
+                    }
+
+                    Command::new(&parsed[0])
+                        .args(&parsed[1..])
                         .spawn()
                         .map_err(|e| {
                             RuntimeError::new(

@@ -124,8 +124,22 @@ impl<'a> CodegenEngine<'a> {
                         let dest_block = self.ctx.get_block(*dest).unwrap();
                         LLVMBuildBr(self.ctx.builder, dest_block);
                     }
-                    TerminatorKind::Throw(_) => {
-                        // TODO: Implement exception handling or unwind
+                    TerminatorKind::Throw(val) => {
+                        let val_val = self.codegen_val(val)?;
+                        let boxed_val = self.box_val(val_val)?;
+                        let fn_val = self.get_or_declare_runtime_fn(
+                            "ts_throw",
+                            LLVMVoidTypeInContext(self.ctx.context),
+                            &[LLVMPointerType(LLVMInt8TypeInContext(self.ctx.context), 0)],
+                        );
+                        LLVMBuildCall2(
+                            self.ctx.builder,
+                            LLVMTypeOf(fn_val),
+                            fn_val,
+                            [boxed_val].as_mut_ptr(),
+                            1,
+                            CString::new("").unwrap().as_ptr(),
+                        );
                         LLVMBuildUnreachable(self.ctx.builder);
                     }
                     TerminatorKind::ConditionalJump {
@@ -1058,7 +1072,113 @@ impl<'a> CodegenEngine<'a> {
                     CString::new("cast").unwrap().as_ptr(),
                 )
             }
-            Op::Try { .. } | Op::EndTry | Op::MakeDslBlock { .. } | Op::NoOp => return Ok(()),
+            Op::Try { catch_block, catch_var } => {
+                let i8_ptr_ty = LLVMPointerType(LLVMInt8TypeInContext(context), 0);
+                let fn_push = self.get_or_declare_runtime_fn("ts_try_push", i8_ptr_ty, &[]);
+                let buf_ptr = LLVMBuildCall2(
+                    self.ctx.builder,
+                    LLVMTypeOf(fn_push),
+                    fn_push,
+                    [].as_mut_ptr(),
+                    0,
+                    CString::new("jmp_buf").unwrap().as_ptr(),
+                );
+
+                let setjmp_fn = self.get_or_declare_runtime_fn(
+                    #[cfg(target_os = "windows")]
+                    "_setjmp",
+                    #[cfg(not(target_os = "windows"))]
+                    "setjmp",
+                    i32_ty,
+                    &[i8_ptr_ty],
+                );
+
+                let res = LLVMBuildCall2(
+                    self.ctx.builder,
+                    LLVMTypeOf(setjmp_fn),
+                    setjmp_fn,
+                    [buf_ptr].as_mut_ptr(),
+                    1,
+                    CString::new("setjmp_res").unwrap().as_ptr(),
+                );
+
+                let zero = LLVMConstInt(i32_ty, 0, 0);
+                let is_exception = LLVMBuildICmp(
+                    self.ctx.builder,
+                    llvm_sys::LLVMIntPredicate::LLVMIntNE,
+                    res,
+                    zero,
+                    CString::new("is_exception").unwrap().as_ptr(),
+                );
+
+                // We need to split the block here because setjmp acts as a conditional branch point
+                let current_block = LLVMGetInsertBlock(self.ctx.builder);
+                let func = LLVMGetBasicBlockParent(current_block);
+
+                let cont_block = LLVMAppendBasicBlockInContext(
+                    context,
+                    func,
+                    CString::new("try_continue").unwrap().as_ptr(),
+                );
+
+                let catch_target = self.ctx.get_block(*catch_block).unwrap();
+
+                // We create a dispatch block for the exception path
+                let dispatch_block = LLVMAppendBasicBlockInContext(
+                    context,
+                    func,
+                    CString::new("try_dispatch").unwrap().as_ptr(),
+                );
+
+                LLVMBuildCondBr(self.ctx.builder, is_exception, dispatch_block, cont_block);
+
+                // exception path
+                LLVMPositionBuilderAtEnd(self.ctx.builder, dispatch_block);
+
+                // Clean up the jmp_buf since we arrived here via longjmp and ts_try_pop wasn't called
+                let fn_free_buf = self.get_or_declare_runtime_fn("ts_try_free", LLVMVoidTypeInContext(context), &[i8_ptr_ty]);
+                LLVMBuildCall2(
+                    self.ctx.builder,
+                    LLVMTypeOf(fn_free_buf),
+                    fn_free_buf,
+                    [buf_ptr].as_mut_ptr(),
+                    1,
+                    CString::new("").unwrap().as_ptr(),
+                );
+
+                let fn_get_ex = self.get_or_declare_runtime_fn("ts_get_exception", i8_ptr_ty, &[]);
+                let ex_val = LLVMBuildCall2(
+                    self.ctx.builder,
+                    LLVMTypeOf(fn_get_ex),
+                    fn_get_ex,
+                    [].as_mut_ptr(),
+                    0,
+                    CString::new("ex_val").unwrap().as_ptr(),
+                );
+
+                if let Some(target) = self.ctx.get_local(*catch_var) {
+                    LLVMBuildStore(self.ctx.builder, ex_val, target);
+                }
+                LLVMBuildBr(self.ctx.builder, catch_target);
+
+                // continue path
+                LLVMPositionBuilderAtEnd(self.ctx.builder, cont_block);
+
+                return Ok(());
+            }
+            Op::EndTry => {
+                let fn_pop = self.get_or_declare_runtime_fn("ts_try_pop", LLVMVoidTypeInContext(context), &[]);
+                LLVMBuildCall2(
+                    self.ctx.builder,
+                    LLVMTypeOf(fn_pop),
+                    fn_pop,
+                    [].as_mut_ptr(),
+                    0,
+                    CString::new("").unwrap().as_ptr(),
+                );
+                return Ok(());
+            }
+            Op::MakeDslBlock { .. } | Op::NoOp => return Ok(()),
         };
 
         if let Some(res_id) = inst.result {

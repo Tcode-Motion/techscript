@@ -314,7 +314,10 @@ mod tests {
 
         let dest_dir = temp_dir.join("dest");
 
-        let result = unzip_archive(corrupted_zip_path.to_str().unwrap(), dest_dir.to_str().unwrap());
+        let result = unzip_archive(
+            corrupted_zip_path.to_str().unwrap(),
+            dest_dir.to_str().unwrap(),
+        );
         assert!(result.is_err());
 
         std::fs::remove_dir_all(&temp_dir).unwrap();

@@ -1018,3 +1018,109 @@ pub unsafe extern "C" fn ts_await(val: *mut TsValue) -> *mut TsValue {
     }
     val
 }
+
+use std::cell::RefCell;
+use std::ffi::c_int;
+
+// `libc::jmp_buf` is not exposed in the `libc` crate consistently across platforms,
+// so we define a generic opaque struct that is large enough and aligned.
+// A size of 2048 bytes (256 * 8) is vastly larger than needed by any OS for jmp_buf.
+#[repr(C, align(16))]
+pub struct JmpBuf {
+    data: [u64; 256],
+}
+
+extern "C" {
+    #[cfg_attr(target_os = "windows", link_name = "_setjmp")]
+    pub fn setjmp(env: *mut JmpBuf) -> c_int;
+    pub fn longjmp(env: *mut JmpBuf, val: c_int) -> !;
+}
+
+thread_local! {
+    static TRY_STACK: RefCell<Vec<*mut JmpBuf>> = RefCell::new(Vec::new());
+    static PENDING_EXCEPTION: RefCell<*mut TsValue> = RefCell::new(std::ptr::null_mut());
+}
+
+#[no_mangle]
+pub extern "C" fn ts_try_push() -> *mut JmpBuf {
+    // We allocate a jmp_buf on the heap and keep it on the stack.
+    let layout = std::alloc::Layout::new::<JmpBuf>();
+    let ptr = unsafe { std::alloc::alloc_zeroed(layout) as *mut JmpBuf };
+    TRY_STACK.with(|stack| {
+        stack.borrow_mut().push(ptr);
+    });
+    ptr
+}
+
+#[no_mangle]
+pub extern "C" fn ts_try_pop() {
+    let ptr = TRY_STACK.with(|stack| stack.borrow_mut().pop());
+    if let Some(p) = ptr {
+        let layout = std::alloc::Layout::new::<JmpBuf>();
+        unsafe {
+            std::alloc::dealloc(p as *mut u8, layout);
+        }
+    }
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn ts_throw(val: *mut TsValue) -> ! {
+    PENDING_EXCEPTION.with(|exc| {
+        *exc.borrow_mut() = val;
+    });
+
+    let buf_ptr = TRY_STACK.with(|stack| {
+        let mut s = stack.borrow_mut();
+        if let Some(buf) = s.pop() {
+            buf
+        } else {
+            std::ptr::null_mut()
+        }
+    });
+
+    if buf_ptr.is_null() {
+        // Uncaught exception! We should abort or panic.
+        let msg = if val.is_null() {
+            "null".to_string()
+        } else {
+            let v = &*val;
+            if v.tag == TsTag::String as u32 {
+                let s = &*(v.data.pointer as *const String);
+                s.clone()
+            } else {
+                format!("exception tag {}", v.tag)
+            }
+        };
+        eprintln!("Uncaught Exception: {}", msg);
+        std::process::abort();
+    }
+
+    // Call longjmp (memory leak of the jmp buf happens here if we don't deallocate first!
+    // But since longjmp doesn't return, we can't deallocate it after.
+    // It's safe to deallocate before calling longjmp since setjmp execution is fully complete and we just need the values out of the struct. Wait, longjmp uses the buf ptr so we shouldn't dealloc before longjmp. We'll leave it allocated, but wait! longjmp jumps to the setjmp frame, which can deallocate the buffer. So we should NOT deallocate in try_pop if we arrived via longjmp, OR we deallocate the buffer in the Catch block via LLVM IR calling ts_free_buf, and remove ts_try_pop.
+    // Instead of leaking, let's keep it simple: ts_try_pop() frees it, so if an exception is thrown, ts_try_pop is skipped (because the instruction is after the Try block), so the Catch block needs to call ts_try_pop or equivalent?
+    // Let's create a dedicated function to clean it up after an exception.
+
+    // Call longjmp
+    longjmp(buf_ptr, 1);
+}
+
+#[no_mangle]
+pub extern "C" fn ts_try_free(buf_ptr: *mut JmpBuf) {
+    if !buf_ptr.is_null() {
+        let layout = std::alloc::Layout::new::<JmpBuf>();
+        unsafe {
+            std::alloc::dealloc(buf_ptr as *mut u8, layout);
+        }
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn ts_get_exception() -> *mut TsValue {
+    PENDING_EXCEPTION.with(|exc| {
+        let mut e = exc.borrow_mut();
+        let val = *e;
+        *e = std::ptr::null_mut();
+        val
+    })
+}

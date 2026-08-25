@@ -1134,3 +1134,63 @@ fn test_ai_generate_text() {
     let val = res.unwrap();
     assert!(val.as_string().unwrap().contains("Prompt: What is 2+2?"));
 }
+
+#[test]
+fn test_sync_mutex_contention() {
+    use std::sync::{Arc, mpsc};
+    use std::thread;
+    use std::time::Duration;
+    use techscript_stdlib::sync::ScriptMutex;
+
+    let mutex = Arc::new(ScriptMutex::new());
+    let (tx_locked, rx_locked) = mpsc::channel();
+    let (tx_proceed, rx_proceed) = mpsc::channel();
+
+    let mutex_clone = Arc::clone(&mutex);
+
+    // Spawn a thread that will lock the mutex and hold it
+    let handle = thread::spawn(move || {
+        mutex_clone.lock();
+        // Signal that the thread has successfully locked the mutex
+        tx_locked.send(()).unwrap();
+
+        // Wait for the main thread to tell us to unlock
+        rx_proceed.recv().unwrap();
+        mutex_clone.unlock();
+    });
+
+    // Wait until the thread has locked the mutex
+    rx_locked.recv().unwrap();
+
+    let (tx_thread2_locked, rx_thread2_locked) = mpsc::channel();
+    let mutex_clone2 = Arc::clone(&mutex);
+
+    let handle2 = thread::spawn(move || {
+        // This should block until the first thread unlocks
+        mutex_clone2.lock();
+        tx_thread2_locked.send(()).unwrap();
+        mutex_clone2.unlock();
+    });
+
+    // Give thread2 a moment to block on the mutex lock
+    thread::sleep(Duration::from_millis(50));
+
+    // Verify thread2 hasn't locked it yet
+    assert!(
+        rx_thread2_locked.try_recv().is_err(),
+        "Thread 2 should have blocked on lock()"
+    );
+
+    // Tell thread 1 to unlock the mutex
+    tx_proceed.send(()).unwrap();
+
+    // Now thread2 should be able to lock and proceed
+    // We expect to receive the message reasonably soon
+    assert!(
+        rx_thread2_locked.recv_timeout(Duration::from_secs(2)).is_ok(),
+        "Thread 2 should acquire the lock after Thread 1 unlocks"
+    );
+
+    handle.join().unwrap();
+    handle2.join().unwrap();
+}

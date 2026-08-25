@@ -63,6 +63,17 @@ fn test_semantic_shadowing_warning() {
 }
 
 #[test]
+fn test_semantic_shadowing_multiple_levels() {
+    let (res, diags) = check_source("make x = 10\n{\n  make y = 20\n  {\n    make x = 30\n  }\n}");
+    assert!(res.is_ok()); // Shadowing is allowed, so compile succeeds
+    assert!(!diags.is_empty());
+
+    // We should find W0010 among the diagnostics
+    let has_shadow_warning = diags.iter().any(|d| d.level == DiagnosticLevel::Warning && matches!(d.code, ErrorCode::W0010));
+    assert!(has_shadow_warning, "Expected W0010 shadowing warning, but diagnostics were: {:?}", diags);
+}
+
+#[test]
 fn test_semantic_constant_reassignment() {
     let (res, diags) = check_source("const x = 10\nx = 20");
     assert!(res.is_err());

@@ -233,25 +233,11 @@ pub fn unzip_archive(archive_path: &str, dest_dir: &str) -> std::io::Result<()> 
     let mut archive = zip::ZipArchive::new(file)?;
     std::fs::create_dir_all(dest_dir)?;
 
-    for i in 0..archive.len() {
-        let mut file = archive.by_index(i)?;
-        let outpath = match file.enclosed_name() {
-            Some(path) => Path::new(dest_dir).join(path.to_owned()),
-            None => continue,
-        };
-
-        if file.name().ends_with('/') {
-            std::fs::create_dir_all(&outpath)?;
-        } else {
-            if let Some(p) = outpath.parent() {
-                if !p.exists() {
-                    std::fs::create_dir_all(p)?;
-                }
-            }
-            let mut outfile = File::create(&outpath)?;
-            std::io::copy(&mut file, &mut outfile)?;
-        }
-    }
+    // The zip crate's `extract` method already has built-in directory traversal
+    // protections which prevent absolute paths and parent directory traversals
+    // from escaping the destination directory. Therefore, we revert the manual
+    // path validation that caused a regression with uncanonicalized relative paths.
+    archive.extract(dest_dir)?;
     Ok(())
 }
 

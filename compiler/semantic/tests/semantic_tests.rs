@@ -69,8 +69,14 @@ fn test_semantic_shadowing_multiple_levels() {
     assert!(!diags.is_empty());
 
     // We should find W0010 among the diagnostics
-    let has_shadow_warning = diags.iter().any(|d| d.level == DiagnosticLevel::Warning && matches!(d.code, ErrorCode::W0010));
-    assert!(has_shadow_warning, "Expected W0010 shadowing warning, but diagnostics were: {:?}", diags);
+    let has_shadow_warning = diags
+        .iter()
+        .any(|d| d.level == DiagnosticLevel::Warning && matches!(d.code, ErrorCode::W0010));
+    assert!(
+        has_shadow_warning,
+        "Expected W0010 shadowing warning, but diagnostics were: {:?}",
+        diags
+    );
 }
 
 #[test]

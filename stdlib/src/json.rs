@@ -125,3 +125,84 @@ pub fn parse_json_value(v: serde_json::Value) -> RuntimeValue {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use indexmap::IndexMap;
+    use std::cell::RefCell;
+    use std::rc::Rc;
+    use techscript_runtime::value::RuntimeValue;
+
+    #[test]
+    fn test_stringify_simple_values() {
+        assert_eq!(stringify_value(&RuntimeValue::Null).unwrap(), "null");
+        assert_eq!(stringify_value(&RuntimeValue::Bool(true)).unwrap(), "true");
+        assert_eq!(
+            stringify_value(&RuntimeValue::Bool(false)).unwrap(),
+            "false"
+        );
+        assert_eq!(stringify_value(&RuntimeValue::Int(42)).unwrap(), "42");
+        assert_eq!(stringify_value(&RuntimeValue::Int(-10)).unwrap(), "-10");
+        assert_eq!(stringify_value(&RuntimeValue::Float(3.14)).unwrap(), "3.14");
+        assert_eq!(
+            stringify_value(&RuntimeValue::Str("hello".to_string())).unwrap(),
+            "\"hello\""
+        );
+        assert_eq!(
+            stringify_value(&RuntimeValue::Str("quote \" inside".to_string())).unwrap(),
+            "\"quote \\\" inside\""
+        );
+    }
+
+    #[test]
+    fn test_stringify_complex_values() {
+        // Test List
+        let list_items = vec![
+            RuntimeValue::Int(1),
+            RuntimeValue::Str("two".to_string()),
+            RuntimeValue::Bool(false),
+        ];
+        let list_val = RuntimeValue::List {
+            items: Rc::new(RefCell::new(list_items)),
+            is_const: false,
+        };
+        assert_eq!(stringify_value(&list_val).unwrap(), "[1,\"two\",false]");
+
+        // Test Map
+        let mut map_entries = IndexMap::new();
+        map_entries.insert("key1".to_string(), RuntimeValue::Int(100));
+        map_entries.insert("key2".to_string(), RuntimeValue::Str("value2".to_string()));
+        let map_val = RuntimeValue::Map {
+            entries: Rc::new(RefCell::new(map_entries)),
+            is_const: false,
+        };
+        assert_eq!(
+            stringify_value(&map_val).unwrap(),
+            "{\"key1\":100,\"key2\":\"value2\"}"
+        );
+
+        // Test Nested Structure
+        let mut nested_map_entries = IndexMap::new();
+        nested_map_entries.insert("inner_list".to_string(), list_val);
+        nested_map_entries.insert("inner_map".to_string(), map_val);
+        let nested_val = RuntimeValue::Map {
+            entries: Rc::new(RefCell::new(nested_map_entries)),
+            is_const: false,
+        };
+        assert_eq!(
+            stringify_value(&nested_val).unwrap(),
+            "{\"inner_list\":[1,\"two\",false],\"inner_map\":{\"key1\":100,\"key2\":\"value2\"}}"
+        );
+    }
+
+    #[test]
+    fn test_stringify_error() {
+        // Using an unsupported type, like an empty tuple
+        let unsupported_val = RuntimeValue::Tuple(Vec::new());
+        let result = stringify_value(&unsupported_val);
+        assert!(result.is_err());
+        let err = result.unwrap_err();
+        assert!(err.to_string().contains("Cannot stringify type"));
+    }
+}

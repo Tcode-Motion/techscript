@@ -560,160 +560,15 @@ impl ResolveSymbols {
                 context.node_types.insert(lit.id, ty);
                 Ok(ty)
             }
-            Expression::Identifier(ident) => {
-                let name = ident.name.clone();
-                if name == "self" {
-                    if context.current_model.is_none() {
-                        let diag = Diagnostic::new(
-                            DiagnosticLevel::Error,
-                            ErrorCode::E0320,
-                            "Cannot reference 'self' outside model context".to_string(),
-                            ident.span,
-                        );
-                        context.diagnostics.push(diag);
-                        return Err(());
-                    }
-                    return Ok(context.interner.any());
-                }
-
-                if let Some(symbol) = context.symbol_table.lookup(&name) {
-                    return Ok(symbol.type_id);
-                }
-
-                // Unresolved variable: compute Levenshtein suggestion on-demand
-                let suggestion = find_suggestion(&name, context);
-                let message = if let Some(suggest) = suggestion {
-                    format!("Undefined variable '{}'. Did you mean '{}'?", name, suggest)
-                } else {
-                    format!("Undefined variable '{}'", name)
-                };
-
-                let diag = Diagnostic::new(
-                    DiagnosticLevel::Error,
-                    ErrorCode::E0300,
-                    message,
-                    ident.span,
-                );
-                context.diagnostics.push(diag);
-                Err(())
-            }
-            Expression::Binary(bin) => {
-                if bin.op == "?." {
-                    let _left_ty = self.resolve_expression(&bin.left, context)?;
-                    match &*bin.right {
-                        Expression::Identifier(_) => {}
-                        Expression::Call(call) => {
-                            if let Expression::Identifier(_) = *call.callee {
-                                // Member call
-                            } else {
-                                let _ = self.resolve_expression(&call.callee, context);
-                            }
-                            for arg in &call.args {
-                                let _ = self.resolve_expression(arg, context);
-                            }
-                        }
-                        Expression::Member(mem) => {
-                            let _ = self.resolve_expression(&mem.object, context);
-                        }
-                        other => {
-                            let _ = self.resolve_expression(other, context);
-                        }
-                    }
-                    let res_ty = context.interner.any();
-                    context.node_types.insert(bin.id, res_ty);
-                    return Ok(res_ty);
-                }
-
-                let left_ty = self.resolve_expression(&bin.left, context)?;
-                let right_ty = self.resolve_expression(&bin.right, context)?;
-
-                // Implicit numeric coercions: if either operand is Float, output is Float.
-                let res_ty = if left_ty == context.interner.float()
-                    || right_ty == context.interner.float()
-                    || bin.op == "/"
-                {
-                    context.interner.float()
-                } else if bin.op == "//" {
-                    context.interner.int()
-                } else {
-                    left_ty
-                };
-                context.node_types.insert(bin.id, res_ty);
-                Ok(res_ty)
-            }
+            Expression::Identifier(ident) => self.resolve_identifier(ident, context),
+            Expression::Binary(bin) => self.resolve_binary(bin, context),
             Expression::Unary(un) => {
                 let ty = self.resolve_expression(&un.right, context)?;
                 context.node_types.insert(un.id, ty);
                 Ok(ty)
             }
-            Expression::Assignment(assign) => {
-                if let Expression::Identifier(ref ident) = *assign.target {
-                    if context.symbol_table.lookup(&ident.name).is_none() {
-                        // Automatically declare the variable on first assignment
-                        let symbol = Symbol::new(
-                            ident.name.clone(),
-                            false, // is_constant
-                            false, // is_function
-                            false, // is_type
-                            context.interner.any(),
-                        );
-                        context.symbol_table.register(ident.name.clone(), symbol);
-                    } else {
-                        // Check mutation of constant variable
-                        if let Some(symbol) = context.symbol_table.lookup(&ident.name) {
-                            if symbol.is_constant {
-                                let diag = Diagnostic::new(
-                                    DiagnosticLevel::Error,
-                                    ErrorCode::E0302,
-                                    format!("Cannot reassign constant variable '{}'", ident.name),
-                                    ident.span,
-                                );
-                                context.diagnostics.push(diag);
-                                return Err(());
-                            }
-                        }
-                    }
-                }
-
-                let _left_ty = self.resolve_expression(&assign.target, context)?;
-                let right_ty = self.resolve_expression(&assign.value, context)?;
-                context.node_types.insert(assign.id, right_ty);
-                Ok(right_ty)
-            }
-            Expression::Call(call) => {
-                let _callee_ty = self.resolve_expression(&call.callee, context)?;
-
-                // Validate call arity check if callee is a known hoisted function
-                if let Expression::Identifier(ref ident) = *call.callee {
-                    if let Some(symbol) = context.symbol_table.lookup(&ident.name) {
-                        if symbol.is_function {
-                            let function_type = context.interner.get(symbol.type_id);
-                            if let Type::Function { ref params, .. } = function_type {
-                                // For TechScript 2.0 simple checking, let's compare argument counts.
-                                // (min, max checking can be detailed as we expand)
-                                // Runtime callables know their required/minimum arity;
-                                // this preserves default-parameter functions.
-                                if call.args.len() > params.len() {
-                                    let diag = Diagnostic::new(
-                                        DiagnosticLevel::Error,
-                                        ErrorCode::E0311,
-                                        format!("Too many arguments in call to '{}'. Expected {}, found {}", ident.name, params.len(), call.args.len()),
-                                        call.span,
-                                    );
-                                    context.diagnostics.push(diag);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                for arg in &call.args {
-                    let _ = self.resolve_expression(arg, context);
-                }
-
-                context.node_types.insert(call.id, context.interner.any());
-                Ok(context.interner.any())
-            }
+            Expression::Assignment(assign) => self.resolve_assignment(assign, context),
+            Expression::Call(call) => self.resolve_call(call, context),
             Expression::Member(mem) => {
                 let _ = self.resolve_expression(&mem.object, context)?;
                 context.node_types.insert(mem.id, context.interner.any());
@@ -783,6 +638,180 @@ impl ResolveSymbols {
             }
             _ => Ok(context.interner.any()),
         }
+    }
+
+    fn resolve_identifier(
+        &self,
+        ident: &techscript_common::Ident,
+        context: &mut SemanticContext,
+    ) -> Result<crate::types::TypeId, ()> {
+        let name = ident.name.clone();
+        if name == "self" {
+            if context.current_model.is_none() {
+                let diag = Diagnostic::new(
+                    DiagnosticLevel::Error,
+                    ErrorCode::E0320,
+                    "Cannot reference 'self' outside model context".to_string(),
+                    ident.span,
+                );
+                context.diagnostics.push(diag);
+                return Err(());
+            }
+            return Ok(context.interner.any());
+        }
+
+        if let Some(symbol) = context.symbol_table.lookup(&name) {
+            return Ok(symbol.type_id);
+        }
+
+        // Unresolved variable: compute Levenshtein suggestion on-demand
+        let suggestion = find_suggestion(&name, context);
+        let message = if let Some(suggest) = suggestion {
+            format!("Undefined variable '{}'. Did you mean '{}'?", name, suggest)
+        } else {
+            format!("Undefined variable '{}'", name)
+        };
+
+        let diag = Diagnostic::new(
+            DiagnosticLevel::Error,
+            ErrorCode::E0300,
+            message,
+            ident.span,
+        );
+        context.diagnostics.push(diag);
+        Err(())
+    }
+
+    fn resolve_binary(
+        &self,
+        bin: &techscript_ast::BinaryExpr,
+        context: &mut SemanticContext,
+    ) -> Result<crate::types::TypeId, ()> {
+        if bin.op == "?." {
+            let _left_ty = self.resolve_expression(&bin.left, context)?;
+            match &*bin.right {
+                Expression::Identifier(_) => {}
+                Expression::Call(call) => {
+                    if let Expression::Identifier(_) = *call.callee {
+                        // Member call
+                    } else {
+                        let _ = self.resolve_expression(&call.callee, context);
+                    }
+                    for arg in &call.args {
+                        let _ = self.resolve_expression(arg, context);
+                    }
+                }
+                Expression::Member(mem) => {
+                    let _ = self.resolve_expression(&mem.object, context);
+                }
+                other => {
+                    let _ = self.resolve_expression(other, context);
+                }
+            }
+            let res_ty = context.interner.any();
+            context.node_types.insert(bin.id, res_ty);
+            return Ok(res_ty);
+        }
+
+        let left_ty = self.resolve_expression(&bin.left, context)?;
+        let right_ty = self.resolve_expression(&bin.right, context)?;
+
+        // Implicit numeric coercions: if either operand is Float, output is Float.
+        let res_ty = if left_ty == context.interner.float()
+            || right_ty == context.interner.float()
+            || bin.op == "/"
+        {
+            context.interner.float()
+        } else if bin.op == "//" {
+            context.interner.int()
+        } else {
+            left_ty
+        };
+        context.node_types.insert(bin.id, res_ty);
+        Ok(res_ty)
+    }
+
+    fn resolve_assignment(
+        &self,
+        assign: &techscript_ast::AssignmentExpr,
+        context: &mut SemanticContext,
+    ) -> Result<crate::types::TypeId, ()> {
+        if let Expression::Identifier(ref ident) = *assign.target {
+            if context.symbol_table.lookup(&ident.name).is_none() {
+                // Automatically declare the variable on first assignment
+                let symbol = Symbol::new(
+                    ident.name.clone(),
+                    false, // is_constant
+                    false, // is_function
+                    false, // is_type
+                    context.interner.any(),
+                );
+                context.symbol_table.register(ident.name.clone(), symbol);
+            } else {
+                // Check mutation of constant variable
+                if let Some(symbol) = context.symbol_table.lookup(&ident.name) {
+                    if symbol.is_constant {
+                        let diag = Diagnostic::new(
+                            DiagnosticLevel::Error,
+                            ErrorCode::E0302,
+                            format!("Cannot reassign constant variable '{}'", ident.name),
+                            ident.span,
+                        );
+                        context.diagnostics.push(diag);
+                        return Err(());
+                    }
+                }
+            }
+        }
+
+        let _left_ty = self.resolve_expression(&assign.target, context)?;
+        let right_ty = self.resolve_expression(&assign.value, context)?;
+        context.node_types.insert(assign.id, right_ty);
+        Ok(right_ty)
+    }
+
+    fn resolve_call(
+        &self,
+        call: &techscript_ast::CallExpr,
+        context: &mut SemanticContext,
+    ) -> Result<crate::types::TypeId, ()> {
+        let _callee_ty = self.resolve_expression(&call.callee, context)?;
+
+        // Validate call arity check if callee is a known hoisted function
+        if let Expression::Identifier(ref ident) = *call.callee {
+            if let Some(symbol) = context.symbol_table.lookup(&ident.name) {
+                if symbol.is_function {
+                    let function_type = context.interner.get(symbol.type_id);
+                    if let Type::Function { ref params, .. } = function_type {
+                        // For TechScript 2.0 simple checking, let's compare argument counts.
+                        // (min, max checking can be detailed as we expand)
+                        // Runtime callables know their required/minimum arity;
+                        // this preserves default-parameter functions.
+                        if call.args.len() > params.len() {
+                            let diag = Diagnostic::new(
+                                DiagnosticLevel::Error,
+                                ErrorCode::E0311,
+                                format!(
+                                    "Too many arguments in call to '{}'. Expected {}, found {}",
+                                    ident.name,
+                                    params.len(),
+                                    call.args.len()
+                                ),
+                                call.span,
+                            );
+                            context.diagnostics.push(diag);
+                        }
+                    }
+                }
+            }
+        }
+
+        for arg in &call.args {
+            let _ = self.resolve_expression(arg, context);
+        }
+
+        context.node_types.insert(call.id, context.interner.any());
+        Ok(context.interner.any())
     }
 }
 

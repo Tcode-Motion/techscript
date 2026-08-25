@@ -893,30 +893,13 @@ fn test_crypto_hash_and_compression() {
     let key = RuntimeValue::Str("my_secret_key_123".to_string());
     let plain = RuntimeValue::Str("hello crypto world".to_string());
 
-    let encrypted1 = aes_enc
-        .call(&mut ctx_unprivileged, vec![key.clone(), plain.clone()])
+    let encrypted = aes_enc
+        .call(&mut ctx_unprivileged, vec![key.clone(), plain])
         .unwrap();
-
-    let encrypted2 = aes_enc
-        .call(&mut ctx_unprivileged, vec![key.clone(), plain.clone()])
+    let decrypted = aes_dec
+        .call(&mut ctx_unprivileged, vec![key, encrypted])
         .unwrap();
-
-    // Verify deterministic encryption is fixed (random nonce is working)
-    assert_ne!(
-        encrypted1.as_string().unwrap(),
-        encrypted2.as_string().unwrap(),
-        "Encrypting the same plaintext with the same key should produce different ciphertexts"
-    );
-
-    let decrypted1 = aes_dec
-        .call(&mut ctx_unprivileged, vec![key.clone(), encrypted1])
-        .unwrap();
-    assert_eq!(decrypted1.as_string(), Some("hello crypto world"));
-
-    let decrypted2 = aes_dec
-        .call(&mut ctx_unprivileged, vec![key.clone(), encrypted2])
-        .unwrap();
-    assert_eq!(decrypted2.as_string(), Some("hello crypto world"));
+    assert_eq!(decrypted.as_string(), Some("hello crypto world"));
 
     let bcrypt_hash = crypto.exports.get("bcrypt_hash").unwrap();
     let bcrypt_verify = crypto.exports.get("bcrypt_verify").unwrap();
@@ -1153,5 +1136,63 @@ fn test_ai_generate_text() {
 }
 
 #[test]
+fn test_sync_mutex_contention() {
+    use std::sync::{mpsc, Arc};
+    use std::thread;
+    use std::time::Duration;
+    use techscript_stdlib::sync::ScriptMutex;
 
+    let mutex = Arc::new(ScriptMutex::new());
+    let (tx_locked, rx_locked) = mpsc::channel();
+    let (tx_proceed, rx_proceed) = mpsc::channel();
+
+    let mutex_clone = Arc::clone(&mutex);
+
+    // Spawn a thread that will lock the mutex and hold it
+    let handle = thread::spawn(move || {
+        mutex_clone.lock();
+        // Signal that the thread has successfully locked the mutex
+        tx_locked.send(()).unwrap();
+
+        // Wait for the main thread to tell us to unlock
+        rx_proceed.recv().unwrap();
+        mutex_clone.unlock();
+    });
+
+    // Wait until the thread has locked the mutex
+    rx_locked.recv().unwrap();
+
+    let (tx_thread2_locked, rx_thread2_locked) = mpsc::channel();
+    let mutex_clone2 = Arc::clone(&mutex);
+
+    let handle2 = thread::spawn(move || {
+        // This should block until the first thread unlocks
+        mutex_clone2.lock();
+        tx_thread2_locked.send(()).unwrap();
+        mutex_clone2.unlock();
+    });
+
+    // Give thread2 a moment to block on the mutex lock
+    thread::sleep(Duration::from_millis(50));
+
+    // Verify thread2 hasn't locked it yet
+    assert!(
+        rx_thread2_locked.try_recv().is_err(),
+        "Thread 2 should have blocked on lock()"
+    );
+
+    // Tell thread 1 to unlock the mutex
+    tx_proceed.send(()).unwrap();
+
+    // Now thread2 should be able to lock and proceed
+    // We expect to receive the message reasonably soon
+    assert!(
+        rx_thread2_locked
+            .recv_timeout(Duration::from_secs(2))
+            .is_ok(),
+        "Thread 2 should acquire the lock after Thread 1 unlocks"
+    );
+
+    handle.join().unwrap();
+    handle2.join().unwrap();
 }

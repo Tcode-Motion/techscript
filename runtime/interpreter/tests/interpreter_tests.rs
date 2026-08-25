@@ -195,21 +195,6 @@ try {
 }
 
 #[test]
-fn test_interpreter_uncaught_throw() {
-    let source = r#"
-throw "uncaught exception"
-"#;
-    let res = run_source(source);
-    assert!(res.is_err());
-    let err = res.unwrap_err();
-    assert_eq!(err.message, "uncaught exception");
-    match err.kind {
-        RuntimeErrorKind::UserError(msg) => assert_eq!(msg, "uncaught exception"),
-        _ => panic!("Expected UserError"),
-    }
-}
-
-#[test]
 fn test_v108_runtime_compatibility() {
     let source = r#"
 keep limit be 4

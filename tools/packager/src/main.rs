@@ -521,15 +521,703 @@ fn get_git_commit() -> String {
 }
 
 fn generate_offline_inno_script(dest: &Path, version: &str) -> anyhow::Result<()> {
-    let template = include_str!("offline_installer.iss.template");
-    let iss_content = template.replace("{version}", version);
+    let iss_content = format!(
+        r#"; TechScript 2.0 Offline Setup Script (Inno Setup)
+[Setup]
+AppId={{{{TechScript-Compiler-Environment-2-0}}
+AppName=TechScript 2.0
+AppVersion={version}
+AppPublisher=techscript-motion
+AppPublisherURL=https://github.com/Tcode-Motion/TechScript-2.0
+AppCopyright=Copyright (c) 2026 techscript-motion
+VersionInfoVersion={version}
+VersionInfoCompany=techscript-motion
+VersionInfoDescription=TechScript 2.0 Language Environment
+DefaultDirName={{code:GetInstallDir}}
+DefaultGroupName=TechScript 2.0
+ChangesAssociations=yes
+UninstallDisplayIcon={{app}}\tools\tsc.exe
+Compression=lzma2/ultra64
+SolidCompression=yes
+InternalCompressLevel=ultra64
+OutputDir=.
+OutputBaseFilename=TechScript_Setup
+WizardStyle=modern
+WizardSizePercent=120
+DisableWelcomePage=no
+LicenseFile=..\LICENSE
+PrivilegesRequired=lowest
+PrivilegesRequiredOverridesAllowed=commandline dialog
+SetupIconFile=..\..\..\assets\branding\logo-package\windows\installer-icon.ico
+WizardImageFile=..\..\..\assets\branding\logo-package\source\logo-black-bg-1254.png
+WizardSmallImageFile=..\..\..\assets\branding\logo-package\png\icon-256.png
+
+[Types]
+Name: "full"; Description: "Full installation (Recommended)"
+Name: "compact"; Description: "Compact installation"
+Name: "custom"; Description: "Custom installation"; Flags: iscustom
+
+[Components]
+Name: "compiler"; Description: "TechScript Compiler (tsc.exe)"; Types: full compact custom; Flags: fixed
+Name: "vm"; Description: "TechScript VM & Runtime (tsvm.exe)"; Types: full compact custom; Flags: fixed
+Name: "pm"; Description: "Package Manager (tspm.exe)"; Types: full custom
+Name: "fmt"; Description: "Formatter (tsfmt.exe)"; Types: full custom
+Name: "lint"; Description: "Linter (tslint.exe)"; Types: full custom
+Name: "docgen"; Description: "Documentation Generator (tsdoc.exe)"; Types: full custom
+Name: "migrate"; Description: "Migration Tool (tsmigrate.exe)"; Types: full custom
+Name: "ls"; Description: "Language Server (tsls.exe)"; Types: full custom
+Name: "stdlib"; Description: "Standard Library Sources"; Types: full custom
+Name: "vscode"; Description: "VS Code Extension Integration"; Types: full custom
+Name: "examples"; Description: "Language Examples"; Types: full custom
+
+[Files]
+Source: "..\tools\tsc.exe"; DestDir: "{{app}}\tools"; Components: compiler; Flags: ignoreversion
+Source: "..\tools\tsvm.exe"; DestDir: "{{app}}\tools"; Components: vm; Flags: ignoreversion
+Source: "..\tools\tspm.exe"; DestDir: "{{app}}\tools"; Components: pm; Flags: ignoreversion
+Source: "..\tools\tsfmt.exe"; DestDir: "{{app}}\tools"; Components: fmt; Flags: ignoreversion
+Source: "..\tools\tslint.exe"; DestDir: "{{app}}\tools"; Components: lint; Flags: ignoreversion
+Source: "..\tools\tsdoc.exe"; DestDir: "{{app}}\tools"; Components: docgen; Flags: ignoreversion
+Source: "..\tools\tsmigrate.exe"; DestDir: "{{app}}\tools"; Components: migrate; Flags: ignoreversion
+Source: "..\tools\tsls.exe"; DestDir: "{{app}}\tools"; Components: ls; Flags: ignoreversion
+Source: "..\tools\welcome.bat"; DestDir: "{{app}}\tools"; Components: compiler; Flags: ignoreversion
+Source: "..\runtime\*"; DestDir: "{{app}}\runtime"; Components: stdlib; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\examples\*"; DestDir: "{{app}}\examples"; Components: examples; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\docs\*"; DestDir: "{{app}}\docs"; Components: compiler; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\TechScript.vsix"; DestDir: "{{app}}"; Components: vscode; Flags: ignoreversion
+Source: "..\LICENSE"; DestDir: "{{app}}"; Flags: ignoreversion
+Source: "..\README.md"; DestDir: "{{app}}"; Flags: ignoreversion
+
+[Tasks]
+Name: "addtopath"; Description: "Add TechScript tools to PATH environment variable (recommended)"; GroupDescription: "Environment Setup:"
+Name: "fileassoc"; Description: "Associate .txs files with TechScript Compiler"; GroupDescription: "File Associations:"
+Name: "desktopicon"; Description: "Create a Desktop shortcut for TechScript REPL"; GroupDescription: "Shortcuts:"; Flags: unchecked
+Name: "startmenuicon"; Description: "Create Start Menu shortcuts"; GroupDescription: "Shortcuts:"
+
+[Icons]
+Name: "{{autodesktop}}\TechScript REPL"; Filename: "{{app}}\tools\tsc.exe"; Parameters: "repl"; IconFilename: "{{app}}\tools\tsc.exe"; Tasks: desktopicon
+Name: "{{group}}\TechScript REPL"; Filename: "{{app}}\tools\tsc.exe"; Parameters: "repl"; IconFilename: "{{app}}\tools\tsc.exe"; Tasks: startmenuicon
+Name: "{{group}}\TechScript Documentation"; Filename: "{{app}}\docs\LanguageGuide.md"; Tasks: startmenuicon; Components: compiler
+Name: "{{group}}\Uninstall TechScript"; Filename: "{{uninstallexe}}"; Tasks: startmenuicon
+[InstallDelete]
+Type: filesandordirs; Name: "C:\Program Files (x86)\TechScript"
+Type: filesandordirs; Name: "{{localappdata}}\Programs\TechScript"
+Type: files; Name: "{{%USERPROFILE}}\.cargo\bin\tsc.exe"
+Type: files; Name: "{{%USERPROFILE}}\.cargo\bin\tsvm.exe"
+Type: files; Name: "{{%USERPROFILE}}\.cargo\bin\tspm.exe"
+Type: files; Name: "{{%USERPROFILE}}\.cargo\bin\tsfmt.exe"
+Type: files; Name: "{{%USERPROFILE}}\.cargo\bin\tslint.exe"
+Type: files; Name: "{{%USERPROFILE}}\.cargo\bin\tsdoc.exe"
+Type: files; Name: "{{%USERPROFILE}}\.cargo\bin\tsls.exe"
+Type: files; Name: "{{%USERPROFILE}}\.cargo\bin\tsmigrate.exe"
+
+[Registry]
+Root: HKCU; Subkey: "Software\Classes\.txs"; ValueType: string; ValueName: ""; ValueData: "TechScriptFile"; Tasks: fileassoc; Flags: uninsdeletevalue
+Root: HKCU; Subkey: "Software\Classes\TechScriptFile"; ValueType: string; ValueName: ""; ValueData: "TechScript Source File"; Tasks: fileassoc; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\TechScriptFile\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{{app}}\tools\tsc.exe,0"; Tasks: fileassoc
+Root: HKCU; Subkey: "Software\Classes\TechScriptFile\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{{app}}\tools\tsc.exe"" ""%1"""; Tasks: fileassoc
+
+; Install metadata
+Root: HKCU; Subkey: "Software\TechScript"; ValueType: string; ValueName: "InstallDir"; ValueData: "{{app}}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\TechScript"; ValueType: string; ValueName: "Version"; ValueData: "{version}"
+
+; Environment variables
+Root: HKCU; Subkey: "Environment"; ValueType: string; ValueName: "TECHSCRIPT_HOME"; ValueData: "{{app}}"; Flags: preservestringtype uninsdeletevalue
+Root: HKCU; Subkey: "Environment"; ValueType: string; ValueName: "TECHSCRIPT_STDLIB"; ValueData: "{{app}}\runtime\stdlib"; Flags: preservestringtype uninsdeletevalue
+Root: HKCU; Subkey: "Environment"; ValueType: string; ValueName: "TECHSCRIPT_DOCS"; ValueData: "{{app}}\docs"; Flags: preservestringtype uninsdeletevalue
+
+[Run]
+Filename: "{{app}}\tools\tspm.exe"; Parameters: "doctor"; StatusMsg: "Bootstrapping package manager cache..."; Flags: runhidden
+Filename: "explorer.exe"; Parameters: """{{app}}\docs\LanguageGuide.md"""; Description: "Open TechScript Language Guide"; Flags: postinstall shellexec nowait skipifsilent unchecked
+Filename: "{{app}}\tools\welcome.bat"; Description: "Launch Welcome Experience & Create First Project"; Flags: postinstall nowait skipifsilent
+
+[Code]
+var
+  ModePage: TInputOptionWizardPage;
+
+function GetInstallDir(Param: String): String;
+var
+  OldDir: String;
+begin
+  if RegQueryStringValue(HKEY_CURRENT_USER, 'Software\TechScript', 'InstallDir', OldDir) or
+     RegQueryStringValue(HKEY_LOCAL_MACHINE, 'Software\TechScript', 'InstallDir', OldDir) then
+    Result := OldDir
+  else
+    Result := ExpandConstant('{{autopf}}\TechScript');
+end;
+
+function GetUninstallString(): String;
+var
+  sUnInstPath: String;
+  sUnInstallString: String;
+begin
+  sUnInstPath := 'Software\Microsoft\Windows\CurrentVersion\Uninstall\TechScript 2.0_is1';
+  sUnInstallString := '';
+  if not RegQueryStringValue(HKEY_LOCAL_MACHINE, sUnInstPath, 'UninstallString', sUnInstallString) then
+    RegQueryStringValue(HKEY_CURRENT_USER, sUnInstPath, 'UninstallString', sUnInstallString);
+  Result := sUnInstallString;
+end;
+
+procedure InitializeWizard();
+var
+  OldDir: String;
+begin
+  if RegQueryStringValue(HKEY_CURRENT_USER, 'Software\TechScript', 'InstallDir', OldDir) or
+     RegQueryStringValue(HKEY_LOCAL_MACHINE, 'Software\TechScript', 'InstallDir', OldDir) then
+  begin
+    ModePage := CreateInputOptionPage(wpWelcome,
+      'TechScript Maintenance & Setup',
+      'Fresh Install, Update, or Uninstall your TechScript installation',
+      'A previous version of TechScript was detected at: ' + OldDir + #13#10 +
+      'Please select the operation you wish to perform:',
+      True, False);
+
+    ModePage.Add('Fresh Install (Reinstalls everything, overrides old files, and sets up a clean environment)');
+    ModePage.Add('Update (Updates binaries and files to the new version)');
+    ModePage.Add('Uninstall (Completely remove TechScript from this computer)');
+
+    ModePage.SelectedValueIndex := 0;
+  end;
+end;
+
+function ShouldSkipPage(PageID: Integer): Boolean;
+begin
+  Result := False;
+  // Skip pages Select Dir, Select Components, and Select Tasks if user chooses Update
+  if (ModePage <> nil) and (ModePage.SelectedValueIndex = 1) then
+  begin
+    if (PageID = wpSelectDir) or (PageID = wpSelectComponents) or (PageID = wpSelectTasks) then
+      Result := True;
+  end;
+end;
+
+function NextButtonClick(CurPageID: Integer): Boolean;
+var
+  ResultCode: Integer;
+  UninstallStr: String;
+begin
+  Result := True;
+  if (ModePage <> nil) and (CurPageID = ModePage.ID) then
+  begin
+    if ModePage.SelectedValueIndex = 2 then // Uninstall
+    begin
+      UninstallStr := GetUninstallString();
+      if UninstallStr <> '' then
+      begin
+        UninstallStr := RemoveQuotes(UninstallStr);
+        if Exec(UninstallStr, '/SILENT /NORESTART', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
+        begin
+          MsgBox('TechScript has been uninstalled successfully.', mbInformation, MB_OK);
+          Result := False;
+          WizardForm.Close;
+        end
+        else
+        begin
+          MsgBox('Failed to run uninstaller. Please uninstall manually.', mbError, MB_OK);
+          Result := False;
+        end;
+      end;
+    end;
+  end;
+end;
+
+procedure AddToPath(PathToAdd: String; IsSystem: Boolean);
+var
+  OldPath, NewPath: String;
+  RootKey: Integer;
+  SubKey: String;
+begin
+  if IsSystem then begin
+    RootKey := HKEY_LOCAL_MACHINE;
+    SubKey := 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment';
+  end else begin
+    RootKey := HKEY_CURRENT_USER;
+    SubKey := 'Environment';
+  end;
+
+  if RegQueryStringValue(RootKey, SubKey, 'Path', OldPath) then begin
+    if Pos(PathToAdd, OldPath) = 0 then begin
+      if (OldPath <> '') and (OldPath[Length(OldPath)] <> ';') then
+        NewPath := OldPath + ';' + PathToAdd
+      else
+        NewPath := OldPath + PathToAdd;
+      RegWriteExpandStringValue(RootKey, SubKey, 'Path', NewPath);
+    end;
+  end else begin
+    RegWriteExpandStringValue(RootKey, SubKey, 'Path', PathToAdd);
+  end;
+end;
+
+procedure RemoveFromPath(PathToRemove: String; IsSystem: Boolean);
+var
+  OldPath, NewPath: String;
+  RootKey: Integer;
+  SubKey: String;
+  P: Integer;
+begin
+  if IsSystem then begin
+    RootKey := HKEY_LOCAL_MACHINE;
+    SubKey := 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment';
+  end else begin
+    RootKey := HKEY_CURRENT_USER;
+    SubKey := 'Environment';
+  end;
+
+  if RegQueryStringValue(RootKey, SubKey, 'Path', OldPath) then begin
+    P := Pos(PathToRemove, OldPath);
+    if P > 0 then begin
+      NewPath := OldPath;
+      Delete(NewPath, P, Length(PathToRemove));
+      StringChangeEx(NewPath, ';;', ';', True);
+      if (Length(NewPath) > 0) and (NewPath[1] = ';') then Delete(NewPath, 1, 1);
+      if (Length(NewPath) > 0) and (NewPath[Length(NewPath)] = ';') then Delete(NewPath, Length(NewPath), 1);
+      RegWriteExpandStringValue(RootKey, SubKey, 'Path', NewPath);
+    end;
+  end;
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+var
+  ToolsPath, OldPath, NewPath, OldBinDir: String;
+begin
+  if CurStep = ssInstall then
+  begin
+    // Clean up old conflicting directories and cargo binaries
+    DelTree(ExpandConstant('C:\Program Files (x86)\TechScript'), True, True, True);
+    DelTree(ExpandConstant('{{localappdata}}\Programs\TechScript'), True, True, True);
+    DeleteFile(ExpandConstant('{{%USERPROFILE}}\.cargo\bin\tsc.exe'));
+    DeleteFile(ExpandConstant('{{%USERPROFILE}}\.cargo\bin\tsvm.exe'));
+    DeleteFile(ExpandConstant('{{%USERPROFILE}}\.cargo\bin\tspm.exe'));
+    DeleteFile(ExpandConstant('{{%USERPROFILE}}\.cargo\bin\tsfmt.exe'));
+    DeleteFile(ExpandConstant('{{%USERPROFILE}}\.cargo\bin\tslint.exe'));
+    DeleteFile(ExpandConstant('{{%USERPROFILE}}\.cargo\bin\tsdoc.exe'));
+    DeleteFile(ExpandConstant('{{%USERPROFILE}}\.cargo\bin\tsls.exe'));
+    DeleteFile(ExpandConstant('{{%USERPROFILE}}\.cargo\bin\tsmigrate.exe'));
+
+    OldBinDir := 'C:\Program Files (x86)\TechScript\bin';
+
+    // Clean system PATH
+    if RegQueryStringValue(HKEY_LOCAL_MACHINE,
+        'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
+        'Path', OldPath) then
+    begin
+      NewPath := OldPath;
+      StringChangeEx(NewPath, ';' + OldBinDir, '', True);
+      StringChangeEx(NewPath, OldBinDir + ';', '', True);
+      StringChangeEx(NewPath, OldBinDir,       '', True);
+      RegWriteStringValue(HKEY_LOCAL_MACHINE,
+        'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
+        'Path', NewPath);
+    end;
+
+    // Clean user PATH
+    if RegQueryStringValue(HKEY_CURRENT_USER,
+        'Environment', 'Path', OldPath) then
+    begin
+      NewPath := OldPath;
+      StringChangeEx(NewPath, ';' + OldBinDir, '', True);
+      StringChangeEx(NewPath, OldBinDir + ';', '', True);
+      StringChangeEx(NewPath, OldBinDir,       '', True);
+      RegWriteStringValue(HKEY_CURRENT_USER, 'Environment', 'Path', NewPath);
+    end;
+  end;
+
+  if CurStep = ssPostInstall then
+  begin
+    ToolsPath := ExpandConstant('{{app}}\tools');
+    if (ModePage <> nil) and ((ModePage.SelectedValueIndex = 0) or (ModePage.SelectedValueIndex = 1)) then
+    begin
+      AddToPath(ToolsPath, False);
+    end
+    else
+    begin
+      if WizardIsTaskSelected('addtopath') then
+      begin
+        AddToPath(ToolsPath, False);
+      end;
+    end;
+  end;
+end;
+
+function InitializeUninstall(): Boolean;
+begin
+  Result := True;
+  if MsgBox('Would you like to delete your user settings and configuration files?', mbConfirmation, MB_YESNO) = idYes then
+    RegWriteDWordValue(HKEY_CURRENT_USER, 'Software\TechScript', 'DeleteUserSettings', 1);
+  if MsgBox('Would you like to completely delete the global Package Manager cache and all installed packages (~/.techscript)?', mbConfirmation, MB_YESNO) = idYes then
+    RegWriteDWordValue(HKEY_CURRENT_USER, 'Software\TechScript', 'DeleteCache', 1);
+end;
+
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+var
+  DeleteSettings, DeleteCache: DWORD;
+  ToolsPath: String;
+begin
+  if CurUninstallStep = usPostUninstall then
+  begin
+    ToolsPath := ExpandConstant('{{app}}\tools');
+    RemoveFromPath(ToolsPath, False);
+    RemoveFromPath(ToolsPath, True);
+
+    if RegQueryDWordValue(HKEY_CURRENT_USER, 'Software\TechScript', 'DeleteCache', DeleteCache) and (DeleteCache = 1) then
+      DelTree(ExpandConstant('{{%USERPROFILE}}\.techscript'), True, True, True);
+
+    if RegQueryDWordValue(HKEY_CURRENT_USER, 'Software\TechScript', 'DeleteUserSettings', DeleteSettings) and (DeleteSettings = 1) then
+      DelTree(ExpandConstant('{{userappdata}}\TechScript'), True, True, True);
+
+    RegDeleteKeyIncludingSubkeys(HKEY_CURRENT_USER, 'Software\TechScript');
+  end;
+end;
+"#,
+        version = version
+    );
     fs::write(dest, iss_content)?;
     Ok(())
 }
 
 fn generate_online_inno_script(dest: &Path, version: &str) -> anyhow::Result<()> {
-    let template = include_str!("online_installer.iss.template");
-    let iss_content = template.replace("{version}", version);
+    let iss_content = format!(
+        r#"; TechScript 2.0 Online Setup Script (Inno Setup)
+[Setup]
+AppId={{{{TechScript-Compiler-Environment-2-0}}
+AppName=TechScript 2.0 (Online)
+AppVersion={version}
+AppPublisher=techscript-motion
+AppPublisherURL=https://github.com/Tcode-Motion/TechScript-2.0
+AppCopyright=Copyright (c) 2026 techscript-motion
+VersionInfoVersion={version}
+VersionInfoCompany=techscript-motion
+VersionInfoDescription=TechScript 2.0 Language Environment
+DefaultDirName={{code:GetInstallDir}}
+DefaultGroupName=TechScript 2.0
+ChangesAssociations=yes
+UninstallDisplayIcon={{app}}\tools\tsc.exe
+Compression=lzma2/ultra64
+SolidCompression=yes
+InternalCompressLevel=ultra64
+OutputDir=.
+OutputBaseFilename=TechScript_Online_Setup
+WizardStyle=modern
+WizardSizePercent=120
+DisableWelcomePage=no
+LicenseFile=..\LICENSE
+PrivilegesRequired=lowest
+PrivilegesRequiredOverridesAllowed=commandline dialog
+SetupIconFile=..\..\..\assets\branding\logo-package\windows\installer-icon.ico
+WizardImageFile=..\..\..\assets\branding\logo-package\source\logo-black-bg-1254.png
+WizardSmallImageFile=..\..\..\assets\branding\logo-package\png\icon-256.png
+
+[Types]
+Name: "full"; Description: "Full installation (Downloads required components)"
+Name: "compact"; Description: "Compact installation"
+Name: "custom"; Description: "Custom installation"; Flags: iscustom
+
+[Components]
+Name: "compiler"; Description: "TechScript Compiler (tsc.exe)"; Types: full compact custom; Flags: fixed
+Name: "vm"; Description: "TechScript VM & Runtime (tsvm.exe)"; Types: full compact custom; Flags: fixed
+Name: "pm"; Description: "Package Manager (tspm.exe)"; Types: full custom
+Name: "fmt"; Description: "Formatter (tsfmt.exe)"; Types: full custom
+Name: "lint"; Description: "Linter (tslint.exe)"; Types: full custom
+Name: "docgen"; Description: "Documentation Generator (tsdoc.exe)"; Types: full custom
+Name: "migrate"; Description: "Migration Tool (tsmigrate.exe)"; Types: full custom
+Name: "ls"; Description: "Language Server (tsls.exe)"; Types: full custom
+Name: "stdlib"; Description: "Standard Library Sources (Downloads online)"; Types: full custom
+Name: "vscode"; Description: "VS Code Extension Integration (Downloads online)"; Types: full custom
+Name: "examples"; Description: "Language Examples (Downloads online)"; Types: full custom
+
+[Files]
+Source: "..\tools\tsc.exe"; DestDir: "{{app}}\tools"; Components: compiler; Flags: ignoreversion
+Source: "..\tools\tsvm.exe"; DestDir: "{{app}}\tools"; Components: vm; Flags: ignoreversion
+Source: "..\tools\welcome.bat"; DestDir: "{{app}}\tools"; Components: compiler; Flags: ignoreversion
+Source: "..\LICENSE"; DestDir: "{{app}}"; Flags: ignoreversion
+Source: "..\README.md"; DestDir: "{{app}}"; Flags: ignoreversion
+
+[Tasks]
+Name: "addtopath"; Description: "Add TechScript tools to PATH environment variable (recommended)"; GroupDescription: "Environment Setup:"
+Name: "fileassoc"; Description: "Associate .txs files with TechScript Compiler"; GroupDescription: "File Associations:"
+Name: "desktopicon"; Description: "Create a Desktop shortcut for TechScript REPL"; GroupDescription: "Shortcuts:"; Flags: unchecked
+Name: "startmenuicon"; Description: "Create Start Menu shortcuts"; GroupDescription: "Shortcuts:"
+
+[Icons]
+Name: "{{autodesktop}}\TechScript REPL"; Filename: "{{app}}\tools\tsc.exe"; Parameters: "repl"; IconFilename: "{{app}}\tools\tsc.exe"; Tasks: desktopicon
+Name: "{{group}}\TechScript REPL"; Filename: "{{app}}\tools\tsc.exe"; Parameters: "repl"; IconFilename: "{{app}}\tools\tsc.exe"; Tasks: startmenuicon
+Name: "{{group}}\TechScript Documentation"; Filename: "{{app}}\docs\LanguageGuide.md"; Tasks: startmenuicon; Components: compiler
+Name: "{{group}}\Uninstall TechScript"; Filename: "{{uninstallexe}}"; Tasks: startmenuicon
+[InstallDelete]
+Type: filesandordirs; Name: "C:\Program Files (x86)\TechScript"
+Type: filesandordirs; Name: "{{localappdata}}\Programs\TechScript"
+Type: files; Name: "{{%USERPROFILE}}\.cargo\bin\tsc.exe"
+Type: files; Name: "{{%USERPROFILE}}\.cargo\bin\tsvm.exe"
+Type: files; Name: "{{%USERPROFILE}}\.cargo\bin\tspm.exe"
+Type: files; Name: "{{%USERPROFILE}}\.cargo\bin\tsfmt.exe"
+Type: files; Name: "{{%USERPROFILE}}\.cargo\bin\tslint.exe"
+Type: files; Name: "{{%USERPROFILE}}\.cargo\bin\tsdoc.exe"
+Type: files; Name: "{{%USERPROFILE}}\.cargo\bin\tsls.exe"
+Type: files; Name: "{{%USERPROFILE}}\.cargo\bin\tsmigrate.exe"
+
+[Registry]
+Root: HKCU; Subkey: "Software\Classes\.txs"; ValueType: string; ValueName: ""; ValueData: "TechScriptFile"; Tasks: fileassoc; Flags: uninsdeletevalue
+Root: HKCU; Subkey: "Software\Classes\TechScriptFile"; ValueType: string; ValueName: ""; ValueData: "TechScript Source File"; Tasks: fileassoc; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\TechScriptFile\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{{app}}\tools\tsc.exe,0"; Tasks: fileassoc
+Root: HKCU; Subkey: "Software\Classes\TechScriptFile\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{{app}}\tools\tsc.exe"" ""%1"""; Tasks: fileassoc
+
+; Install metadata
+Root: HKCU; Subkey: "Software\TechScript"; ValueType: string; ValueName: "InstallDir"; ValueData: "{{app}}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\TechScript"; ValueType: string; ValueName: "Version"; ValueData: "{version}"
+
+; Environment variables
+Root: HKCU; Subkey: "Environment"; ValueType: string; ValueName: "TECHSCRIPT_HOME"; ValueData: "{{app}}"; Flags: preservestringtype uninsdeletevalue
+Root: HKCU; Subkey: "Environment"; ValueType: string; ValueName: "TECHSCRIPT_STDLIB"; ValueData: "{{app}}\runtime\stdlib"; Flags: preservestringtype uninsdeletevalue
+Root: HKCU; Subkey: "Environment"; ValueType: string; ValueName: "TECHSCRIPT_DOCS"; ValueData: "{{app}}\docs"; Flags: preservestringtype uninsdeletevalue
+
+[Run]
+Filename: "powershell.exe"; Parameters: "-Command ""Invoke-WebRequest -Uri 'https://github.com/Tcode-Motion/TechScript-2.0/releases/download/v{version}/stdlib.zip' -OutFile '{{app}}\stdlib.zip'; Expand-Archive -Path '{{app}}\stdlib.zip' -DestinationPath '{{app}}\runtime' -Force; Remove-Item '{{app}}\stdlib.zip'"""; StatusMsg: "Downloading Standard Library..."; Flags: runhidden; Components: stdlib
+Filename: "powershell.exe"; Parameters: "-Command ""Invoke-WebRequest -Uri 'https://github.com/Tcode-Motion/TechScript-2.0/releases/download/v{version}/examples.zip' -OutFile '{{app}}\examples.zip'; Expand-Archive -Path '{{app}}\examples.zip' -DestinationPath '{{app}}\examples' -Force; Remove-Item '{{app}}\examples.zip'"""; StatusMsg: "Downloading Examples..."; Flags: runhidden; Components: examples
+Filename: "powershell.exe"; Parameters: "-Command ""Invoke-WebRequest -Uri 'https://github.com/Tcode-Motion/TechScript-2.0/releases/download/v{version}/docs.zip' -OutFile '{{app}}\docs.zip'; Expand-Archive -Path '{{app}}\docs.zip' -DestinationPath '{{app}}\docs' -Force; Remove-Item '{{app}}\docs.zip'"""; StatusMsg: "Downloading Documentation..."; Flags: runhidden; Components: compiler
+Filename: "powershell.exe"; Parameters: "-Command ""Invoke-WebRequest -Uri 'https://github.com/Tcode-Motion/TechScript-2.0/releases/download/v{version}/techscript.vsix' -OutFile '{{app}}\TechScript.vsix'"""; StatusMsg: "Downloading VS Code Extension..."; Flags: runhidden; Components: vscode
+Filename: "{{app}}\tools\tspm.exe"; Parameters: "doctor"; StatusMsg: "Bootstrapping package manager cache..."; Flags: runhidden
+Filename: "explorer.exe"; Parameters: """{{app}}\docs\LanguageGuide.md"""; Description: "Open TechScript Language Guide"; Flags: postinstall shellexec nowait skipifsilent unchecked
+Filename: "{{app}}\tools\welcome.bat"; Description: "Launch Welcome Experience & Create First Project"; Flags: postinstall nowait skipifsilent
+
+[Code]
+var
+  ModePage: TInputOptionWizardPage;
+
+function GetInstallDir(Param: String): String;
+var
+  OldDir: String;
+begin
+  if RegQueryStringValue(HKEY_CURRENT_USER, 'Software\TechScript', 'InstallDir', OldDir) or
+     RegQueryStringValue(HKEY_LOCAL_MACHINE, 'Software\TechScript', 'InstallDir', OldDir) then
+    Result := OldDir
+  else
+    Result := ExpandConstant('{{autopf}}\TechScript');
+end;
+
+function GetUninstallString(): String;
+var
+  sUnInstPath: String;
+  sUnInstallString: String;
+begin
+  sUnInstPath := 'Software\Microsoft\Windows\CurrentVersion\Uninstall\TechScript 2.0_is1';
+  sUnInstallString := '';
+  if not RegQueryStringValue(HKEY_LOCAL_MACHINE, sUnInstPath, 'UninstallString', sUnInstallString) then
+    RegQueryStringValue(HKEY_CURRENT_USER, sUnInstPath, 'UninstallString', sUnInstallString);
+  Result := sUnInstallString;
+end;
+
+procedure InitializeWizard();
+var
+  OldDir: String;
+begin
+  if RegQueryStringValue(HKEY_CURRENT_USER, 'Software\TechScript', 'InstallDir', OldDir) or
+     RegQueryStringValue(HKEY_LOCAL_MACHINE, 'Software\TechScript', 'InstallDir', OldDir) then
+  begin
+    ModePage := CreateInputOptionPage(wpWelcome,
+      'TechScript Maintenance & Setup',
+      'Fresh Install, Update, or Uninstall your TechScript installation',
+      'A previous version of TechScript was detected at: ' + OldDir + #13#10 +
+      'Please select the operation you wish to perform:',
+      True, False);
+
+    ModePage.Add('Fresh Install (Reinstalls everything, overrides old files, and sets up a clean environment)');
+    ModePage.Add('Update (Updates binaries and files to the new version)');
+    ModePage.Add('Uninstall (Completely remove TechScript from this computer)');
+
+    ModePage.SelectedValueIndex := 0;
+  end;
+end;
+
+function ShouldSkipPage(PageID: Integer): Boolean;
+begin
+  Result := False;
+  // Skip pages Select Dir, Select Components, and Select Tasks if user chooses Update
+  if (ModePage <> nil) and (ModePage.SelectedValueIndex = 1) then
+  begin
+    if (PageID = wpSelectDir) or (PageID = wpSelectComponents) or (PageID = wpSelectTasks) then
+      Result := True;
+  end;
+end;
+
+function NextButtonClick(CurPageID: Integer): Boolean;
+var
+  ResultCode: Integer;
+  UninstallStr: String;
+begin
+  Result := True;
+  if (ModePage <> nil) and (CurPageID = ModePage.ID) then
+  begin
+    if ModePage.SelectedValueIndex = 2 then // Uninstall
+    begin
+      UninstallStr := GetUninstallString();
+      if UninstallStr <> '' then
+      begin
+        UninstallStr := RemoveQuotes(UninstallStr);
+        if Exec(UninstallStr, '/SILENT /NORESTART', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
+        begin
+          MsgBox('TechScript has been uninstalled successfully.', mbInformation, MB_OK);
+          Result := False;
+          WizardForm.Close;
+        end
+        else
+        begin
+          MsgBox('Failed to run uninstaller. Please uninstall manually.', mbError, MB_OK);
+          Result := False;
+        end;
+      end;
+    end;
+  end;
+end;
+
+procedure AddToPath(PathToAdd: String; IsSystem: Boolean);
+var
+  OldPath, NewPath: String;
+  RootKey: Integer;
+  SubKey: String;
+begin
+  if IsSystem then begin
+    RootKey := HKEY_LOCAL_MACHINE;
+    SubKey := 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment';
+  end else begin
+    RootKey := HKEY_CURRENT_USER;
+    SubKey := 'Environment';
+  end;
+
+  if RegQueryStringValue(RootKey, SubKey, 'Path', OldPath) then begin
+    if Pos(PathToAdd, OldPath) = 0 then begin
+      if (OldPath <> '') and (OldPath[Length(OldPath)] <> ';') then
+        NewPath := OldPath + ';' + PathToAdd
+      else
+        NewPath := OldPath + PathToAdd;
+      RegWriteExpandStringValue(RootKey, SubKey, 'Path', NewPath);
+    end;
+  end else begin
+    RegWriteExpandStringValue(RootKey, SubKey, 'Path', PathToAdd);
+  end;
+end;
+
+procedure RemoveFromPath(PathToRemove: String; IsSystem: Boolean);
+var
+  OldPath, NewPath: String;
+  RootKey: Integer;
+  SubKey: String;
+  P: Integer;
+begin
+  if IsSystem then begin
+    RootKey := HKEY_LOCAL_MACHINE;
+    SubKey := 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment';
+  end else begin
+    RootKey := HKEY_CURRENT_USER;
+    SubKey := 'Environment';
+  end;
+
+  if RegQueryStringValue(RootKey, SubKey, 'Path', OldPath) then begin
+    P := Pos(PathToRemove, OldPath);
+    if P > 0 then begin
+      NewPath := OldPath;
+      Delete(NewPath, P, Length(PathToRemove));
+      StringChangeEx(NewPath, ';;', ';', True);
+      if (Length(NewPath) > 0) and (NewPath[1] = ';') then Delete(NewPath, 1, 1);
+      if (Length(NewPath) > 0) and (NewPath[Length(NewPath)] = ';') then Delete(NewPath, Length(NewPath), 1);
+      RegWriteExpandStringValue(RootKey, SubKey, 'Path', NewPath);
+    end;
+  end;
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+var
+  ToolsPath, OldPath, NewPath, OldBinDir: String;
+begin
+  if CurStep = ssInstall then
+  begin
+    // Clean up old conflicting directories and cargo binaries
+    DelTree(ExpandConstant('C:\Program Files (x86)\TechScript'), True, True, True);
+    DelTree(ExpandConstant('{{localappdata}}\Programs\TechScript'), True, True, True);
+    DeleteFile(ExpandConstant('{{%USERPROFILE}}\.cargo\bin\tsc.exe'));
+    DeleteFile(ExpandConstant('{{%USERPROFILE}}\.cargo\bin\tsvm.exe'));
+    DeleteFile(ExpandConstant('{{%USERPROFILE}}\.cargo\bin\tspm.exe'));
+    DeleteFile(ExpandConstant('{{%USERPROFILE}}\.cargo\bin\tsfmt.exe'));
+    DeleteFile(ExpandConstant('{{%USERPROFILE}}\.cargo\bin\tslint.exe'));
+    DeleteFile(ExpandConstant('{{%USERPROFILE}}\.cargo\bin\tsdoc.exe'));
+    DeleteFile(ExpandConstant('{{%USERPROFILE}}\.cargo\bin\tsls.exe'));
+    DeleteFile(ExpandConstant('{{%USERPROFILE}}\.cargo\bin\tsmigrate.exe'));
+
+    OldBinDir := 'C:\Program Files (x86)\TechScript\bin';
+
+    // Clean system PATH
+    if RegQueryStringValue(HKEY_LOCAL_MACHINE,
+        'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
+        'Path', OldPath) then
+    begin
+      NewPath := OldPath;
+      StringChangeEx(NewPath, ';' + OldBinDir, '', True);
+      StringChangeEx(NewPath, OldBinDir + ';', '', True);
+      StringChangeEx(NewPath, OldBinDir,       '', True);
+      RegWriteStringValue(HKEY_LOCAL_MACHINE,
+        'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
+        'Path', NewPath);
+    end;
+
+    // Clean user PATH
+    if RegQueryStringValue(HKEY_CURRENT_USER,
+        'Environment', 'Path', OldPath) then
+    begin
+      NewPath := OldPath;
+      StringChangeEx(NewPath, ';' + OldBinDir, '', True);
+      StringChangeEx(NewPath, OldBinDir + ';', '', True);
+      StringChangeEx(NewPath, OldBinDir,       '', True);
+      RegWriteStringValue(HKEY_CURRENT_USER, 'Environment', 'Path', NewPath);
+    end;
+  end;
+
+  if CurStep = ssPostInstall then
+  begin
+    ToolsPath := ExpandConstant('{{app}}\tools');
+    if (ModePage <> nil) and ((ModePage.SelectedValueIndex = 0) or (ModePage.SelectedValueIndex = 1)) then
+    begin
+      AddToPath(ToolsPath, False);
+    end
+    else
+    begin
+      if WizardIsTaskSelected('addtopath') then
+      begin
+        AddToPath(ToolsPath, False);
+      end;
+    end;
+  end;
+end;
+
+function InitializeUninstall(): Boolean;
+begin
+  Result := True;
+  if MsgBox('Would you like to delete your user settings and configuration files?', mbConfirmation, MB_YESNO) = idYes then
+    RegWriteDWordValue(HKEY_CURRENT_USER, 'Software\TechScript', 'DeleteUserSettings', 1);
+  if MsgBox('Would you like to completely delete the global Package Manager cache and all installed packages (~/.techscript)?', mbConfirmation, MB_YESNO) = idYes then
+    RegWriteDWordValue(HKEY_CURRENT_USER, 'Software\TechScript', 'DeleteCache', 1);
+end;
+
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+var
+  DeleteSettings, DeleteCache: DWORD;
+  ToolsPath: String;
+begin
+  if CurUninstallStep = usPostUninstall then
+  begin
+    ToolsPath := ExpandConstant('{{app}}\tools');
+    RemoveFromPath(ToolsPath, False);
+    RemoveFromPath(ToolsPath, True);
+
+    if RegQueryDWordValue(HKEY_CURRENT_USER, 'Software\TechScript', 'DeleteCache', DeleteCache) and (DeleteCache = 1) then
+      DelTree(ExpandConstant('{{%USERPROFILE}}\.techscript'), True, True, True);
+
+    if RegQueryDWordValue(HKEY_CURRENT_USER, 'Software\TechScript', 'DeleteUserSettings', DeleteSettings) and (DeleteSettings = 1) then
+      DelTree(ExpandConstant('{{userappdata}}\TechScript'), True, True, True);
+
+    RegDeleteKeyIncludingSubkeys(HKEY_CURRENT_USER, 'Software\TechScript');
+  end;
+end;
+"#,
+        version = version
+    );
     fs::write(dest, iss_content)?;
     Ok(())
 }

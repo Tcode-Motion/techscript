@@ -4,9 +4,9 @@ use aes_gcm::{
     Aes256Gcm, Nonce,
 };
 use bcrypt;
+use rand::Rng;
 use sha2::Digest;
 use std::collections::HashMap;
-use rand::Rng;
 use std::rc::Rc;
 use techscript_runtime::{error::RuntimeError, error::RuntimeErrorKind, value::RuntimeValue};
 

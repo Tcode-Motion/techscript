@@ -148,12 +148,10 @@ impl ProjectBuildGraph {
 
         // 1. Add all entry points to compilation list
         for pkg in self.workspace.packages.values_mut() {
-            if pkg.entry_file.exists() {
-                if let Ok(source) = std::fs::read_to_string(&pkg.entry_file) {
-                    let fid = source_mgr.add_file(pkg.entry_file.clone(), source.clone());
-                    pkg.entry_file_id = Some(fid);
-                    to_resolve.push((fid, pkg.entry_file.clone(), pkg.name.clone()));
-                }
+            if let Ok(source) = std::fs::read_to_string(&pkg.entry_file) {
+                let fid = source_mgr.add_file(pkg.entry_file.clone(), source.clone());
+                pkg.entry_file_id = Some(fid);
+                to_resolve.push((fid, pkg.entry_file.clone(), pkg.name.clone()));
             }
         }
 
@@ -269,12 +267,10 @@ impl ProjectBuildGraph {
                     }
                 }
 
-                if import_file.exists() {
-                    if let Ok(source) = std::fs::read_to_string(&import_file) {
-                        let dep_fid = source_mgr.add_file(import_file.clone(), source);
-                        dep_fids.push(dep_fid);
-                        to_resolve.push((dep_fid, import_file, pkg_name.clone()));
-                    }
+                if let Ok(source) = std::fs::read_to_string(&import_file) {
+                    let dep_fid = source_mgr.add_file(import_file.clone(), source);
+                    dep_fids.push(dep_fid);
+                    to_resolve.push((dep_fid, import_file, pkg_name.clone()));
                 }
             }
 

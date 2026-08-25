@@ -267,19 +267,14 @@ capabilities = ["FileSystem", "Environment", "Process", "Network"]
     }
 }
 
-fn levenshtein(a: &str, b: &str, cache: &mut [usize]) -> usize {
-    let b_len = b.len();
-
-    // We only need bytes since commands are ascii
-    let a_bytes = a.as_bytes();
-    let b_bytes = b.as_bytes();
-
-    for (i, val) in cache[..=b_len].iter_mut().enumerate() {
+fn levenshtein(a: &str, b: &str) -> usize {
+    let mut cache = vec![0; b.len() + 1];
+    for (i, val) in cache.iter_mut().enumerate() {
         *val = i;
     }
-    for (i, &ca) in a_bytes.iter().enumerate() {
+    for (i, ca) in a.chars().enumerate() {
         let mut temp = i + 1;
-        for (j, &cb) in b_bytes.iter().enumerate() {
+        for (j, cb) in b.chars().enumerate() {
             let next = if ca == cb {
                 cache[j]
             } else {
@@ -288,9 +283,9 @@ fn levenshtein(a: &str, b: &str, cache: &mut [usize]) -> usize {
             cache[j] = temp;
             temp = next;
         }
-        cache[b_len] = temp;
+        cache[b.len()] = temp;
     }
-    cache[b_len]
+    cache[b.len()]
 }
 
 fn suggest_subcommand(unknown: &str) {
@@ -327,10 +322,9 @@ fn suggest_subcommand(unknown: &str) {
         "self",
     ];
 
-    let mut cache = [0; 32];
     let mut matches = Vec::new();
     for cmd in SUBCOMMANDS {
-        let dist = levenshtein(unknown, cmd, &mut cache);
+        let dist = levenshtein(unknown, cmd);
         if dist <= 3 {
             matches.push(*cmd);
         }

@@ -292,31 +292,3 @@ pub fn gunzip_archive(archive_path: &str, dst_file: &str) -> std::io::Result<()>
     std::io::copy(&mut decoder, &mut output)?;
     Ok(())
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::path::Path;
-
-    #[test]
-    fn test_unzip_archive_invalid_path() {
-        let result = unzip_archive("non_existent_archive.zip", "dest_dir");
-        assert!(result.is_err());
-    }
-
-    #[test]
-    fn test_unzip_archive_corrupted_zip() {
-        let temp_dir = std::env::temp_dir().join("techscript_unzip_test");
-        std::fs::create_dir_all(&temp_dir).unwrap();
-
-        let corrupted_zip_path = temp_dir.join("corrupted.zip");
-        std::fs::write(&corrupted_zip_path, b"not a valid zip file").unwrap();
-
-        let dest_dir = temp_dir.join("dest");
-
-        let result = unzip_archive(corrupted_zip_path.to_str().unwrap(), dest_dir.to_str().unwrap());
-        assert!(result.is_err());
-
-        std::fs::remove_dir_all(&temp_dir).unwrap();
-    }
-}

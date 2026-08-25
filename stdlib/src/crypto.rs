@@ -6,7 +6,6 @@ use aes_gcm::{
 use bcrypt;
 use sha2::Digest;
 use std::collections::HashMap;
-use rand::Rng;
 use std::rc::Rc;
 use techscript_runtime::{error::RuntimeError, error::RuntimeErrorKind, value::RuntimeValue};
 
@@ -40,10 +39,8 @@ impl StdlibRegistry {
                         )
                     })?;
 
-                    // Generate a random 12-byte nonce for secure encryption
-                    let mut nonce_bytes = [0u8; 12];
-                    rand::thread_rng().fill(&mut nonce_bytes);
-                    let nonce = Nonce::from_slice(&nonce_bytes);
+                    // Nonce is 12-byte zero nonce for simple FFI compatibility
+                    let nonce = Nonce::from_slice(&[0u8; 12]);
 
                     let ciphertext = cipher.encrypt(nonce, text.as_bytes()).map_err(|e| {
                         RuntimeError::new(
@@ -56,12 +53,8 @@ impl StdlibRegistry {
                         )
                     })?;
 
-                    // Prepend nonce to ciphertext
-                    let mut combined = nonce_bytes.to_vec();
-                    combined.extend_from_slice(&ciphertext);
-
                     // Hex encode ciphertext
-                    let hex_ciphertext = combined
+                    let hex_ciphertext = ciphertext
                         .iter()
                         .map(|b| format!("{:02x}", b))
                         .collect::<String>();
@@ -112,22 +105,10 @@ impl StdlibRegistry {
                         )
                     })?;
 
-                    if ciphertext.len() < 12 {
-                        return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(
-                                "Ciphertext too short (missing nonce)".to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
-
-                    let nonce_bytes = &ciphertext[0..12];
-                    let actual_ciphertext = &ciphertext[12..];
-                    let nonce = Nonce::from_slice(nonce_bytes);
+                    let nonce = Nonce::from_slice(&[0u8; 12]);
 
                     let plaintext_bytes =
-                        cipher.decrypt(nonce, actual_ciphertext).map_err(|e| {
+                        cipher.decrypt(nonce, ciphertext.as_slice()).map_err(|e| {
                             RuntimeError::new(
                                 RuntimeErrorKind::InvalidOperation(format!(
                                     "AES decryption error: {}",

@@ -300,7 +300,7 @@ mod tests {
     #[test]
     fn test_zip_dir_error_path() {
         let temp_dir = std::env::temp_dir().join("techscript_zip_dir_error_test");
-        std::fs::create_dir_all(&temp_dir).ok();
+        std::fs::create_dir_all(&temp_dir).unwrap();
 
         let dst_file = temp_dir.join("archive.zip");
         let non_existent_dir = temp_dir.join("does_not_exist");
@@ -310,8 +310,11 @@ mod tests {
             &dst_file.to_string_lossy(),
         );
 
-        assert!(result.is_err(), "Expected error when zipping a non-existent directory");
+        assert!(
+            result.is_err(),
+            "Expected error when zipping a non-existent directory"
+        );
 
-        std::fs::remove_dir_all(&temp_dir).ok();
+        std::fs::remove_dir_all(&temp_dir).unwrap();
     }
 }

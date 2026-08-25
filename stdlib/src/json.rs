@@ -39,7 +39,7 @@ impl StdlibRegistry {
                             None,
                         )
                     })?;
-                    Ok(parse_json_value(v))
+                    parse_json_value(v, 0)
                 },
             }),
         );
@@ -92,36 +92,47 @@ pub fn stringify_value(val: &RuntimeValue) -> Result<String, RuntimeError> {
     }
 }
 
-pub fn parse_json_value(v: serde_json::Value) -> RuntimeValue {
+pub fn parse_json_value(v: serde_json::Value, depth: usize) -> Result<RuntimeValue, RuntimeError> {
+    if depth > 128 {
+        return Err(RuntimeError::new(
+            RuntimeErrorKind::InvalidOperation("JSON depth limit exceeded".to_string()),
+            None,
+            None,
+        ));
+    }
+
     match v {
-        serde_json::Value::Null => RuntimeValue::Null,
-        serde_json::Value::Bool(b) => RuntimeValue::Bool(b),
+        serde_json::Value::Null => Ok(RuntimeValue::Null),
+        serde_json::Value::Bool(b) => Ok(RuntimeValue::Bool(b)),
         serde_json::Value::Number(num) => {
             if let Some(i) = num.as_i64() {
-                RuntimeValue::Int(i)
+                Ok(RuntimeValue::Int(i))
             } else if let Some(f) = num.as_f64() {
-                RuntimeValue::Float(f)
+                Ok(RuntimeValue::Float(f))
             } else {
-                RuntimeValue::Null
+                Ok(RuntimeValue::Null)
             }
         }
-        serde_json::Value::String(s) => RuntimeValue::Str(s),
+        serde_json::Value::String(s) => Ok(RuntimeValue::Str(s)),
         serde_json::Value::Array(arr) => {
-            let items = arr.into_iter().map(parse_json_value).collect::<Vec<_>>();
-            RuntimeValue::List {
+            let mut items = Vec::new();
+            for item in arr {
+                items.push(parse_json_value(item, depth + 1)?);
+            }
+            Ok(RuntimeValue::List {
                 items: Rc::new(RefCell::new(items)),
                 is_const: false,
-            }
+            })
         }
         serde_json::Value::Object(obj) => {
             let mut entries = IndexMap::new();
             for (k, v) in obj {
-                entries.insert(k, parse_json_value(v));
+                entries.insert(k, parse_json_value(v, depth + 1)?);
             }
-            RuntimeValue::Map {
+            Ok(RuntimeValue::Map {
                 entries: Rc::new(RefCell::new(entries)),
                 is_const: false,
-            }
+            })
         }
     }
 }

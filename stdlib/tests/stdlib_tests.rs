@@ -186,6 +186,25 @@ fn test_json_module() {
     } else {
         panic!("JSON parse result was not a Map");
     }
+
+    // Test depth limit
+    let mut nested_json_str = String::new();
+    for _ in 0..200 {
+        nested_json_str.push_str("{\"nested\":");
+    }
+    nested_json_str.push_str("null");
+    for _ in 0..200 {
+        nested_json_str.push('}');
+    }
+
+    let result = parse.call(&mut ctx, vec![RuntimeValue::Str(nested_json_str)]);
+    assert!(result.is_err());
+    if let Err(e) = result {
+        assert!(
+            e.message.contains("JSON depth limit exceeded")
+                || e.message.contains("JSON parse error")
+        );
+    }
 }
 
 #[test]

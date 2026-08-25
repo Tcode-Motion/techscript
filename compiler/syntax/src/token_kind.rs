@@ -21,7 +21,14 @@ pub enum LiteralKind {
 
 impl fmt::Display for LiteralKind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Debug::fmt(self, f)
+        let label = match self {
+            LiteralKind::Int => "Int",
+            LiteralKind::Float => "Float",
+            LiteralKind::Str => "Str",
+            LiteralKind::Bool => "Bool",
+            LiteralKind::Null => "Null",
+        };
+        write!(f, "{}", label)
     }
 }
 
@@ -40,7 +47,13 @@ pub enum NumericLiteralKind {
 
 impl fmt::Display for NumericLiteralKind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Debug::fmt(self, f)
+        let label = match self {
+            NumericLiteralKind::Decimal => "Decimal",
+            NumericLiteralKind::Hex => "Hex",
+            NumericLiteralKind::Binary => "Binary",
+            NumericLiteralKind::Octal => "Octal",
+        };
+        write!(f, "{}", label)
     }
 }
 
@@ -778,7 +791,18 @@ impl fmt::Display for TokenKind {
         if let Some(lexeme) = self.static_lexeme() {
             write!(f, "'{}'", lexeme)
         } else {
-            fmt::Debug::fmt(self, f)
+            let label = match self {
+                TokenKind::Identifier => "Identifier",
+                TokenKind::IntLiteral => "Integer Literal",
+                TokenKind::FloatLiteral => "Float Literal",
+                TokenKind::StringLiteral => "String Literal",
+                TokenKind::FStringText => "f-string segment",
+                TokenKind::Newline => "Newline",
+                TokenKind::Eof => "EOF",
+                TokenKind::Error => "Error",
+                _ => "Unknown Token",
+            };
+            write!(f, "{}", label)
         }
     }
 }

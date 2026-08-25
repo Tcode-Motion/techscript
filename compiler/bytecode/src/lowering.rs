@@ -374,7 +374,10 @@ impl BytecodeLowerer {
 
     fn lower_exception_op(&mut self, inst: &Instruction) {
         match &inst.op {
-            Op::Try { catch_block, catch_var: _ } => {
+            Op::Try {
+                catch_block,
+                catch_var: _,
+            } => {
                 let catch_lbl = self.block_labels[catch_block];
                 self.builder
                     .emit_jump(Opcode::Try, catch_lbl, inst.span, inst.id);

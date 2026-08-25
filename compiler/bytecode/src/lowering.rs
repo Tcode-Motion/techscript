@@ -163,6 +163,38 @@ impl BytecodeLowerer {
 
     fn lower_instruction(&mut self, inst: &Instruction) {
         match &inst.op {
+            Op::Constant(_) | Op::Load(_) | Op::Store { .. } | Op::Move { .. } => {
+                self.lower_memory_op(inst);
+            }
+            Op::BinaryOp { .. } | Op::UnaryOp { .. } | Op::Compare { .. } => {
+                self.lower_arithmetic_op(inst);
+            }
+            Op::Call { .. } => {
+                self.lower_call_op(inst);
+            }
+            Op::IndexLoad { .. }
+            | Op::IndexStore { .. }
+            | Op::FieldLoad { .. }
+            | Op::FieldStore { .. } => {
+                self.lower_access_op(inst);
+            }
+            Op::MakeList(_) | Op::MakeMap(_) => {
+                self.lower_collection_op(inst);
+            }
+            Op::Try { .. } | Op::EndTry => {
+                self.lower_exception_op(inst);
+            }
+            _ => {
+                // Default NoOp for unimplemented placeholders
+                self.builder
+                    .emit(Opcode::NoOp, Vec::new(), inst.span, inst.id);
+                self.store_result(inst);
+            }
+        }
+    }
+
+    fn lower_memory_op(&mut self, inst: &Instruction) {
+        match &inst.op {
             Op::Constant(lit) => {
                 let const_idx = self.builder.constants.add(lit.clone());
                 self.builder.emit(
@@ -191,6 +223,12 @@ impl BytecodeLowerer {
                     inst.id,
                 );
             }
+            _ => unreachable!(),
+        }
+    }
+
+    fn lower_arithmetic_op(&mut self, inst: &Instruction) {
+        match &inst.op {
             Op::BinaryOp { op, left, right } => {
                 self.emit_load(left, inst.span);
                 self.emit_load(right, inst.span);
@@ -233,19 +271,30 @@ impl BytecodeLowerer {
                 self.builder.emit(opcode, Vec::new(), inst.span, inst.id);
                 self.store_result(inst);
             }
-            Op::Call { callee, args } => {
-                self.emit_load(callee, inst.span);
-                for arg in args {
-                    self.emit_load(arg, inst.span);
-                }
-                self.builder.emit(
-                    Opcode::Call,
-                    vec![Operand::Count(args.len() as u32)],
-                    inst.span,
-                    inst.id,
-                );
-                self.store_result(inst);
+            _ => unreachable!(),
+        }
+    }
+
+    fn lower_call_op(&mut self, inst: &Instruction) {
+        if let Op::Call { callee, args } = &inst.op {
+            self.emit_load(callee, inst.span);
+            for arg in args {
+                self.emit_load(arg, inst.span);
             }
+            self.builder.emit(
+                Opcode::Call,
+                vec![Operand::Count(args.len() as u32)],
+                inst.span,
+                inst.id,
+            );
+            self.store_result(inst);
+        } else {
+            unreachable!()
+        }
+    }
+
+    fn lower_access_op(&mut self, inst: &Instruction) {
+        match &inst.op {
             Op::IndexLoad { base, index } => {
                 self.emit_load(base, inst.span);
                 self.emit_load(index, inst.span);
@@ -288,6 +337,12 @@ impl BytecodeLowerer {
                     inst.id,
                 );
             }
+            _ => unreachable!(),
+        }
+    }
+
+    fn lower_collection_op(&mut self, inst: &Instruction) {
+        match &inst.op {
             Op::MakeList(elems) => {
                 for elem in elems {
                     self.emit_load(elem, inst.span);
@@ -313,10 +368,13 @@ impl BytecodeLowerer {
                 );
                 self.store_result(inst);
             }
-            Op::Try {
-                catch_block,
-                catch_var: _,
-            } => {
+            _ => unreachable!(),
+        }
+    }
+
+    fn lower_exception_op(&mut self, inst: &Instruction) {
+        match &inst.op {
+            Op::Try { catch_block, catch_var: _ } => {
                 let catch_lbl = self.block_labels[catch_block];
                 self.builder
                     .emit_jump(Opcode::Try, catch_lbl, inst.span, inst.id);
@@ -325,12 +383,7 @@ impl BytecodeLowerer {
                 self.builder
                     .emit(Opcode::EndTry, Vec::new(), inst.span, inst.id);
             }
-            _ => {
-                // Default NoOp for unimplemented placeholders
-                self.builder
-                    .emit(Opcode::NoOp, Vec::new(), inst.span, inst.id);
-                self.store_result(inst);
-            }
+            _ => unreachable!(),
         }
     }
 

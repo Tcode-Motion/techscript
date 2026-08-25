@@ -129,21 +129,30 @@ pub fn parse_json_value(v: serde_json::Value) -> RuntimeValue {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use techscript_runtime::value::RuntimeValue;
-    use std::rc::Rc;
-    use std::cell::RefCell;
     use indexmap::IndexMap;
+    use std::cell::RefCell;
+    use std::rc::Rc;
+    use techscript_runtime::value::RuntimeValue;
 
     #[test]
     fn test_stringify_simple_values() {
         assert_eq!(stringify_value(&RuntimeValue::Null).unwrap(), "null");
         assert_eq!(stringify_value(&RuntimeValue::Bool(true)).unwrap(), "true");
-        assert_eq!(stringify_value(&RuntimeValue::Bool(false)).unwrap(), "false");
+        assert_eq!(
+            stringify_value(&RuntimeValue::Bool(false)).unwrap(),
+            "false"
+        );
         assert_eq!(stringify_value(&RuntimeValue::Int(42)).unwrap(), "42");
         assert_eq!(stringify_value(&RuntimeValue::Int(-10)).unwrap(), "-10");
         assert_eq!(stringify_value(&RuntimeValue::Float(3.14)).unwrap(), "3.14");
-        assert_eq!(stringify_value(&RuntimeValue::Str("hello".to_string())).unwrap(), "\"hello\"");
-        assert_eq!(stringify_value(&RuntimeValue::Str("quote \" inside".to_string())).unwrap(), "\"quote \\\" inside\"");
+        assert_eq!(
+            stringify_value(&RuntimeValue::Str("hello".to_string())).unwrap(),
+            "\"hello\""
+        );
+        assert_eq!(
+            stringify_value(&RuntimeValue::Str("quote \" inside".to_string())).unwrap(),
+            "\"quote \\\" inside\""
+        );
     }
 
     #[test]
@@ -168,7 +177,10 @@ mod tests {
             entries: Rc::new(RefCell::new(map_entries)),
             is_const: false,
         };
-        assert_eq!(stringify_value(&map_val).unwrap(), "{\"key1\":100,\"key2\":\"value2\"}");
+        assert_eq!(
+            stringify_value(&map_val).unwrap(),
+            "{\"key1\":100,\"key2\":\"value2\"}"
+        );
 
         // Test Nested Structure
         let mut nested_map_entries = IndexMap::new();
@@ -178,7 +190,10 @@ mod tests {
             entries: Rc::new(RefCell::new(nested_map_entries)),
             is_const: false,
         };
-        assert_eq!(stringify_value(&nested_val).unwrap(), "{\"inner_list\":[1,\"two\",false],\"inner_map\":{\"key1\":100,\"key2\":\"value2\"}}");
+        assert_eq!(
+            stringify_value(&nested_val).unwrap(),
+            "{\"inner_list\":[1,\"two\",false],\"inner_map\":{\"key1\":100,\"key2\":\"value2\"}}"
+        );
     }
 
     #[test]

@@ -12,6 +12,17 @@ thread_local! {
 
 static NEXT_ID: AtomicI64 = AtomicI64::new(1);
 
+fn runtime_to_sql_value(v: &RuntimeValue) -> rusqlite::types::Value {
+    match v {
+        RuntimeValue::Null => rusqlite::types::Value::Null,
+        RuntimeValue::Bool(b) => rusqlite::types::Value::Integer(if *b { 1 } else { 0 }),
+        RuntimeValue::Int(i) => rusqlite::types::Value::Integer(*i),
+        RuntimeValue::Float(f) => rusqlite::types::Value::Real(*f),
+        RuntimeValue::Str(s) => rusqlite::types::Value::Text(s.clone()),
+        _ => rusqlite::types::Value::Text(v.to_string()),
+    }
+}
+
 impl StdlibRegistry {
     pub fn register_sqlite(&mut self) {
         let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
@@ -53,16 +64,34 @@ impl StdlibRegistry {
                     })?;
                     let sql = args[1].to_string();
 
+                    let params: Vec<rusqlite::types::Value> = if let Some(arg) = args.get(2) {
+                        if let RuntimeValue::List { items, .. } = arg {
+                            items.borrow().iter().map(runtime_to_sql_value).collect()
+                        } else {
+                            return Err(RuntimeError::new(
+                                RuntimeErrorKind::TypeMismatch {
+                                    expected: "list".to_string(),
+                                    found: arg.runtime_type().to_string(),
+                                },
+                                None,
+                                None,
+                            ));
+                        }
+                    } else {
+                        Vec::new()
+                    };
+
                     CONNECTIONS.with(|m| {
                         let mut map = m.borrow_mut();
                         if let Some(conn) = map.get_mut(&id) {
-                            conn.execute(&sql, []).map_err(|e| {
-                                RuntimeError::new(
-                                    RuntimeErrorKind::InvalidOperation(e.to_string()),
-                                    None,
-                                    None,
-                                )
-                            })?;
+                            conn.execute(&sql, rusqlite::params_from_iter(params))
+                                .map_err(|e| {
+                                    RuntimeError::new(
+                                        RuntimeErrorKind::InvalidOperation(e.to_string()),
+                                        None,
+                                        None,
+                                    )
+                                })?;
                             Ok(())
                         } else {
                             Err(RuntimeError::new(
@@ -94,6 +123,23 @@ impl StdlibRegistry {
                     })?;
                     let sql = args[1].to_string();
 
+                    let params: Vec<rusqlite::types::Value> = if let Some(arg) = args.get(2) {
+                        if let RuntimeValue::List { items, .. } = arg {
+                            items.borrow().iter().map(runtime_to_sql_value).collect()
+                        } else {
+                            return Err(RuntimeError::new(
+                                RuntimeErrorKind::TypeMismatch {
+                                    expected: "list".to_string(),
+                                    found: arg.runtime_type().to_string(),
+                                },
+                                None,
+                                None,
+                            ));
+                        }
+                    } else {
+                        Vec::new()
+                    };
+
                     let rows = CONNECTIONS.with(|m| {
                         let mut map = m.borrow_mut();
                         if let Some(conn) = map.get_mut(&id) {
@@ -110,7 +156,7 @@ impl StdlibRegistry {
                                 .collect();
                             let mut rows = Vec::new();
                             let row_iter = stmt
-                                .query_map([], |row| {
+                                .query_map(rusqlite::params_from_iter(params), |row| {
                                     let mut map = IndexMap::new();
                                     for i in 0..col_count {
                                         let name = col_names[i].clone();

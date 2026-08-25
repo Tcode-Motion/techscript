@@ -52,11 +52,39 @@ impl StdlibRegistry {
                         )
                     })?;
                     let sql = args[1].to_string();
+                    let params_list = if args.len() > 2 {
+                        if let RuntimeValue::List { items, .. } = &args[2] {
+                            items.borrow().clone()
+                        } else {
+                            Vec::new()
+                        }
+                    } else {
+                        Vec::new()
+                    };
 
                     CONNECTIONS.with(|m| {
                         let mut map = m.borrow_mut();
                         if let Some(conn) = map.get_mut(&id) {
-                            conn.execute(&sql, []).map_err(|e| {
+                            let params_converted: Vec<rusqlite::types::Value> = params_list
+                                .iter()
+                                .map(|p| match p {
+                                    RuntimeValue::Null => rusqlite::types::Value::Null,
+                                    RuntimeValue::Bool(b) => {
+                                        rusqlite::types::Value::Integer(if *b { 1 } else { 0 })
+                                    }
+                                    RuntimeValue::Int(i) => rusqlite::types::Value::Integer(*i),
+                                    RuntimeValue::Float(f) => rusqlite::types::Value::Real(*f),
+                                    RuntimeValue::Str(s) => rusqlite::types::Value::Text(s.clone()),
+                                    _ => rusqlite::types::Value::Null,
+                                })
+                                .collect();
+
+                            let params_refs: Vec<&dyn rusqlite::types::ToSql> = params_converted
+                                .iter()
+                                .map(|p| p as &dyn rusqlite::types::ToSql)
+                                .collect();
+
+                            conn.execute(&sql, params_refs.as_slice()).map_err(|e| {
                                 RuntimeError::new(
                                     RuntimeErrorKind::InvalidOperation(e.to_string()),
                                     None,
@@ -93,6 +121,15 @@ impl StdlibRegistry {
                         )
                     })?;
                     let sql = args[1].to_string();
+                    let params_list = if args.len() > 2 {
+                        if let RuntimeValue::List { items, .. } = &args[2] {
+                            items.borrow().clone()
+                        } else {
+                            Vec::new()
+                        }
+                    } else {
+                        Vec::new()
+                    };
 
                     let rows = CONNECTIONS.with(|m| {
                         let mut map = m.borrow_mut();
@@ -108,9 +145,29 @@ impl StdlibRegistry {
                             let col_names: Vec<String> = (0..col_count)
                                 .map(|i| stmt.column_name(i).unwrap_or("?").to_string())
                                 .collect();
+
+                            let params_converted: Vec<rusqlite::types::Value> = params_list
+                                .iter()
+                                .map(|p| match p {
+                                    RuntimeValue::Null => rusqlite::types::Value::Null,
+                                    RuntimeValue::Bool(b) => {
+                                        rusqlite::types::Value::Integer(if *b { 1 } else { 0 })
+                                    }
+                                    RuntimeValue::Int(i) => rusqlite::types::Value::Integer(*i),
+                                    RuntimeValue::Float(f) => rusqlite::types::Value::Real(*f),
+                                    RuntimeValue::Str(s) => rusqlite::types::Value::Text(s.clone()),
+                                    _ => rusqlite::types::Value::Null,
+                                })
+                                .collect();
+
+                            let params_refs: Vec<&dyn rusqlite::types::ToSql> = params_converted
+                                .iter()
+                                .map(|p| p as &dyn rusqlite::types::ToSql)
+                                .collect();
+
                             let mut rows = Vec::new();
                             let row_iter = stmt
-                                .query_map([], |row| {
+                                .query_map(params_refs.as_slice(), |row| {
                                     let mut map = IndexMap::new();
                                     for i in 0..col_count {
                                         let name = col_names[i].clone();

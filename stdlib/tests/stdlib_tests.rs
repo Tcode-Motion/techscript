@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 use std::collections::HashSet;
 use std::rc::Rc;
-use techscript_runtime::{context::Capability, value::RuntimeValue, RuntimeConfig, RuntimeContext};
+use techscript_runtime::{context::Capability, value::RuntimeValue, RuntimeConfig, RuntimeContext, error::RuntimeErrorKind};
 use techscript_stdlib::StdlibRegistry;
 
 #[test]
@@ -893,13 +893,30 @@ fn test_crypto_hash_and_compression() {
     let key = RuntimeValue::Str("my_secret_key_123".to_string());
     let plain = RuntimeValue::Str("hello crypto world".to_string());
 
-    let encrypted = aes_enc
-        .call(&mut ctx_unprivileged, vec![key.clone(), plain])
+    let encrypted1 = aes_enc
+        .call(&mut ctx_unprivileged, vec![key.clone(), plain.clone()])
         .unwrap();
-    let decrypted = aes_dec
-        .call(&mut ctx_unprivileged, vec![key, encrypted])
+
+    let encrypted2 = aes_enc
+        .call(&mut ctx_unprivileged, vec![key.clone(), plain.clone()])
         .unwrap();
-    assert_eq!(decrypted.as_string(), Some("hello crypto world"));
+
+    // Verify deterministic encryption is fixed (random nonce is working)
+    assert_ne!(
+        encrypted1.as_string().unwrap(),
+        encrypted2.as_string().unwrap(),
+        "Encrypting the same plaintext with the same key should produce different ciphertexts"
+    );
+
+    let decrypted1 = aes_dec
+        .call(&mut ctx_unprivileged, vec![key.clone(), encrypted1])
+        .unwrap();
+    assert_eq!(decrypted1.as_string(), Some("hello crypto world"));
+
+    let decrypted2 = aes_dec
+        .call(&mut ctx_unprivileged, vec![key.clone(), encrypted2])
+        .unwrap();
+    assert_eq!(decrypted2.as_string(), Some("hello crypto world"));
 
     let bcrypt_hash = crypto.exports.get("bcrypt_hash").unwrap();
     let bcrypt_verify = crypto.exports.get("bcrypt_verify").unwrap();
@@ -1133,4 +1150,8 @@ fn test_ai_generate_text() {
     assert!(res.is_ok());
     let val = res.unwrap();
     assert!(val.as_string().unwrap().contains("Prompt: What is 2+2?"));
+}
+
+#[test]
+
 }

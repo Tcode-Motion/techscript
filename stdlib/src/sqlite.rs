@@ -108,15 +108,24 @@ impl StdlibRegistry {
                             let col_names: Vec<String> = (0..col_count)
                                 .map(|i| stmt.column_name(i).unwrap_or("?").to_string())
                                 .collect();
+
+                            // Optimization: Pre-allocate a template map to avoid cloning string keys
+                            // and recalculating hashes for every row in the query result.
+                            let mut template_map = IndexMap::with_capacity(col_count);
+                            for name in &col_names {
+                                template_map.insert(name.clone(), RuntimeValue::Null);
+                            }
+
                             let mut rows = Vec::new();
                             let row_iter = stmt
                                 .query_map([], |row| {
-                                    let mut map = IndexMap::new();
+                                    let mut map = template_map.clone();
                                     for i in 0..col_count {
-                                        let name = col_names[i].clone();
                                         let val: String =
                                             row.get::<_, String>(i).unwrap_or_default();
-                                        map.insert(name, RuntimeValue::Str(val));
+                                        if let Some((_, v)) = map.get_index_mut(i) {
+                                            *v = RuntimeValue::Str(val);
+                                        }
                                     }
                                     Ok(map)
                                 })

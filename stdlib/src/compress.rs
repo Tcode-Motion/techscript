@@ -233,25 +233,11 @@ pub fn unzip_archive(archive_path: &str, dest_dir: &str) -> std::io::Result<()> 
     let mut archive = zip::ZipArchive::new(file)?;
     std::fs::create_dir_all(dest_dir)?;
 
-    for i in 0..archive.len() {
-        let mut file = archive.by_index(i)?;
-        let outpath = match file.enclosed_name() {
-            Some(path) => Path::new(dest_dir).join(path.to_owned()),
-            None => continue,
-        };
-
-        if file.name().ends_with('/') {
-            std::fs::create_dir_all(&outpath)?;
-        } else {
-            if let Some(p) = outpath.parent() {
-                if !p.exists() {
-                    std::fs::create_dir_all(p)?;
-                }
-            }
-            let mut outfile = File::create(&outpath)?;
-            std::io::copy(&mut file, &mut outfile)?;
-        }
-    }
+    // The zip crate's `extract` method already has built-in directory traversal
+    // protections which prevent absolute paths and parent directory traversals
+    // from escaping the destination directory. Therefore, we revert the manual
+    // path validation that caused a regression with uncanonicalized relative paths.
+    archive.extract(dest_dir)?;
     Ok(())
 }
 
@@ -291,4 +277,32 @@ pub fn gunzip_archive(archive_path: &str, dst_file: &str) -> std::io::Result<()>
     let mut output = File::create(dst_file)?;
     std::io::copy(&mut decoder, &mut output)?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::path::Path;
+
+    #[test]
+    fn test_unzip_archive_invalid_path() {
+        let result = unzip_archive("non_existent_archive.zip", "dest_dir");
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_unzip_archive_corrupted_zip() {
+        let temp_dir = std::env::temp_dir().join("techscript_unzip_test");
+        std::fs::create_dir_all(&temp_dir).unwrap();
+
+        let corrupted_zip_path = temp_dir.join("corrupted.zip");
+        std::fs::write(&corrupted_zip_path, b"not a valid zip file").unwrap();
+
+        let dest_dir = temp_dir.join("dest");
+
+        let result = unzip_archive(corrupted_zip_path.to_str().unwrap(), dest_dir.to_str().unwrap());
+        assert!(result.is_err());
+
+        std::fs::remove_dir_all(&temp_dir).unwrap();
+    }
 }

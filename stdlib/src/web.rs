@@ -2,6 +2,87 @@ use crate::{StdFunction, StdlibModule, StdlibRegistry};
 use std::collections::HashMap;
 use std::rc::Rc;
 use std::sync::atomic::{AtomicBool, Ordering};
+use std::net::{ToSocketAddrs, IpAddr, SocketAddr};
+use url::Url;
+use ureq::Resolver;
+
+fn is_safe_ip(ip: &IpAddr) -> bool {
+    match ip {
+        IpAddr::V4(ipv4) => {
+            !ipv4.is_private()
+                && !ipv4.is_loopback()
+                && !ipv4.is_link_local()
+                && !ipv4.is_broadcast()
+                && !ipv4.is_documentation()
+                && !ipv4.is_unspecified()
+        }
+        IpAddr::V6(ipv6) => {
+            if let Some(ipv4) = ipv6.to_ipv4() {
+                // Check IPv4-mapped IPv6
+                return is_safe_ip(&IpAddr::V4(ipv4));
+            }
+            !ipv6.is_loopback()
+                && !ipv6.is_unspecified()
+                // IPv6 specific checks
+                && (ipv6.segments()[0] & 0xfe00) != 0xfc00 // Unique Local Address
+                && (ipv6.segments()[0] & 0xffc0) != 0xfe80 // Link Local Address
+        }
+    }
+}
+
+fn is_safe_url(url_str: &str) -> bool {
+    let Ok(parsed_url) = Url::parse(url_str) else {
+        return false; // Invalid URL
+    };
+
+    match parsed_url.scheme() {
+        "http" | "https" => {}
+        _ => return false, // Block file://, ftp://, gopher://, etc.
+    }
+
+    let host = match parsed_url.host_str() {
+        Some(h) => h,
+        None => return false, // No host provided
+    };
+
+    let port = parsed_url.port_or_known_default().unwrap_or(80);
+    let addr_str = format!("{}:{}", host, port);
+
+    // Resolve the domain to IPs
+    let addrs = match addr_str.to_socket_addrs() {
+        Ok(a) => a,
+        Err(_) => return false, // DNS resolution failed
+    };
+
+    for addr in addrs {
+        if !is_safe_ip(&addr.ip()) {
+            return false; // Found an unsafe IP
+        }
+    }
+
+    true
+}
+
+struct SafeResolver;
+
+impl Resolver for SafeResolver {
+    fn resolve(&self, netloc: &str) -> std::io::Result<Vec<SocketAddr>> {
+        let addrs: Vec<SocketAddr> = netloc.to_socket_addrs()?.collect();
+        let mut safe_addrs = Vec::new();
+        for addr in addrs {
+            if is_safe_ip(&addr.ip()) {
+                safe_addrs.push(addr);
+            }
+        }
+        if safe_addrs.is_empty() {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::PermissionDenied,
+                "DNS resolution returned only blocked/internal IP addresses (SSRF prevention).",
+            ));
+        }
+        Ok(safe_addrs)
+    }
+}
 use std::sync::Mutex;
 use std::thread;
 use techscript_runtime::{
@@ -432,7 +513,22 @@ impl StdlibRegistry {
                 arity: 1,
                 callback: |_ctx, args| {
                     let url = args[0].to_string();
-                    let body = ureq::get(&url)
+
+                    if !is_safe_url(&url) {
+                        return Err(RuntimeError::new(
+                            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
+                                format!("Access denied: the URL '{}' points to a blocked or internal destination (SSRF prevention).", url)
+                            ),
+                            None,
+                            None,
+                        ));
+                    }
+
+                    let agent = ureq::builder()
+                        .resolver(SafeResolver)
+                        .redirects(0)
+                        .build();
+                    let body = agent.get(&url)
                         .call()
                         .map_err(|e| {
                             RuntimeError::new(

@@ -124,23 +124,7 @@ impl<'a> CodegenEngine<'a> {
                         let dest_block = self.ctx.get_block(*dest).unwrap();
                         LLVMBuildBr(self.ctx.builder, dest_block);
                     }
-                    TerminatorKind::Throw(val) => {
-                        let val_val = self.codegen_val(val)?;
-                        let boxed_val = self.box_val(val_val)?;
-                        let fn_val = self.get_or_declare_runtime_fn(
-                            "ts_throw",
-                            LLVMVoidTypeInContext(self.ctx.context),
-                            &[LLVMPointerType(LLVMInt8TypeInContext(self.ctx.context), 0)],
-                        );
-                        LLVMBuildCall2(
-                            self.ctx.builder,
-                            LLVMTypeOf(fn_val),
-                            fn_val,
-                            [boxed_val].as_mut_ptr(),
-                            1,
-                            CString::new("").unwrap().as_ptr(),
-                        );
-                        LLVMBuildUnreachable(self.ctx.builder);
+<
                     }
                     TerminatorKind::ConditionalJump {
                         cond,

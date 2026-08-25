@@ -1134,3 +1134,16 @@ fn test_ai_generate_text() {
     let val = res.unwrap();
     assert!(val.as_string().unwrap().contains("Prompt: What is 2+2?"));
 }
+
+#[test]
+fn test_tar_dir_error_path() {
+    let temp_dir = std::env::temp_dir().join("techscript_tar_error_test");
+    std::fs::create_dir_all(&temp_dir).ok();
+
+    let dest_file = temp_dir.join("archive.tar");
+    let result =
+        techscript_stdlib::compress::tar_dir("/non/existent/path/for/sure", &dest_file.to_string_lossy());
+    assert!(result.is_err());
+
+    std::fs::remove_dir_all(&temp_dir).ok();
+}

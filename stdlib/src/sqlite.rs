@@ -166,34 +166,13 @@ impl StdlibRegistry {
                                 .map(|i| stmt.column_name(i).unwrap_or("?").to_string())
                                 .collect();
 
-                            let params_converted: Vec<rusqlite::types::Value> = params_list
-                                .iter()
-                                .map(|p| match p {
-                                    RuntimeValue::Null => rusqlite::types::Value::Null,
-                                    RuntimeValue::Bool(b) => {
-                                        rusqlite::types::Value::Integer(if *b { 1 } else { 0 })
-                                    }
-                                    RuntimeValue::Int(i) => rusqlite::types::Value::Integer(*i),
-                                    RuntimeValue::Float(f) => rusqlite::types::Value::Real(*f),
-                                    RuntimeValue::Str(s) => rusqlite::types::Value::Text(s.clone()),
-                                    _ => rusqlite::types::Value::Null,
-                                })
-                                .collect();
 
-                            let params_refs: Vec<&dyn rusqlite::types::ToSql> = params_converted
-                                .iter()
-                                .map(|p| p as &dyn rusqlite::types::ToSql)
-                                .collect();
-
-                            let mut rows = Vec::new();
-                            let row_iter = stmt
-<<<<<
-                                    let mut map = IndexMap::new();
                                     for i in 0..col_count {
-                                        let name = col_names[i].clone();
                                         let val: String =
                                             row.get::<_, String>(i).unwrap_or_default();
-                                        map.insert(name, RuntimeValue::Str(val));
+                                        if let Some((_, v)) = map.get_index_mut(i) {
+                                            *v = RuntimeValue::Str(val);
+                                        }
                                     }
                                     Ok(map)
                                 })

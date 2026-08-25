@@ -5,8 +5,8 @@
 #![cfg(feature = "llvm")]
 
 use llvm_sys::core::*;
-use llvm_sys::orc2::lljit::*;
 use llvm_sys::orc2::*;
+use llvm_sys::orc2::lljit::*;
 use std::collections::HashMap;
 use std::ffi::CString;
 use std::ptr;
@@ -60,7 +60,7 @@ impl LLVMJitEngine {
 
         // 3. Set host target triple
         let _host_triple = LLVMOrcLLJITGetExecutionSession(self.jit); // session triple fallback
-                                                                      // We can just keep the default LLVM target triple
+                                                                     // We can just keep the default LLVM target triple
 
         // 4. Wrap Module in ThreadSafeModule
         let tsm = LLVMOrcCreateNewThreadSafeModule(ctx.module, self.ts_ctx);

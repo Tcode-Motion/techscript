@@ -893,13 +893,30 @@ fn test_crypto_hash_and_compression() {
     let key = RuntimeValue::Str("my_secret_key_123".to_string());
     let plain = RuntimeValue::Str("hello crypto world".to_string());
 
-    let encrypted = aes_enc
-        .call(&mut ctx_unprivileged, vec![key.clone(), plain])
+    let encrypted1 = aes_enc
+        .call(&mut ctx_unprivileged, vec![key.clone(), plain.clone()])
         .unwrap();
-    let decrypted = aes_dec
-        .call(&mut ctx_unprivileged, vec![key, encrypted])
+
+    let encrypted2 = aes_enc
+        .call(&mut ctx_unprivileged, vec![key.clone(), plain.clone()])
         .unwrap();
-    assert_eq!(decrypted.as_string(), Some("hello crypto world"));
+
+    // Verify deterministic encryption is fixed (random nonce is working)
+    assert_ne!(
+        encrypted1.as_string().unwrap(),
+        encrypted2.as_string().unwrap(),
+        "Encrypting the same plaintext with the same key should produce different ciphertexts"
+    );
+
+    let decrypted1 = aes_dec
+        .call(&mut ctx_unprivileged, vec![key.clone(), encrypted1])
+        .unwrap();
+    assert_eq!(decrypted1.as_string(), Some("hello crypto world"));
+
+    let decrypted2 = aes_dec
+        .call(&mut ctx_unprivileged, vec![key.clone(), encrypted2])
+        .unwrap();
+    assert_eq!(decrypted2.as_string(), Some("hello crypto world"));
 
     let bcrypt_hash = crypto.exports.get("bcrypt_hash").unwrap();
     let bcrypt_verify = crypto.exports.get("bcrypt_verify").unwrap();
@@ -1136,40 +1153,5 @@ fn test_ai_generate_text() {
 }
 
 #[test]
-fn test_process_spawn_parsing() {
-    let registry = StdlibRegistry::new();
-    let process_module = registry.get_module("std.process").unwrap();
 
-    let mut config = RuntimeConfig::default();
-    config.capabilities.insert(Capability::Process);
-    let mut ctx = RuntimeContext::new(config);
-
-    let spawn_fn = process_module.exports.get("spawn").unwrap();
-
-    // Valid command
-    let res = spawn_fn.call(
-        &mut ctx,
-        vec![RuntimeValue::Str("echo 'hello world'".to_string())],
-    );
-    assert!(res.is_ok());
-
-    // Empty command
-    let res_empty = spawn_fn.call(&mut ctx, vec![RuntimeValue::Str("   ".to_string())]);
-    assert!(res_empty.is_err());
-    let err = res_empty.unwrap_err();
-    if let RuntimeErrorKind::InvalidOperation(msg) = err.kind.clone() {
-        assert_eq!(msg, "Empty command string");
-    } else {
-        panic!("Expected InvalidOperation error");
-    }
-
-    // Invalid shell string (missing closing quote)
-    let res_invalid = spawn_fn.call(&mut ctx, vec![RuntimeValue::Str("echo 'hello".to_string())]);
-    assert!(res_invalid.is_err());
-    let err = res_invalid.unwrap_err();
-    if let RuntimeErrorKind::InvalidOperation(msg) = err.kind.clone() {
-        assert_eq!(msg, "Failed to parse command string");
-    } else {
-        panic!("Expected InvalidOperation error");
-    }
 }

@@ -125,8 +125,7 @@ impl<'a> CodegenEngine<'a> {
                         LLVMBuildBr(self.ctx.builder, dest_block);
                     }
                     TerminatorKind::Throw(_) => {
-                        // TODO: Implement exception handling or unwind
-                        LLVMBuildUnreachable(self.ctx.builder);
+                        return Err("Exception handling (throw) is not yet implemented in the LLVM backend".to_string());
                     }
                     TerminatorKind::ConditionalJump {
                         cond,

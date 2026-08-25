@@ -17,277 +17,305 @@ impl AstVisitor for Interpreter {
 
     fn visit_expression(&mut self, expr: &Expression) -> EvalResult {
         match expr {
-            Expression::Literal(lit) => match &lit.value {
-                LiteralVal::Int(i) => Ok(RuntimeValue::Int(*i)),
-                LiteralVal::Float(f) => Ok(RuntimeValue::Float(*f)),
-                LiteralVal::Str(s) => Ok(RuntimeValue::Str(s.clone())),
-                LiteralVal::Bool(b) => Ok(RuntimeValue::Bool(*b)),
-                LiteralVal::None => Ok(RuntimeValue::Null),
-            },
-            Expression::Identifier(ident) => {
-                let name = &ident.name;
-                if name == "self" {
-                    return self.env.borrow().lookup("self");
-                }
-                self.env.borrow().lookup(name)
-            }
-            Expression::Unary(un) => {
-                let right_val = self.visit_expression(&un.right)?;
-                eval_unary(&un.op, right_val)
-            }
-            Expression::Binary(bin) => {
-                // Handle short-circuiting logical operators
-                if bin.op == "and" || bin.op == "&&" {
-                    let left_val = self.visit_expression(&bin.left)?;
-                    if !left_val.is_truthy() {
-                        return Ok(left_val);
-                    }
-                    return self.visit_expression(&bin.right);
-                }
-                if bin.op == "or" || bin.op == "||" {
-                    let left_val = self.visit_expression(&bin.left)?;
-                    if left_val.is_truthy() {
-                        return Ok(left_val);
-                    }
-                    return self.visit_expression(&bin.right);
-                }
-                if bin.op == "??" {
-                    let left_val = self.visit_expression(&bin.left)?;
-                    if left_val != RuntimeValue::Null {
-                        return Ok(left_val);
-                    }
-                    return self.visit_expression(&bin.right);
-                }
-                if bin.op == "?." {
-                    let left_val = self.visit_expression(&bin.left)?;
-                    if left_val == RuntimeValue::Null {
-                        return Ok(RuntimeValue::Null);
-                    }
-                    // Evaluate RHS with left_val context
-                    return self.eval_optional_chain(left_val, &bin.right);
-                }
-
-                let left_val = self.visit_expression(&bin.left)?;
-                let right_val = self.visit_expression(&bin.right)?;
-                eval_binary(&bin.op, left_val, right_val)
-            }
-            Expression::Assignment(assign) => {
-                let value_val = self.visit_expression(&assign.value)?;
-                self.eval_assignment(&assign.target, &assign.op, value_val, assign.span)
-            }
+            Expression::Literal(lit) => self.eval_literal(lit),
+            Expression::Identifier(ident) => self.eval_identifier(ident),
+            Expression::Unary(un) => self.eval_unary_expr(un),
+            Expression::Binary(bin) => self.eval_binary_expr(bin),
+            Expression::Assignment(assign) => self.eval_assignment_expr(assign),
             Expression::Group(inner) => self.visit_expression(inner),
-            Expression::List(list) => {
-                let mut items = Vec::new();
-                for expr in &list.items {
-                    items.push(self.visit_expression(expr)?);
-                }
-                Ok(RuntimeValue::List {
-                    items: Rc::new(RefCell::new(items)),
-                    is_const: false,
-                })
-            }
-            Expression::Map(map) => {
-                let mut entries = IndexMap::new();
-                for (k_expr, v_expr) in &map.entries {
-                    let k_val = self.visit_expression(k_expr)?;
-                    let k_str = k_val.try_into_string()?;
-                    let v_val = self.visit_expression(v_expr)?;
-                    entries.insert(k_str, v_val);
-                }
-                Ok(RuntimeValue::Map {
-                    entries: Rc::new(RefCell::new(entries)),
-                    is_const: false,
-                })
-            }
-
-            Expression::FString(fstr) => {
-                let mut result = String::new();
-                for part in &fstr.parts {
-                    match part {
-                        FStringPart::Literal(s) => result.push_str(s),
-                        FStringPart::Expr(expr) => {
-                            let val = self.visit_expression(expr)?;
-                            result.push_str(&val.to_string());
-                        }
-                    }
-                }
-                Ok(RuntimeValue::Str(result))
-            }
-            Expression::Call(call) => {
-                if let Expression::Identifier(ref ident) = *call.callee {
-                    if ident.name == "env" {
-                        let arg = self.visit_expression(&call.args[0])?;
-                        let std_val = self.env.borrow().lookup("std")?;
-                        let env_val = self.eval_member_access(std_val, "env", call.span)?;
-                        let get_val = self.eval_member_access(env_val, "get", call.span)?;
-                        if let RuntimeValue::Function(func) = get_val {
-                            return func.call(&mut self.ctx, vec![arg]);
-                        }
-                    } else if ident.name == "file" {
-                        let arg = self.visit_expression(&call.args[0])?;
-                        let std_val = self.env.borrow().lookup("std")?;
-                        let file_val = self.eval_member_access(std_val, "file", call.span)?;
-                        let read_val = self.eval_member_access(file_val, "read", call.span)?;
-                        if let RuntimeValue::Function(func) = read_val {
-                            return func.call(&mut self.ctx, vec![arg]);
-                        }
-                    } else if ident.name == "json" {
-                        let arg = self.visit_expression(&call.args[0])?;
-                        let std_val = self.env.borrow().lookup("std")?;
-                        let file_val =
-                            self.eval_member_access(std_val.clone(), "file", call.span)?;
-                        let read_val = self.eval_member_access(file_val, "read", call.span)?;
-                        let content = if let RuntimeValue::Function(func) = read_val {
-                            func.call(&mut self.ctx, vec![arg])?
-                        } else {
-                            return Err(RuntimeError::new(
-                                RuntimeErrorKind::InvalidOperation(
-                                    "file.read not found".to_string(),
-                                ),
-                                Some(call.span),
-                                None,
-                            ));
-                        };
-                        let json_val = self.eval_member_access(std_val, "json", call.span)?;
-                        let parse_val = self.eval_member_access(json_val, "parse", call.span)?;
-                        if let RuntimeValue::Function(func) = parse_val {
-                            return func.call(&mut self.ctx, vec![content]);
-                        }
-                    }
-                }
-                let callee_val = self.visit_expression(&call.callee)?;
-                let mut args = Vec::new();
-                for arg_expr in &call.args {
-                    args.push(self.visit_expression(arg_expr)?);
-                }
-
-                if let RuntimeValue::Function(func) = callee_val {
-                    if !func.accepts_arity(args.len())
-                        && func.name() != "assert"
-                        && func.name() != "exit"
-                        && func.name() != "print"
-                        && func.name() != "println"
-                        && func.name() != "info"
-                        && func.name() != "warn"
-                        && func.name() != "error"
-                        && func.name() != "debug"
-                    {
-                        return Err(RuntimeError::new(
-                            RuntimeErrorKind::ArityMismatch {
-                                expected: func.arity(),
-                                found: args.len(),
-                            },
-                            Some(call.span),
-                            None,
-                        ));
-                    }
-                    // Prevent stack overflows
-                    if self.call_stack.len() >= self.ctx.config.max_recursion_depth {
-                        return Err(RuntimeError::new(
-                            RuntimeErrorKind::StackOverflow,
-                            Some(call.span),
-                            None,
-                        ));
-                    }
-                    self.call_stack.push(crate::control_flow::CallFrame::new(
-                        func.name().to_string(),
-                        Some(call.span),
-                    ));
-                    let res = func.call(&mut self.ctx, args);
-                    self.call_stack.pop();
-                    res
-                } else {
-                    Err(RuntimeError::new(
-                        RuntimeErrorKind::TypeMismatch {
-                            expected: "function".to_string(),
-                            found: callee_val.runtime_type().to_string(),
-                        },
-                        Some(call.span),
-                        None,
-                    ))
-                }
-            }
-            Expression::Member(mem) => {
-                let obj_val = self.visit_expression(&mem.object)?;
-                self.eval_member_access(obj_val, &mem.member.name, mem.span)
-            }
-            Expression::Index(idx) => {
-                let obj_val = self.visit_expression(&idx.object)?;
-                let idx_val = self.visit_expression(&idx.index)?;
-                self.eval_index_access(&obj_val, &idx_val, idx.span)
-            }
-            Expression::New(new_expr) => {
-                // Instantiate model constructor
-                let model_name = &new_expr.class_name.name;
-                let ctor_val = self.env.borrow().lookup(model_name)?;
-                let mut args = Vec::new();
-                for arg in &new_expr.args {
-                    args.push(self.visit_expression(arg)?);
-                }
-
-                if let RuntimeValue::Function(func) = ctor_val {
-                    func.call(&mut self.ctx, args)
-                } else {
-                    Err(RuntimeError::new(
-                        RuntimeErrorKind::TypeMismatch {
-                            expected: "model constructor".to_string(),
-                            found: ctor_val.runtime_type().to_string(),
-                        },
-                        Some(new_expr.span),
-                        None,
-                    ))
-                }
-            }
-            Expression::Range(range) => {
-                let start_val = self.visit_expression(&range.start)?;
-                let end_val = self.visit_expression(&range.end)?;
-                let start = start_val.try_into_int()?;
-                let end = end_val.try_into_int()?;
-                // v1.0.8 defines `..` as inclusive (1..5 → 1,2,3,4,5).
-                // `..=` is accepted as an explicit alias with the same semantics.
-                // Both tokens produce an inclusive range — always add 1 for the
-                // exclusive Rust range iterator.
-                let final_end = end.saturating_add(1);
-                let list = (start..final_end)
-                    .map(RuntimeValue::Int)
-                    .collect::<Vec<_>>();
-                Ok(RuntimeValue::List {
-                    items: Rc::new(RefCell::new(list)),
-                    is_const: false,
-                })
-            }
-            Expression::Ask(ask) => {
-                let prompt_val = self.visit_expression(&ask.prompt)?;
-                let ask_fn = self.ctx.registry.lookup("ask").ok_or_else(|| {
-                    crate::RuntimeError::new(
-                        crate::RuntimeErrorKind::UndefinedVariable("ask".to_string()),
-                        None,
-                        None,
-                    )
-                })?;
-                ask_fn.call(&mut self.ctx, vec![prompt_val])
-            }
-            Expression::Lambda(lambda) => {
-                // Create a UserFunction representing the lambda and return it
-                let mut params = Vec::new();
-                for param in &lambda.params {
-                    params.push(param.name.name.clone());
-                }
-                let user_func = techscript_runtime::UserFunction {
-                    name: "lambda".to_string(),
-                    params,
-                    body: techscript_runtime::FunctionBody::Ast(lambda.body.clone()),
-                    closure: Rc::clone(&self.env),
-                };
-                Ok(RuntimeValue::Function(Rc::new(
-                    self.bridge_user_function(user_func),
-                )))
-            }
+            Expression::List(list) => self.eval_list(list),
+            Expression::Map(map) => self.eval_map(map),
+            Expression::FString(fstr) => self.eval_fstring(fstr),
+            Expression::Call(call) => self.eval_call(call),
+            Expression::Member(mem) => self.eval_member_expr(mem),
+            Expression::Index(idx) => self.eval_index_expr(idx),
+            Expression::New(new_expr) => self.eval_new(new_expr),
+            Expression::Range(range) => self.eval_range(range),
+            Expression::Ask(ask) => self.eval_ask(ask),
+            Expression::Lambda(lambda) => self.eval_lambda(lambda),
         }
     }
 }
 
 impl Interpreter {
+    fn eval_literal(&self, lit: &techscript_ast::LiteralExpr) -> EvalResult {
+        match &lit.value {
+            LiteralVal::Int(i) => Ok(RuntimeValue::Int(*i)),
+            LiteralVal::Float(f) => Ok(RuntimeValue::Float(*f)),
+            LiteralVal::Str(s) => Ok(RuntimeValue::Str(s.clone())),
+            LiteralVal::Bool(b) => Ok(RuntimeValue::Bool(*b)),
+            LiteralVal::None => Ok(RuntimeValue::Null),
+        }
+    }
+
+    fn eval_identifier(&self, ident: &techscript_ast::Ident) -> EvalResult {
+        let name = &ident.name;
+        if name == "self" {
+            return self.env.borrow().lookup("self");
+        }
+        self.env.borrow().lookup(name)
+    }
+
+    fn eval_unary_expr(&mut self, un: &techscript_ast::UnaryExpr) -> EvalResult {
+        let right_val = self.visit_expression(&un.right)?;
+        eval_unary(&un.op, right_val)
+    }
+
+    fn eval_binary_expr(&mut self, bin: &techscript_ast::BinaryExpr) -> EvalResult {
+        // Handle short-circuiting logical operators
+        if bin.op == "and" || bin.op == "&&" {
+            let left_val = self.visit_expression(&bin.left)?;
+            if !left_val.is_truthy() {
+                return Ok(left_val);
+            }
+            return self.visit_expression(&bin.right);
+        }
+        if bin.op == "or" || bin.op == "||" {
+            let left_val = self.visit_expression(&bin.left)?;
+            if left_val.is_truthy() {
+                return Ok(left_val);
+            }
+            return self.visit_expression(&bin.right);
+        }
+        if bin.op == "??" {
+            let left_val = self.visit_expression(&bin.left)?;
+            if left_val != RuntimeValue::Null {
+                return Ok(left_val);
+            }
+            return self.visit_expression(&bin.right);
+        }
+        if bin.op == "?." {
+            let left_val = self.visit_expression(&bin.left)?;
+            if left_val == RuntimeValue::Null {
+                return Ok(RuntimeValue::Null);
+            }
+            // Evaluate RHS with left_val context
+            return self.eval_optional_chain(left_val, &bin.right);
+        }
+
+        let left_val = self.visit_expression(&bin.left)?;
+        let right_val = self.visit_expression(&bin.right)?;
+        eval_binary(&bin.op, left_val, right_val)
+    }
+
+    fn eval_assignment_expr(&mut self, assign: &techscript_ast::AssignmentExpr) -> EvalResult {
+        let value_val = self.visit_expression(&assign.value)?;
+        self.eval_assignment(&assign.target, &assign.op, value_val, assign.span)
+    }
+
+    fn eval_list(&mut self, list: &techscript_ast::ListExpr) -> EvalResult {
+        let mut items = Vec::new();
+        for expr in &list.items {
+            items.push(self.visit_expression(expr)?);
+        }
+        Ok(RuntimeValue::List {
+            items: Rc::new(RefCell::new(items)),
+            is_const: false,
+        })
+    }
+
+    fn eval_map(&mut self, map: &techscript_ast::MapExpr) -> EvalResult {
+        let mut entries = IndexMap::new();
+        for (k_expr, v_expr) in &map.entries {
+            let k_val = self.visit_expression(k_expr)?;
+            let k_str = k_val.try_into_string()?;
+            let v_val = self.visit_expression(v_expr)?;
+            entries.insert(k_str, v_val);
+        }
+        Ok(RuntimeValue::Map {
+            entries: Rc::new(RefCell::new(entries)),
+            is_const: false,
+        })
+    }
+
+    fn eval_fstring(&mut self, fstr: &techscript_ast::FStringExpr) -> EvalResult {
+        let mut result = String::new();
+        for part in &fstr.parts {
+            match part {
+                FStringPart::Literal(s) => result.push_str(s),
+                FStringPart::Expr(expr) => {
+                    let val = self.visit_expression(expr)?;
+                    result.push_str(&val.to_string());
+                }
+            }
+        }
+        Ok(RuntimeValue::Str(result))
+    }
+
+    fn eval_call(&mut self, call: &techscript_ast::CallExpr) -> EvalResult {
+        if let Expression::Identifier(ref ident) = *call.callee {
+            if ident.name == "env" {
+                let arg = self.visit_expression(&call.args[0])?;
+                let std_val = self.env.borrow().lookup("std")?;
+                let env_val = self.eval_member_access(std_val, "env", call.span)?;
+                let get_val = self.eval_member_access(env_val, "get", call.span)?;
+                if let RuntimeValue::Function(func) = get_val {
+                    return func.call(&mut self.ctx, vec![arg]);
+                }
+            } else if ident.name == "file" {
+                let arg = self.visit_expression(&call.args[0])?;
+                let std_val = self.env.borrow().lookup("std")?;
+                let file_val = self.eval_member_access(std_val, "file", call.span)?;
+                let read_val = self.eval_member_access(file_val, "read", call.span)?;
+                if let RuntimeValue::Function(func) = read_val {
+                    return func.call(&mut self.ctx, vec![arg]);
+                }
+            } else if ident.name == "json" {
+                let arg = self.visit_expression(&call.args[0])?;
+                let std_val = self.env.borrow().lookup("std")?;
+                let file_val = self.eval_member_access(std_val.clone(), "file", call.span)?;
+                let read_val = self.eval_member_access(file_val, "read", call.span)?;
+                let content = if let RuntimeValue::Function(func) = read_val {
+                    func.call(&mut self.ctx, vec![arg])?
+                } else {
+                    return Err(RuntimeError::new(
+                        RuntimeErrorKind::InvalidOperation("file.read not found".to_string()),
+                        Some(call.span),
+                        None,
+                    ));
+                };
+                let json_val = self.eval_member_access(std_val, "json", call.span)?;
+                let parse_val = self.eval_member_access(json_val, "parse", call.span)?;
+                if let RuntimeValue::Function(func) = parse_val {
+                    return func.call(&mut self.ctx, vec![content]);
+                }
+            }
+        }
+        let callee_val = self.visit_expression(&call.callee)?;
+        let mut args = Vec::new();
+        for arg_expr in &call.args {
+            args.push(self.visit_expression(arg_expr)?);
+        }
+
+        if let RuntimeValue::Function(func) = callee_val {
+            if !func.accepts_arity(args.len())
+                && func.name() != "assert"
+                && func.name() != "exit"
+                && func.name() != "print"
+                && func.name() != "println"
+                && func.name() != "info"
+                && func.name() != "warn"
+                && func.name() != "error"
+                && func.name() != "debug"
+            {
+                return Err(RuntimeError::new(
+                    RuntimeErrorKind::ArityMismatch {
+                        expected: func.arity(),
+                        found: args.len(),
+                    },
+                    Some(call.span),
+                    None,
+                ));
+            }
+            // Prevent stack overflows
+            if self.call_stack.len() >= self.ctx.config.max_recursion_depth {
+                return Err(RuntimeError::new(
+                    RuntimeErrorKind::StackOverflow,
+                    Some(call.span),
+                    None,
+                ));
+            }
+            self.call_stack.push(crate::control_flow::CallFrame::new(
+                func.name().to_string(),
+                Some(call.span),
+            ));
+            let res = func.call(&mut self.ctx, args);
+            self.call_stack.pop();
+            res
+        } else {
+            Err(RuntimeError::new(
+                RuntimeErrorKind::TypeMismatch {
+                    expected: "function".to_string(),
+                    found: callee_val.runtime_type().to_string(),
+                },
+                Some(call.span),
+                None,
+            ))
+        }
+    }
+
+    fn eval_member_expr(&mut self, mem: &techscript_ast::MemberExpr) -> EvalResult {
+        let obj_val = self.visit_expression(&mem.object)?;
+        self.eval_member_access(obj_val, &mem.member.name, mem.span)
+    }
+
+    fn eval_index_expr(&mut self, idx: &techscript_ast::IndexExpr) -> EvalResult {
+        let obj_val = self.visit_expression(&idx.object)?;
+        let idx_val = self.visit_expression(&idx.index)?;
+        self.eval_index_access(&obj_val, &idx_val, idx.span)
+    }
+
+    fn eval_new(&mut self, new_expr: &techscript_ast::NewExpr) -> EvalResult {
+        // Instantiate model constructor
+        let model_name = &new_expr.class_name.name;
+        let ctor_val = self.env.borrow().lookup(model_name)?;
+        let mut args = Vec::new();
+        for arg in &new_expr.args {
+            args.push(self.visit_expression(arg)?);
+        }
+
+        if let RuntimeValue::Function(func) = ctor_val {
+            func.call(&mut self.ctx, args)
+        } else {
+            Err(RuntimeError::new(
+                RuntimeErrorKind::TypeMismatch {
+                    expected: "model constructor".to_string(),
+                    found: ctor_val.runtime_type().to_string(),
+                },
+                Some(new_expr.span),
+                None,
+            ))
+        }
+    }
+
+    fn eval_range(&mut self, range: &techscript_ast::RangeExpr) -> EvalResult {
+        let start_val = self.visit_expression(&range.start)?;
+        let end_val = self.visit_expression(&range.end)?;
+        let start = start_val.try_into_int()?;
+        let end = end_val.try_into_int()?;
+        // v1.0.8 defines `..` as inclusive (1..5 → 1,2,3,4,5).
+        // `..=` is accepted as an explicit alias with the same semantics.
+        // Both tokens produce an inclusive range — always add 1 for the
+        // exclusive Rust range iterator.
+        let final_end = end.saturating_add(1);
+        let list = (start..final_end)
+            .map(RuntimeValue::Int)
+            .collect::<Vec<_>>();
+        Ok(RuntimeValue::List {
+            items: Rc::new(RefCell::new(list)),
+            is_const: false,
+        })
+    }
+
+    fn eval_ask(&mut self, ask: &techscript_ast::AskExpr) -> EvalResult {
+        let prompt_val = self.visit_expression(&ask.prompt)?;
+        let ask_fn = self.ctx.registry.lookup("ask").ok_or_else(|| {
+            crate::RuntimeError::new(
+                crate::RuntimeErrorKind::UndefinedVariable("ask".to_string()),
+                None,
+                None,
+            )
+        })?;
+        ask_fn.call(&mut self.ctx, vec![prompt_val])
+    }
+
+    fn eval_lambda(&mut self, lambda: &techscript_ast::LambdaExpr) -> EvalResult {
+        // Create a UserFunction representing the lambda and return it
+        let mut params = Vec::new();
+        for param in &lambda.params {
+            params.push(param.name.name.clone());
+        }
+        let user_func = techscript_runtime::UserFunction {
+            name: "lambda".to_string(),
+            params,
+            body: techscript_runtime::FunctionBody::Ast(lambda.body.clone()),
+            closure: Rc::clone(&self.env),
+        };
+        Ok(RuntimeValue::Function(Rc::new(
+            self.bridge_user_function(user_func),
+        )))
+    }
+
     pub(crate) fn eval_member_access(
         &mut self,
         obj_val: RuntimeValue,

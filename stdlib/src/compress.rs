@@ -292,3 +292,26 @@ pub fn gunzip_archive(archive_path: &str, dst_file: &str) -> std::io::Result<()>
     std::io::copy(&mut decoder, &mut output)?;
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_zip_dir_error_path() {
+        let temp_dir = std::env::temp_dir().join("techscript_zip_dir_error_test");
+        std::fs::create_dir_all(&temp_dir).ok();
+
+        let dst_file = temp_dir.join("archive.zip");
+        let non_existent_dir = temp_dir.join("does_not_exist");
+
+        let result = zip_dir(
+            &non_existent_dir.to_string_lossy(),
+            &dst_file.to_string_lossy(),
+        );
+
+        assert!(result.is_err(), "Expected error when zipping a non-existent directory");
+
+        std::fs::remove_dir_all(&temp_dir).ok();
+    }
+}

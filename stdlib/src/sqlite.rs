@@ -93,7 +93,14 @@ impl StdlibRegistry {
                     CONNECTIONS.with(|m| {
                         let mut map = m.borrow_mut();
                         if let Some(conn) = map.get_mut(&id) {
-
+                            conn.execute(&sql, rusqlite::params_from_iter(params))
+                                .map_err(|e| {
+                                    RuntimeError::new(
+                                        RuntimeErrorKind::InvalidOperation(e.to_string()),
+                                        None,
+                                        None,
+                                    )
+                                })?;
                             Ok(())
                         } else {
                             Err(RuntimeError::new(
@@ -166,7 +173,13 @@ impl StdlibRegistry {
                                 .map(|i| stmt.column_name(i).unwrap_or("?").to_string())
                                 .collect();
 
-
+                            let mut rows = Vec::new();
+                            let row_iter = stmt
+                                .query_map(rusqlite::params_from_iter(params), |row| {
+                                    let mut map = IndexMap::new();
+                                    for name in &col_names {
+                                        map.insert(name.clone(), RuntimeValue::Null);
+                                    }
                                     for i in 0..col_count {
                                         let val: String =
                                             row.get::<_, String>(i).unwrap_or_default();

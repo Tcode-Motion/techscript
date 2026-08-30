@@ -1037,8 +1037,8 @@ extern "C" {
 }
 
 thread_local! {
-    static TRY_STACK: RefCell<Vec<*mut JmpBuf>> = RefCell::new(Vec::new());
-    static PENDING_EXCEPTION: RefCell<*mut TsValue> = RefCell::new(std::ptr::null_mut());
+    static TRY_STACK: RefCell<Vec<*mut JmpBuf>> = const { RefCell::new(Vec::new()) };
+    static PENDING_EXCEPTION: RefCell<*mut TsValue> = const { RefCell::new(std::ptr::null_mut()) };
 }
 
 #[no_mangle]

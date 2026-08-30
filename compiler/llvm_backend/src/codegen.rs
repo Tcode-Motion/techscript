@@ -33,11 +33,14 @@ impl<'a> CodegenEngine<'a> {
         }
     }
 
+    /// # Safety
+    ///
+    /// Caller must ensure LLVM context is valid.
     pub unsafe fn compile_module(&mut self, ir_module: &Module) -> Result<(), String> {
         self.global_names.clear();
 
         // 1. Declare globals
-        for &(ref global_id, ref name, ref ty) in &ir_module.globals {
+        for (global_id, name, ty) in &ir_module.globals {
             let llvm_ty = to_llvm_type(self.ctx.context, ty);
             let global_var = LLVMAddGlobal(
                 self.ctx.module,
@@ -124,8 +127,6 @@ impl<'a> CodegenEngine<'a> {
                         let dest_block = self.ctx.get_block(*dest).unwrap();
                         LLVMBuildBr(self.ctx.builder, dest_block);
                     }
-<
-                    }
                     TerminatorKind::ConditionalJump {
                         cond,
                         then_block,
@@ -197,6 +198,25 @@ impl<'a> CodegenEngine<'a> {
                         }
                     }
                     TerminatorKind::Unreachable => {
+                        LLVMBuildUnreachable(self.ctx.builder);
+                    }
+                    TerminatorKind::Throw(val) => {
+                        let thrown_val = self.codegen_val(val)?;
+                        let boxed_val = self.box_val(thrown_val)?;
+                        let i8_ptr_ty = LLVMPointerType(LLVMInt8TypeInContext(self.ctx.context), 0);
+                        let fn_throw = self.get_or_declare_runtime_fn(
+                            "ts_throw",
+                            LLVMVoidTypeInContext(self.ctx.context),
+                            &[i8_ptr_ty],
+                        );
+                        LLVMBuildCall2(
+                            self.ctx.builder,
+                            LLVMTypeOf(fn_throw),
+                            fn_throw,
+                            [boxed_val].as_mut_ptr(),
+                            1,
+                            c"".as_ptr(),
+                        );
                         LLVMBuildUnreachable(self.ctx.builder);
                     }
                 }
@@ -1056,7 +1076,10 @@ impl<'a> CodegenEngine<'a> {
                     CString::new("cast").unwrap().as_ptr(),
                 )
             }
-            Op::Try { catch_block, catch_var } => {
+            Op::Try {
+                catch_block,
+                catch_var,
+            } => {
                 let i8_ptr_ty = LLVMPointerType(LLVMInt8TypeInContext(context), 0);
                 let fn_push = self.get_or_declare_runtime_fn("ts_try_push", i8_ptr_ty, &[]);
                 let buf_ptr = LLVMBuildCall2(
@@ -1120,7 +1143,11 @@ impl<'a> CodegenEngine<'a> {
                 LLVMPositionBuilderAtEnd(self.ctx.builder, dispatch_block);
 
                 // Clean up the jmp_buf since we arrived here via longjmp and ts_try_pop wasn't called
-                let fn_free_buf = self.get_or_declare_runtime_fn("ts_try_free", LLVMVoidTypeInContext(context), &[i8_ptr_ty]);
+                let fn_free_buf = self.get_or_declare_runtime_fn(
+                    "ts_try_free",
+                    LLVMVoidTypeInContext(context),
+                    &[i8_ptr_ty],
+                );
                 LLVMBuildCall2(
                     self.ctx.builder,
                     LLVMTypeOf(fn_free_buf),
@@ -1151,7 +1178,11 @@ impl<'a> CodegenEngine<'a> {
                 return Ok(());
             }
             Op::EndTry => {
-                let fn_pop = self.get_or_declare_runtime_fn("ts_try_pop", LLVMVoidTypeInContext(context), &[]);
+                let fn_pop = self.get_or_declare_runtime_fn(
+                    "ts_try_pop",
+                    LLVMVoidTypeInContext(context),
+                    &[],
+                );
                 LLVMBuildCall2(
                     self.ctx.builder,
                     LLVMTypeOf(fn_pop),

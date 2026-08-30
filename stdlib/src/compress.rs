@@ -208,8 +208,8 @@ impl StdlibRegistry {
 pub fn zip_dir(src_dir: &str, dst_file: &str) -> std::io::Result<()> {
     let file = File::create(dst_file)?;
     let mut zip = zip::ZipWriter::new(file);
-    let options = zip::write::SimpleFileOptions::default()
-        .compression_method(zip::CompressionMethod::Deflated);
+    let options =
+        zip::write::FileOptions::default().compression_method(zip::CompressionMethod::Deflated);
 
     let walkdir = std::fs::read_dir(src_dir)?;
     for entry in walkdir {
@@ -300,7 +300,10 @@ mod tests {
 
         let dest_dir = temp_dir.join("dest");
 
-        let result = unzip_archive(corrupted_zip_path.to_str().unwrap(), dest_dir.to_str().unwrap());
+        let result = unzip_archive(
+            corrupted_zip_path.to_str().unwrap(),
+            dest_dir.to_str().unwrap(),
+        );
         assert!(result.is_err());
 
         std::fs::remove_dir_all(&temp_dir).unwrap();

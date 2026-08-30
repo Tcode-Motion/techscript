@@ -104,7 +104,7 @@ impl LLVMBackend {
             let mut engine = CodegenEngine::new(&mut ctx);
             engine
                 .compile_module(ir_module)
-                .map_err(|e| LLVMCodegenError::CompilationError(e))?;
+                .map_err(LLVMCodegenError::CompilationError)?;
 
             let out_str = CString::new(out_path.to_string_lossy().to_string()).unwrap();
             let mut err_msg = std::ptr::null_mut();
@@ -147,7 +147,7 @@ impl LLVMBackend {
 
         engine
             .compile_module(ir_module)
-            .map_err(|e| LLVMCodegenError::CompilationError(e))?;
+            .map_err(LLVMCodegenError::CompilationError)?;
 
         // 3. Resolve Target Triple & Host CPU Features
         let triple_cstr = CString::new(options.target_triple.as_str()).unwrap();

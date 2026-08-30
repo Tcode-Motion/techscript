@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 use std::collections::HashSet;
 use std::rc::Rc;
-use techscript_runtime::{context::Capability, value::RuntimeValue, RuntimeConfig, RuntimeContext, error::RuntimeErrorKind};
+use techscript_runtime::{context::Capability, value::RuntimeValue, RuntimeConfig, RuntimeContext};
 use techscript_stdlib::StdlibRegistry;
 
 #[test]
@@ -1150,8 +1150,4 @@ fn test_ai_generate_text() {
     assert!(res.is_ok());
     let val = res.unwrap();
     assert!(val.as_string().unwrap().contains("Prompt: What is 2+2?"));
-}
-
-#[test]
-
 }

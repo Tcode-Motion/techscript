@@ -200,15 +200,20 @@ impl<'a> CodegenEngine<'a> {
                     TerminatorKind::Unreachable => {
                         LLVMBuildUnreachable(self.ctx.builder);
                     }
-                    TerminatorKind::Throw(_) => {
+                    TerminatorKind::Throw(val) => {
+                        let thrown_val = self.codegen_val(val)?;
+                        let boxed_val = self.box_val(thrown_val)?;
                         let i8_ptr_ty = LLVMPointerType(LLVMInt8TypeInContext(self.ctx.context), 0);
-                        let fn_throw = self.get_or_declare_runtime_fn("ts_throw", LLVMVoidTypeInContext(self.ctx.context), &[i8_ptr_ty]);
-                        let null_ptr = LLVMConstNull(i8_ptr_ty);
+                        let fn_throw = self.get_or_declare_runtime_fn(
+                            "ts_throw",
+                            LLVMVoidTypeInContext(self.ctx.context),
+                            &[i8_ptr_ty],
+                        );
                         LLVMBuildCall2(
                             self.ctx.builder,
                             LLVMTypeOf(fn_throw),
                             fn_throw,
-                            [null_ptr].as_mut_ptr(),
+                            [boxed_val].as_mut_ptr(),
                             1,
                             c"".as_ptr(),
                         );

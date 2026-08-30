@@ -1,10 +1,7 @@
 use std::cell::RefCell;
 use std::collections::HashSet;
 use std::rc::Rc;
-use techscript_runtime::{
-    context::Capability, value::RuntimeValue, RuntimeConfig,
-    RuntimeContext,
-};
+use techscript_runtime::{context::Capability, value::RuntimeValue, RuntimeConfig, RuntimeContext};
 use techscript_stdlib::StdlibRegistry;
 
 #[test]

@@ -4,7 +4,6 @@
 
 #![cfg(feature = "llvm")]
 
-use llvm_sys::core::*;
 use llvm_sys::orc2::lljit::*;
 use llvm_sys::orc2::*;
 use std::collections::HashMap;
@@ -23,6 +22,9 @@ pub struct LLVMJitEngine {
 
 impl LLVMJitEngine {
     /// Creates a new LLVMJitEngine instance.
+    /// # Safety
+    ///
+    /// Caller must ensure LLVM context is valid.
     pub unsafe fn new() -> Result<Self, String> {
         let mut jit = ptr::null_mut();
         let builder = LLVMOrcCreateLLJITBuilder();
@@ -41,10 +43,13 @@ impl LLVMJitEngine {
     }
 
     /// Compiles a TechScript IR Module to JIT memory.
+    /// # Safety
+    ///
+    /// Caller must ensure LLVM context is valid.
     pub unsafe fn compile(
         &mut self,
         ir_module: &techscript_ir::Module,
-        options: &LLVMBackendOptions,
+        _options: &LLVMBackendOptions,
     ) -> Result<(), String> {
         // 1. Build LLVM IR Module
         let mut ctx = CodegenContext::new(&ir_module.name);
@@ -79,6 +84,9 @@ impl LLVMJitEngine {
     }
 
     /// Looks up a function symbol by name.
+    /// # Safety
+    ///
+    /// Caller must ensure LLVM context is valid.
     pub unsafe fn lookup(&mut self, name: &str) -> Result<u64, String> {
         if let Some(&addr) = self.cache.get(name) {
             return Ok(addr);
@@ -96,6 +104,9 @@ impl LLVMJitEngine {
     }
 
     /// Executes the JIT-compiled main function and returns its result (if integer).
+    /// # Safety
+    ///
+    /// Caller must ensure LLVM context is valid.
     pub unsafe fn execute(&mut self, func_name: &str) -> Result<i64, String> {
         let addr = self.lookup(func_name)?;
         let func: extern "C" fn() -> i64 = std::mem::transmute(addr);
@@ -103,6 +114,9 @@ impl LLVMJitEngine {
     }
 
     /// Clears the function cache and reloads the engine (for hot reload support).
+    /// # Safety
+    ///
+    /// Caller must ensure LLVM context is valid.
     pub unsafe fn hot_reload(&mut self) {
         self.cache.clear();
     }

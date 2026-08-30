@@ -1,10 +1,10 @@
 use crate::{StdFunction, StdlibModule, StdlibRegistry};
 use std::collections::HashMap;
+use std::net::{IpAddr, SocketAddr, ToSocketAddrs};
 use std::rc::Rc;
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::net::{ToSocketAddrs, IpAddr, SocketAddr};
-use url::Url;
 use ureq::Resolver;
+use url::Url;
 
 fn is_safe_ip(ip: &IpAddr) -> bool {
     match ip {

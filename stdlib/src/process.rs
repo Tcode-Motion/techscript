@@ -117,14 +117,16 @@ impl StdlibRegistry {
 
                     let parsed = shlex::split(&cmd).ok_or_else(|| {
                         RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation("Failed to parse command string".to_string()),
+                            RuntimeErrorKind::InvalidOperation(
+                                "Failed to parse command string".to_string(),
+                            ),
                             None,
                             None,
                         )
                     })?;
 
                     if parsed.is_empty() {
-                         return Err(RuntimeError::new(
+                        return Err(RuntimeError::new(
                             RuntimeErrorKind::InvalidOperation("Empty command string".to_string()),
                             None,
                             None,

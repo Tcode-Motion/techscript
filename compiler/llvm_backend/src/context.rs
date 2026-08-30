@@ -21,6 +21,9 @@ pub struct CodegenContext {
 }
 
 impl CodegenContext {
+    /// # Safety
+    ///
+    /// Caller must ensure LLVM context is valid.
     pub unsafe fn new(name: &str) -> Self {
         let context = LLVMContextCreate();
         let module =

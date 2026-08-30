@@ -9,7 +9,10 @@ use llvm_sys::prelude::*;
 use techscript_ir::types::IRType;
 
 /// Maps a TechScript IRType to its corresponding LLVMTypeRef.
-pub unsafe fn to_llvm_type(context: LLVMContextRef, ty: &IRType) -> LLVMTypeRef {
+/// # Safety
+    ///
+    /// Caller must ensure LLVM context is valid.
+    pub unsafe fn to_llvm_type(context: LLVMContextRef, ty: &IRType) -> LLVMTypeRef {
     match ty {
         IRType::Void => LLVMVoidTypeInContext(context),
         IRType::Int64 => LLVMInt64TypeInContext(context),

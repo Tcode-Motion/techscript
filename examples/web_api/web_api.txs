@@ -19,4 +19,3 @@ say $"Status Code: {response.status}"
 data = json.decode(response.body)
 say $"Repository: {data.name}"
 say $"Owner: {data.owner.login}"
-say $"Open Issues: {data.open_issues_count}"

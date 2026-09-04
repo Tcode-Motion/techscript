@@ -449,9 +449,13 @@ impl VM {
                     self.stack.push(RuntimeValue::Bool(res))?;
                 }
 
+                // PERFORMANCE OPTIMIZATION (Bolt):
+                // We reuse the existing mutable `frame` reference acquired at the start of
+                // the loop iteration rather than redundantly calling `self.frames.last_mut()`
+                // for these control flow and exception opcodes. This reduces bounds checking
+                // and RefCell borrow overhead on the hottest execution paths.
                 Opcode::Jump => {
                     if let Some(Operand::JumpOffset(offset)) = inst_operands.first() {
-                        let frame = self.frames.last_mut().ok_or(VMError::StackUnderflow)?;
                         frame.ip = ((frame.ip as i32 - 1) + offset) as usize;
                     } else {
                         return Err(VMError::InvalidOpcode);
@@ -462,7 +466,6 @@ impl VM {
                     if let Some(Operand::JumpOffset(offset)) = inst_operands.first() {
                         let cond = self.stack.pop()?;
                         if cond.is_truthy() {
-                            let frame = self.frames.last_mut().ok_or(VMError::StackUnderflow)?;
                             frame.ip = ((frame.ip as i32 - 1) + offset) as usize;
                         }
                     } else {
@@ -474,7 +477,6 @@ impl VM {
                     if let Some(Operand::JumpOffset(offset)) = inst_operands.first() {
                         let cond = self.stack.pop()?;
                         if !cond.is_truthy() {
-                            let frame = self.frames.last_mut().ok_or(VMError::StackUnderflow)?;
                             frame.ip = ((frame.ip as i32 - 1) + offset) as usize;
                         }
                     } else {
@@ -644,7 +646,6 @@ impl VM {
 
                 Opcode::Try => {
                     if let Some(Operand::JumpOffset(offset)) = inst_operands.first() {
-                        let frame = self.frames.last_mut().ok_or(VMError::StackUnderflow)?;
                         let catch_ip = ((frame.ip as i32 - 1) + offset) as usize;
                         frame.handlers.push(ExceptionHandler {
                             catch_ip,
@@ -656,7 +657,6 @@ impl VM {
                 }
 
                 Opcode::EndTry => {
-                    let frame = self.frames.last_mut().ok_or(VMError::StackUnderflow)?;
                     frame.handlers.pop();
                 }
 

@@ -34,16 +34,10 @@ impl BuildCache {
     /// Loads the cache database from the build directory.
     pub fn load(cache_dir: &Path) -> anyhow::Result<Self> {
         let db_path = cache_dir.join("fingerprints.json");
-        let db = if db_path.exists() {
-            if let Ok(content) = std::fs::read_to_string(&db_path) {
-                serde_json::from_str(&content).unwrap_or_else(|_| CacheDatabase {
-                    fingerprints: HashMap::new(),
-                })
-            } else {
-                CacheDatabase {
-                    fingerprints: HashMap::new(),
-                }
-            }
+        let db = if let Ok(content) = std::fs::read_to_string(&db_path) {
+            serde_json::from_str(&content).unwrap_or_else(|_| CacheDatabase {
+                fingerprints: HashMap::new(),
+            })
         } else {
             CacheDatabase {
                 fingerprints: HashMap::new(),
@@ -98,8 +92,7 @@ impl BuildCache {
             .cache_dir
             .join("ir")
             .join(hash_path_filename(path) + ".ir");
-        if cache_file.exists() {
-            let data = std::fs::read(cache_file)?;
+        if let Ok(data) = std::fs::read(cache_file) {
             let module = bincode::deserialize(&data)
                 .map_err(|e| anyhow::anyhow!("Deserialization failed: {}", e))?;
             Ok(Some(module))
@@ -132,8 +125,7 @@ impl BuildCache {
             .cache_dir
             .join("bytecode")
             .join(hash_path_filename(path) + ".tsb");
-        if cache_file.exists() {
-            let data = std::fs::read(cache_file)?;
+        if let Ok(data) = std::fs::read(cache_file) {
             let module = techscript_bytecode::BytecodeSerializer::deserialize(&data)
                 .map_err(|e| anyhow::anyhow!("Bytecode deserialization failed: {}", e))?;
             Ok(Some(module))

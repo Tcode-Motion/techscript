@@ -75,28 +75,34 @@ impl ProjectBuildGraph {
         let mut packages = HashMap::new();
         let mut members = Vec::new();
 
-        if manifest_path.exists() {
-            let content = std::fs::read_to_string(&manifest_path)?;
-            let manifest: Manifest = toml::from_str(&content)?;
+        match std::fs::read_to_string(&manifest_path) {
+            Ok(content) => {
+                let manifest: Manifest = toml::from_str(&content)?;
 
-            if let Some(workspace_cfg) = &manifest.workspace {
-                // Workspace mode
-                members = workspace_cfg.members.clone();
-                for member_glob in &members {
-                    // Simulating directory lookup for member folders
-                    let member_dir = root.join(member_glob);
-                    if member_dir.exists() {
-                        let pkg = load_package(&member_dir)?;
-                        packages.insert(pkg.name.clone(), pkg);
+                if let Some(workspace_cfg) = &manifest.workspace {
+                    // Workspace mode
+                    members = workspace_cfg.members.clone();
+                    for member_glob in &members {
+                        // Simulating directory lookup for member folders
+                        let member_dir = root.join(member_glob);
+                        if member_dir.exists() {
+                            let pkg = load_package(&member_dir)?;
+                            packages.insert(pkg.name.clone(), pkg);
+                        }
                     }
+                } else {
+                    // Single package mode
+                    let pkg = load_package(root)?;
+                    packages.insert(pkg.name.clone(), pkg);
                 }
-            } else {
-                // Single package mode
-                let pkg = load_package(root)?;
-                packages.insert(pkg.name.clone(), pkg);
             }
-        } else {
-            // No tech.toml, single file virtual package mode
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
+                // No tech.toml, single file virtual package mode
+            }
+            Err(e) => return Err(e.into()),
+        }
+
+        if packages.is_empty() {
             let entry = root.to_path_buf();
             let parent = entry.parent().unwrap_or(root).to_path_buf();
             let pkg = Package {
@@ -148,12 +154,10 @@ impl ProjectBuildGraph {
 
         // 1. Add all entry points to compilation list
         for pkg in self.workspace.packages.values_mut() {
-            if pkg.entry_file.exists() {
-                if let Ok(source) = std::fs::read_to_string(&pkg.entry_file) {
-                    let fid = source_mgr.add_file(pkg.entry_file.clone(), source.clone());
-                    pkg.entry_file_id = Some(fid);
-                    to_resolve.push((fid, pkg.entry_file.clone(), pkg.name.clone()));
-                }
+            if let Ok(source) = std::fs::read_to_string(&pkg.entry_file) {
+                let fid = source_mgr.add_file(pkg.entry_file.clone(), source.clone());
+                pkg.entry_file_id = Some(fid);
+                to_resolve.push((fid, pkg.entry_file.clone(), pkg.name.clone()));
             }
         }
 
@@ -269,12 +273,10 @@ impl ProjectBuildGraph {
                     }
                 }
 
-                if import_file.exists() {
-                    if let Ok(source) = std::fs::read_to_string(&import_file) {
-                        let dep_fid = source_mgr.add_file(import_file.clone(), source);
-                        dep_fids.push(dep_fid);
-                        to_resolve.push((dep_fid, import_file, pkg_name.clone()));
-                    }
+                if let Ok(source) = std::fs::read_to_string(&import_file) {
+                    let dep_fid = source_mgr.add_file(import_file.clone(), source);
+                    dep_fids.push(dep_fid);
+                    to_resolve.push((dep_fid, import_file, pkg_name.clone()));
                 }
             }
 

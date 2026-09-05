@@ -99,11 +99,9 @@ impl ConfigManager {
         // 2. Global user config (~/.techscript/config.toml)
         if let Some(home) = dirs::home_dir() {
             let global_path = home.join(".techscript").join("config.toml");
-            if global_path.exists() {
-                if let Ok(content) = std::fs::read_to_string(global_path) {
-                    if let Ok(toml_cfg) = toml::from_str::<TomlConfig>(&content) {
-                        apply_toml(&mut base, &toml_cfg);
-                    }
+            if let Ok(content) = std::fs::read_to_string(global_path) {
+                if let Ok(toml_cfg) = toml::from_str::<TomlConfig>(&content) {
+                    apply_toml(&mut base, &toml_cfg);
                 }
             }
         }
@@ -111,15 +109,12 @@ impl ConfigManager {
         // 3. Workspace config
         if let Some(ws) = workspace_root {
             let ws_manifest = ws.join("tech.toml");
-            if ws_manifest.exists() {
-                if let Ok(content) = std::fs::read_to_string(ws_manifest) {
-                    if let Ok(manifest_toml) = toml::from_str::<serde_json::Value>(&content) {
-                        if let Some(cfg_val) = manifest_toml.get("config") {
-                            if let Ok(toml_cfg) =
-                                serde_json::from_value::<TomlConfig>(cfg_val.clone())
-                            {
-                                apply_toml(&mut base, &toml_cfg);
-                            }
+            if let Ok(content) = std::fs::read_to_string(ws_manifest) {
+                if let Ok(manifest_toml) = toml::from_str::<serde_json::Value>(&content) {
+                    if let Some(cfg_val) = manifest_toml.get("config") {
+                        if let Ok(toml_cfg) = serde_json::from_value::<TomlConfig>(cfg_val.clone())
+                        {
+                            apply_toml(&mut base, &toml_cfg);
                         }
                     }
                 }
@@ -129,15 +124,12 @@ impl ConfigManager {
         // 4. Project config
         if let Some(proj) = project_root {
             let proj_manifest = proj.join("tech.toml");
-            if proj_manifest.exists() {
-                if let Ok(content) = std::fs::read_to_string(proj_manifest) {
-                    if let Ok(manifest_toml) = toml::from_str::<serde_json::Value>(&content) {
-                        if let Some(cfg_val) = manifest_toml.get("config") {
-                            if let Ok(toml_cfg) =
-                                serde_json::from_value::<TomlConfig>(cfg_val.clone())
-                            {
-                                apply_toml(&mut base, &toml_cfg);
-                            }
+            if let Ok(content) = std::fs::read_to_string(proj_manifest) {
+                if let Ok(manifest_toml) = toml::from_str::<serde_json::Value>(&content) {
+                    if let Some(cfg_val) = manifest_toml.get("config") {
+                        if let Ok(toml_cfg) = serde_json::from_value::<TomlConfig>(cfg_val.clone())
+                        {
+                            apply_toml(&mut base, &toml_cfg);
                         }
                     }
                 }

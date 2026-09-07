@@ -74,4 +74,9 @@ impl ValueStack {
     pub fn get_dump(&self) -> Vec<RuntimeValue> {
         self.data.clone()
     }
+
+    /// Returns a slice of the stack data.
+    pub fn data_slice(&self) -> &[RuntimeValue] {
+        &self.data
+    }
 }

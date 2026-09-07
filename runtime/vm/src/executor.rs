@@ -40,7 +40,7 @@ impl VM {
                     ip,
                     inst_op,
                     inst_operands,
-                    &self.stack.get_dump(),
+                    self.stack.data_slice(),
                 );
             }
 

@@ -14,6 +14,14 @@ use std::process::Command;
 use zip::write::FileOptions;
 use zip::ZipWriter;
 
+struct ReleaseDirectories {
+    release_dir: PathBuf,
+    tools_dir: PathBuf,
+    runtime_dir: PathBuf,
+    docs_dir: PathBuf,
+    examples_dir: PathBuf,
+}
+
 fn main() -> anyhow::Result<()> {
     println!("=== Starting TechScript 2.0 Packaging Pipeline ===");
 
@@ -32,13 +40,52 @@ fn main() -> anyhow::Result<()> {
     compile_binary(&root_dir, "techscript_lsp")?;
 
     // 4. Create release folder structure
+    let dirs = setup_release_directories(&root_dir)?;
+
+    // 5. Build Tools binaries
+    build_and_copy_tools(&root_dir, &dirs.tools_dir)?;
+
+    // 6-9. Copy resources and generate notes
+    let (git_commit, build_date) = copy_resources(
+        &root_dir,
+        &dirs.runtime_dir,
+        &dirs.examples_dir,
+        &dirs.docs_dir,
+        &dirs.release_dir,
+    )?;
+
+    // 10-17. Package installers, ZIPs, and sign binaries
+    package_installers(
+        &root_dir,
+        &dirs.release_dir,
+        &version,
+        &dirs.runtime_dir,
+        &dirs.examples_dir,
+        &dirs.docs_dir,
+        &dirs.tools_dir,
+    )?;
+
+    // 18-20. Generate manifest, checksums, and versioned release folder
+    finalize_release(
+        &root_dir,
+        &dirs.release_dir,
+        &version,
+        &git_commit,
+        &build_date,
+        &dirs.examples_dir,
+        &dirs.docs_dir,
+    )?;
+
+    Ok(())
+}
+
+fn setup_release_directories(root_dir: &Path) -> anyhow::Result<ReleaseDirectories> {
     let release_dir = root_dir.join("releases").join("current");
     if release_dir.exists() {
         fs::remove_dir_all(&release_dir).context("Failed to clean current release directory")?;
     }
     fs::create_dir_all(&release_dir)?;
 
-    // Target Directories
     let tools_dir = release_dir.join("tools");
     let runtime_dir = release_dir.join("runtime");
     let docs_dir = release_dir.join("docs");
@@ -49,7 +96,16 @@ fn main() -> anyhow::Result<()> {
     fs::create_dir_all(&docs_dir)?;
     fs::create_dir_all(&examples_dir)?;
 
-    // 5. Build Tools binaries
+    Ok(ReleaseDirectories {
+        release_dir,
+        tools_dir,
+        runtime_dir,
+        docs_dir,
+        examples_dir,
+    })
+}
+
+fn build_and_copy_tools(root_dir: &Path, tools_dir: &Path) -> anyhow::Result<()> {
     let target_release = root_dir.join("target").join("release");
     let tsc_exe = target_release.join("tsc.exe");
     let lsp_exe = target_release.join("techscript-lsp.exe");
@@ -64,7 +120,6 @@ fn main() -> anyhow::Result<()> {
         ));
     }
 
-    // Copy compiler driver & duplicate to make compiler tool suite
     let tools_list = [
         "tsc.exe",
         "tsvm.exe",
@@ -77,10 +132,8 @@ fn main() -> anyhow::Result<()> {
     for tool_name in &tools_list {
         fs::copy(&tsc_exe, tools_dir.join(tool_name))?;
     }
-    // Copy LSP as tsls.exe
     fs::copy(&lsp_exe, tools_dir.join("tsls.exe"))?;
 
-    // Create the First-Run Experience welcome batch file
     let welcome_bat_content = r#"@echo off
 title Welcome to TechScript!
 color 0A
@@ -107,7 +160,16 @@ pause
 "#;
     fs::write(tools_dir.join("welcome.bat"), welcome_bat_content)?;
 
-    // 6. Copy standard library sources to runtime/stdlib
+    Ok(())
+}
+
+fn copy_resources(
+    root_dir: &Path,
+    runtime_dir: &Path,
+    examples_dir: &Path,
+    docs_dir: &Path,
+    release_dir: &Path,
+) -> anyhow::Result<(String, String)> {
     let stdlib_dest = runtime_dir.join("stdlib");
     fs::create_dir_all(&stdlib_dest)?;
     if root_dir.join("stdlib").exists() {
@@ -115,11 +177,11 @@ pause
     } else {
         fs::write(
             stdlib_dest.join("README.md"),
-            "# Stdlib runtime source placeholder\n",
+            "# Stdlib runtime source placeholder
+",
         )?;
     }
 
-    // 7. Copy flattened examples to examples/ (retaining compat)
     if root_dir.join("examples").exists() {
         for entry in fs::read_dir(root_dir.join("examples"))? {
             let entry = entry?;
@@ -133,7 +195,6 @@ pause
         }
     }
 
-    // 8. Copy specific docs to docs/
     let required_docs = [
         "LanguageGuide.md",
         "SyntaxGuide.md",
@@ -153,12 +214,12 @@ pause
             fs::copy(&doc_src, docs_dir.join(doc_name))?;
         }
     }
-    // Also copy root README.md to docs/README.md
+
     if root_dir.join("README.md").exists() {
         fs::copy(root_dir.join("README.md"), docs_dir.join("README.md"))?;
+        fs::copy(root_dir.join("README.md"), release_dir.join("README.md"))?;
     }
 
-    // 9. Copy licenses & metadata to release root
     if root_dir.join("LICENSE").exists() {
         fs::copy(root_dir.join("LICENSE"), release_dir.join("LICENSE"))?;
     }
@@ -168,93 +229,116 @@ pause
             release_dir.join("CHANGELOG.md"),
         )?;
     }
-    if root_dir.join("README.md").exists() {
-        fs::copy(root_dir.join("README.md"), release_dir.join("README.md"))?;
-    }
 
-    // Create a release notes file
     let git_commit = get_git_commit();
     let build_date = Local::now().format("%Y-%m-%d").to_string();
     let release_notes_content = format!(
-        "# TechScript 2.0 Release Notes\n\n- Build Date: {}\n- Git Commit: {}\n- Official froze v2.0.0 Release.\n",
+        "# TechScript 2.0 Release Notes
+
+- Build Date: {}
+- Git Commit: {}
+- Official froze v2.0.0 Release.
+",
         build_date, git_commit
     );
     fs::write(release_dir.join("RELEASE_NOTES.md"), &release_notes_content)?;
     fs::write(docs_dir.join("ReleaseNotes.md"), &release_notes_content)?;
 
-    // 10. Package VS Code Extension (vsix)
-    let vsix_dest = release_dir.join("TechScript.vsix");
-    package_vsix(&root_dir, &vsix_dest, &version)?;
+    Ok((git_commit, build_date))
+}
 
-    // 11. Create Portable release ZIP (excluding installers/zip themselves)
+fn package_installers(
+    root_dir: &Path,
+    release_dir: &Path,
+    version: &str,
+    runtime_dir: &Path,
+    examples_dir: &Path,
+    docs_dir: &Path,
+    tools_dir: &Path,
+) -> anyhow::Result<()> {
+    let vsix_dest = release_dir.join("TechScript.vsix");
+    package_vsix(root_dir, &vsix_dest, version)?;
+
     let portable_zip_dest = release_dir.join("TechScript_Portable.zip");
     println!(
         "Generating portable release: {}",
         portable_zip_dest.display()
     );
-    zip_release_folder(&release_dir, &portable_zip_dest)?;
+    zip_release_folder(release_dir, &portable_zip_dest)?;
 
-    // 12. Create Zip packages for Online Installer download
     let installer_res_dir = release_dir.join("installer");
     fs::create_dir_all(&installer_res_dir)?;
 
-    zip_sub_directory(&runtime_dir, &installer_res_dir.join("stdlib.zip"))?;
-    zip_sub_directory(&examples_dir, &installer_res_dir.join("examples.zip"))?;
-    zip_sub_directory(&docs_dir, &installer_res_dir.join("docs.zip"))?;
+    zip_sub_directory(runtime_dir, &installer_res_dir.join("stdlib.zip"))?;
+    zip_sub_directory(examples_dir, &installer_res_dir.join("examples.zip"))?;
+    zip_sub_directory(docs_dir, &installer_res_dir.join("docs.zip"))?;
 
-    // 13. Write Inno Setup offline and online script configurations
     let offline_iss = installer_res_dir.join("offline_installer.iss");
     let online_iss = installer_res_dir.join("online_installer.iss");
 
-    generate_offline_inno_script(&offline_iss, &version)?;
-    generate_online_inno_script(&online_iss, &version)?;
+    generate_offline_inno_script(&offline_iss, version)?;
+    generate_online_inno_script(&online_iss, version)?;
 
-    // 14. Code-sign all tools/ executables before installer packaging
+    let tools_list = [
+        "tsc.exe",
+        "tsvm.exe",
+        "tspm.exe",
+        "tsfmt.exe",
+        "tslint.exe",
+        "tsdoc.exe",
+        "tsmigrate.exe",
+    ];
     for tool_name in &tools_list {
         sign_executable(&tools_dir.join(tool_name));
     }
     sign_executable(&tools_dir.join("tsls.exe"));
 
-    // 15. Compile Offline installer using Inno Setup and copy to online filename so both are same
     compile_inno_installer(&offline_iss, &release_dir.join("TechScript_Setup.exe"))?;
     fs::copy(
         release_dir.join("TechScript_Setup.exe"),
         release_dir.join("TechScript_Online_Setup.exe"),
     )?;
 
-    // 16. Code-sign the setup installers
     sign_executable(&release_dir.join("TechScript_Setup.exe"));
     sign_executable(&release_dir.join("TechScript_Online_Setup.exe"));
 
-    // 17. Clean up installer zip components to keep releases folder clean
     let _ = fs::remove_dir_all(&installer_res_dir);
 
-    // 18. Generate manifest.json (Release Manifest)
-    let examples_count = count_files(&examples_dir, "*.txs")?;
-    let docs_count = count_files(&docs_dir, "*.md")?;
+    Ok(())
+}
+
+fn finalize_release(
+    root_dir: &Path,
+    release_dir: &Path,
+    version: &str,
+    git_commit: &str,
+    build_date: &str,
+    examples_dir: &Path,
+    docs_dir: &Path,
+) -> anyhow::Result<()> {
+    let examples_count = count_files(examples_dir, "*.txs")?;
+    let docs_count = count_files(docs_dir, "*.md")?;
     let manifest_dest = release_dir.join("manifest.json");
 
-    let checksum_json = calculate_checksums_json(&release_dir)?;
+    let checksum_json = calculate_checksums_json(release_dir)?;
     generate_release_manifest(
         &manifest_dest,
-        &version,
-        &git_commit,
-        &build_date,
+        version,
+        git_commit,
+        build_date,
         examples_count,
         docs_count,
         &checksum_json,
     )?;
 
-    // 19. Generate SHA256SUMS.txt
-    generate_checksums_txt(&release_dir)?;
+    generate_checksums_txt(release_dir)?;
 
-    // 20. Versioned Releases Folder (v2.0.0)
     let versioned_dir = root_dir.join("releases").join(format!("v{}", version));
     if versioned_dir.exists() {
         fs::remove_dir_all(&versioned_dir)?;
     }
     fs::create_dir_all(&versioned_dir)?;
-    copy_dir_all(&release_dir, &versioned_dir)?;
+    copy_dir_all(release_dir, &versioned_dir)?;
 
     println!("=== Packaging Complete! ===");
     Ok(())

@@ -429,7 +429,8 @@ fn test_web_module() {
     let stop = web.exports.get("stop").unwrap();
 
     // Bind a listener to a random port to ensure the port is taken
-    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    // Keep it alive to conflict
+    let listener = TcpListener::bind("0.0.0.0:0").unwrap();
     let port = listener.local_addr().unwrap().port();
 
     // Test panic on `start` when port is in use

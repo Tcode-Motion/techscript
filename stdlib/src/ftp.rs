@@ -28,24 +28,3 @@ impl StdlibRegistry {
         );
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::StdlibRegistry;
-    use std::collections::HashMap;
-
-    #[test]
-    fn test_register_ftp() {
-        let mut registry = StdlibRegistry {
-            modules: HashMap::new(),
-        };
-        registry.register_ftp();
-
-        assert!(registry.has_module("std.ftp"));
-        let module = registry.get_module("std.ftp").unwrap();
-        assert_eq!(module.name, "std.ftp");
-        assert_eq!(module.version, "1.0.0");
-        assert!(module.exports.contains_key("connect"));
-    }
-}

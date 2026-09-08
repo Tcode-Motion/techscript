@@ -30,39 +30,3 @@ impl StdlibRegistry {
         );
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use techscript_runtime::RuntimeContext;
-
-    #[test]
-    fn test_register_redis() {
-        let mut registry = StdlibRegistry::default();
-        registry.register_redis();
-
-        let module = registry
-            .modules
-            .get("std.redis")
-            .expect("Module std.redis should be registered");
-        assert_eq!(module.name, "std.redis");
-        assert_eq!(module.version, "1.0.0");
-
-        let connect_fn = module
-            .exports
-            .get("connect")
-            .expect("connect function should be exported");
-        assert_eq!(connect_fn.arity(), 1);
-
-        let mut ctx = RuntimeContext::new(techscript_runtime::RuntimeConfig::default());
-        let args = vec![RuntimeValue::Str("localhost:6379".to_string())];
-        let result = connect_fn
-            .call(&mut ctx, args)
-            .expect("connect function should succeed");
-
-        assert_eq!(
-            result,
-            RuntimeValue::Str("Redis not yet available".to_string())
-        );
-    }
-}

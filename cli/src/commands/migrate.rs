@@ -263,9 +263,7 @@ fn replace_call(source: &str, prefix: &str, keyword: &str) -> String {
                 remaining = &remaining[pos + full.len()..];
                 if let Some(close) = remaining.find(')') {
                     let args = &remaining[..close];
-                    result.push_str(keyword);
-                    result.push(' ');
-                    result.push_str(args);
+                    result.push_str(&format!("{keyword} {args}"));
                     remaining = &remaining[close + 1..];
                 } else {
                     result.push_str(remaining);

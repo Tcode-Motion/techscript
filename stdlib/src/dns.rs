@@ -4,6 +4,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::net::ToSocketAddrs;
 use std::rc::Rc;
+use techscript_runtime::context::Capability;
 use techscript_runtime::{error::RuntimeError, value::RuntimeValue};
 
 impl StdlibRegistry {
@@ -16,7 +17,17 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "lookup".to_string(),
                 arity: 1,
-                callback: |_ctx, args| {
+                callback: |ctx, args| {
+                    if !ctx.config.capabilities.contains(&Capability::Network) {
+                        return Err(RuntimeError::new(
+                            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
+                                "Security policy violation: Network capability is denied"
+                                    .to_string(),
+                            ),
+                            None,
+                            None,
+                        ));
+                    }
                     let host = match &args[0] {
                         RuntimeValue::Str(s) => s.clone(),
                         _ => {
@@ -51,7 +62,7 @@ impl StdlibRegistry {
                 name: "std.dns".to_string(),
                 version: "1.0.0".to_string(),
                 exports,
-                required_capabilities: Vec::new(),
+                required_capabilities: vec![Capability::Network],
             },
         );
     }

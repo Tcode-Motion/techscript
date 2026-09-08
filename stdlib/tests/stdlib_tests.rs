@@ -1151,3 +1151,30 @@ fn test_ai_generate_text() {
     let val = res.unwrap();
     assert!(val.as_string().unwrap().contains("Prompt: What is 2+2?"));
 }
+
+#[test]
+fn test_dns_module_denied() {
+    let mut registry = StdlibRegistry::new();
+    registry.register_dns();
+    let dns = registry.get_module("std.dns").unwrap();
+
+    let mut config = RuntimeConfig::default();
+    config.capabilities.clear(); // Ensure Network capability is denied
+
+    let mut ctx = RuntimeContext::new(config);
+
+    let lookup = dns.exports.get("lookup").unwrap();
+    let res = lookup.call(&mut ctx, vec![RuntimeValue::Str("localhost".to_string())]);
+
+    assert!(res.is_err());
+    if let Err(err) = res {
+        if let techscript_runtime::error::RuntimeErrorKind::InvalidOperation(msg) = err.kind {
+            assert_eq!(
+                msg,
+                "Security policy violation: Network capability is denied"
+            );
+        } else {
+            panic!("Expected InvalidOperation error, got {:?}", err.kind);
+        }
+    }
+}

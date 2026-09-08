@@ -31,7 +31,9 @@ mod tests {
         // Since `StdlibRegistry::new()` calls `register_defaults()`, which calls `register_barcode()`,
         // the module should already be registered.
 
-        let module = registry.get_module("std.barcode").expect("Module should be registered");
+        let module = registry
+            .get_module("std.barcode")
+            .expect("Module should be registered");
         assert_eq!(module.name, "std.barcode");
         assert_eq!(module.version, "1.0.0");
         assert_eq!(module.required_capabilities.len(), 0);

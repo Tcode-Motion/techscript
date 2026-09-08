@@ -460,7 +460,6 @@ fn test_web_module() {
     // although the panic meant it wasn't started fully, but `SERVER_RUNNING` is true.
     let _ = stop.call(&mut ctx, vec![]).unwrap();
 
-
     // Test panic on `serve` when port is in use
     let serve_result = panic::catch_unwind(panic::AssertUnwindSafe(|| {
         let mut caps = HashSet::new();

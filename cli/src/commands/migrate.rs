@@ -66,7 +66,7 @@ pub fn execute(path_str: Option<&str>) -> ExitCode {
     ExitCode::Success
 }
 
-fn migrate_source(source: &str) -> String {
+pub fn migrate_source(source: &str) -> String {
     let mut reporter = techscript_errors::DiagnosticReporter::new();
     let tokens = techscript_lexer::lex_recovered(source, &mut reporter);
     let _program = techscript_parser::parse_recovered(&tokens, &mut reporter);
@@ -263,7 +263,9 @@ fn replace_call(source: &str, prefix: &str, keyword: &str) -> String {
                 remaining = &remaining[pos + full.len()..];
                 if let Some(close) = remaining.find(')') {
                     let args = &remaining[..close];
-                    result.push_str(&format!("{keyword} {args}"));
+                    result.push_str(keyword);
+                    result.push(' ');
+                    result.push_str(args);
                     remaining = &remaining[close + 1..];
                 } else {
                     result.push_str(remaining);

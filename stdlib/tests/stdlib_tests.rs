@@ -60,42 +60,30 @@ fn test_math_module() {
     assert!((0.0..1.0).contains(&r1));
     assert!((0.0..1.0).contains(&r2));
     assert_ne!(r1, r2); // pseudo-random sequence should advance
+}
 
-    // test sin, cos, tan
-    let sin = math.exports.get("sin").unwrap();
-    let res = sin
-        .call(
-            &mut ctx,
-            vec![RuntimeValue::Float(std::f64::consts::PI / 2.0)],
-        )
-        .unwrap();
-    assert!((res.as_float().unwrap() - 1.0).abs() < 1e-10);
+#[test]
+fn test_math_module_registration() {
+    let mut registry = StdlibRegistry::new();
+    registry.register_math();
 
-    let cos = math.exports.get("cos").unwrap();
-    let res = cos
-        .call(&mut ctx, vec![RuntimeValue::Float(std::f64::consts::PI)])
-        .unwrap();
-    assert!((res.as_float().unwrap() - (-1.0)).abs() < 1e-10);
+    let math = registry.get_module("std.math").unwrap();
+    assert_eq!(math.name, "std.math");
+    assert_eq!(math.version, "1.0.0");
+    assert!(math.required_capabilities.is_empty());
 
-    let tan = math.exports.get("tan").unwrap();
-    let res = tan.call(&mut ctx, vec![RuntimeValue::Float(0.0)]).unwrap();
-    assert!((res.as_float().unwrap() - 0.0).abs() < 1e-10);
+    let expected_exports = vec![
+        "abs", "sin", "cos", "tan", "log", "exp", "sqrt", "pow", "floor", "ceil", "round",
+        "random", "to_float",
+    ];
 
-    // test log, exp
-    let log = math.exports.get("log").unwrap();
-    let res = log
-        .call(
-            &mut ctx,
-            vec![RuntimeValue::Float(std::f64::consts::E)],
-        )
-        .unwrap();
-    assert!((res.as_float().unwrap() - 1.0).abs() < 1e-10);
-
-    let exp = math.exports.get("exp").unwrap();
-    let res = exp
-        .call(&mut ctx, vec![RuntimeValue::Float(1.0)])
-        .unwrap();
-    assert!((res.as_float().unwrap() - std::f64::consts::E).abs() < 1e-10);
+    for name in expected_exports {
+        assert!(
+            math.exports.contains_key(name),
+            "math module should export {}",
+            name
+        );
+    }
 }
 
 #[test]

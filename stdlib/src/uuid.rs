@@ -17,7 +17,7 @@ impl StdlibRegistry {
                     use std::time::SystemTime;
                     let nano = SystemTime::now()
                         .duration_since(SystemTime::UNIX_EPOCH)
-                        .unwrap()
+                        .unwrap_or_default()
                         .as_nanos();
                     Ok(RuntimeValue::Str(format!(
                         "123e4567-e89b-12d3-a456-{}",

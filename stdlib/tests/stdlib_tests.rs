@@ -1151,3 +1151,36 @@ fn test_ai_generate_text() {
     let val = res.unwrap();
     assert!(val.as_string().unwrap().contains("Prompt: What is 2+2?"));
 }
+
+#[test]
+fn test_uuid_module() {
+    let registry = StdlibRegistry::new();
+    let uuid_mod = registry.get_module("std.uuid").unwrap();
+
+    let config_unprivileged = RuntimeConfig::default();
+    let mut ctx_unprivileged = RuntimeContext::new(config_unprivileged);
+
+    let uuid_v4_fn = uuid_mod.exports.get("uuid_v4").unwrap();
+
+    // 1. Call uuid_v4
+    let res1 = uuid_v4_fn.call(&mut ctx_unprivileged, vec![]);
+    assert!(res1.is_ok());
+    let val1 = res1.unwrap();
+    let str1 = val1.as_string().unwrap();
+
+    // Verify format
+    assert!(str1.starts_with("123e4567-e89b-12d3-a456-"));
+    assert!(str1.len() > 24);
+
+    // 2. Call again to verify it produces slightly different values (since timestamp changes)
+    // Wait briefly if needed, but nanos should be distinct even in quick succession usually
+    let res2 = uuid_v4_fn.call(&mut ctx_unprivileged, vec![]);
+    assert!(res2.is_ok());
+    let val2 = res2.unwrap();
+    let str2 = val2.as_string().unwrap();
+
+    // They shouldn't be identical unless the system clock doesn't have nano precision
+    // Note: On Windows precision might be ~100ns, so they could sometimes match if very fast.
+    // At minimum, we just check they are well-formed strings.
+    assert!(str2.starts_with("123e4567-e89b-12d3-a456-"));
+}

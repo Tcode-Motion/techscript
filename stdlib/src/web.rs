@@ -86,7 +86,10 @@ impl Resolver for SafeResolver {
 use std::sync::Mutex;
 use std::thread;
 use techscript_runtime::{
-    context::{Capability, RuntimeContext}, error::RuntimeError, function::Callable, value::RuntimeValue,
+    context::{Capability, RuntimeContext},
+    error::RuntimeError,
+    function::Callable,
+    value::RuntimeValue,
 };
 
 static SERVER_RUNNING: AtomicBool = AtomicBool::new(false);
@@ -386,7 +389,8 @@ impl StdlibRegistry {
                     if !ctx.config.capabilities.contains(&Capability::Network) {
                         return Err(RuntimeError::new(
                             techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Network capability is denied".to_string(),
+                                "Security policy violation: Network capability is denied"
+                                    .to_string(),
                             ),
                             None,
                             None,
@@ -455,7 +459,8 @@ impl StdlibRegistry {
                     if !ctx.config.capabilities.contains(&Capability::Network) {
                         return Err(RuntimeError::new(
                             techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Network capability is denied".to_string(),
+                                "Security policy violation: Network capability is denied"
+                                    .to_string(),
                             ),
                             None,
                             None,

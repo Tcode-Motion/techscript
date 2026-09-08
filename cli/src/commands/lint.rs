@@ -2,9 +2,9 @@
 //!
 //! Performs static analysis linting on TechScript sources.
 
+use crate::commands::migrate::migrate_source;
 use crate::exit_code::ExitCode;
 use std::path::{Path, PathBuf};
-use crate::commands::migrate::migrate_source;
 
 pub fn execute(path_str: Option<&str>, fix: bool) -> ExitCode {
     let current_dir = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));

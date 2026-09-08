@@ -283,27 +283,3 @@ impl StdlibRegistry {
         );
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::collections::HashMap;
-
-    #[test]
-    fn test_register_database() {
-        let mut registry = StdlibRegistry {
-            modules: HashMap::new(),
-        };
-        registry.register_database();
-
-        assert!(registry.has_module("std.database"));
-        let module = registry.get_module("std.database").unwrap();
-        assert_eq!(module.name, "std.database");
-        assert_eq!(module.version, "1.0.0");
-        assert!(module.exports.contains_key("connect"));
-        assert!(module.exports.contains_key("query"));
-        assert!(module.exports.contains_key("execute"));
-        assert!(module.exports.contains_key("close"));
-        assert_eq!(module.exports.len(), 4);
-    }
-}

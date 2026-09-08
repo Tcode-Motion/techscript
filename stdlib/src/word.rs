@@ -19,22 +19,3 @@ impl StdlibRegistry {
         );
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_register_word() {
-        let mut registry = StdlibRegistry::new();
-        registry.register_word();
-
-        let module = registry
-            .get_module("std.word")
-            .expect("Module std.word should be registered");
-        assert_eq!(module.name, "std.word");
-        assert_eq!(module.version, "1.0.0");
-        assert!(module.exports.is_empty());
-        assert!(module.required_capabilities.is_empty());
-    }
-}

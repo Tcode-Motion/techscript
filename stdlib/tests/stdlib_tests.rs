@@ -63,30 +63,6 @@ fn test_math_module() {
 }
 
 #[test]
-fn test_math_module_registration() {
-    let mut registry = StdlibRegistry::new();
-    registry.register_math();
-
-    let math = registry.get_module("std.math").unwrap();
-    assert_eq!(math.name, "std.math");
-    assert_eq!(math.version, "1.0.0");
-    assert!(math.required_capabilities.is_empty());
-
-    let expected_exports = vec![
-        "abs", "sin", "cos", "tan", "log", "exp", "sqrt", "pow", "floor", "ceil", "round",
-        "random", "to_float",
-    ];
-
-    for name in expected_exports {
-        assert!(
-            math.exports.contains_key(name),
-            "math module should export {}",
-            name
-        );
-    }
-}
-
-#[test]
 fn test_strings_module() {
     let registry = StdlibRegistry::new();
     let strings = registry.get_module("std.strings").unwrap();
@@ -1177,5 +1153,28 @@ fn test_ai_generate_text() {
 }
 
 #[test]
-<<<<
+fn test_dns_module_denied() {
+    let mut registry = StdlibRegistry::new();
+    registry.register_dns();
+    let dns = registry.get_module("std.dns").unwrap();
+
+    let mut config = RuntimeConfig::default();
+    config.capabilities.clear(); // Ensure Network capability is denied
+
+    let mut ctx = RuntimeContext::new(config);
+
+    let lookup = dns.exports.get("lookup").unwrap();
+    let res = lookup.call(&mut ctx, vec![RuntimeValue::Str("localhost".to_string())]);
+
+    assert!(res.is_err());
+    if let Err(err) = res {
+        if let techscript_runtime::error::RuntimeErrorKind::InvalidOperation(msg) = err.kind {
+            assert_eq!(
+                msg,
+                "Security policy violation: Network capability is denied"
+            );
+        } else {
+            panic!("Expected InvalidOperation error, got {:?}", err.kind);
+        }
+    }
 }

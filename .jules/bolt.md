@@ -8,3 +8,6 @@
 ## 2024-05-18 - Removed redundant clone of VM stack during trace logs
 **Learning:** In `runtime/vm/src/executor.rs`, the debugging instruction trace `self.debugger.trace_instruction` was cloning the entire VM stack using `&self.stack.get_dump()` for every single instruction executed. This caused significant `O(N)` overhead inside the main fetch-decode-execute loop just to format debug output. A new `data_slice()` method was added to `ValueStack` to provide zero-copy slice access (`&[RuntimeValue]`) instead, completely eliminating the allocation overhead.
 **Action:** Always scrutinize deep clones in logging, tracing, or hot path loops. Use slice references (`&[T]`) instead of `Vec::clone` when the caller only needs read-only access to a collection.
+## 2024-06-25 - Suboptimal Line Search in LSP
+**Learning:** Using `chars().nth()` with a byte offset (such as one returned by `.find()`) inside a loop over a string creates an O(N) penalty and may result in an incorrect character lookup if multi-byte unicode characters are present.
+**Action:** Use string slicing with the byte index to create a subset string slice, and call `.chars().next_back()` or `.chars().next()` on it for an O(1) and UTF-8 safe boundary lookup.

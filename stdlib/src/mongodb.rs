@@ -30,3 +30,27 @@ impl StdlibRegistry {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::StdlibRegistry;
+
+    #[test]
+    fn test_register_mongodb() {
+        let mut registry = StdlibRegistry {
+            modules: std::collections::HashMap::new(),
+        };
+        registry.register_mongodb();
+
+        assert!(registry.modules.contains_key("std.mongodb"));
+        let module = registry.modules.get("std.mongodb").unwrap();
+        assert_eq!(module.name, "std.mongodb");
+        assert_eq!(module.version, "1.0.0");
+        assert!(module.exports.contains_key("connect"));
+
+        let connect_func = module.exports.get("connect").unwrap();
+        assert_eq!(connect_func.name(), "connect");
+        assert_eq!(connect_func.arity(), 1);
+    }
+}

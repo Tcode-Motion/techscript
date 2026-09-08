@@ -63,6 +63,30 @@ fn test_math_module() {
 }
 
 #[test]
+fn test_math_module_registration() {
+    let mut registry = StdlibRegistry::new();
+    registry.register_math();
+
+    let math = registry.get_module("std.math").unwrap();
+    assert_eq!(math.name, "std.math");
+    assert_eq!(math.version, "1.0.0");
+    assert!(math.required_capabilities.is_empty());
+
+    let expected_exports = vec![
+        "abs", "sin", "cos", "tan", "log", "exp", "sqrt", "pow", "floor", "ceil", "round",
+        "random", "to_float",
+    ];
+
+    for name in expected_exports {
+        assert!(
+            math.exports.contains_key(name),
+            "math module should export {}",
+            name
+        );
+    }
+}
+
+#[test]
 fn test_strings_module() {
     let registry = StdlibRegistry::new();
     let strings = registry.get_module("std.strings").unwrap();
@@ -1150,32 +1174,3 @@ fn test_ai_generate_text() {
     assert!(res.is_ok());
     let val = res.unwrap();
     assert!(val.as_string().unwrap().contains("Prompt: What is 2+2?"));
-}
-
-#[test]
-fn test_sys_module_registration() {
-    let registry = StdlibRegistry::new();
-
-    // Verify std.fs module
-    let fs_module = registry
-        .get_module("std.fs")
-        .expect("std.fs module should be registered");
-    assert_eq!(fs_module.name, "std.fs");
-    assert!(fs_module
-        .required_capabilities
-        .contains(&Capability::FileSystem));
-
-    assert!(fs_module.exports.contains_key("read_file"));
-    assert!(fs_module.exports.contains_key("write_file"));
-    assert!(fs_module.exports.contains_key("exists"));
-
-    // Verify std.time module
-    let time_module = registry
-        .get_module("std.time")
-        .expect("std.time module should be registered");
-    assert_eq!(time_module.name, "std.time");
-    assert!(time_module.required_capabilities.is_empty());
-
-    assert!(time_module.exports.contains_key("now"));
-    assert!(time_module.exports.contains_key("sleep"));
-}

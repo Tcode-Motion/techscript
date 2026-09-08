@@ -752,11 +752,11 @@ impl LanguageServer for Backend {
             while let Some(pos_in_line) = line[start_pos..].find(&word) {
                 let actual_pos = start_pos + pos_in_line;
                 let char_before = if actual_pos > 0 {
-                    line[..actual_pos].chars().next_back()
+                    line.chars().nth(actual_pos - 1)
                 } else {
                     None
                 };
-                let char_after = line[actual_pos + word_len..].chars().next();
+                let char_after = line.chars().nth(actual_pos + word_len);
 
                 let is_boundary_before =
                     char_before.map_or(true, |c| !c.is_alphanumeric() && c != '_');
@@ -803,11 +803,11 @@ impl LanguageServer for Backend {
             while let Some(pos_in_line) = line[start_pos..].find(&word) {
                 let actual_pos = start_pos + pos_in_line;
                 let char_before = if actual_pos > 0 {
-                    line[..actual_pos].chars().next_back()
+                    line.chars().nth(actual_pos - 1)
                 } else {
                     None
                 };
-                let char_after = line[actual_pos + word_len..].chars().next();
+                let char_after = line.chars().nth(actual_pos + word_len);
 
                 let is_boundary_before =
                     char_before.map_or(true, |c| !c.is_alphanumeric() && c != '_');

@@ -34,7 +34,7 @@ TRANSFORMS = [
     (r'std\.io\.println\((.+?)\)', r'say \1', 0),
     (r'std\.io\.print\((.+?)\)', r'say \1', 0),
 
-    # ── std.xxx → module ─────────────────────────────────────────
+    # ── std.xxx.yyy() calls → module.yyy() ─────────────────────────────────
     (r'std\.math\.', r'math.', 0),
     (r'std\.strings\.', r'string.', 0),
     (r'std\.fs\.', r'file.', 0),

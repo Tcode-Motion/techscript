@@ -752,11 +752,11 @@ impl LanguageServer for Backend {
             while let Some(pos_in_line) = line[start_pos..].find(&word) {
                 let actual_pos = start_pos + pos_in_line;
                 let char_before = if actual_pos > 0 {
-                    line.chars().nth(actual_pos - 1)
+                    line[..actual_pos].chars().next_back()
                 } else {
                     None
                 };
-                let char_after = line.chars().nth(actual_pos + word_len);
+                let char_after = line[actual_pos + word_len..].chars().next();
 
                 let is_boundary_before =
                     char_before.map_or(true, |c| !c.is_alphanumeric() && c != '_');
@@ -803,11 +803,11 @@ impl LanguageServer for Backend {
             while let Some(pos_in_line) = line[start_pos..].find(&word) {
                 let actual_pos = start_pos + pos_in_line;
                 let char_before = if actual_pos > 0 {
-                    line.chars().nth(actual_pos - 1)
+                    line[..actual_pos].chars().next_back()
                 } else {
                     None
                 };
-                let char_after = line.chars().nth(actual_pos + word_len);
+                let char_after = line[actual_pos + word_len..].chars().next();
 
                 let is_boundary_before =
                     char_before.map_or(true, |c| !c.is_alphanumeric() && c != '_');
@@ -1403,7 +1403,7 @@ impl LanguageServer for Backend {
         let mut actions = Vec::new();
         let uri = params.text_document.uri;
 
-        // Quick Fix 1: Organize Imports Action
+        // Code Action 1: Organize Imports
         let mut organize_edits = Vec::new();
         organize_edits.push(TextEdit {
             range: Range {
@@ -1427,7 +1427,7 @@ impl LanguageServer for Backend {
             ..Default::default()
         }));
 
-        // Quick Fix 2: Convert mutable "make" to immutable "const"
+        // Code Action 2: Convert mutable "make" to immutable "const"
         for diagnostic in params.context.diagnostics {
             if let Some(ref code) = diagnostic.code {
                 if let NumberOrString::String(ref s) = code {

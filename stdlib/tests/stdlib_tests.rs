@@ -63,6 +63,30 @@ fn test_math_module() {
 }
 
 #[test]
+fn test_math_module_registration() {
+    let mut registry = StdlibRegistry::new();
+    registry.register_math();
+
+    let math = registry.get_module("std.math").unwrap();
+    assert_eq!(math.name, "std.math");
+    assert_eq!(math.version, "1.0.0");
+    assert!(math.required_capabilities.is_empty());
+
+    let expected_exports = vec![
+        "abs", "sin", "cos", "tan", "log", "exp", "sqrt", "pow", "floor", "ceil", "round",
+        "random", "to_float",
+    ];
+
+    for name in expected_exports {
+        assert!(
+            math.exports.contains_key(name),
+            "math module should export {}",
+            name
+        );
+    }
+}
+
+#[test]
 fn test_strings_module() {
     let registry = StdlibRegistry::new();
     let strings = registry.get_module("std.strings").unwrap();
@@ -405,6 +429,82 @@ fn test_regex_operations() {
         )
         .unwrap();
     assert_eq!(res.as_string(), Some("hello TechScript"));
+}
+
+#[test]
+fn test_web_module() {
+    use std::net::TcpListener;
+    use std::panic;
+
+    let registry = StdlibRegistry::new();
+    let web = registry.get_module("std.web").unwrap();
+
+    let mut caps = HashSet::new();
+    caps.insert(Capability::Network);
+    let mut ctx = RuntimeContext::new(RuntimeConfig {
+        strict_mode: false,
+        max_recursion_depth: 1000,
+        enable_assertions: true,
+        capabilities: caps,
+    });
+
+    let start = web.exports.get("start").unwrap();
+    let serve = web.exports.get("serve").unwrap();
+    let stop = web.exports.get("stop").unwrap();
+
+    // Bind a listener to a random port to ensure the port is taken
+    // Keep it alive to conflict
+    let listener = TcpListener::bind("0.0.0.0:0").unwrap();
+    let port = listener.local_addr().unwrap().port();
+
+    // Test panic on `start` when port is in use
+    let start_result = panic::catch_unwind(panic::AssertUnwindSafe(|| {
+        let mut caps = HashSet::new();
+        caps.insert(Capability::Network);
+        let mut ctx2 = RuntimeContext::new(RuntimeConfig {
+            strict_mode: false,
+            max_recursion_depth: 1000,
+            enable_assertions: true,
+            capabilities: caps,
+        });
+        let _ = start.call(
+            &mut ctx2,
+            vec![
+                RuntimeValue::Int(port as i64),
+                RuntimeValue::Str("<h1>Test</h1>".to_string()),
+            ],
+        );
+    }));
+
+    assert!(
+        start_result.is_err(),
+        "Expected `start` to panic due to port already in use"
+    );
+
+    // Make sure we stop the server and cleanup the global bool in case of weirdness,
+    // although the panic meant it wasn't started fully, but `SERVER_RUNNING` is true.
+    let _ = stop.call(&mut ctx, vec![]).unwrap();
+
+    // Test panic on `serve` when port is in use
+    let serve_result = panic::catch_unwind(panic::AssertUnwindSafe(|| {
+        let mut caps = HashSet::new();
+        caps.insert(Capability::Network);
+        let mut ctx3 = RuntimeContext::new(RuntimeConfig {
+            strict_mode: false,
+            max_recursion_depth: 1000,
+            enable_assertions: true,
+            capabilities: caps,
+        });
+        let _ = serve.call(&mut ctx3, vec![RuntimeValue::Int(port as i64)]);
+    }));
+
+    assert!(
+        serve_result.is_err(),
+        "Expected `serve` to panic due to port already in use"
+    );
+
+    // Reset `SERVER_RUNNING` so other tests aren't affected
+    let _ = stop.call(&mut ctx, vec![]).unwrap();
 }
 
 #[test]
@@ -1150,4 +1250,8 @@ fn test_ai_generate_text() {
     assert!(res.is_ok());
     let val = res.unwrap();
     assert!(val.as_string().unwrap().contains("Prompt: What is 2+2?"));
+}
+
+#[test]
+<<
 }

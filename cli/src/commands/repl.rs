@@ -68,86 +68,8 @@ pub fn execute() -> ExitCode {
                     // Process REPL Metacommand
                     let parts: Vec<&str> = trimmed.split_whitespace().collect();
                     let cmd = parts[0];
-                    match cmd {
-                        ":quit" | ":q" => {
-                            println!("Goodbye!");
-                            break;
-                        }
-                        ":help" | ":h" => {
-                            print_help();
-                        }
-                        ":clear" | ":c" => {
-                            interpreter = techscript_interpreter::Interpreter::new();
-                            println!("REPL environment state cleared.");
-                        }
-                        ":history" => {
-                            for (i, h) in session_history.iter().enumerate() {
-                                println!("{:>4}: {}", i + 1, h);
-                            }
-                        }
-                        ":type" => {
-                            if parts.len() < 2 {
-                                println!("Usage: :type <expr>");
-                            } else {
-                                let expr = parts[1..].join(" ");
-                                evaluate_type(&expr, &mut interpreter);
-                            }
-                        }
-                        ":ast" => {
-                            if parts.len() < 2 {
-                                println!("Usage: :ast <expr>");
-                            } else {
-                                let expr = parts[1..].join(" ");
-                                dump_repl_ast(&expr);
-                            }
-                        }
-                        ":ir" => {
-                            if parts.len() < 2 {
-                                println!("Usage: :ir <expr>");
-                            } else {
-                                let expr = parts[1..].join(" ");
-                                dump_repl_ir(&expr);
-                            }
-                        }
-                        ":bytecode" => {
-                            if parts.len() < 2 {
-                                println!("Usage: :bytecode <expr>");
-                            } else {
-                                let expr = parts[1..].join(" ");
-                                dump_repl_bytecode(&expr);
-                            }
-                        }
-                        ":load" => {
-                            if parts.len() < 2 {
-                                println!("Usage: :load <file>");
-                            } else {
-                                let file = parts[1];
-                                if let Ok(content) = std::fs::read_to_string(file) {
-                                    eval_code(&content, &mut interpreter);
-                                } else {
-                                    println!("Error: Could not read file '{}'.", file);
-                                }
-                            }
-                        }
-                        ":save" => {
-                            if parts.len() < 2 {
-                                println!("Usage: :save <file>");
-                            } else {
-                                let file = parts[1];
-                                let session_data = session_history.join("\n");
-                                if std::fs::write(file, session_data).is_ok() {
-                                    println!("Session history saved to '{}'.", file);
-                                } else {
-                                    println!("Error: Could not write to file '{}'.", file);
-                                }
-                            }
-                        }
-                        other => {
-                            println!(
-                                "Unknown command '{}'. Type ':help' for instructions.",
-                                other
-                            );
-                        }
+                    if handle_metacommand(cmd, &parts, &mut interpreter, &session_history) {
+                        break;
                     }
                 } else {
                     // Regular statement/expression evaluation
@@ -170,6 +92,96 @@ pub fn execute() -> ExitCode {
     }
 
     ExitCode::Success
+}
+
+fn handle_metacommand(
+    cmd: &str,
+    parts: &[&str],
+    interpreter: &mut techscript_interpreter::Interpreter,
+    session_history: &[String],
+) -> bool {
+    match cmd {
+        ":quit" | ":q" => {
+            println!("Goodbye!");
+            return true;
+        }
+        ":help" | ":h" => {
+            print_help();
+        }
+        ":clear" | ":c" => {
+            *interpreter = techscript_interpreter::Interpreter::new();
+            println!("REPL environment state cleared.");
+        }
+        ":history" => {
+            for (i, h) in session_history.iter().enumerate() {
+                println!("{:>4}: {}", i + 1, h);
+            }
+        }
+        ":type" => {
+            if parts.len() < 2 {
+                println!("Usage: :type <expr>");
+            } else {
+                let expr = parts[1..].join(" ");
+                evaluate_type(&expr, interpreter);
+            }
+        }
+        ":ast" => {
+            if parts.len() < 2 {
+                println!("Usage: :ast <expr>");
+            } else {
+                let expr = parts[1..].join(" ");
+                dump_repl_ast(&expr);
+            }
+        }
+        ":ir" => {
+            if parts.len() < 2 {
+                println!("Usage: :ir <expr>");
+            } else {
+                let expr = parts[1..].join(" ");
+                dump_repl_ir(&expr);
+            }
+        }
+        ":bytecode" => {
+            if parts.len() < 2 {
+                println!("Usage: :bytecode <expr>");
+            } else {
+                let expr = parts[1..].join(" ");
+                dump_repl_bytecode(&expr);
+            }
+        }
+        ":load" => {
+            if parts.len() < 2 {
+                println!("Usage: :load <file>");
+            } else {
+                let file = parts[1];
+                if let Ok(content) = std::fs::read_to_string(file) {
+                    eval_code(&content, interpreter);
+                } else {
+                    println!("Error: Could not read file '{}'.", file);
+                }
+            }
+        }
+        ":save" => {
+            if parts.len() < 2 {
+                println!("Usage: :save <file>");
+            } else {
+                let file = parts[1];
+                let session_data = session_history.join("\n");
+                if std::fs::write(file, session_data).is_ok() {
+                    println!("Session history saved to '{}'.", file);
+                } else {
+                    println!("Error: Could not write to file '{}'.", file);
+                }
+            }
+        }
+        other => {
+            println!(
+                "Unknown command '{}'. Type ':help' for instructions.",
+                other
+            );
+        }
+    }
+    false
 }
 
 fn print_help() {

@@ -43,41 +43,8 @@ impl ResolveSymbols {
             Statement::ModelDecl(decl) => self.resolve_model_decl(decl, context),
             Statement::ExportDecl(decl) => self.resolve_statement(&decl.declaration, context),
             Statement::Block(block) => self.resolve_block(block, context),
-            Statement::If(stmt) => {
-                let _ = self.resolve_expression(&stmt.condition, context);
-                let _ = self.resolve_block(&stmt.body, context);
-                for (cond, body) in &stmt.else_ifs {
-                    let _ = self.resolve_expression(cond, context);
-                    let _ = self.resolve_block(body, context);
-                }
-                if let Some(ref else_body) = stmt.else_body {
-                    let _ = self.resolve_block(else_body, context);
-                }
-                Ok(())
-            }
-            Statement::For(stmt) => {
-                let _ = self.resolve_expression(&stmt.iterable, context);
-                context.loop_depth += 1;
-                context.symbol_table.push_scope();
-
-                // Register loop variable
-                let symbol = Symbol::new(
-                    stmt.item.name.clone(),
-                    false,
-                    false,
-                    false,
-                    context.interner.any(),
-                );
-                context
-                    .symbol_table
-                    .register(stmt.item.name.clone(), symbol);
-
-                let _ = self.resolve_block(&stmt.body, context);
-
-                context.symbol_table.pop_scope();
-                context.loop_depth -= 1;
-                Ok(())
-            }
+            Statement::If(stmt) => self.resolve_if(stmt, context),
+            Statement::For(stmt) => self.resolve_for(stmt, context),
             Statement::While(stmt) => {
                 let _ = self.resolve_expression(&stmt.condition, context);
                 context.loop_depth += 1;
@@ -92,26 +59,7 @@ impl ResolveSymbols {
                 context.loop_depth -= 1;
                 Ok(())
             }
-            Statement::Try(stmt) => {
-                let _ = self.resolve_block(&stmt.body, context);
-                context.symbol_table.push_scope();
-
-                // Register catch variable
-                let symbol = Symbol::new(
-                    stmt.catch_var.name.clone(),
-                    false,
-                    false,
-                    false,
-                    context.interner.any(),
-                );
-                context
-                    .symbol_table
-                    .register(stmt.catch_var.name.clone(), symbol);
-
-                let _ = self.resolve_block(&stmt.catch_body, context);
-                context.symbol_table.pop_scope();
-                Ok(())
-            }
+            Statement::Try(stmt) => self.resolve_try(stmt, context),
             Statement::Say(stmt) => {
                 let _ = self.resolve_expression(&stmt.value, context);
                 Ok(())
@@ -162,115 +110,7 @@ impl ResolveSymbols {
                 }
                 Ok(())
             }
-            Statement::Import(stmt) => {
-                if stmt.path.is_empty() {
-                    let diag = Diagnostic::new(
-                        DiagnosticLevel::Error,
-                        ErrorCode::E0340,
-                        "Empty module import path".to_string(),
-                        stmt.span,
-                    );
-                    context.diagnostics.push(diag);
-                    return Err(());
-                }
-
-                let path_strs = stmt
-                    .path
-                    .iter()
-                    .map(|ident| ident.name.clone())
-                    .collect::<Vec<_>>();
-                let resolver = techscript_module_resolver::DefaultModuleResolver::new();
-                use techscript_module_resolver::ModuleResolver;
-                match resolver.resolve(&path_strs) {
-                    Ok(_) => {
-                        if let Some(symbols) = &stmt.symbols {
-                            if stmt.path.len() > 1
-                                && symbols.len() == 1
-                                && !symbols[0].name.contains(':')
-                                && symbols[0].name != "*"
-                            {
-                                let alias_name = symbols[0].name.clone();
-                                let symbol = Symbol::new(
-                                    alias_name.clone(),
-                                    false,
-                                    true,
-                                    false,
-                                    context.interner.any(),
-                                );
-                                context.symbol_table.register(alias_name, symbol);
-                            } else {
-                                for sym in symbols {
-                                    if sym.name == "*" {
-                                        let module_path = stmt
-                                            .path
-                                            .iter()
-                                            .map(|i| i.name.clone())
-                                            .collect::<Vec<_>>()
-                                            .join(".");
-                                        let registry = techscript_stdlib::StdlibRegistry::new();
-                                        if let Some(module) = registry.get_module(&module_path) {
-                                            for func_name in module.exports.keys() {
-                                                let symbol = Symbol::new(
-                                                    func_name.clone(),
-                                                    false,
-                                                    true,
-                                                    false,
-                                                    context.interner.any(),
-                                                );
-                                                context
-                                                    .symbol_table
-                                                    .register(func_name.clone(), symbol);
-                                            }
-                                        }
-                                    } else if sym.name.contains(':') {
-                                        let parts: Vec<&str> = sym.name.split(':').collect();
-                                        let alias_name = parts[1].to_string();
-                                        let symbol = Symbol::new(
-                                            alias_name.clone(),
-                                            false,
-                                            true,
-                                            false,
-                                            context.interner.any(),
-                                        );
-                                        context.symbol_table.register(alias_name, symbol);
-                                    } else {
-                                        let sym_name = sym.name.clone();
-                                        let symbol = Symbol::new(
-                                            sym_name.clone(),
-                                            false,
-                                            true,
-                                            false,
-                                            context.interner.any(),
-                                        );
-                                        context.symbol_table.register(sym_name, symbol);
-                                    }
-                                }
-                            }
-                        } else {
-                            let root_name = stmt.path[0].name.clone();
-                            let symbol = Symbol::new(
-                                root_name.clone(),
-                                false,
-                                true,
-                                false,
-                                context.interner.any(),
-                            );
-                            context.symbol_table.register(root_name, symbol);
-                        }
-                    }
-                    Err(e) => {
-                        let diag = Diagnostic::new(
-                            DiagnosticLevel::Error,
-                            ErrorCode::E0340,
-                            format!("Failed to resolve module: {}", e),
-                            stmt.span,
-                        );
-                        context.diagnostics.push(diag);
-                        return Err(());
-                    }
-                }
-                Ok(())
-            }
+            Statement::Import(stmt) => self.resolve_import(stmt, context),
             Statement::Expression(stmt) => {
                 let _ = self.resolve_expression(&stmt.expression, context);
                 Ok(())
@@ -280,6 +120,188 @@ impl ResolveSymbols {
                 Ok(())
             }
         }
+    }
+
+    fn resolve_try(
+        &self,
+        stmt: &techscript_ast::TryStmt,
+        context: &mut SemanticContext,
+    ) -> Result<(), ()> {
+        let _ = self.resolve_block(&stmt.body, context);
+        context.symbol_table.push_scope();
+
+        // Register catch variable
+        let symbol = Symbol::new(
+            stmt.catch_var.name.clone(),
+            false,
+            false,
+            false,
+            context.interner.any(),
+        );
+        context
+            .symbol_table
+            .register(stmt.catch_var.name.clone(), symbol);
+
+        let _ = self.resolve_block(&stmt.catch_body, context);
+        context.symbol_table.pop_scope();
+        Ok(())
+    }
+
+    fn resolve_for(
+        &self,
+        stmt: &techscript_ast::ForStmt,
+        context: &mut SemanticContext,
+    ) -> Result<(), ()> {
+        let _ = self.resolve_expression(&stmt.iterable, context);
+        context.loop_depth += 1;
+        context.symbol_table.push_scope();
+
+        // Register loop variable
+        let symbol = Symbol::new(
+            stmt.item.name.clone(),
+            false,
+            false,
+            false,
+            context.interner.any(),
+        );
+        context
+            .symbol_table
+            .register(stmt.item.name.clone(), symbol);
+
+        let _ = self.resolve_block(&stmt.body, context);
+
+        context.symbol_table.pop_scope();
+        context.loop_depth -= 1;
+        Ok(())
+    }
+
+    fn resolve_if(
+        &self,
+        stmt: &techscript_ast::IfStmt,
+        context: &mut SemanticContext,
+    ) -> Result<(), ()> {
+        let _ = self.resolve_expression(&stmt.condition, context);
+        let _ = self.resolve_block(&stmt.body, context);
+        for (cond, body) in &stmt.else_ifs {
+            let _ = self.resolve_expression(cond, context);
+            let _ = self.resolve_block(body, context);
+        }
+        if let Some(ref else_body) = stmt.else_body {
+            let _ = self.resolve_block(else_body, context);
+        }
+        Ok(())
+    }
+
+    fn resolve_import(
+        &self,
+        stmt: &techscript_ast::ImportStmt,
+        context: &mut SemanticContext,
+    ) -> Result<(), ()> {
+        if stmt.path.is_empty() {
+            let diag = Diagnostic::new(
+                DiagnosticLevel::Error,
+                ErrorCode::E0340,
+                "Empty module import path".to_string(),
+                stmt.span,
+            );
+            context.diagnostics.push(diag);
+            return Err(());
+        }
+
+        let path_strs = stmt
+            .path
+            .iter()
+            .map(|ident| ident.name.clone())
+            .collect::<Vec<_>>();
+        let resolver = techscript_module_resolver::DefaultModuleResolver::new();
+        use techscript_module_resolver::ModuleResolver;
+        match resolver.resolve(&path_strs) {
+            Ok(_) => {
+                if let Some(symbols) = &stmt.symbols {
+                    if stmt.path.len() > 1
+                        && symbols.len() == 1
+                        && !symbols[0].name.contains(':')
+                        && symbols[0].name != "*"
+                    {
+                        let alias_name = symbols[0].name.clone();
+                        let symbol = Symbol::new(
+                            alias_name.clone(),
+                            false,
+                            true,
+                            false,
+                            context.interner.any(),
+                        );
+                        context.symbol_table.register(alias_name, symbol);
+                    } else {
+                        for sym in symbols {
+                            if sym.name == "*" {
+                                let module_path = stmt
+                                    .path
+                                    .iter()
+                                    .map(|i| i.name.clone())
+                                    .collect::<Vec<_>>()
+                                    .join(".");
+                                let registry = techscript_stdlib::StdlibRegistry::new();
+                                if let Some(module) = registry.get_module(&module_path) {
+                                    for func_name in module.exports.keys() {
+                                        let symbol = Symbol::new(
+                                            func_name.clone(),
+                                            false,
+                                            true,
+                                            false,
+                                            context.interner.any(),
+                                        );
+                                        context.symbol_table.register(func_name.clone(), symbol);
+                                    }
+                                }
+                            } else if sym.name.contains(':') {
+                                let parts: Vec<&str> = sym.name.split(':').collect();
+                                let alias_name = parts[1].to_string();
+                                let symbol = Symbol::new(
+                                    alias_name.clone(),
+                                    false,
+                                    true,
+                                    false,
+                                    context.interner.any(),
+                                );
+                                context.symbol_table.register(alias_name, symbol);
+                            } else {
+                                let sym_name = sym.name.clone();
+                                let symbol = Symbol::new(
+                                    sym_name.clone(),
+                                    false,
+                                    true,
+                                    false,
+                                    context.interner.any(),
+                                );
+                                context.symbol_table.register(sym_name, symbol);
+                            }
+                        }
+                    }
+                } else {
+                    let root_name = stmt.path[0].name.clone();
+                    let symbol = Symbol::new(
+                        root_name.clone(),
+                        false,
+                        true,
+                        false,
+                        context.interner.any(),
+                    );
+                    context.symbol_table.register(root_name, symbol);
+                }
+            }
+            Err(e) => {
+                let diag = Diagnostic::new(
+                    DiagnosticLevel::Error,
+                    ErrorCode::E0340,
+                    format!("Failed to resolve module: {}", e),
+                    stmt.span,
+                );
+                context.diagnostics.push(diag);
+                return Err(());
+            }
+        }
+        Ok(())
     }
 
     fn resolve_dsl_block(&self, block: &DSLBlock, context: &mut SemanticContext) {

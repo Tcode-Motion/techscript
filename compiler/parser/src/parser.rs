@@ -1,5 +1,5 @@
 use std::collections::HashSet;
-use techscript_common::{NodeIdGenerator, Span};
+use techscript_common::NodeIdGenerator;
 use techscript_errors::{Diagnostic, DiagnosticLevel, DiagnosticReporter, ErrorCode};
 use techscript_syntax::{Token, TokenKind};
 
@@ -18,7 +18,6 @@ pub struct Parser<'a> {
     pub(crate) dsl_sub_blocks: HashSet<String>,
 }
 
-#[allow(dead_code)]
 impl<'a> Parser<'a> {
     /// Create a new Parser instance with DSL keyword registry initialized.
     pub fn new(tokens: &'a [Token]) -> Self {
@@ -210,16 +209,6 @@ impl<'a> Parser<'a> {
     /// Generates the next sequential `NodeId`.
     pub(crate) fn next_id(&self) -> techscript_common::NodeId {
         self.node_id_gen.next()
-    }
-
-    /// Returns the span of the current token.
-    pub(crate) fn current_span(&self) -> Span {
-        self.peek().span
-    }
-
-    /// Returns the span of the previous token.
-    pub(crate) fn prev_span(&self) -> Span {
-        self.previous().span
     }
 
     /// Synchronizes the parser boundary to recover from syntax errors.

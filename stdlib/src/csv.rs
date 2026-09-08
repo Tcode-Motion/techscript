@@ -73,3 +73,26 @@ impl StdlibRegistry {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::collections::HashMap;
+
+    #[test]
+    fn test_register_csv() {
+        let mut registry = StdlibRegistry {
+            modules: HashMap::new(),
+        };
+
+        registry.register_csv();
+
+        assert!(registry.has_module("std.csv"));
+
+        let module = registry.get_module("std.csv").unwrap();
+        assert_eq!(module.name, "std.csv");
+        assert_eq!(module.version, "1.0.0");
+        assert!(module.exports.contains_key("parse"));
+        assert!(module.exports.contains_key("stringify"));
+    }
+}

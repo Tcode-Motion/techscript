@@ -93,7 +93,14 @@ impl StdlibRegistry {
                     CONNECTIONS.with(|m| {
                         let mut map = m.borrow_mut();
                         if let Some(conn) = map.get_mut(&id) {
-                            conn.execute(&sql, rusqlite::params_from_iter(params))
+                            let mut stmt = conn.prepare_cached(&sql).map_err(|e| {
+                                RuntimeError::new(
+                                    RuntimeErrorKind::InvalidOperation(e.to_string()),
+                                    None,
+                                    None,
+                                )
+                            })?;
+                            stmt.execute(rusqlite::params_from_iter(params))
                                 .map_err(|e| {
                                     RuntimeError::new(
                                         RuntimeErrorKind::InvalidOperation(e.to_string()),
@@ -161,7 +168,7 @@ impl StdlibRegistry {
                     let rows = CONNECTIONS.with(|m| {
                         let mut map = m.borrow_mut();
                         if let Some(conn) = map.get_mut(&id) {
-                            let mut stmt = conn.prepare(&sql).map_err(|e| {
+                            let mut stmt = conn.prepare_cached(&sql).map_err(|e| {
                                 RuntimeError::new(
                                     RuntimeErrorKind::InvalidOperation(e.to_string()),
                                     None,
@@ -251,6 +258,49 @@ impl StdlibRegistry {
                 exports,
                 required_capabilities: Vec::new(),
             },
+        );
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use rusqlite::types::Value;
+    use std::cell::RefCell;
+    use std::rc::Rc;
+    use techscript_runtime::value::RuntimeValue;
+
+    #[test]
+    fn test_runtime_to_sql_value() {
+        assert_eq!(runtime_to_sql_value(&RuntimeValue::Null), Value::Null);
+        assert_eq!(
+            runtime_to_sql_value(&RuntimeValue::Bool(true)),
+            Value::Integer(1)
+        );
+        assert_eq!(
+            runtime_to_sql_value(&RuntimeValue::Bool(false)),
+            Value::Integer(0)
+        );
+        assert_eq!(
+            runtime_to_sql_value(&RuntimeValue::Int(42)),
+            Value::Integer(42)
+        );
+        assert_eq!(
+            runtime_to_sql_value(&RuntimeValue::Float(3.14)),
+            Value::Real(3.14)
+        );
+        assert_eq!(
+            runtime_to_sql_value(&RuntimeValue::Str("test".to_string())),
+            Value::Text("test".to_string())
+        );
+
+        let list_val = RuntimeValue::List {
+            items: Rc::new(RefCell::new(vec![RuntimeValue::Int(1)])),
+            is_const: false,
+        };
+        assert_eq!(
+            runtime_to_sql_value(&list_val),
+            Value::Text(list_val.to_string())
         );
     }
 }

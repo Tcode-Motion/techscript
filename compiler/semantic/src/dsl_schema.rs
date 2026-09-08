@@ -33,9 +33,7 @@ impl DSLSchema {
     }
 }
 
-pub fn build_dsl_registry() -> HashMap<String, DSLSchema> {
-    let mut reg = HashMap::new();
-
+fn register_web_schemas(reg: &mut HashMap<String, DSLSchema>) {
     // Web module schemas ──────────────────────────────────────────────
     reg.insert(
         "website".to_string(),
@@ -298,7 +296,9 @@ pub fn build_dsl_registry() -> HashMap<String, DSLSchema> {
             vec![],
         ),
     );
+}
 
+fn register_canvas_schemas(reg: &mut HashMap<String, DSLSchema>) {
     // Canvas module schemas ──────────────────────────────────────────
     reg.insert(
         "logo".to_string(),
@@ -485,7 +485,9 @@ pub fn build_dsl_registry() -> HashMap<String, DSLSchema> {
             vec![],
         ),
     );
+}
 
+fn register_generic_schemas(reg: &mut HashMap<String, DSLSchema>) {
     // Generic DSL blocks ────────────────────────────────────────────
     reg.insert(
         "window".to_string(),
@@ -530,6 +532,12 @@ pub fn build_dsl_registry() -> HashMap<String, DSLSchema> {
             vec!["link".into(), "button".into()],
         ),
     );
+}
 
+pub fn build_dsl_registry() -> HashMap<String, DSLSchema> {
+    let mut reg = HashMap::new();
+    register_web_schemas(&mut reg);
+    register_canvas_schemas(&mut reg);
+    register_generic_schemas(&mut reg);
     reg
 }

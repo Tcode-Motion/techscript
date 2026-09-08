@@ -17,7 +17,7 @@ fn is_safe_ip(ip: &IpAddr) -> bool {
                 && !ipv4.is_unspecified()
         }
         IpAddr::V6(ipv6) => {
-            if let Some(ipv4) = ipv6.to_ipv4() {
+            if let Some(ipv4) = ipv6.to_ipv4_mapped() {
                 // Check IPv4-mapped IPv6
                 return is_safe_ip(&IpAddr::V4(ipv4));
             }
@@ -86,7 +86,10 @@ impl Resolver for SafeResolver {
 use std::sync::Mutex;
 use std::thread;
 use techscript_runtime::{
-    context::RuntimeContext, error::RuntimeError, function::Callable, value::RuntimeValue,
+    context::{Capability, RuntimeContext},
+    error::RuntimeError,
+    function::Callable,
+    value::RuntimeValue,
 };
 
 static SERVER_RUNNING: AtomicBool = AtomicBool::new(false);
@@ -382,7 +385,17 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "start".to_string(),
                 arity: 2,
-                callback: |_ctx, args| {
+                callback: |ctx, args| {
+                    if !ctx.config.capabilities.contains(&Capability::Network) {
+                        return Err(RuntimeError::new(
+                            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
+                                "Security policy violation: Network capability is denied"
+                                    .to_string(),
+                            ),
+                            None,
+                            None,
+                        ));
+                    }
                     let port = args[0].try_into_int().map_err(|e| {
                         RuntimeError::new(
                             techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
@@ -442,7 +455,17 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "serve".to_string(),
                 arity: 1,
-                callback: |_ctx, args| {
+                callback: |ctx, args| {
+                    if !ctx.config.capabilities.contains(&Capability::Network) {
+                        return Err(RuntimeError::new(
+                            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
+                                "Security policy violation: Network capability is denied"
+                                    .to_string(),
+                            ),
+                            None,
+                            None,
+                        ));
+                    }
                     let port = args[0].try_into_int().map_err(|e| {
                         RuntimeError::new(
                             techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
@@ -511,7 +534,16 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "fetch".to_string(),
                 arity: 1,
-                callback: |_ctx, args| {
+                callback: |ctx, args| {
+                    if !ctx.config.capabilities.contains(&Capability::Network) {
+                        return Err(RuntimeError::new(
+                            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
+                                "Security policy violation: Network capability is denied".to_string(),
+                            ),
+                            None,
+                            None,
+                        ));
+                    }
                     let url = args[0].to_string();
 
                     if !is_safe_url(&url) {
@@ -592,8 +624,105 @@ impl StdlibRegistry {
                 name: "std.web".to_string(),
                 version: "1.0.0".to_string(),
                 exports,
-                required_capabilities: Vec::new(),
+                required_capabilities: vec![Capability::Network],
             },
         );
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::net::IpAddr;
+
+    #[test]
+    fn test_safe_ipv4() {
+        let ip: IpAddr = "8.8.8.8".parse().unwrap();
+        assert!(is_safe_ip(&ip));
+
+        let ip: IpAddr = "1.1.1.1".parse().unwrap();
+        assert!(is_safe_ip(&ip));
+    }
+
+    #[test]
+    fn test_unsafe_ipv4() {
+        // Private
+        let ip: IpAddr = "10.0.0.1".parse().unwrap();
+        assert!(!is_safe_ip(&ip));
+
+        let ip: IpAddr = "172.16.0.1".parse().unwrap();
+        assert!(!is_safe_ip(&ip));
+
+        let ip: IpAddr = "192.168.1.1".parse().unwrap();
+        assert!(!is_safe_ip(&ip));
+
+        // Loopback
+        let ip: IpAddr = "127.0.0.1".parse().unwrap();
+        assert!(!is_safe_ip(&ip));
+
+        // Link-local
+        let ip: IpAddr = "169.254.0.1".parse().unwrap();
+        assert!(!is_safe_ip(&ip));
+
+        // Broadcast
+        let ip: IpAddr = "255.255.255.255".parse().unwrap();
+        assert!(!is_safe_ip(&ip));
+
+        // Documentation
+        let ip: IpAddr = "192.0.2.1".parse().unwrap();
+        assert!(!is_safe_ip(&ip));
+
+        let ip: IpAddr = "198.51.100.1".parse().unwrap();
+        assert!(!is_safe_ip(&ip));
+
+        let ip: IpAddr = "203.0.113.1".parse().unwrap();
+        assert!(!is_safe_ip(&ip));
+
+        // Unspecified
+        let ip: IpAddr = "0.0.0.0".parse().unwrap();
+        assert!(!is_safe_ip(&ip));
+    }
+
+    #[test]
+    fn test_safe_ipv6() {
+        let ip: IpAddr = "2001:4860:4860::8888".parse().unwrap();
+        assert!(is_safe_ip(&ip));
+    }
+
+    #[test]
+    fn test_unsafe_ipv6() {
+        // Loopback
+        let ip: IpAddr = "::1".parse().unwrap();
+        assert!(!is_safe_ip(&ip));
+
+        // Unspecified
+        let ip: IpAddr = "::".parse().unwrap();
+        assert!(!is_safe_ip(&ip));
+
+        // Unique Local Address
+        let ip: IpAddr = "fc00::1".parse().unwrap();
+        assert!(!is_safe_ip(&ip));
+
+        let ip: IpAddr = "fd00::1".parse().unwrap();
+        assert!(!is_safe_ip(&ip));
+
+        // Link Local Address
+        let ip: IpAddr = "fe80::1".parse().unwrap();
+        assert!(!is_safe_ip(&ip));
+    }
+
+    #[test]
+    fn test_ipv4_mapped_ipv6() {
+        // Mapped loopback (127.0.0.1)
+        let ip: IpAddr = "::ffff:127.0.0.1".parse().unwrap();
+        assert!(!is_safe_ip(&ip));
+
+        // Mapped private (10.0.0.1)
+        let ip: IpAddr = "::ffff:10.0.0.1".parse().unwrap();
+        assert!(!is_safe_ip(&ip));
+
+        // Mapped public (8.8.8.8)
+        let ip: IpAddr = "::ffff:8.8.8.8".parse().unwrap();
+        assert!(is_safe_ip(&ip));
     }
 }

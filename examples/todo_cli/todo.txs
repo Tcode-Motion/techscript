@@ -1,4 +1,4 @@
-# Todo CLI Demo
+# To-Do CLI Demo
 use collections
 
 do add_todo(todo_list, title)

@@ -93,7 +93,14 @@ impl StdlibRegistry {
                     CONNECTIONS.with(|m| {
                         let mut map = m.borrow_mut();
                         if let Some(conn) = map.get_mut(&id) {
-                            conn.execute(&sql, rusqlite::params_from_iter(params))
+                            let mut stmt = conn.prepare_cached(&sql).map_err(|e| {
+                                RuntimeError::new(
+                                    RuntimeErrorKind::InvalidOperation(e.to_string()),
+                                    None,
+                                    None,
+                                )
+                            })?;
+                            stmt.execute(rusqlite::params_from_iter(params))
                                 .map_err(|e| {
                                     RuntimeError::new(
                                         RuntimeErrorKind::InvalidOperation(e.to_string()),
@@ -161,7 +168,7 @@ impl StdlibRegistry {
                     let rows = CONNECTIONS.with(|m| {
                         let mut map = m.borrow_mut();
                         if let Some(conn) = map.get_mut(&id) {
-                            let mut stmt = conn.prepare(&sql).map_err(|e| {
+                            let mut stmt = conn.prepare_cached(&sql).map_err(|e| {
                                 RuntimeError::new(
                                     RuntimeErrorKind::InvalidOperation(e.to_string()),
                                     None,

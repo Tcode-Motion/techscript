@@ -1151,3 +1151,16 @@ fn test_ai_generate_text() {
     let val = res.unwrap();
     assert!(val.as_string().unwrap().contains("Prompt: What is 2+2?"));
 }
+
+#[test]
+fn test_uuid_module() {
+    let registry = StdlibRegistry::new();
+    let uuid_mod = registry.get_module("std.uuid").unwrap();
+    let uuid_v4 = uuid_mod.exports.get("uuid_v4").unwrap();
+
+    let mut ctx = RuntimeContext::new(RuntimeConfig::default());
+    let result = uuid_v4.call(&mut ctx, vec![]).unwrap();
+
+    let s = result.as_string().unwrap();
+    assert!(s.starts_with("123e4567-e89b-12d3-a456-"));
+}

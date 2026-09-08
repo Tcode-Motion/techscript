@@ -1151,3 +1151,14 @@ fn test_ai_generate_text() {
     let val = res.unwrap();
     assert!(val.as_string().unwrap().contains("Prompt: What is 2+2?"));
 }
+
+#[test]
+fn test_word_module() {
+    let registry = StdlibRegistry::new();
+    let word = registry.get_module("std.word").unwrap();
+
+    assert_eq!(word.name, "std.word");
+    assert_eq!(word.version, "1.0.0");
+    assert!(word.exports.is_empty());
+    assert!(word.required_capabilities.is_empty());
+}

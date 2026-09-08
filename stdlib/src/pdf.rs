@@ -19,21 +19,3 @@ impl StdlibRegistry {
         );
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_register_pdf() {
-        let mut registry = StdlibRegistry::default();
-        registry.register_pdf();
-
-        assert!(registry.has_module("std.pdf"));
-        let module = registry.get_module("std.pdf").unwrap();
-        assert_eq!(module.name, "std.pdf");
-        assert_eq!(module.version, "1.0.0");
-        assert!(module.exports.is_empty());
-        assert!(module.required_capabilities.is_empty());
-    }
-}

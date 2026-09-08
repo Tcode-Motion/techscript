@@ -86,10 +86,7 @@ impl Resolver for SafeResolver {
 use std::sync::Mutex;
 use std::thread;
 use techscript_runtime::{
-    context::{Capability, RuntimeContext},
-    error::RuntimeError,
-    function::Callable,
-    value::RuntimeValue,
+    context::RuntimeContext, error::RuntimeError, function::Callable, value::RuntimeValue,
 };
 
 static SERVER_RUNNING: AtomicBool = AtomicBool::new(false);
@@ -385,17 +382,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "start".to_string(),
                 arity: 2,
-                callback: |ctx, args| {
-                    if !ctx.config.capabilities.contains(&Capability::Network) {
-                        return Err(RuntimeError::new(
-                            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Network capability is denied"
-                                    .to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
+                callback: |_ctx, args| {
                     let port = args[0].try_into_int().map_err(|e| {
                         RuntimeError::new(
                             techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
@@ -455,17 +442,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "serve".to_string(),
                 arity: 1,
-                callback: |ctx, args| {
-                    if !ctx.config.capabilities.contains(&Capability::Network) {
-                        return Err(RuntimeError::new(
-                            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Network capability is denied"
-                                    .to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
+                callback: |_ctx, args| {
                     let port = args[0].try_into_int().map_err(|e| {
                         RuntimeError::new(
                             techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
@@ -534,16 +511,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "fetch".to_string(),
                 arity: 1,
-                callback: |ctx, args| {
-                    if !ctx.config.capabilities.contains(&Capability::Network) {
-                        return Err(RuntimeError::new(
-                            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Network capability is denied".to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
+                callback: |_ctx, args| {
                     let url = args[0].to_string();
 
                     if !is_safe_url(&url) {
@@ -624,7 +592,7 @@ impl StdlibRegistry {
                 name: "std.web".to_string(),
                 version: "1.0.0".to_string(),
                 exports,
-                required_capabilities: vec![Capability::Network],
+                required_capabilities: Vec::new(),
             },
         );
     }

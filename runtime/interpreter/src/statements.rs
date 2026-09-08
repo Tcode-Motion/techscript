@@ -21,10 +21,103 @@ impl Interpreter {
                 self.visit_expression(&expr_stmt.expression)?;
                 Ok(FlowSignal::Normal)
             }
-            Statement::If(if_stmt) => self.execute_if_stmt(if_stmt),
-            Statement::While(while_stmt) => self.execute_while_stmt(while_stmt),
-            Statement::For(for_stmt) => self.execute_for_stmt(for_stmt),
-            Statement::Repeat(repeat_stmt) => self.execute_repeat_stmt(repeat_stmt),
+            Statement::If(if_stmt) => {
+                let cond_val = self.visit_expression(&if_stmt.condition)?;
+                if cond_val.is_truthy() {
+                    return self.execute_block(&if_stmt.body);
+                }
+                for (else_if_cond, else_if_body) in &if_stmt.else_ifs {
+                    let elif_val = self.visit_expression(else_if_cond)?;
+                    if elif_val.is_truthy() {
+                        return self.execute_block(else_if_body);
+                    }
+                }
+                if let Some(ref else_body) = if_stmt.else_body {
+                    return self.execute_block(else_body);
+                }
+                Ok(FlowSignal::Normal)
+            }
+            Statement::While(while_stmt) => {
+                loop {
+                    let cond_val = self.visit_expression(&while_stmt.condition)?;
+                    if !cond_val.is_truthy() {
+                        break;
+                    }
+                    let signal = self.execute_block(&while_stmt.body)?;
+                    match signal {
+                        FlowSignal::Break => break,
+                        FlowSignal::Continue => continue,
+                        FlowSignal::Return(val) => return Ok(FlowSignal::Return(val)),
+                        FlowSignal::Throw(err) => return Ok(FlowSignal::Throw(err)),
+                        FlowSignal::Normal => {}
+                    }
+                }
+                Ok(FlowSignal::Normal)
+            }
+            Statement::For(for_stmt) => {
+                let iter_val = self.visit_expression(&for_stmt.iterable)?;
+                let items = match iter_val {
+                    RuntimeValue::List { items, .. } => items.borrow().clone(),
+                    RuntimeValue::Tuple(elements) => elements,
+                    other => {
+                        return Err(RuntimeError::new(
+                            RuntimeErrorKind::TypeMismatch {
+                                expected: "iterable collection".to_string(),
+                                found: other.runtime_type().to_string(),
+                            },
+                            Some(for_stmt.span),
+                            None,
+                        ))
+                    }
+                };
+
+                for item in items {
+                    let loop_env =
+                        Rc::new(RefCell::new(Environment::new(Some(Rc::clone(&self.env)))));
+                    loop_env
+                        .borrow_mut()
+                        .define(for_stmt.item.name.clone(), item, false);
+
+                    let signal =
+                        self.with_scope(loop_env, |interp| interp.execute_block(&for_stmt.body))?;
+                    match signal {
+                        FlowSignal::Break => break,
+                        FlowSignal::Continue => continue,
+                        FlowSignal::Return(val) => return Ok(FlowSignal::Return(val)),
+                        FlowSignal::Throw(err) => return Ok(FlowSignal::Throw(err)),
+                        FlowSignal::Normal => {}
+                    }
+                }
+                Ok(FlowSignal::Normal)
+            }
+            Statement::Repeat(repeat_stmt) => {
+                // v1 `repeat condition` is a while loop; retain the 2.0
+                // numeric repeat-count extension for integer expressions.
+                let first = self.visit_expression(&repeat_stmt.count)?;
+                let mut remaining = match first {
+                    RuntimeValue::Int(count) => Some(count),
+                    _ => None,
+                };
+                loop {
+                    if let Some(count) = remaining {
+                        if count <= 0 {
+                            break;
+                        }
+                        remaining = Some(count - 1);
+                    } else if !self.visit_expression(&repeat_stmt.count)?.is_truthy() {
+                        break;
+                    }
+                    let signal = self.execute_block(&repeat_stmt.body)?;
+                    match signal {
+                        FlowSignal::Break => break,
+                        FlowSignal::Continue => continue,
+                        FlowSignal::Return(val) => return Ok(FlowSignal::Return(val)),
+                        FlowSignal::Throw(err) => return Ok(FlowSignal::Throw(err)),
+                        FlowSignal::Normal => {}
+                    }
+                }
+                Ok(FlowSignal::Normal)
+            }
             Statement::Return(ret_stmt) => {
                 let val = if let Some(ref val_expr) = ret_stmt.value {
                     self.visit_expression(val_expr)?
@@ -44,7 +137,36 @@ impl Interpreter {
                 );
                 Ok(FlowSignal::Throw(err))
             }
-            Statement::Try(try_stmt) => self.execute_try_stmt(try_stmt),
+            Statement::Try(try_stmt) => {
+                let result = self.execute_block(&try_stmt.body);
+                let caught = match result {
+                    Ok(FlowSignal::Throw(err)) | Err(err) => Some(err),
+                    Ok(signal) => return Ok(signal),
+                };
+                let err = caught.expect("only catchable execution results reach this branch");
+                // v1.0.8: `err` is a Map with `message` (and optional `kind`) fields,
+                // so that `err.message` works in catch blocks.
+                let catch_env = Rc::new(RefCell::new(Environment::new(Some(Rc::clone(&self.env)))));
+                let mut err_map = IndexMap::new();
+                err_map.insert(
+                    "message".to_string(),
+                    RuntimeValue::Str(err.message.clone()),
+                );
+                err_map.insert(
+                    "kind".to_string(),
+                    RuntimeValue::Str(format!("{:?}", err.kind)),
+                );
+                let err_val = RuntimeValue::Map {
+                    entries: Rc::new(RefCell::new(err_map)),
+                    is_const: false,
+                };
+                catch_env
+                    .borrow_mut()
+                    .define(try_stmt.catch_var.name.clone(), err_val, false);
+                self.with_scope(catch_env, |interp| {
+                    interp.execute_block(&try_stmt.catch_body)
+                })
+            }
             Statement::Say(say_stmt) => {
                 let val = self.visit_expression(&say_stmt.value)?;
                 let say_func = self.ctx.registry.lookup("say").ok_or_else(|| {
@@ -57,303 +179,165 @@ impl Interpreter {
                 say_func.call(&mut self.ctx, vec![val])?;
                 Ok(FlowSignal::Normal)
             }
-            Statement::FuncDecl(decl) => self.execute_func_decl_stmt(decl),
-            Statement::StructDecl(decl) => self.execute_struct_decl_stmt(decl),
-            Statement::EnumDecl(decl) => self.execute_enum_decl_stmt(decl),
-            Statement::ModelDecl(decl) => self.execute_model_decl_stmt(decl),
-            Statement::ExportDecl(decl) => self.execute_statement(&decl.declaration),
-            Statement::DSL(dsl) => self.execute_dsl_stmt(dsl),
-            Statement::Import(import) => self.execute_import_stmt(import),
-        }
-    }
-
-    fn execute_if_stmt(&mut self, if_stmt: &techscript_ast::IfStmt) -> ExecResult {
-        let cond_val = self.visit_expression(&if_stmt.condition)?;
-        if cond_val.is_truthy() {
-            return self.execute_block(&if_stmt.body);
-        }
-        for (else_if_cond, else_if_body) in &if_stmt.else_ifs {
-            let elif_val = self.visit_expression(else_if_cond)?;
-            if elif_val.is_truthy() {
-                return self.execute_block(else_if_body);
-            }
-        }
-        if let Some(ref else_body) = if_stmt.else_body {
-            return self.execute_block(else_body);
-        }
-        Ok(FlowSignal::Normal)
-    }
-
-    fn execute_while_stmt(&mut self, while_stmt: &techscript_ast::WhileStmt) -> ExecResult {
-        loop {
-            let cond_val = self.visit_expression(&while_stmt.condition)?;
-            if !cond_val.is_truthy() {
-                break;
-            }
-            let signal = self.execute_block(&while_stmt.body)?;
-            match signal {
-                FlowSignal::Break => break,
-                FlowSignal::Continue => continue,
-                FlowSignal::Return(val) => return Ok(FlowSignal::Return(val)),
-                FlowSignal::Throw(err) => return Ok(FlowSignal::Throw(err)),
-                FlowSignal::Normal => {}
-            }
-        }
-        Ok(FlowSignal::Normal)
-    }
-
-    fn execute_for_stmt(&mut self, for_stmt: &techscript_ast::ForStmt) -> ExecResult {
-        let iter_val = self.visit_expression(&for_stmt.iterable)?;
-        let items = match iter_val {
-            RuntimeValue::List { items, .. } => items.borrow().clone(),
-            RuntimeValue::Tuple(elements) => elements,
-            other => {
-                return Err(RuntimeError::new(
-                    RuntimeErrorKind::TypeMismatch {
-                        expected: "iterable collection".to_string(),
-                        found: other.runtime_type().to_string(),
-                    },
-                    Some(for_stmt.span),
-                    None,
-                ))
-            }
-        };
-
-        for item in items {
-            let loop_env = Rc::new(RefCell::new(Environment::new(Some(Rc::clone(&self.env)))));
-            loop_env
-                .borrow_mut()
-                .define(for_stmt.item.name.clone(), item, false);
-
-            let signal =
-                self.with_scope(loop_env, |interp| interp.execute_block(&for_stmt.body))?;
-            match signal {
-                FlowSignal::Break => break,
-                FlowSignal::Continue => continue,
-                FlowSignal::Return(val) => return Ok(FlowSignal::Return(val)),
-                FlowSignal::Throw(err) => return Ok(FlowSignal::Throw(err)),
-                FlowSignal::Normal => {}
-            }
-        }
-        Ok(FlowSignal::Normal)
-    }
-
-    fn execute_repeat_stmt(&mut self, repeat_stmt: &techscript_ast::RepeatStmt) -> ExecResult {
-        // v1 `repeat condition` is a while loop; retain the 2.0
-        // numeric repeat-count extension for integer expressions.
-        let first = self.visit_expression(&repeat_stmt.count)?;
-        let mut remaining = match first {
-            RuntimeValue::Int(count) => Some(count),
-            _ => None,
-        };
-        loop {
-            if let Some(count) = remaining {
-                if count <= 0 {
-                    break;
+            Statement::FuncDecl(decl) => {
+                let mut params = Vec::new();
+                for param in &decl.params {
+                    params.push(param.name.name.clone());
                 }
-                remaining = Some(count - 1);
-            } else if !self.visit_expression(&repeat_stmt.count)?.is_truthy() {
-                break;
+                let name = decl.name.name.clone();
+                let user_func = techscript_runtime::UserFunction {
+                    name: name.clone(),
+                    params,
+                    body: techscript_runtime::FunctionBody::Ast(decl.body.clone()),
+                    closure: Rc::clone(&self.env),
+                };
+                let defaults = decl
+                    .params
+                    .iter()
+                    .map(|param| param.default.clone())
+                    .collect();
+                let callable = Rc::new(self.bridge_declared_function(user_func, defaults));
+                self.env
+                    .borrow_mut()
+                    .define(name, RuntimeValue::Function(callable), false);
+                Ok(FlowSignal::Normal)
             }
-            let signal = self.execute_block(&repeat_stmt.body)?;
-            match signal {
-                FlowSignal::Break => break,
-                FlowSignal::Continue => continue,
-                FlowSignal::Return(val) => return Ok(FlowSignal::Return(val)),
-                FlowSignal::Throw(err) => return Ok(FlowSignal::Throw(err)),
-                FlowSignal::Normal => {}
-            }
-        }
-        Ok(FlowSignal::Normal)
-    }
-
-    fn execute_try_stmt(&mut self, try_stmt: &techscript_ast::TryStmt) -> ExecResult {
-        let result = self.execute_block(&try_stmt.body);
-        let caught = match result {
-            Ok(FlowSignal::Throw(err)) | Err(err) => Some(err),
-            Ok(signal) => return Ok(signal),
-        };
-        let err = caught.expect("only catchable execution results reach this branch");
-        // v1.0.8: `err` is a Map with `message` (and optional `kind`) fields,
-        // so that `err.message` works in catch blocks.
-        let catch_env = Rc::new(RefCell::new(Environment::new(Some(Rc::clone(&self.env)))));
-        let mut err_map = IndexMap::new();
-        err_map.insert(
-            "message".to_string(),
-            RuntimeValue::Str(err.message.clone()),
-        );
-        err_map.insert(
-            "kind".to_string(),
-            RuntimeValue::Str(format!("{:?}", err.kind)),
-        );
-        let err_val = RuntimeValue::Map {
-            entries: Rc::new(RefCell::new(err_map)),
-            is_const: false,
-        };
-        catch_env
-            .borrow_mut()
-            .define(try_stmt.catch_var.name.clone(), err_val, false);
-        self.with_scope(catch_env, |interp| {
-            interp.execute_block(&try_stmt.catch_body)
-        })
-    }
-
-    fn execute_func_decl_stmt(&mut self, decl: &techscript_ast::FuncDecl) -> ExecResult {
-        let mut params = Vec::new();
-        for param in &decl.params {
-            params.push(param.name.name.clone());
-        }
-        let name = decl.name.name.clone();
-        let user_func = techscript_runtime::UserFunction {
-            name: name.clone(),
-            params,
-            body: techscript_runtime::FunctionBody::Ast(decl.body.clone()),
-            closure: Rc::clone(&self.env),
-        };
-        let defaults = decl
-            .params
-            .iter()
-            .map(|param| param.default.clone())
-            .collect();
-        let callable = Rc::new(self.bridge_declared_function(user_func, defaults));
-        self.env
-            .borrow_mut()
-            .define(name, RuntimeValue::Function(callable), false);
-        Ok(FlowSignal::Normal)
-    }
-
-    fn execute_struct_decl_stmt(&mut self, decl: &techscript_ast::StructDecl) -> ExecResult {
-        // Register a struct constructor callable
-        let name = decl.name.name.clone();
-        let fields_template = decl.fields.clone();
-        let struct_ctor = StructConstructor {
-            name: name.clone(),
-            fields: fields_template,
-        };
-        self.env
-            .borrow_mut()
-            .define(name, RuntimeValue::Function(Rc::new(struct_ctor)), false);
-        Ok(FlowSignal::Normal)
-    }
-
-    fn execute_enum_decl_stmt(&mut self, decl: &techscript_ast::EnumDecl) -> ExecResult {
-        let enum_name = decl.name.name.clone();
-        let mut entries = IndexMap::new();
-
-        for variant in &decl.variants {
-            let var_name = variant.name.name.clone();
-            if variant.payload.is_some() {
-                #[derive(Clone)]
-                struct VariantConstructor {
-                    name: String,
-                    arity: usize,
-                }
-                impl Callable for VariantConstructor {
-                    fn name(&self) -> &str {
-                        &self.name
-                    }
-                    fn arity(&self) -> usize {
-                        self.arity
-                    }
-                    fn call(
-                        &self,
-                        _ctx: &mut techscript_runtime::RuntimeContext,
-                        args: Vec<RuntimeValue>,
-                    ) -> Result<RuntimeValue, RuntimeError> {
-                        Ok(RuntimeValue::EnumVariant {
-                            name: self.name.clone(),
-                            payload: Some(args),
-                        })
-                    }
-                }
-                let arity = variant.payload.as_ref().map_or(0, |p| p.len());
-                entries.insert(
-                    var_name.clone(),
-                    RuntimeValue::Function(Rc::new(VariantConstructor {
-                        name: var_name,
-                        arity,
-                    })),
+            Statement::StructDecl(decl) => {
+                // Register a struct constructor callable
+                let name = decl.name.name.clone();
+                let fields_template = decl.fields.clone();
+                let struct_ctor = StructConstructor {
+                    name: name.clone(),
+                    fields: fields_template,
+                };
+                self.env.borrow_mut().define(
+                    name,
+                    RuntimeValue::Function(Rc::new(struct_ctor)),
+                    false,
                 );
-            } else {
-                entries.insert(
-                    var_name.clone(),
-                    RuntimeValue::EnumVariant {
-                        name: var_name,
-                        payload: None,
-                    },
-                );
+                Ok(FlowSignal::Normal)
             }
-        }
+            Statement::EnumDecl(decl) => {
+                let enum_name = decl.name.name.clone();
+                let mut entries = IndexMap::new();
 
-        let enum_val = RuntimeValue::Map {
-            entries: Rc::new(RefCell::new(entries)),
-            is_const: true,
-        };
-        self.env.borrow_mut().define(enum_name, enum_val, true);
-        Ok(FlowSignal::Normal)
-    }
+                for variant in &decl.variants {
+                    let var_name = variant.name.name.clone();
+                    if variant.payload.is_some() {
+                        #[derive(Clone)]
+                        struct VariantConstructor {
+                            name: String,
+                            arity: usize,
+                        }
+                        impl Callable for VariantConstructor {
+                            fn name(&self) -> &str {
+                                &self.name
+                            }
+                            fn arity(&self) -> usize {
+                                self.arity
+                            }
+                            fn call(
+                                &self,
+                                _ctx: &mut techscript_runtime::RuntimeContext,
+                                args: Vec<RuntimeValue>,
+                            ) -> Result<RuntimeValue, RuntimeError> {
+                                Ok(RuntimeValue::EnumVariant {
+                                    name: self.name.clone(),
+                                    payload: Some(args),
+                                })
+                            }
+                        }
+                        let arity = variant.payload.as_ref().map_or(0, |p| p.len());
+                        entries.insert(
+                            var_name.clone(),
+                            RuntimeValue::Function(Rc::new(VariantConstructor {
+                                name: var_name,
+                                arity,
+                            })),
+                        );
+                    } else {
+                        entries.insert(
+                            var_name.clone(),
+                            RuntimeValue::EnumVariant {
+                                name: var_name,
+                                payload: None,
+                            },
+                        );
+                    }
+                }
 
-    fn execute_model_decl_stmt(&mut self, decl: &techscript_ast::ModelDecl) -> ExecResult {
-        let name = decl.name.name.clone();
-        let model_ctor = ModelConstructor {
-            name: name.clone(),
-            decl: decl.clone(),
-        };
-        self.env
-            .borrow_mut()
-            .define(name, RuntimeValue::Function(Rc::new(model_ctor)), false);
-        Ok(FlowSignal::Normal)
-    }
-
-    fn execute_dsl_stmt(&mut self, dsl: &techscript_ast::DSLBlock) -> ExecResult {
-        let block_val = self.eval_dsl_block(dsl)?;
-        let blocks_list_key = "_dsl_blocks".to_string();
-        let has_list = self
-            .ctx
-            .global_env
-            .borrow()
-            .lookup(&blocks_list_key)
-            .is_ok();
-        if has_list {
-            let env = self.ctx.global_env.borrow();
-            if let Ok(RuntimeValue::List { items, .. }) = env.lookup(&blocks_list_key) {
-                items.borrow_mut().push(block_val);
-            }
-        } else {
-            self.ctx.global_env.borrow_mut().define(
-                blocks_list_key,
-                RuntimeValue::List {
-                    items: Rc::new(RefCell::new(vec![block_val])),
+                let enum_val = RuntimeValue::Map {
+                    entries: Rc::new(RefCell::new(entries)),
                     is_const: true,
-                },
-                true,
-            );
+                };
+                self.env.borrow_mut().define(enum_name, enum_val, true);
+                Ok(FlowSignal::Normal)
+            }
+            Statement::ModelDecl(decl) => {
+                let name = decl.name.name.clone();
+                let model_ctor = ModelConstructor {
+                    name: name.clone(),
+                    decl: decl.clone(),
+                };
+                self.env.borrow_mut().define(
+                    name,
+                    RuntimeValue::Function(Rc::new(model_ctor)),
+                    false,
+                );
+                Ok(FlowSignal::Normal)
+            }
+            Statement::ExportDecl(decl) => self.execute_statement(&decl.declaration),
+            Statement::DSL(dsl) => {
+                let block_val = self.eval_dsl_block(dsl)?;
+                let blocks_list_key = "_dsl_blocks".to_string();
+                let has_list = self
+                    .ctx
+                    .global_env
+                    .borrow()
+                    .lookup(&blocks_list_key)
+                    .is_ok();
+                if has_list {
+                    let env = self.ctx.global_env.borrow();
+                    if let Ok(RuntimeValue::List { items, .. }) = env.lookup(&blocks_list_key) {
+                        items.borrow_mut().push(block_val);
+                    }
+                } else {
+                    self.ctx.global_env.borrow_mut().define(
+                        blocks_list_key,
+                        RuntimeValue::List {
+                            items: Rc::new(RefCell::new(vec![block_val])),
+                            is_const: true,
+                        },
+                        true,
+                    );
+                }
+                Ok(FlowSignal::Normal)
+            }
+            Statement::Import(import) => {
+                let requested = import
+                    .path
+                    .iter()
+                    .map(|part| part.name.as_str())
+                    .collect::<Vec<_>>()
+                    .join(".");
+                let std_name = match requested.as_str() {
+                    "math" => "math",
+                    "crypto" => "crypto",
+                    "json" => "json",
+                    "fs" => "fs",
+                    "os" => "system",
+                    "random" => "random",
+                    "date" => "datetime",
+                    other => other,
+                };
+                let std = self.env.borrow().lookup("std")?;
+                let module = self.eval_member_access(std, std_name, import.span)?;
+                self.env.borrow_mut().define(requested, module, true);
+                Ok(FlowSignal::Normal)
+            }
         }
-        Ok(FlowSignal::Normal)
     }
 
-    fn execute_import_stmt(&mut self, import: &techscript_ast::ImportStmt) -> ExecResult {
-        let requested = import
-            .path
-            .iter()
-            .map(|part| part.name.as_str())
-            .collect::<Vec<_>>()
-            .join(".");
-        let std_name = match requested.as_str() {
-            "math" => "math",
-            "crypto" => "crypto",
-            "json" => "json",
-            "fs" => "fs",
-            "os" => "system",
-            "random" => "random",
-            "date" => "datetime",
-            other => other,
-        };
-        let std = self.env.borrow().lookup("std")?;
-        let module = self.eval_member_access(std, std_name, import.span)?;
-        self.env.borrow_mut().define(requested, module, true);
-        Ok(FlowSignal::Normal)
-    }
     /// Evaluate a DSL block to a DslBlockValue at runtime.
     pub fn eval_dsl_block(
         &mut self,

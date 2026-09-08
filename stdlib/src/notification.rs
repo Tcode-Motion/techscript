@@ -74,3 +74,29 @@ impl StdlibRegistry {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_register_notification() {
+        let mut registry = StdlibRegistry {
+            modules: std::collections::HashMap::new(),
+        };
+        registry.register_notification();
+
+        assert!(registry.has_module("std.notification"));
+
+        let module = registry.get_module("std.notification").unwrap();
+        assert_eq!(module.name, "std.notification");
+
+        let show = module.exports.get("show").unwrap();
+        assert_eq!(show.name(), "show");
+        assert_eq!(show.arity(), 2);
+
+        let alert = module.exports.get("alert").unwrap();
+        assert_eq!(alert.name(), "alert");
+        assert_eq!(alert.arity(), 1);
+    }
+}

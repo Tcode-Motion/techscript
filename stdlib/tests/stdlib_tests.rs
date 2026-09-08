@@ -1151,3 +1151,31 @@ fn test_ai_generate_text() {
     let val = res.unwrap();
     assert!(val.as_string().unwrap().contains("Prompt: What is 2+2?"));
 }
+
+#[test]
+fn test_sys_module_registration() {
+    let registry = StdlibRegistry::new();
+
+    // Verify std.fs module
+    let fs_module = registry
+        .get_module("std.fs")
+        .expect("std.fs module should be registered");
+    assert_eq!(fs_module.name, "std.fs");
+    assert!(fs_module
+        .required_capabilities
+        .contains(&Capability::FileSystem));
+
+    assert!(fs_module.exports.contains_key("read_file"));
+    assert!(fs_module.exports.contains_key("write_file"));
+    assert!(fs_module.exports.contains_key("exists"));
+
+    // Verify std.time module
+    let time_module = registry
+        .get_module("std.time")
+        .expect("std.time module should be registered");
+    assert_eq!(time_module.name, "std.time");
+    assert!(time_module.required_capabilities.is_empty());
+
+    assert!(time_module.exports.contains_key("now"));
+    assert!(time_module.exports.contains_key("sleep"));
+}

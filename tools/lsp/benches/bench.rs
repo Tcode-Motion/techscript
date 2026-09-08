@@ -1,4 +1,4 @@
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{criterion_group, criterion_main, Criterion};
 
 fn find_boundary_slow(line: &str, word: &str) -> usize {
     let mut count = 0;
@@ -13,8 +13,8 @@ fn find_boundary_slow(line: &str, word: &str) -> usize {
         };
         let char_after = line.chars().nth(actual_pos + word_len);
 
-        let is_boundary_before = char_before.map_or(true, |c| !c.is_alphanumeric() && c != '_');
-        let is_boundary_after = char_after.map_or(true, |c| !c.is_alphanumeric() && c != '_');
+        let is_boundary_before = char_before.is_none_or(|c| !c.is_alphanumeric() && c != '_');
+        let is_boundary_after = char_after.is_none_or(|c| !c.is_alphanumeric() && c != '_');
 
         if is_boundary_before && is_boundary_after {
             count += 1;
@@ -37,8 +37,8 @@ fn find_boundary_fast(line: &str, word: &str) -> usize {
         };
         let char_after = line[actual_pos + word_len..].chars().next();
 
-        let is_boundary_before = char_before.map_or(true, |c| !c.is_alphanumeric() && c != '_');
-        let is_boundary_after = char_after.map_or(true, |c| !c.is_alphanumeric() && c != '_');
+        let is_boundary_before = char_before.is_none_or(|c| !c.is_alphanumeric() && c != '_');
+        let is_boundary_after = char_after.is_none_or(|c| !c.is_alphanumeric() && c != '_');
 
         if is_boundary_before && is_boundary_after {
             count += 1;
@@ -52,8 +52,12 @@ fn criterion_benchmark(c: &mut Criterion) {
     let long_line = "let abc = 123; ".repeat(1000);
     let word = "abc";
 
-    c.bench_function("slow", |b| b.iter(|| find_boundary_slow(black_box(&long_line), black_box(word))));
-    c.bench_function("fast", |b| b.iter(|| find_boundary_fast(black_box(&long_line), black_box(word))));
+    c.bench_function("slow", |b| {
+        b.iter(|| find_boundary_slow(std::hint::black_box(&long_line), std::hint::black_box(word)))
+    });
+    c.bench_function("fast", |b| {
+        b.iter(|| find_boundary_fast(std::hint::black_box(&long_line), std::hint::black_box(word)))
+    });
 }
 
 criterion_group!(benches, criterion_benchmark);

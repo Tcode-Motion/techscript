@@ -1151,3 +1151,54 @@ fn test_ai_generate_text() {
     let val = res.unwrap();
     assert!(val.as_string().unwrap().contains("Prompt: What is 2+2?"));
 }
+
+#[test]
+fn test_socket_module_sandboxing() {
+    let registry = StdlibRegistry::new();
+    let socket = registry.get_module("std.socket").unwrap();
+
+    let mut config_unprivileged = RuntimeConfig::default();
+    config_unprivileged.capabilities.remove(&Capability::Network);
+    let mut ctx_unprivileged = RuntimeContext::new(config_unprivileged);
+
+    let mut config_privileged = RuntimeConfig::default();
+    config_privileged.capabilities.insert(Capability::Network);
+    let mut ctx_privileged = RuntimeContext::new(config_privileged);
+
+    let connect_fn = socket.exports.get("connect").unwrap();
+    let listen_fn = socket.exports.get("listen").unwrap();
+
+    // 1. Unprivileged context should fail due to security policy
+    let res_connect = connect_fn.call(
+        &mut ctx_unprivileged,
+        vec![
+            RuntimeValue::Str("example.com".to_string()),
+            RuntimeValue::Int(80),
+        ],
+    );
+    assert!(res_connect.is_err());
+    let err = res_connect.unwrap_err();
+    assert!(err.message.contains("Security policy violation"));
+
+    let res_listen = listen_fn.call(&mut ctx_unprivileged, vec![RuntimeValue::Int(8080)]);
+    assert!(res_listen.is_err());
+    let err = res_listen.unwrap_err();
+    assert!(err.message.contains("Security policy violation"));
+
+    // 2. Privileged context shouldn't fail due to security policy (though they may fail due to valid network errors like bad host or port already in use)
+    let res_connect = connect_fn.call(
+        &mut ctx_privileged,
+        vec![
+            RuntimeValue::Str("localhost".to_string()),
+            RuntimeValue::Int(9999), // likely nobody listening
+        ],
+    );
+    if let Err(e) = res_connect {
+        assert!(!e.message.contains("Security policy violation"));
+    }
+
+    let res_listen = listen_fn.call(&mut ctx_privileged, vec![RuntimeValue::Int(0)]); // port 0 allows OS to pick an available port
+    if let Err(e) = res_listen {
+        assert!(!e.message.contains("Security policy violation"));
+    }
+}

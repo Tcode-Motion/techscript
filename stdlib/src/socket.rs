@@ -2,7 +2,9 @@ use crate::{StdFunction, StdlibModule, StdlibRegistry};
 use std::collections::HashMap;
 use std::net::TcpStream;
 use std::rc::Rc;
-use techscript_runtime::{error::RuntimeError, value::RuntimeValue};
+use techscript_runtime::{
+    context::Capability, error::RuntimeError, value::RuntimeValue,
+};
 
 impl StdlibRegistry {
     pub fn register_socket(&mut self) {
@@ -14,7 +16,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "connect".to_string(),
                 arity: 2,
-                callback: |_ctx, args| {
+                callback: |ctx, args| {
                     let host = match &args[0] {
                         RuntimeValue::Str(s) => s.clone(),
                         _ => {
@@ -42,6 +44,17 @@ impl StdlibRegistry {
                         }
                     };
                     let addr = format!("{}:{}", host, port);
+
+                    if !ctx.config.capabilities.contains(&Capability::Network) {
+                        return Err(RuntimeError::new(
+                            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
+                                "Security policy violation: Network capability is denied".to_string(),
+                            ),
+                            None,
+                            None,
+                        ));
+                    }
+
                     TcpStream::connect(&addr).map_err(|e| {
                         RuntimeError::new(
                             techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
@@ -61,7 +74,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "listen".to_string(),
                 arity: 1,
-                callback: |_ctx, args| {
+                callback: |ctx, args| {
                     let port = match &args[0] {
                         RuntimeValue::Int(n) => *n as u16,
                         _ => {
@@ -76,6 +89,17 @@ impl StdlibRegistry {
                         }
                     };
                     let addr = format!("0.0.0.0:{}", port);
+
+                    if !ctx.config.capabilities.contains(&Capability::Network) {
+                        return Err(RuntimeError::new(
+                            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
+                                "Security policy violation: Network capability is denied".to_string(),
+                            ),
+                            None,
+                            None,
+                        ));
+                    }
+
                     let _listener = std::net::TcpListener::bind(&addr).map_err(|e| {
                         RuntimeError::new(
                             techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
@@ -96,7 +120,7 @@ impl StdlibRegistry {
                 name: "std.socket".to_string(),
                 version: "1.0.0".to_string(),
                 exports,
-                required_capabilities: Vec::new(),
+                required_capabilities: vec![Capability::Network],
             },
         );
     }

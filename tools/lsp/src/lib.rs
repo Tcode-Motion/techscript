@@ -1403,7 +1403,7 @@ impl LanguageServer for Backend {
         let mut actions = Vec::new();
         let uri = params.text_document.uri;
 
-        // Quick Fix 1: Organize Imports Action
+        // Code Action 1: Organize Imports
         let mut organize_edits = Vec::new();
         organize_edits.push(TextEdit {
             range: Range {
@@ -1427,7 +1427,7 @@ impl LanguageServer for Backend {
             ..Default::default()
         }));
 
-        // Quick Fix 2: Convert mutable "make" to immutable "const"
+        // Code Action 2: Convert mutable "make" to immutable "const"
         for diagnostic in params.context.diagnostics {
             if let Some(ref code) = diagnostic.code {
                 if let NumberOrString::String(ref s) = code {

@@ -1,11 +1,7 @@
 use crate::{StdFunction, StdlibModule, StdlibRegistry};
 use std::collections::HashMap;
 use std::rc::Rc;
-use techscript_runtime::{
-    context::Capability,
-    error::{RuntimeError, RuntimeErrorKind},
-    value::RuntimeValue,
-};
+use techscript_runtime::{error::RuntimeError, value::RuntimeValue};
 
 impl StdlibRegistry {
     pub fn register_notification(&mut self) {
@@ -17,17 +13,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "show".to_string(),
                 arity: 2,
-                callback: |ctx, args| {
-                    if !ctx.config.capabilities.contains(&Capability::Process) {
-                        return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Process capability is denied"
-                                    .to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
+                callback: |_ctx, args| {
                     let title = args[0].to_string();
                     let body = args[1].to_string();
                     #[cfg(target_os = "windows")]
@@ -60,17 +46,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "alert".to_string(),
                 arity: 1,
-                callback: |ctx, args| {
-                    if !ctx.config.capabilities.contains(&Capability::Process) {
-                        return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Process capability is denied"
-                                    .to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
+                callback: |_ctx, args| {
                     let msg = args[0].to_string();
                     #[cfg(target_os = "windows")]
                     {
@@ -93,7 +69,7 @@ impl StdlibRegistry {
                 name: "std.notification".to_string(),
                 version: "1.0.0".to_string(),
                 exports,
-                required_capabilities: vec![Capability::Process],
+                required_capabilities: Vec::new(),
             },
         );
     }

@@ -2,7 +2,6 @@
 //!
 //! Performs static analysis linting on TechScript sources.
 
-use crate::commands::migrate::migrate_source;
 use crate::exit_code::ExitCode;
 use std::path::{Path, PathBuf};
 
@@ -44,7 +43,6 @@ pub fn execute(path_str: Option<&str>, fix: bool) -> ExitCode {
 
     let linter = techscript_linter::Linter::new();
     let mut violation_count = 0;
-    let mut fixed_count = 0;
 
     for file in files_to_lint {
         if let Ok(content) = std::fs::read_to_string(&file) {
@@ -68,24 +66,7 @@ pub fn execute(path_str: Option<&str>, fix: bool) -> ExitCode {
                     }
                 }
             }
-
-            // Fix deprecation warnings
-            if fix {
-                let migrated = migrate_source(&content);
-                if migrated != content {
-                    if let Err(e) = std::fs::write(&file, migrated) {
-                        eprintln!("Error writing fixed file {:?}: {}", file, e);
-                    } else {
-                        println!("Fixed deprecated keywords in: {:?}", file);
-                        fixed_count += 1;
-                    }
-                }
-            }
         }
-    }
-
-    if fix && fixed_count > 0 {
-        println!("Fixed deprecation warnings in {} file(s).", fixed_count);
     }
 
     if violation_count > 0 {

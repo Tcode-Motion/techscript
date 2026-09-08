@@ -410,56 +410,46 @@ pub struct DocItem {
 pub struct DocExtractor;
 
 impl DocExtractor {
-    fn extract_symbol_name(line: &str) -> Option<String> {
-        let parts: Vec<&str> = line.split_whitespace().collect();
-        if parts.len() <= 1 {
-            return None;
-        }
-
-        let sym_name = parts[1]
-            .split('(')
-            .next()
-            .unwrap_or("")
-            .split('{')
-            .next()
-            .unwrap_or("")
-            .split('=')
-            .next()
-            .unwrap_or("")
-            .trim();
-
-        if sym_name.is_empty() {
-            None
-        } else {
-            Some(sym_name.to_string())
-        }
-    }
-
     pub fn extract_comments(content: &str) -> Vec<DocItem> {
         let mut items = Vec::new();
         let mut active_doc = Vec::new();
 
         for line in content.lines() {
             let line = line.trim();
-
             if let Some(doc) = line.strip_prefix("///") {
                 active_doc.push(doc.trim().to_string());
-                continue;
-            }
+            } else if line.starts_with("function")
+                || line.starts_with("make")
+                || line.starts_with("model")
+                || line.starts_with("struct")
+            {
+                if !active_doc.is_empty() {
+                    // Extract name of symbol following keyword
+                    let parts: Vec<&str> = line.split_whitespace().collect();
+                    if parts.len() > 1 {
+                        let raw_name = parts[1];
+                        let sym_name = raw_name
+                            .split('(')
+                            .next()
+                            .unwrap_or("")
+                            .split('{')
+                            .next()
+                            .unwrap_or("")
+                            .split('=')
+                            .next()
+                            .unwrap_or("")
+                            .trim();
 
-            if !active_doc.is_empty() {
-                if line.starts_with("function")
-                    || line.starts_with("make")
-                    || line.starts_with("model")
-                    || line.starts_with("struct")
-                {
-                    if let Some(name) = Self::extract_symbol_name(line) {
-                        items.push(DocItem {
-                            name,
-                            doc: active_doc.join("\n"),
-                        });
+                        if !sym_name.is_empty() {
+                            items.push(DocItem {
+                                name: sym_name.to_string(),
+                                doc: active_doc.join("\n"),
+                            });
+                        }
                     }
+                    active_doc.clear();
                 }
+            } else {
                 active_doc.clear();
             }
         }

@@ -8,4 +8,6 @@
 ## 2024-05-18 - Removed redundant clone of VM stack during trace logs
 **Learning:** In `runtime/vm/src/executor.rs`, the debugging instruction trace `self.debugger.trace_instruction` was cloning the entire VM stack using `&self.stack.get_dump()` for every single instruction executed. This caused significant `O(N)` overhead inside the main fetch-decode-execute loop just to format debug output. A new `data_slice()` method was added to `ValueStack` to provide zero-copy slice access (`&[RuntimeValue]`) instead, completely eliminating the allocation overhead.
 **Action:** Always scrutinize deep clones in logging, tracing, or hot path loops. Use slice references (`&[T]`) instead of `Vec::clone` when the caller only needs read-only access to a collection.
-<
+## 2024-05-24 - Fast-Path and String Allocation Avoidance in Loop-based Parsers
+**Learning:** In string manipulation routines like `replace_call` inside `cli/src/commands/migrate.rs`, repeatedly using `format!()` inside a loop creates temporary heap-allocated `String`s, and failing to verify the target's existence before entering the parsing loop forces unnecessary allocations (`String::with_capacity`).
+**Action:** When refactoring iterative string parsers/replacers, always add an early-return fast path (e.g. `if !source.contains(target) { return source.to_string(); }`) and replace `format!()` in loops with sequential `.push_str()` and `.push()` calls onto a pre-allocated buffer.

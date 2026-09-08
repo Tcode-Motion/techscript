@@ -17,7 +17,14 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "create_canvas".to_string(),
                 arity: 2,
-                callback: create_canvas,
+                callback: |ctx, args| {
+                    let w = args[0].try_into_int()? as u32;
+                    let h = args[1].try_into_int()? as u32;
+
+                    let img = RgbaImage::new(w, h);
+                    let handle = ctx.resources.borrow_mut().insert(RefCell::new(img));
+                    Ok(RuntimeValue::Int(handle as i64))
+                },
             }),
         );
 
@@ -26,7 +33,44 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "draw_rect".to_string(),
                 arity: 6,
-                callback: draw_rect,
+                callback: |ctx, args| {
+                    let handle = args[0].try_into_int()? as u32;
+                    let x = args[1].try_into_int()?;
+                    let y = args[2].try_into_int()?;
+                    let w = args[3].try_into_int()?;
+                    let h = args[4].try_into_int()?;
+                    let color_hex = args[5].try_into_string()?;
+
+                    let color = parse_color(&color_hex);
+
+                    let resources = ctx.resources.borrow();
+                    let img_cell =
+                        resources.get::<RefCell<RgbaImage>>(handle).ok_or_else(|| {
+                            RuntimeError::new(
+                                RuntimeErrorKind::InvalidOperation(format!(
+                                    "Invalid canvas resource handle: {}",
+                                    handle
+                                )),
+                                None,
+                                None,
+                            )
+                        })?;
+
+                    let mut img = img_cell.borrow_mut();
+                    for px in x..(x + w) {
+                        for py in y..(y + h) {
+                            if px >= 0
+                                && px < img.width() as i64
+                                && py >= 0
+                                && py < img.height() as i64
+                            {
+                                img.put_pixel(px as u32, py as u32, color);
+                            }
+                        }
+                    }
+
+                    Ok(RuntimeValue::Null)
+                },
             }),
         );
 
@@ -35,7 +79,47 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "draw_circle".to_string(),
                 arity: 5,
-                callback: draw_circle,
+                callback: |ctx, args| {
+                    let handle = args[0].try_into_int()? as u32;
+                    let cx = args[1].try_into_int()?;
+                    let cy = args[2].try_into_int()?;
+                    let r = args[3].try_into_int()?;
+                    let color_hex = args[4].try_into_string()?;
+
+                    let color = parse_color(&color_hex);
+
+                    let resources = ctx.resources.borrow();
+                    let img_cell =
+                        resources.get::<RefCell<RgbaImage>>(handle).ok_or_else(|| {
+                            RuntimeError::new(
+                                RuntimeErrorKind::InvalidOperation(format!(
+                                    "Invalid canvas resource handle: {}",
+                                    handle
+                                )),
+                                None,
+                                None,
+                            )
+                        })?;
+
+                    let mut img = img_cell.borrow_mut();
+                    for px in (cx - r)..(cx + r) {
+                        for py in (cy - r)..(cy + r) {
+                            let dx = px - cx;
+                            let dy = py - cy;
+                            if dx * dx + dy * dy <= r * r {
+                                if px >= 0
+                                    && px < img.width() as i64
+                                    && py >= 0
+                                    && py < img.height() as i64
+                                {
+                                    img.put_pixel(px as u32, py as u32, color);
+                                }
+                            }
+                        }
+                    }
+
+                    Ok(RuntimeValue::Null)
+                },
             }),
         );
 
@@ -44,7 +128,60 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "draw_line".to_string(),
                 arity: 6,
-                callback: draw_line,
+                callback: |ctx, args| {
+                    let handle = args[0].try_into_int()? as u32;
+                    let x1 = args[1].try_into_int()?;
+                    let y1 = args[2].try_into_int()?;
+                    let x2 = args[3].try_into_int()?;
+                    let y2 = args[4].try_into_int()?;
+                    let color_hex = args[5].try_into_string()?;
+
+                    let color = parse_color(&color_hex);
+
+                    let resources = ctx.resources.borrow();
+                    let img_cell =
+                        resources.get::<RefCell<RgbaImage>>(handle).ok_or_else(|| {
+                            RuntimeError::new(
+                                RuntimeErrorKind::InvalidOperation(format!(
+                                    "Invalid canvas resource handle: {}",
+                                    handle
+                                )),
+                                None,
+                                None,
+                            )
+                        })?;
+
+                    let mut img = img_cell.borrow_mut();
+                    let dx = (x2 - x1).abs();
+                    let dy = (y2 - y1).abs();
+                    let sx = if x1 < x2 { 1 } else { -1 };
+                    let sy = if y1 < y2 { 1 } else { -1 };
+                    let mut err = dx - dy;
+
+                    let mut cx = x1;
+                    let mut cy = y1;
+
+                    loop {
+                        if cx >= 0 && cx < img.width() as i64 && cy >= 0 && cy < img.height() as i64
+                        {
+                            img.put_pixel(cx as u32, cy as u32, color);
+                        }
+                        if cx == x2 && cy == y2 {
+                            break;
+                        }
+                        let e2 = 2 * err;
+                        if e2 > -dy {
+                            err -= dy;
+                            cx += sx;
+                        }
+                        if e2 < dx {
+                            err += dx;
+                            cy += sy;
+                        }
+                    }
+
+                    Ok(RuntimeValue::Null)
+                },
             }),
         );
 
@@ -53,7 +190,48 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "save_png".to_string(),
                 arity: 2,
-                callback: save_png,
+                callback: |ctx, args| {
+                    if !ctx.config.capabilities.contains(&Capability::FileSystem) {
+                        return Err(RuntimeError::new(
+                            RuntimeErrorKind::InvalidOperation(
+                                "Security policy violation: FileSystem capability is denied"
+                                    .to_string(),
+                            ),
+                            None,
+                            None,
+                        ));
+                    }
+                    let handle = args[0].try_into_int()? as u32;
+                    let path = args[1].try_into_string()?;
+
+                    let resources = ctx.resources.borrow();
+                    let img_cell =
+                        resources.get::<RefCell<RgbaImage>>(handle).ok_or_else(|| {
+                            RuntimeError::new(
+                                RuntimeErrorKind::InvalidOperation(format!(
+                                    "Invalid canvas resource handle: {}",
+                                    handle
+                                )),
+                                None,
+                                None,
+                            )
+                        })?;
+
+                    let img = img_cell.borrow();
+                    img.save_with_format(&path, image::ImageFormat::Png)
+                        .map_err(|e| {
+                            RuntimeError::new(
+                                RuntimeErrorKind::InvalidOperation(format!(
+                                    "Failed to save PNG: {}",
+                                    e
+                                )),
+                                None,
+                                None,
+                            )
+                        })?;
+
+                    Ok(RuntimeValue::Null)
+                },
             }),
         );
 
@@ -62,7 +240,48 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "save_jpeg".to_string(),
                 arity: 2,
-                callback: save_jpeg,
+                callback: |ctx, args| {
+                    if !ctx.config.capabilities.contains(&Capability::FileSystem) {
+                        return Err(RuntimeError::new(
+                            RuntimeErrorKind::InvalidOperation(
+                                "Security policy violation: FileSystem capability is denied"
+                                    .to_string(),
+                            ),
+                            None,
+                            None,
+                        ));
+                    }
+                    let handle = args[0].try_into_int()? as u32;
+                    let path = args[1].try_into_string()?;
+
+                    let resources = ctx.resources.borrow();
+                    let img_cell =
+                        resources.get::<RefCell<RgbaImage>>(handle).ok_or_else(|| {
+                            RuntimeError::new(
+                                RuntimeErrorKind::InvalidOperation(format!(
+                                    "Invalid canvas resource handle: {}",
+                                    handle
+                                )),
+                                None,
+                                None,
+                            )
+                        })?;
+
+                    let img = img_cell.borrow();
+                    img.save_with_format(&path, image::ImageFormat::Jpeg)
+                        .map_err(|e| {
+                            RuntimeError::new(
+                                RuntimeErrorKind::InvalidOperation(format!(
+                                    "Failed to save JPEG: {}",
+                                    e
+                                )),
+                                None,
+                                None,
+                            )
+                        })?;
+
+                    Ok(RuntimeValue::Null)
+                },
             }),
         );
 
@@ -76,207 +295,6 @@ impl StdlibRegistry {
             },
         );
     }
-}
-
-fn create_canvas(
-    ctx: &mut techscript_runtime::context::RuntimeContext,
-    args: Vec<RuntimeValue>,
-) -> Result<RuntimeValue, RuntimeError> {
-    let w = args[0].try_into_int()? as u32;
-    let h = args[1].try_into_int()? as u32;
-
-    let img = RgbaImage::new(w, h);
-    let handle = ctx.resources.borrow_mut().insert(RefCell::new(img));
-    Ok(RuntimeValue::Int(handle as i64))
-}
-
-fn draw_rect(
-    ctx: &mut techscript_runtime::context::RuntimeContext,
-    args: Vec<RuntimeValue>,
-) -> Result<RuntimeValue, RuntimeError> {
-    let handle = args[0].try_into_int()? as u32;
-    let x = args[1].try_into_int()?;
-    let y = args[2].try_into_int()?;
-    let w = args[3].try_into_int()?;
-    let h = args[4].try_into_int()?;
-    let color_hex = args[5].try_into_string()?;
-
-    let color = parse_color(&color_hex);
-
-    let resources = ctx.resources.borrow();
-    let img_cell = resources.get::<RefCell<RgbaImage>>(handle).ok_or_else(|| {
-        RuntimeError::new(
-            RuntimeErrorKind::InvalidOperation(format!(
-                "Invalid canvas resource handle: {}",
-                handle
-            )),
-            None,
-            None,
-        )
-    })?;
-
-    let mut img = img_cell.borrow_mut();
-    for px in x..(x + w) {
-        for py in y..(y + h) {
-            if px >= 0 && px < img.width() as i64 && py >= 0 && py < img.height() as i64 {
-                img.put_pixel(px as u32, py as u32, color);
-            }
-        }
-    }
-
-    Ok(RuntimeValue::Null)
-}
-
-fn draw_circle(
-    ctx: &mut techscript_runtime::context::RuntimeContext,
-    args: Vec<RuntimeValue>,
-) -> Result<RuntimeValue, RuntimeError> {
-    let handle = args[0].try_into_int()? as u32;
-    let cx = args[1].try_into_int()?;
-    let cy = args[2].try_into_int()?;
-    let r = args[3].try_into_int()?;
-    let color_hex = args[4].try_into_string()?;
-
-    let color = parse_color(&color_hex);
-
-    let resources = ctx.resources.borrow();
-    let img_cell = resources.get::<RefCell<RgbaImage>>(handle).ok_or_else(|| {
-        RuntimeError::new(
-            RuntimeErrorKind::InvalidOperation(format!(
-                "Invalid canvas resource handle: {}",
-                handle
-            )),
-            None,
-            None,
-        )
-    })?;
-
-    let mut img = img_cell.borrow_mut();
-    for px in (cx - r)..(cx + r) {
-        for py in (cy - r)..(cy + r) {
-            let dx = px - cx;
-            let dy = py - cy;
-            if dx * dx + dy * dy <= r * r {
-                if px >= 0 && px < img.width() as i64 && py >= 0 && py < img.height() as i64 {
-                    img.put_pixel(px as u32, py as u32, color);
-                }
-            }
-        }
-    }
-
-    Ok(RuntimeValue::Null)
-}
-
-fn draw_line(
-    ctx: &mut techscript_runtime::context::RuntimeContext,
-    args: Vec<RuntimeValue>,
-) -> Result<RuntimeValue, RuntimeError> {
-    let handle = args[0].try_into_int()? as u32;
-    let x1 = args[1].try_into_int()?;
-    let y1 = args[2].try_into_int()?;
-    let x2 = args[3].try_into_int()?;
-    let y2 = args[4].try_into_int()?;
-    let color_hex = args[5].try_into_string()?;
-
-    let color = parse_color(&color_hex);
-
-    let resources = ctx.resources.borrow();
-    let img_cell = resources.get::<RefCell<RgbaImage>>(handle).ok_or_else(|| {
-        RuntimeError::new(
-            RuntimeErrorKind::InvalidOperation(format!(
-                "Invalid canvas resource handle: {}",
-                handle
-            )),
-            None,
-            None,
-        )
-    })?;
-
-    let mut img = img_cell.borrow_mut();
-    let dx = (x2 - x1).abs();
-    let dy = (y2 - y1).abs();
-    let sx = if x1 < x2 { 1 } else { -1 };
-    let sy = if y1 < y2 { 1 } else { -1 };
-    let mut err = dx - dy;
-
-    let mut cx = x1;
-    let mut cy = y1;
-
-    loop {
-        if cx >= 0 && cx < img.width() as i64 && cy >= 0 && cy < img.height() as i64 {
-            img.put_pixel(cx as u32, cy as u32, color);
-        }
-        if cx == x2 && cy == y2 {
-            break;
-        }
-        let e2 = 2 * err;
-        if e2 > -dy {
-            err -= dy;
-            cx += sx;
-        }
-        if e2 < dx {
-            err += dx;
-            cy += sy;
-        }
-    }
-
-    Ok(RuntimeValue::Null)
-}
-
-fn save_image_with_format(
-    ctx: &mut techscript_runtime::context::RuntimeContext,
-    args: Vec<RuntimeValue>,
-    format: image::ImageFormat,
-    format_name: &str,
-) -> Result<RuntimeValue, RuntimeError> {
-    if !ctx.config.capabilities.contains(&Capability::FileSystem) {
-        return Err(RuntimeError::new(
-            RuntimeErrorKind::InvalidOperation(
-                "Security policy violation: FileSystem capability is denied".to_string(),
-            ),
-            None,
-            None,
-        ));
-    }
-    let handle = args[0].try_into_int()? as u32;
-    let path = args[1].try_into_string()?;
-
-    let resources = ctx.resources.borrow();
-    let img_cell = resources.get::<RefCell<RgbaImage>>(handle).ok_or_else(|| {
-        RuntimeError::new(
-            RuntimeErrorKind::InvalidOperation(format!(
-                "Invalid canvas resource handle: {}",
-                handle
-            )),
-            None,
-            None,
-        )
-    })?;
-
-    let img = img_cell.borrow();
-    img.save_with_format(&path, format).map_err(|e| {
-        RuntimeError::new(
-            RuntimeErrorKind::InvalidOperation(format!("Failed to save {}: {}", format_name, e)),
-            None,
-            None,
-        )
-    })?;
-
-    Ok(RuntimeValue::Null)
-}
-
-fn save_png(
-    ctx: &mut techscript_runtime::context::RuntimeContext,
-    args: Vec<RuntimeValue>,
-) -> Result<RuntimeValue, RuntimeError> {
-    save_image_with_format(ctx, args, image::ImageFormat::Png, "PNG")
-}
-
-fn save_jpeg(
-    ctx: &mut techscript_runtime::context::RuntimeContext,
-    args: Vec<RuntimeValue>,
-) -> Result<RuntimeValue, RuntimeError> {
-    save_image_with_format(ctx, args, image::ImageFormat::Jpeg, "JPEG")
 }
 
 fn parse_color(hex: &str) -> Rgba<u8> {

@@ -71,35 +71,39 @@ impl FileWatcher {
     fn scan_files(&self, states: &mut HashMap<PathBuf, SystemTime>) -> anyhow::Result<()> {
         let mut dirs = vec![self.root.clone()];
         while let Some(dir) = dirs.pop() {
-            if dir.is_dir() {
-                if let Ok(entries) = std::fs::read_dir(dir) {
-                    for entry in entries.flatten() {
-                        let path = entry.path();
-                        if path.is_dir() {
-                            // Don't watch build or cache directories to prevent infinite loops
-                            let name = path.file_name().unwrap_or_default().to_string_lossy();
-                            if name != "build" && name != ".git" && name != "target" {
-                                dirs.push(path);
-                            }
-                        } else {
-                            let ext = path.extension().unwrap_or_default().to_string_lossy();
-                            if ext == "txs" || ext == "ts" {
-                                if let Ok(metadata) = entry.metadata() {
-                                    if let Ok(modified) = metadata.modified() {
-                                        states.insert(path, modified);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            } else {
+            if !dir.is_dir() {
                 // Root is a single file
                 let ext = self.root.extension().unwrap_or_default().to_string_lossy();
                 if ext == "txs" || ext == "ts" {
                     if let Ok(metadata) = std::fs::metadata(&self.root) {
                         if let Ok(modified) = metadata.modified() {
                             states.insert(self.root.clone(), modified);
+                        }
+                    }
+                }
+                continue;
+            }
+
+            if let Ok(entries) = std::fs::read_dir(dir) {
+                for entry in entries.flatten() {
+                    let path = entry.path();
+                    if path.is_dir() {
+                        // Don't watch build or cache directories to prevent infinite loops
+                        let name = path.file_name().unwrap_or_default().to_string_lossy();
+                        if name != "build" && name != ".git" && name != "target" {
+                            dirs.push(path);
+                        }
+                        continue;
+                    }
+
+                    let ext = path.extension().unwrap_or_default().to_string_lossy();
+                    if ext != "txs" && ext != "ts" {
+                        continue;
+                    }
+
+                    if let Ok(metadata) = entry.metadata() {
+                        if let Ok(modified) = metadata.modified() {
+                            states.insert(path, modified);
                         }
                     }
                 }

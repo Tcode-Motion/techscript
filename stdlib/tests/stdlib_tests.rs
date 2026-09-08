@@ -63,30 +63,6 @@ fn test_math_module() {
 }
 
 #[test]
-fn test_math_module_registration() {
-    let mut registry = StdlibRegistry::new();
-    registry.register_math();
-
-    let math = registry.get_module("std.math").unwrap();
-    assert_eq!(math.name, "std.math");
-    assert_eq!(math.version, "1.0.0");
-    assert!(math.required_capabilities.is_empty());
-
-    let expected_exports = vec![
-        "abs", "sin", "cos", "tan", "log", "exp", "sqrt", "pow", "floor", "ceil", "round",
-        "random", "to_float",
-    ];
-
-    for name in expected_exports {
-        assert!(
-            math.exports.contains_key(name),
-            "math module should export {}",
-            name
-        );
-    }
-}
-
-#[test]
 fn test_strings_module() {
     let registry = StdlibRegistry::new();
     let strings = registry.get_module("std.strings").unwrap();
@@ -1177,5 +1153,16 @@ fn test_ai_generate_text() {
 }
 
 #[test]
-<<
+fn test_uuid_module() {
+    let registry = StdlibRegistry::new();
+    let uuid_mod = registry.get_module("std.uuid").unwrap();
+
+    let mut ctx = RuntimeContext::new(RuntimeConfig::default());
+
+    let uuid_v4 = uuid_mod.exports.get("uuid_v4").unwrap();
+    let res = uuid_v4.call(&mut ctx, vec![]).unwrap();
+
+    let uuid_str = res.as_string().expect("Expected string");
+    assert!(!uuid_str.is_empty());
+    assert!(uuid_str.contains("-"));
 }

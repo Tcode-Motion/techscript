@@ -250,10 +250,17 @@ fn post_process(source: &str) -> String {
 /// Replace `prefix(args)` calls with `keyword args` (implicit call style).
 fn replace_call(source: &str, prefix: &str, keyword: &str) -> String {
     let full = format!("{prefix}(");
+    let full_str = full.as_str();
+
+    // Fast path: if the substring is not in the source, just return a copy.
+    if !source.contains(full_str) {
+        return source.to_string();
+    }
+
     let mut result = String::with_capacity(source.len());
     let mut remaining = source;
     loop {
-        match remaining.find(full.as_str()) {
+        match remaining.find(full_str) {
             None => {
                 result.push_str(remaining);
                 break;
@@ -263,7 +270,9 @@ fn replace_call(source: &str, prefix: &str, keyword: &str) -> String {
                 remaining = &remaining[pos + full.len()..];
                 if let Some(close) = remaining.find(')') {
                     let args = &remaining[..close];
-                    result.push_str(&format!("{keyword} {args}"));
+                    result.push_str(keyword);
+                    result.push(' ');
+                    result.push_str(args);
                     remaining = &remaining[close + 1..];
                 } else {
                     result.push_str(remaining);

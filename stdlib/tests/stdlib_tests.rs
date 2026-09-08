@@ -60,6 +60,42 @@ fn test_math_module() {
     assert!((0.0..1.0).contains(&r1));
     assert!((0.0..1.0).contains(&r2));
     assert_ne!(r1, r2); // pseudo-random sequence should advance
+
+    // test sin, cos, tan
+    let sin = math.exports.get("sin").unwrap();
+    let res = sin
+        .call(
+            &mut ctx,
+            vec![RuntimeValue::Float(std::f64::consts::PI / 2.0)],
+        )
+        .unwrap();
+    assert!((res.as_float().unwrap() - 1.0).abs() < 1e-10);
+
+    let cos = math.exports.get("cos").unwrap();
+    let res = cos
+        .call(&mut ctx, vec![RuntimeValue::Float(std::f64::consts::PI)])
+        .unwrap();
+    assert!((res.as_float().unwrap() - (-1.0)).abs() < 1e-10);
+
+    let tan = math.exports.get("tan").unwrap();
+    let res = tan.call(&mut ctx, vec![RuntimeValue::Float(0.0)]).unwrap();
+    assert!((res.as_float().unwrap() - 0.0).abs() < 1e-10);
+
+    // test log, exp
+    let log = math.exports.get("log").unwrap();
+    let res = log
+        .call(
+            &mut ctx,
+            vec![RuntimeValue::Float(std::f64::consts::E)],
+        )
+        .unwrap();
+    assert!((res.as_float().unwrap() - 1.0).abs() < 1e-10);
+
+    let exp = math.exports.get("exp").unwrap();
+    let res = exp
+        .call(&mut ctx, vec![RuntimeValue::Float(1.0)])
+        .unwrap();
+    assert!((res.as_float().unwrap() - std::f64::consts::E).abs() < 1e-10);
 }
 
 #[test]

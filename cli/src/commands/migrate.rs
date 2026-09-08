@@ -66,7 +66,7 @@ pub fn execute(path_str: Option<&str>) -> ExitCode {
     ExitCode::Success
 }
 
-fn migrate_source(source: &str) -> String {
+pub fn migrate_source(source: &str) -> String {
     let mut reporter = techscript_errors::DiagnosticReporter::new();
     let tokens = techscript_lexer::lex_recovered(source, &mut reporter);
     let _program = techscript_parser::parse_recovered(&tokens, &mut reporter);

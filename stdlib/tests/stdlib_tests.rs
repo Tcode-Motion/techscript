@@ -1151,3 +1151,14 @@ fn test_ai_generate_text() {
     let val = res.unwrap();
     assert!(val.as_string().unwrap().contains("Prompt: What is 2+2?"));
 }
+
+#[test]
+fn test_excel_module() {
+    let registry = StdlibRegistry::new();
+    let excel = registry.get_module("std.excel").unwrap();
+
+    assert_eq!(excel.name, "std.excel");
+    assert_eq!(excel.version, "1.0.0");
+    assert!(excel.required_capabilities.is_empty());
+    assert!(excel.exports.is_empty());
+}

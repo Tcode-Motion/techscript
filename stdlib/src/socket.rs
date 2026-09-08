@@ -2,9 +2,7 @@ use crate::{StdFunction, StdlibModule, StdlibRegistry};
 use std::collections::HashMap;
 use std::net::TcpStream;
 use std::rc::Rc;
-use techscript_runtime::{
-    context::Capability, error::RuntimeError, value::RuntimeValue,
-};
+use techscript_runtime::{context::Capability, error::RuntimeError, value::RuntimeValue};
 
 impl StdlibRegistry {
     pub fn register_socket(&mut self) {
@@ -48,7 +46,8 @@ impl StdlibRegistry {
                     if !ctx.config.capabilities.contains(&Capability::Network) {
                         return Err(RuntimeError::new(
                             techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Network capability is denied".to_string(),
+                                "Security policy violation: Network capability is denied"
+                                    .to_string(),
                             ),
                             None,
                             None,
@@ -93,7 +92,8 @@ impl StdlibRegistry {
                     if !ctx.config.capabilities.contains(&Capability::Network) {
                         return Err(RuntimeError::new(
                             techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Network capability is denied".to_string(),
+                                "Security policy violation: Network capability is denied"
+                                    .to_string(),
                             ),
                             None,
                             None,

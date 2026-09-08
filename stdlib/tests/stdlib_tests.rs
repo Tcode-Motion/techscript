@@ -1158,7 +1158,9 @@ fn test_socket_module_sandboxing() {
     let socket = registry.get_module("std.socket").unwrap();
 
     let mut config_unprivileged = RuntimeConfig::default();
-    config_unprivileged.capabilities.remove(&Capability::Network);
+    config_unprivileged
+        .capabilities
+        .remove(&Capability::Network);
     let mut ctx_unprivileged = RuntimeContext::new(config_unprivileged);
 
     let mut config_privileged = RuntimeConfig::default();

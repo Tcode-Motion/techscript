@@ -1153,12 +1153,5 @@ fn test_ai_generate_text() {
 }
 
 #[test]
-fn test_word_module() {
-    let registry = StdlibRegistry::new();
-    let word = registry.get_module("std.word").unwrap();
-
-    assert_eq!(word.name, "std.word");
-    assert_eq!(word.version, "1.0.0");
-    assert!(word.exports.is_empty());
-    assert!(word.required_capabilities.is_empty());
+<<
 }

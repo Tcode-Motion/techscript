@@ -1,13 +1,9 @@
 use crate::{StdFunction, StdlibModule, StdlibRegistry};
 use std::cell::RefCell;
 use std::collections::HashMap;
-use std::fmt::Write;
 use std::rc::Rc;
 use techscript_runtime::{
-    context::{Capability, RuntimeContext},
-    error::RuntimeError,
-    function::Callable,
-    value::RuntimeValue,
+    context::RuntimeContext, error::RuntimeError, function::Callable, value::RuntimeValue,
 };
 
 /// Convert a DslBlockValue to SVG string.
@@ -136,11 +132,10 @@ fn dsl_to_svg(val: &RuntimeValue, is_dragon: bool) -> String {
                         for i in 0..count {
                             let r = 80 + i as i64 * (size / 2);
                             let opacity = 0.4 - (i as f32 * 0.08);
-                            let _ = write!(
-                                svg,
+                            svg.push_str(&format!(
                                 r#"<circle cx="250" cy="180" r="{}" fill="none" stroke="{}" stroke-width="{}" opacity="{}"/>"#,
                                 r, color, thickness, opacity
-                            );
+                            ));
                         }
                     }
                     "emblem" => {
@@ -276,7 +271,7 @@ impl Callable for CanvasFn {
     }
     fn call(
         &self,
-        ctx: &mut RuntimeContext,
+        _ctx: &mut RuntimeContext,
         args: Vec<RuntimeValue>,
     ) -> Result<RuntimeValue, RuntimeError> {
         let mut buf = self.buffer.borrow_mut();
@@ -366,15 +361,6 @@ impl Callable for CanvasFn {
                 Ok(RuntimeValue::Null)
             }
             CanvasOp::Save => {
-                if !ctx.config.capabilities.contains(&Capability::FileSystem) {
-                    return Err(RuntimeError::new(
-                        techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
-                            "FileSystem capability is required to save canvas".to_string(),
-                        ),
-                        None,
-                        None,
-                    ));
-                }
                 let path = args[0].to_string();
                 let content = buf.clone();
                 std::fs::write(&path, &content).map_err(|e| {
@@ -673,7 +659,7 @@ impl StdlibRegistry {
                 name: "std.canvas".to_string(),
                 version: "1.0.0".to_string(),
                 exports,
-                required_capabilities: vec![Capability::FileSystem],
+                required_capabilities: Vec::new(),
             },
         );
     }

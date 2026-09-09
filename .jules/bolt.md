@@ -11,3 +11,6 @@
 ## 2024-06-25 - Suboptimal Line Search in LSP
 **Learning:** Using `chars().nth()` with a byte offset (such as one returned by `.find()`) inside a loop over a string creates an O(N) penalty and may result in an incorrect character lookup if multi-byte unicode characters are present.
 **Action:** Use string slicing with the byte index to create a subset string slice, and call `.chars().next_back()` or `.chars().next()` on it for an O(1) and UTF-8 safe boundary lookup.
+## 2024-05-24 - Avoid `push_str(&format!(...))` in loops
+**Learning:** Using `push_str(&format!(...))` inside loops creates unnecessary temporary String allocations because `format!` allocates a new `String` which is then appended and immediately dropped.
+**Action:** Use `std::fmt::Write` and the `write!` macro directly onto the target string buffer instead.

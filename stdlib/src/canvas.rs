@@ -1,6 +1,11 @@
 use crate::{StdFunction, StdlibModule, StdlibRegistry};
 use std::cell::RefCell;
 use std::collections::HashMap;
+// Performance Note:
+// This module uses `std::fmt::Write` and the `write!` macro instead of `push_str(&format!(...))`
+// to append content to SVG and buffer strings. This prevents the allocation of temporary `String`
+// objects during concatenation, significantly reducing memory overhead when rendering complex canvases.
+use std::fmt::Write;
 use std::rc::Rc;
 use techscript_runtime::{
     context::{Capability, RuntimeContext},
@@ -38,10 +43,11 @@ fn dsl_to_svg(val: &RuntimeValue, is_dragon: bool) -> String {
                             .and_then(|p| p.value.as_ref())
                             .and_then(|v| v.try_into_int().ok())
                             .unwrap_or(48);
-                        svg.push_str(&format!(
+                        let _ = write!(
+                            svg,
                             r#"<text x="250" y="440" text-anchor="middle" dominant-baseline="central" font-size="{}" font-weight="800" fill="{}" font-family="system-ui, -apple-system, sans-serif" letter-spacing="3">{}</text>"#,
                             size, color, text
-                        ));
+                        );
                     }
                     "rings" => {
                         // BLUE FLAME / WING (Bottom-Left Swirl)
@@ -98,10 +104,11 @@ fn dsl_to_svg(val: &RuntimeValue, is_dragon: bool) -> String {
                             .and_then(|p| p.value.as_ref())
                             .and_then(|v| v.try_into_int().ok())
                             .unwrap_or(48);
-                        svg.push_str(&format!(
+                        let _ = write!(
+                            svg,
                             r#"<text x="250" y="380" text-anchor="middle" dominant-baseline="central" font-size="{}" font-weight="800" fill="{}" font-family="system-ui, -apple-system, sans-serif" letter-spacing="3">{}</text>"#,
                             size, color, text
-                        ));
+                        );
                     }
                     "rings" => {
                         let count = dsl
@@ -135,10 +142,11 @@ fn dsl_to_svg(val: &RuntimeValue, is_dragon: bool) -> String {
                         for i in 0..count {
                             let r = 80 + i as i64 * (size / 2);
                             let opacity = 0.4 - (i as f32 * 0.08);
-                            svg.push_str(&format!(
+                            let _ = write!(
+                                svg,
                                 r#"<circle cx="250" cy="180" r="{}" fill="none" stroke="{}" stroke-width="{}" opacity="{}"/>"#,
                                 r, color, thickness, opacity
-                            ));
+                            );
                         }
                     }
                     "emblem" => {
@@ -158,10 +166,16 @@ fn dsl_to_svg(val: &RuntimeValue, is_dragon: bool) -> String {
                             .unwrap_or(120);
                         let x = 250 - size / 2;
                         let y = 180 - size / 2;
-                        svg.push_str(&format!(
+                        let _ = write!(
+                            svg,
                             r#"<rect x="{}" y="{}" width="{}" height="{}" rx="{}" fill="{}" transform="rotate(45 250 180)" filter="url(#glow)"/>"#,
-                            x, y, size, size, size / 4, color
-                        ));
+                            x,
+                            y,
+                            size,
+                            size,
+                            size / 4,
+                            color
+                        );
                     }
                     "letter" => {
                         let ch = dsl
@@ -185,10 +199,11 @@ fn dsl_to_svg(val: &RuntimeValue, is_dragon: bool) -> String {
                             .and_then(|p| p.value.as_ref())
                             .and_then(|v| v.try_into_int().ok())
                             .unwrap_or(32);
-                        svg.push_str(&format!(
+                        let _ = write!(
+                            svg,
                             r#"<text x="250" y="180" text-anchor="middle" dominant-baseline="central" font-size="{}" font-weight="900" fill="{}" font-family="system-ui, -apple-system, sans-serif">{}</text>"#,
                             size, color, ch
-                        ));
+                        );
                     }
                     "core" => {
                         let color = dsl
@@ -205,11 +220,12 @@ fn dsl_to_svg(val: &RuntimeValue, is_dragon: bool) -> String {
                             .and_then(|p| p.value.as_ref())
                             .and_then(|v| v.try_into_int().ok())
                             .unwrap_or(40);
-                        svg.push_str(&format!(
+                        let _ = write!(
+                            svg,
                             r#"<circle cx="250" cy="180" r="{}" fill="{}" opacity="0.8"/>"#,
                             size / 2,
                             color
-                        ));
+                        );
                     }
                     "circuits" => {
                         let color = dsl
@@ -219,7 +235,8 @@ fn dsl_to_svg(val: &RuntimeValue, is_dragon: bool) -> String {
                             .and_then(|p| p.value.as_ref())
                             .map(|v| v.to_string())
                             .unwrap_or_else(|| "#00d4ff".to_string());
-                        svg.push_str(&format!(
+                        let _ = write!(
+                            svg,
                             r#"<line x1="50" y1="180" x2="450" y2="180" stroke="{}" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.6"/>
                             <line x1="250" y1="30" x2="250" y2="330" stroke="{}" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.6"/>
                             <circle cx="50" cy="180" r="4" fill="{}"/>
@@ -227,7 +244,7 @@ fn dsl_to_svg(val: &RuntimeValue, is_dragon: bool) -> String {
                             <circle cx="250" cy="30" r="4" fill="{}"/>
                             <circle cx="250" cy="330" r="4" fill="{}"/>"#,
                             color, color, color, color, color, color
-                        ));
+                        );
                     }
                     _ => {}
                 }
@@ -292,10 +309,11 @@ impl Callable for CanvasFn {
                 let w = parse_width(&buf);
                 let h = parse_height(&buf);
                 let fill = args[0].to_string();
-                buf.push_str(&format!(
+                let _ = write!(
+                    buf,
                     r#"<rect x="0" y="0" width="{}" height="{}" fill="{}"/>"#,
                     w, h, fill
-                ));
+                );
                 Ok(RuntimeValue::Null)
             }
             CanvasOp::Rect => {
@@ -304,10 +322,11 @@ impl Callable for CanvasFn {
                 let w = args[2].try_into_int().unwrap_or(100);
                 let h = args[3].try_into_int().unwrap_or(100);
                 let fill = args[4].to_string();
-                buf.push_str(&format!(
+                let _ = write!(
+                    buf,
                     r#"<rect x="{}" y="{}" width="{}" height="{}" fill="{}"/>"#,
                     x, y, w, h, fill
-                ));
+                );
                 Ok(RuntimeValue::Null)
             }
             CanvasOp::Circle => {
@@ -315,10 +334,11 @@ impl Callable for CanvasFn {
                 let cy = args[1].try_into_int().unwrap_or(50);
                 let r = args[2].try_into_int().unwrap_or(40);
                 let fill = args[3].to_string();
-                buf.push_str(&format!(
+                let _ = write!(
+                    buf,
                     r#"<circle cx="{}" cy="{}" r="{}" fill="{}"/>"#,
                     cx, cy, r, fill
-                ));
+                );
                 Ok(RuntimeValue::Null)
             }
             CanvasOp::Text => {
@@ -335,16 +355,17 @@ impl Callable for CanvasFn {
                 } else {
                     "black".to_string()
                 };
-                buf.push_str(&format!(r#"<text x="{}" y="{}" font-size="{}" font-family="Arial,sans-serif" fill="{}">{}</text>"#, x, y, size, color, txt));
+                let _ = write!(
+                    buf,
+                    r#"<text x="{}" y="{}" font-size="{}" font-family="Arial,sans-serif" fill="{}">{}</text>"#,
+                    x, y, size, color, txt
+                );
                 Ok(RuntimeValue::Null)
             }
             CanvasOp::Polygon => {
                 let points = args[0].to_string();
                 let fill = args[1].to_string();
-                buf.push_str(&format!(
-                    r#"<polygon points="{}" fill="{}"/>"#,
-                    points, fill
-                ));
+                let _ = write!(buf, r#"<polygon points="{}" fill="{}"/>"#, points, fill);
                 Ok(RuntimeValue::Null)
             }
             CanvasOp::Line => {
@@ -353,10 +374,11 @@ impl Callable for CanvasFn {
                 let x2 = args[2].try_into_int().unwrap_or(100);
                 let y2 = args[3].try_into_int().unwrap_or(100);
                 let stroke = args[4].to_string();
-                buf.push_str(&format!(
+                let _ = write!(
+                    buf,
                     r#"<line x1="{}" y1="{}" x2="{}" y2="{}" stroke="{}" stroke-width="2"/>"#,
                     x1, y1, x2, y2, stroke
-                ));
+                );
                 Ok(RuntimeValue::Null)
             }
             CanvasOp::Close => {
@@ -405,7 +427,11 @@ impl Callable for CanvasFn {
                 } else {
                     "1".to_string()
                 };
-                buf.push_str(&format!(r#"<circle cx="{}" cy="{}" r="{}" fill="none" stroke="{}" stroke-width="{}" opacity="{}"/>"#, cx, cy, r, color, width, opacity));
+                let _ = write!(
+                    buf,
+                    r#"<circle cx="{}" cy="{}" r="{}" fill="none" stroke="{}" stroke-width="{}" opacity="{}"/>"#,
+                    cx, cy, r, color, width, opacity
+                );
                 Ok(RuntimeValue::Null)
             }
             CanvasOp::Reset => {
@@ -633,7 +659,7 @@ impl StdlibRegistry {
                 let bg_color = if is_dragon { "#030408" } else { "#0a0e27" };
 
                 let mut svg = String::new();
-                svg.push_str(&format!(r##"<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
+                let _ = write!(svg, r##"<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
   <defs>
     <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
       <feGaussianBlur stdDeviation="6" result="blur" />
@@ -656,7 +682,7 @@ impl StdlibRegistry {
     </linearGradient>
   </defs>
   <rect width="100%" height="100%" fill="{}"/>
-"##, bg_color));
+"##, bg_color);
                 for block in &blocks {
                     svg.push_str(&dsl_to_svg(block, is_dragon));
                 }

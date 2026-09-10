@@ -2,6 +2,7 @@ use crate::{StdFunction, StdlibModule, StdlibRegistry};
 use indexmap::IndexMap;
 use std::cell::RefCell;
 use std::collections::HashMap;
+use std::fmt::Write;
 use std::rc::Rc;
 use techscript_runtime::{error::RuntimeError, value::RuntimeValue};
 
@@ -44,7 +45,7 @@ impl StdlibRegistry {
                     if let RuntimeValue::Map { entries, .. } = &args[0] {
                         for (k, v) in entries.borrow().iter() {
                             let val_str = v.try_into_string().unwrap_or_default();
-                            result.push_str(&format!("<{}>{}</{}>", k, val_str, k));
+                            let _ = write!(result, "<{}>{}</{}>", k, val_str, k);
                         }
                     }
                     Ok(RuntimeValue::Str(result))

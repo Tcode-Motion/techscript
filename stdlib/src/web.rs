@@ -1,5 +1,6 @@
 use crate::{StdFunction, StdlibModule, StdlibRegistry};
 use std::collections::HashMap;
+use std::fmt::Write;
 use std::net::{IpAddr, SocketAddr, ToSocketAddrs};
 use std::rc::Rc;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -109,7 +110,7 @@ fn render_website(html: &mut String, dsl: &techscript_runtime::value::DslBlockVa
         match prop.name.as_str() {
             "title" => {
                 if let Some(techscript_runtime::value::RuntimeValue::Str(t)) = &prop.value {
-                    html.push_str(&format!("<title>{}</title>", t));
+                    let _ = write!(html, "<title>{}</title>", t);
                 }
             }
             _ => {}
@@ -148,12 +149,12 @@ fn render_website(html: &mut String, dsl: &techscript_runtime::value::DslBlockVa
 fn render_page(html: &mut String, dsl: &techscript_runtime::value::DslBlockValue) {
     html.push_str("<div class=\"page\">");
     if let Some(techscript_runtime::value::RuntimeValue::Str(t)) = dsl.args.first() {
-        html.push_str(&format!("<h1>{}</h1>", t));
+        let _ = write!(html, "<h1>{}</h1>", t);
     }
     for prop in &dsl.properties {
         if prop.name == "title" {
             if let Some(techscript_runtime::value::RuntimeValue::Str(t)) = &prop.value {
-                html.push_str(&format!("<h2>{}</h2>", t));
+                let _ = write!(html, "<h2>{}</h2>", t);
             }
         }
     }
@@ -167,12 +168,12 @@ fn render_hero(html: &mut String, dsl: &techscript_runtime::value::DslBlockValue
         match prop.name.as_str() {
             "title" => {
                 if let Some(techscript_runtime::value::RuntimeValue::Str(t)) = &prop.value {
-                    html.push_str(&format!("<h1>{}</h1>", t));
+                    let _ = write!(html, "<h1>{}</h1>", t);
                 }
             }
             "subtitle" => {
                 if let Some(techscript_runtime::value::RuntimeValue::Str(t)) = &prop.value {
-                    html.push_str(&format!("<p class=\"subtitle\">{}</p>", t));
+                    let _ = write!(html, "<p class=\"subtitle\">{}</p>", t);
                 }
             }
             _ => {}
@@ -188,12 +189,12 @@ fn render_section(html: &mut String, dsl: &techscript_runtime::value::DslBlockVa
         match prop.name.as_str() {
             "title" => {
                 if let Some(techscript_runtime::value::RuntimeValue::Str(t)) = &prop.value {
-                    html.push_str(&format!("<h2>{}</h2>", t));
+                    let _ = write!(html, "<h2>{}</h2>", t);
                 }
             }
             "id" => {
                 if let Some(techscript_runtime::value::RuntimeValue::Str(t)) = &prop.value {
-                    html.push_str(&format!("<!-- id: {} -->", t));
+                    let _ = write!(html, "<!-- id: {} -->", t);
                 }
             }
             _ => {}
@@ -211,17 +212,17 @@ fn render_card(html: &mut String, dsl: &techscript_runtime::value::DslBlockValue
         match prop.name.as_str() {
             "title" => {
                 if let Some(techscript_runtime::value::RuntimeValue::Str(t)) = &prop.value {
-                    html.push_str(&format!("<h3>{}</h3>", t));
+                    let _ = write!(html, "<h3>{}</h3>", t);
                 }
             }
             "text" => {
                 if let Some(techscript_runtime::value::RuntimeValue::Str(t)) = &prop.value {
-                    html.push_str(&format!("<p>{}</p>", t));
+                    let _ = write!(html, "<p>{}</p>", t);
                 }
             }
             "image" => {
                 if let Some(techscript_runtime::value::RuntimeValue::Str(t)) = &prop.value {
-                    html.push_str(&format!("<img src=\"{}\" alt=\"card image\">", t));
+                    let _ = write!(html, "<img src=\"{}\" alt=\"card image\">", t);
                 }
             }
             _ => {}
@@ -259,7 +260,7 @@ fn dsl_to_html(val: &RuntimeValue) -> String {
                         .and_then(|p| p.value.as_ref())
                         .map(|v| v.to_string())
                         .unwrap_or_else(|| "Button".to_string());
-                    html.push_str(&format!("<button>{}</button>", label));
+                    let _ = write!(html, "<button>{}</button>", label);
                 }
                 "link" => {
                     let label = dsl
@@ -276,9 +277,9 @@ fn dsl_to_html(val: &RuntimeValue) -> String {
                         .and_then(|p| p.value.as_ref())
                         .map(|v| v.to_string());
                     if let Some(u) = url {
-                        html.push_str(&format!("<a href=\"{}\">{}</a>", u, label));
+                        let _ = write!(html, "<a href=\"{}\">{}</a>", u, label);
                     } else {
-                        html.push_str(&format!("<a href=\"#\">{}</a>", label));
+                        let _ = write!(html, "<a href=\"#\">{}</a>", label);
                     }
                 }
                 "nav" => {
@@ -291,7 +292,7 @@ fn dsl_to_html(val: &RuntimeValue) -> String {
                     for prop in &dsl.properties {
                         if prop.name == "title" {
                             if let Some(RuntimeValue::Str(t)) = &prop.value {
-                                html.push_str(&format!("<h1>{}</h1>", t));
+                                let _ = write!(html, "<h1>{}</h1>", t);
                             }
                         }
                     }
@@ -303,7 +304,7 @@ fn dsl_to_html(val: &RuntimeValue) -> String {
                     for prop in &dsl.properties {
                         if prop.name == "text" {
                             if let Some(RuntimeValue::Str(t)) = &prop.value {
-                                html.push_str(&format!("<p>{}</p>", t));
+                                let _ = write!(html, "<p>{}</p>", t);
                             }
                         }
                     }
@@ -318,7 +319,7 @@ fn dsl_to_html(val: &RuntimeValue) -> String {
                         .and_then(|p| p.value.as_ref())
                         .map(|v| v.to_string());
                     if let Some(p) = placeholder {
-                        html.push_str(&format!("<input placeholder=\"{}\">", p));
+                        let _ = write!(html, "<input placeholder=\"{}\">", p);
                     } else {
                         html.push_str("<input>");
                     }
@@ -346,13 +347,10 @@ fn dsl_to_html(val: &RuntimeValue) -> String {
                         .and_then(|p| p.value.as_ref())
                         .map(|v| v.to_string())
                         .unwrap_or_else(|| "Get Started".to_string());
-                    html.push_str(&format!(
-                        "<a class=\"start-button\" href=\"#\">{}</a>",
-                        label
-                    ));
+                    let _ = write!(html, "<a class=\"start-button\" href=\"#\">{}</a>", label);
                 }
                 _ => {
-                    html.push_str(&format!("<!-- unknown DSL block: {} -->", dsl.kind));
+                    let _ = write!(html, "<!-- unknown DSL block: {} -->", dsl.kind);
                 }
             }
             html

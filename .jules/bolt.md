@@ -14,3 +14,6 @@
 ## 2024-05-24 - Avoid `push_str(&format!(...))` in loops
 **Learning:** Using `push_str(&format!(...))` inside loops creates unnecessary temporary String allocations because `format!` allocates a new `String` which is then appended and immediately dropped.
 **Action:** Use `std::fmt::Write` and the `write!` macro directly onto the target string buffer instead.
+## 2025-02-12 - String allocation optimization
+**Learning:** In heavily used loops, especially for rendering or stringifying tasks, `push_str(&format!(...))` allocates temporary strings unnecessarily. Replacing it with `write!` directly onto the mutable `String` buffer (using `std::fmt::Write`) skips the intermediate allocations and improves performance significantly.
+**Action:** Use `std::fmt::Write` and the `write!` macro instead of `push_str(&format!(...))` when generating strings in loops to prevent temporary allocations and improve performance.

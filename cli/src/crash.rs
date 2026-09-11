@@ -4,6 +4,7 @@
 //! and write structured crash reports.
 
 use crate::exit_code::ExitCode;
+use std::fmt::Write;
 use std::panic;
 use std::path::{Path, PathBuf};
 use std::time::SystemTime;
@@ -33,12 +34,12 @@ impl CrashReport {
         out.push_str(
             "================================================================================\n",
         );
-        out.push_str(&format!("Compiler Version: {}\n", self.compiler_version));
-        out.push_str(&format!("CLI Command:      {}\n", self.command));
-        out.push_str(&format!("Timestamp:        {}\n", self.timestamp));
-        out.push_str(&format!("OS Info:          {}\n", self.os_info));
+        let _ = write!(out, "Compiler Version: {}\n", self.compiler_version);
+        let _ = write!(out, "CLI Command:      {}\n", self.command);
+        let _ = write!(out, "Timestamp:        {}\n", self.timestamp);
+        let _ = write!(out, "OS Info:          {}\n", self.os_info);
         if let Some(file) = &self.source_file {
-            out.push_str(&format!("Active File:      {}\n", file));
+            let _ = write!(out, "Active File:      {}\n", file);
         }
         out.push_str(
             "--------------------------------------------------------------------------------\n",

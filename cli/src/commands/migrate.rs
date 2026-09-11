@@ -3,6 +3,7 @@
 //! Automatically migrates legacy TechScript 1.0.8 code to TechScript 2.0 canonical syntax.
 
 use crate::exit_code::ExitCode;
+use std::fmt::Write;
 use std::path::PathBuf;
 
 pub fn execute(path_str: Option<&str>) -> ExitCode {
@@ -263,7 +264,7 @@ fn replace_call(source: &str, prefix: &str, keyword: &str) -> String {
                 remaining = &remaining[pos + full.len()..];
                 if let Some(close) = remaining.find(')') {
                     let args = &remaining[..close];
-                    result.push_str(&format!("{keyword} {args}"));
+                    let _ = write!(result, "{keyword} {args}");
                     remaining = &remaining[close + 1..];
                 } else {
                     result.push_str(remaining);

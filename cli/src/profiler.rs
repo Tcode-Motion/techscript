@@ -4,6 +4,7 @@
 //! The `TimingProfiler` is an `EventListener` so it receives events
 //! automatically from the compilation pipeline.
 
+use std::fmt::Write;
 use std::time::{Duration, Instant};
 
 use colored::Colorize;
@@ -97,75 +98,81 @@ impl TimingProfiler {
         let total: Duration = self.stages.iter().map(|s| s.duration).sum();
         let mut out = String::new();
 
-        out.push_str(&format!(
+        let _ = write!(
+            out,
             "{}\n",
             "─── Compilation Timings ────────────────────────────────".dimmed()
-        ));
-        out.push_str(&format!(
+        );
+        let _ = write!(
+            out,
             "{:<24} {:>10}   {}\n",
             "Stage".bold(),
             "Duration".bold(),
             "Items".bold()
-        ));
-        out.push_str(&format!("{}\n", "─".repeat(50).dimmed()));
+        );
+        let _ = write!(out, "{}\n", "─".repeat(50).dimmed());
 
         for s in &self.stages {
-            out.push_str(&format!(
+            let _ = write!(
+                out,
                 "{:<24} {:>10}   {} {}\n",
                 s.stage,
                 format_duration(s.duration).cyan().to_string(),
                 s.item_count,
                 s.item_label.dimmed()
-            ));
+            );
         }
 
-        out.push_str(&format!("{}\n", "─".repeat(50).dimmed()));
-        out.push_str(&format!(
+        let _ = write!(out, "{}\n", "─".repeat(50).dimmed());
+        let _ = write!(
+            out,
             "{:<24} {:>10}\n\n",
             "Total".bold(),
             format_duration(total).green().bold().to_string()
-        ));
+        );
 
         // Memory section
         let mem = &self.memory;
         if mem.peak_memory_bytes > 0 || mem.ast_node_count > 0 {
-            out.push_str(&format!(
+            let _ = write!(
+                out,
                 "{}\n",
                 "─── Memory Statistics ──────────────────────────────────".dimmed()
-            ));
-            out.push_str(&format!(
+            );
+            let _ = write!(
+                out,
                 "{:<24} {:>10}\n",
                 "Peak memory",
                 format_bytes(mem.peak_memory_bytes).cyan().to_string()
-            ));
+            );
             if mem.ir_size_bytes > 0 {
-                out.push_str(&format!(
+                let _ = write!(
+                    out,
                     "{:<24} {:>10}\n",
                     "IR module",
                     format_bytes(mem.ir_size_bytes).cyan().to_string()
-                ));
+                );
             }
             if mem.bytecode_size_bytes > 0 {
-                out.push_str(&format!(
+                let _ = write!(
+                    out,
                     "{:<24} {:>10}\n",
                     "Bytecode",
                     format_bytes(mem.bytecode_size_bytes).cyan().to_string()
-                ));
+                );
             }
             if mem.ast_node_count > 0 {
-                out.push_str(&format!("{:<24} {:>10}\n", "AST nodes", mem.ast_node_count));
+                let _ = write!(out, "{:<24} {:>10}\n", "AST nodes", mem.ast_node_count);
             }
             if mem.function_count > 0 {
-                out.push_str(&format!(
-                    "{:<24} {:>10}\n",
-                    "IR functions", mem.function_count
-                ));
+                let _ = write!(out, "{:<24} {:>10}\n", "IR functions", mem.function_count);
             }
             if mem.basic_block_count > 0 {
-                out.push_str(&format!(
+                let _ = write!(
+                    out,
                     "{:<24} {:>10}\n",
                     "Basic blocks", mem.basic_block_count
-                ));
+                );
             }
         }
 

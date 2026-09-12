@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use std::fmt::Write;
 use techscript_bytecode::{BytecodeFunction, Operand};
 
 /// VM debugger supporting breakpoint registries and opcode single-step tracing.
@@ -61,28 +62,31 @@ impl VMDebugger {
             match op {
                 Operand::ConstantIndex(c_idx) => {
                     if let Some(lit) = func.chunk.constants.get(*c_idx) {
-                        operands_str.push_str(&format!(" #{:<3} ({:?})", c_idx, lit));
+                        let _ = write!(operands_str, " #{:<3} ({:?})", c_idx, lit);
                     } else {
-                        operands_str.push_str(&format!(" #{:<3} (invalid)", c_idx));
+                        let _ = write!(operands_str, " #{:<3} (invalid)", c_idx);
                     }
                 }
                 Operand::LocalIndex(l_idx) => {
                     if let Some(name) = func.debug_symbols.local_names.get(l_idx) {
-                        operands_str.push_str(&format!(" local_{:<2} ({})", l_idx, name));
+                        let _ = write!(operands_str, " local_{:<2} ({})", l_idx, name);
                     } else {
-                        operands_str.push_str(&format!(" local_{}", l_idx));
+                        let _ = write!(operands_str, " local_{}", l_idx);
                     }
                 }
                 Operand::JumpOffset(offset) => {
                     let target = (ip as i32) + offset;
-                    operands_str
-                        .push_str(&format!(" offset_{:<3} (target: {:04})", offset, target));
+                    let _ = write!(
+                        operands_str,
+                        " offset_{:<3} (target: {:04})",
+                        offset, target
+                    );
                 }
                 Operand::Count(n) => {
-                    operands_str.push_str(&format!(" count_{}", n));
+                    let _ = write!(operands_str, " count_{}", n);
                 }
                 Operand::GlobalIndex(g_idx) => {
-                    operands_str.push_str(&format!(" global_{}", g_idx));
+                    let _ = write!(operands_str, " global_{}", g_idx);
                 }
                 _ => {}
             }

@@ -4,6 +4,7 @@
 //! Interfaces native Rust operations with interpreter scopes.
 
 use std::collections::HashMap;
+use std::fmt::Write;
 use techscript_interpreter::{RuntimeError, Value};
 
 /// Type definition for native built-in functions.
@@ -62,7 +63,7 @@ impl BuiltinRegistry {
         self.register("fstring_concat", |args| {
             let mut res = String::new();
             for arg in args {
-                res.push_str(&format!("{}", arg));
+                let _ = write!(res, "{}", arg);
             }
             Ok(Value::Str(res))
         });

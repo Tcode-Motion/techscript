@@ -4,6 +4,7 @@
 
 use crate::artifacts::ArtifactManager;
 use crate::exit_code::ExitCode;
+use std::fmt::Write;
 use std::path::{Path, PathBuf};
 use techscript_package_manager::DocExtractor;
 
@@ -55,14 +56,15 @@ pub fn execute(path_str: Option<&str>) -> ExitCode {
 
     // Build structured output
     let mut md_content = String::new();
-    md_content.push_str(&format!(
+    let _ = write!(
+        md_content,
         "# API Documentation — {}\n\n",
         path.file_name().unwrap_or_default().to_string_lossy()
-    ));
+    );
 
     for item in &doc_items {
-        md_content.push_str(&format!("## {}\n\n", item.name));
-        md_content.push_str(&format!("{}\n\n", item.doc));
+        let _ = write!(md_content, "## {}\n\n", item.name);
+        let _ = write!(md_content, "{}\n\n", item.doc);
         md_content.push_str("---\n\n");
     }
 

@@ -4,6 +4,7 @@
 //! The `TimingProfiler` is an `EventListener` so it receives events
 //! automatically from the compilation pipeline.
 
+use std::fmt::Write;
 use std::time::{Duration, Instant};
 
 use colored::Colorize;

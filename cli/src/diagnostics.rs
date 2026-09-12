@@ -5,6 +5,7 @@
 //! and accumulates post-compilation statistics.
 
 use colored::Colorize;
+use std::fmt::Write;
 use std::sync::Arc;
 use std::time::Duration;
 

@@ -8,6 +8,7 @@ use colored::Colorize;
 use std::sync::Arc;
 use std::time::Duration;
 
+use std::fmt::Write;
 use techscript_common::{FileId, SourceManager};
 use techscript_errors::{Diagnostic, DiagnosticLevel, ErrorCode};
 
@@ -229,29 +230,32 @@ impl<'a> DiagnosticRenderer<'a> {
 
         if self.output == DiagnosticOutput::Colored {
             if header.is_empty() {
-                out.push_str(&format!(
+                let _ = write!(
+                    out,
                     "{}: {}\n",
                     diag.severity.colored_label(),
                     diag.message.bold()
-                ));
+                );
             } else {
-                out.push_str(&format!(
+                let _ = write!(
+                    out,
                     "{}[{}]: {}\n",
                     diag.severity.colored_label(),
                     header.white(),
                     diag.message.bold()
-                ));
+                );
             }
         } else {
             if header.is_empty() {
-                out.push_str(&format!("{}: {}\n", diag.severity.label(), diag.message));
+                let _ = write!(out, "{}: {}\n", diag.severity.label(), diag.message);
             } else {
-                out.push_str(&format!(
+                let _ = write!(
+                    out,
                     "{}[{}]: {}\n",
                     diag.severity.label(),
                     header,
                     diag.message
-                ));
+                );
             }
         }
 
@@ -262,9 +266,9 @@ impl<'a> DiagnosticRenderer<'a> {
 
                 let file_ref = format!("  --> {}:{}:{}", file.path().display(), line, col);
                 if self.output == DiagnosticOutput::Colored {
-                    out.push_str(&format!("{}\n", file_ref.cyan()));
+                    let _ = write!(out, "{}\n", file_ref.cyan());
                 } else {
-                    out.push_str(&format!("{}\n", file_ref));
+                    let _ = write!(out, "{}\n", file_ref);
                 }
 
                 // Source line
@@ -272,16 +276,11 @@ impl<'a> DiagnosticRenderer<'a> {
                     let line_num = format!("{:>4}", line);
                     let bar = "|";
                     if self.output == DiagnosticOutput::Colored {
-                        out.push_str(&format!("{} {}\n", line_num.cyan(), bar.cyan()));
-                        out.push_str(&format!(
-                            "{} {} {}\n",
-                            line_num.cyan(),
-                            bar.cyan(),
-                            line_text
-                        ));
+                        let _ = write!(out, "{} {}\n", line_num.cyan(), bar.cyan());
+                        let _ = write!(out, "{} {} {}\n", line_num.cyan(), bar.cyan(), line_text);
                     } else {
-                        out.push_str(&format!("{} {}\n", line_num, bar));
-                        out.push_str(&format!("{} {} {}\n", line_num, bar, line_text));
+                        let _ = write!(out, "{} {}\n", line_num, bar);
+                        let _ = write!(out, "{} {} {}\n", line_num, bar, line_text);
                     }
 
                     // Caret underline — Unicode-safe (count chars, not bytes)
@@ -298,13 +297,9 @@ impl<'a> DiagnosticRenderer<'a> {
                         format!("{}{}", spaces, carets)
                     };
                     if self.output == DiagnosticOutput::Colored {
-                        out.push_str(&format!(
-                            "     {} {}\n",
-                            bar.cyan(),
-                            caret_line.red().bold()
-                        ));
+                        let _ = write!(out, "     {} {}\n", bar.cyan(), caret_line.red().bold());
                     } else {
-                        out.push_str(&format!("     {} {}\n", bar, caret_line));
+                        let _ = write!(out, "     {} {}\n", bar, caret_line);
                     }
                 }
             }
@@ -313,41 +308,41 @@ impl<'a> DiagnosticRenderer<'a> {
         // Related diagnostics (help, notes)
         for related in &diag.related {
             if self.output == DiagnosticOutput::Colored {
-                out.push_str(&format!(
+                let _ = write!(
+                    out,
                     "  {}: {}\n",
                     related.severity.colored_label(),
                     related.message
-                ));
+                );
             } else {
-                out.push_str(&format!(
-                    "  {}: {}\n",
-                    related.severity.label(),
-                    related.message
-                ));
+                let _ = write!(out, "  {}: {}\n", related.severity.label(), related.message);
             }
         }
 
         // Fix suggestions
         for suggestion in &diag.suggestions {
             if self.output == DiagnosticOutput::Colored {
-                out.push_str(&format!(
+                let _ = write!(
+                    out,
                     "  {}: {} → `{}`\n",
                     "suggestion".green().bold(),
                     suggestion.message,
                     suggestion.replacement.green()
-                ));
+                );
             } else {
-                out.push_str(&format!(
+                let _ = write!(
+                    out,
                     "  suggestion: {} → `{}`\n",
                     suggestion.message, suggestion.replacement
-                ));
+                );
             }
         }
 
         // Documentation link if code is present
         if let Some(code) = diag.code {
             if self.output == DiagnosticOutput::Colored {
-                out.push_str(&format!(
+                let _ = write!(
+                    out,
                     "  {}: For more details see: {}\n",
                     "note".cyan().bold(),
                     format!(
@@ -355,12 +350,12 @@ impl<'a> DiagnosticRenderer<'a> {
                         code
                     )
                     .underline()
-                ));
+                );
             } else {
-                out.push_str(&format!(
+                let _ = write!(out,
                     "  note: For more details see: https://github.com/Tcode-Motion/techscript/blob/main/docs/errors.md#{:?}\n",
                     code
-                ));
+                );
             }
         }
 

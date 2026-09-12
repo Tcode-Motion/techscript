@@ -9,7 +9,6 @@ use std::fmt::Write;
 use std::sync::Arc;
 use std::time::Duration;
 
-use std::fmt::Write;
 use techscript_common::{FileId, SourceManager};
 use techscript_errors::{Diagnostic, DiagnosticLevel, ErrorCode};
 

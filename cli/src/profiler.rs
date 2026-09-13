@@ -11,7 +11,6 @@ use colored::Colorize;
 
 use crate::events::{CompilationEvent, EventListener};
 use crate::logging::format_duration;
-use std::fmt::Write;
 
 // ─── StageTimings ────────────────────────────────────────────────────────────
 

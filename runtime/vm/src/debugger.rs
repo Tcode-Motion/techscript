@@ -55,7 +55,9 @@ impl VMDebugger {
             return;
         }
 
-        let op_str = format!("{:?}", op_code);
+        // Bolt performance optimization: Avoid unnecessary string allocation for op_code.
+        // `op_code` implements `Debug`, so we can format it directly into the final string
+        // instead of pre-allocating an intermediate String with `format!`.
         let mut operands_str = String::new();
 
         for op in operands {
@@ -93,8 +95,8 @@ impl VMDebugger {
         }
 
         println!(
-            "[{:04}]  {:<15} {}  | Stack: {:?}",
-            ip, op_str, operands_str, stack_dump
+            "[{:04}]  {:<15?} {}  | Stack: {:?}",
+            ip, op_code, operands_str, stack_dump
         );
     }
 }

@@ -46,4 +46,4 @@ use trig
 ```
 
 Now, `main.txs` can access everything inside via `use math_helpers`.
-For imports details, see [Imports Guide](imports.md).
+For imports details, see [Imports Guide](language/imports-exports.md).

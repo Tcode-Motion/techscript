@@ -44,4 +44,4 @@ say list_a # prints [1, 2] (remains unaffected)
 
 ## 🔁 Variable Lifecycles
 When a scope exits, all variable references inside that scope are dropped. If an object's total reference count drops to zero, its heap memory is immediately reclaimed by the VM allocator.
-See [Memory Model](memory-model.md) for Garbage Collector mechanics.
+See [Memory Model](../specification/memory-model.md) for Garbage Collector mechanics.

@@ -57,4 +57,4 @@ parallel
     sync.unlock(counter)
 end
 ```
-See [Memory Model](memory-model.md) for data transfer rules.
+See [Memory Model](../specification/memory-model.md) for data transfer rules.

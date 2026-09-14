@@ -42,4 +42,4 @@ All downloaded packages are stored globally in a central cache directory:
 * **Linux/macOS**: `~/.techscript/cache`
 
 During compilation, the compiler resolves imports by checking the local cache first before searching internet sources.
-See [Packages Guide](packages.md) for details on metadata.
+See [Packages Guide](../language/packages.md) for details on metadata.

@@ -37,4 +37,4 @@ my_package/
 ```
 
 The entry point of the package is always `src/index.txs`. When another project depends on this package, importing `use my_package` loads the definitions from `src/index.txs`.
-For details about managing packages, see the [Package Manager Guide](package-manager.md).
+For details about managing packages, see the [Package Manager Guide](../tooling/package-manager.md).

@@ -53,4 +53,4 @@ do print_sound<T: Speaker>(obj: T)
     obj.speak()
 end
 ```
-See [Traits](traits.md) for more details.
+See [Traits](language/traits.md) for more details.

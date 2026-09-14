@@ -17,3 +17,6 @@
 ## 2025-02-12 - String allocation optimization
 **Learning:** In heavily used loops, especially for rendering or stringifying tasks, `push_str(&format!(...))` allocates temporary strings unnecessarily. Replacing it with `write!` directly onto the mutable `String` buffer (using `std::fmt::Write`) skips the intermediate allocations and improves performance significantly.
 **Action:** Use `std::fmt::Write` and the `write!` macro instead of `push_str(&format!(...))` when generating strings in loops to prevent temporary allocations and improve performance.
+## 2024-08-01 - Bytecode Disassembler String Allocation Optimization
+**Learning:** Formatting directly into a string buffer inside a tight loop with `write!(buffer, ...)` avoids unnecessary string heap allocations compared to `buffer.push_str(&format!(...))`.
+**Action:** Always prefer formatting directly into the target String buffer when concatenating strings in loops in performance-sensitive paths like debuggers or disassemblers.

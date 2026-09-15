@@ -312,7 +312,7 @@ The [examples guide](docs/guides/ExamplesGuide.md) explains how examples are str
 
 ## Editor support
 
-The official [TechScript VS Code extension](https://marketplace.visualstudio.com/items?itemName=tanmoy.techscript) provides syntax highlighting and editor integration. The extension is also available through [Open VSX](https://open-vsx.org/extension/Tcode-Motion/techscript).
+The official [TechScript Virtian VS Code extension](https://marketplace.visualstudio.com/items?itemName=tanmoy.techscript) provides canonical 2.0 syntax highlighting, language-server integration, debugger support, configurable save-time formatting and linting, and editor commands. The extension is also available through [Open VSX](https://open-vsx.org/extension/Tcode-Motion/techscript).
 
 The language server is implemented in [`tools/lsp/`](tools/lsp). Formatter and linter implementation is in [`tools/formatter/`](tools/formatter) and [`tools/linter/`](tools/linter).
 

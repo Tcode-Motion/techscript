@@ -7,7 +7,7 @@
 **The official language support extension for TechScript 2.0**  
 Syntax highlighting · IntelliSense · Diagnostics · Debugging · Formatting · Snippets
 
-[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/Tcode-Motion/techscript/releases)
+[![Version](https://img.shields.io/badge/version-2.0.1--Virtian-blue.svg)](https://github.com/Tcode-Motion/techscript/releases)
 [![VS Code](https://img.shields.io/badge/VS%20Code-%5E1.75.0-blue.svg)](https://code.visualstudio.com/)
 [![Open VSX](https://img.shields.io/badge/Open%20VSX-Extension-purple.svg)](https://open-vsx.org/extension/Tcode-Motion/techscript)
 [![License](https://img.shields.io/badge/license-Apache--2.0-green.svg)](https://github.com/Tcode-Motion/techscript/blob/main/LICENSE)

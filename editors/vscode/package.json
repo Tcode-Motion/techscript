@@ -6,6 +6,31 @@
     "Debuggers"
   ],
   "contributes": {
+    "configuration": {
+      "title": "TechScript",
+      "properties": {
+        "techscript.compiler.path": {
+          "default": "tsc",
+          "description": "Path to the TechScript compiler executable.",
+          "type": "string"
+        },
+        "techscript.lsp.path": {
+          "default": "",
+          "description": "Path to the TechScript language server. Leave empty to use techscript-lsp from PATH.",
+          "type": "string"
+        },
+        "techscript.format.onSave": {
+          "default": false,
+          "description": "Format TechScript files after saving.",
+          "type": "boolean"
+        },
+        "techscript.lint.onSave": {
+          "default": true,
+          "description": "Run the TechScript linter after saving a TechScript file.",
+          "type": "boolean"
+        }
+      }
+    },
     "commands": [
       {
         "command": "techscript.run",
@@ -227,8 +252,8 @@
       ]
     }
   },
-  "description": "Official TechScript 2.0 language support, autocomplete, diagnostics, formatting, and debugger integration.",
-  "displayName": "TechScript 2.0",
+  "description": "TechScript Virtian language support, autocomplete, diagnostics, formatting, and debugger integration.",
+  "displayName": "TechScript Virtian",
   "engines": {
     "vscode": "^1.75.0"
   },
@@ -262,5 +287,14 @@
   "main": "./extension.js",
   "name": "techscript",
   "publisher": "tanmoy",
-  "version": "2.0.0"
+  "version": "2.0.1",
+  "activationEvents": [
+    "onLanguage:techscript"
+  ],
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^3.6.2"
+  }
 }

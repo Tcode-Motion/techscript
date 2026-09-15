@@ -16,6 +16,7 @@
   "repository": {
     "comments": {
       "patterns": [
+        { "name": "comment.line.number-sign.techscript", "match": "#.*$" },
         { "name": "comment.line.double-slash.techscript", "match": "//.*$" },
         { "name": "comment.block.techscript", "begin": "/\\*", "end": "\\*/" }
       ]
@@ -26,8 +27,8 @@
     },
     "keywords": {
       "patterns": [
-        { "name": "keyword.control.techscript", "match": "\\b(if|else|while|for|in|return|match|await|when|catch)\\b" },
-        { "name": "keyword.declaration.techscript", "match": "\\b(let|mut|const|fn|async|struct|enum|model|import|export|build|trait|package)\\b" },
+        { "name": "keyword.control.techscript", "match": "\\b(when|else|loop|repeat|for|in|match|try|catch|end|send|await|parallel)\\b" },
+        { "name": "keyword.declaration.techscript", "match": "\\b(do|const|async|class|struct|enum|trait|interface|use|export|package|new)\\b" },
         { "name": "keyword.operator.techscript", "match": "(=|==|!=|<|>|<=|>=|\\+|\\-|\\*|/|\\%|&&|\\|\\||!)" }
       ]
     },
@@ -44,6 +45,7 @@
     },
     "strings": {
       "patterns": [
+        { "name": "string.quoted.interpolated.techscript", "begin": "\\$\"", "end": "\"", "patterns": [{ "name": "constant.character.escape.techscript", "match": "\\\\." }] },
         { "name": "string.quoted.double.techscript", "begin": "\"", "end": "\"", "patterns": [{ "name": "constant.character.escape.techscript", "match": "\\\\." }] },
         { "name": "string.quoted.single.techscript", "begin": "'", "end": "'", "patterns": [{ "name": "constant.character.escape.techscript", "match": "\\\\." }] }
       ]

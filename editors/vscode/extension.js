@@ -182,6 +182,22 @@ function activate(context) {
         })
     );
 
+    context.subscriptions.push(
+        vscode.workspace.onDidSaveTextDocument(document => {
+            if (document.languageId !== 'techscript') {
+                return;
+            }
+
+            const saveConfig = vscode.workspace.getConfiguration('techscript', document.uri);
+            if (saveConfig.get('format.onSave')) {
+                runCommand('fmt', document, false);
+            }
+            if (saveConfig.get('lint.onSave')) {
+                runCommand('lint', document, false);
+            }
+        })
+    );
+
     // 4. Task Provider Setup
     context.subscriptions.push(
         vscode.tasks.registerTaskProvider('techscript', {
@@ -216,23 +232,24 @@ function activate(context) {
     context.subscriptions.push(statusBarItem);
 }
 
-function runCommand(subcommand) {
-    const editor = vscode.window.activeTextEditor;
-    if (!editor) {
+function runCommand(subcommand, document, showTerminal = true) {
+    const targetDocument = document || (vscode.window.activeTextEditor && vscode.window.activeTextEditor.document);
+    if (!targetDocument) {
         vscode.window.showErrorMessage('No active text editor open.');
         return;
     }
 
-    const filePath = editor.document.fileName;
+    const filePath = targetDocument.fileName;
+    const compilerPath = vscode.workspace.getConfiguration('techscript', targetDocument.uri).get('compiler.path') || 'tsc';
     const terminal = vscode.window.activeTerminal || vscode.window.createTerminal('TechScript');
-    terminal.show();
+    terminal.show(showTerminal);
 
     if (subcommand === 'build' || subcommand === 'check' || subcommand === 'lint' || subcommand === 'test' || subcommand === 'clean' || subcommand === 'doc') {
-        terminal.sendText(`tsc ${subcommand}`);
+        terminal.sendText(`${compilerPath} ${subcommand}`);
     } else if (subcommand === 'fmt') {
-        terminal.sendText(`tsc fmt "${filePath}"`);
+        terminal.sendText(`${compilerPath} fmt "${filePath}"`);
     } else {
-        terminal.sendText(`tsc run "${filePath}"`);
+        terminal.sendText(`${compilerPath} run "${filePath}"`);
     }
 }
 

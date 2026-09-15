@@ -72,8 +72,8 @@
     ]
   ],
   "indentationRules": {
-    "increaseIndentPattern": "^\\s*(build|model|if|else|while|each|repeat|attempt|catch)\\b.*{\\s*$",
-    "decreaseIndentPattern": "^\\s*}\\s*$"
+    "increaseIndentPattern": "^\\s*(do|class|struct|enum|trait|interface|when|else|loop|repeat|for|try|catch|match)\\b.*$",
+    "decreaseIndentPattern": "^\\s*end\\s*$"
   },
   "folding": {
     "markers": {

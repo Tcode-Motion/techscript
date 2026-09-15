@@ -1,4 +1,4 @@
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{criterion_group, criterion_main, Criterion};
 use techscript_ir::builder::IRBuilder;
 use techscript_ir::types::IRType;
 

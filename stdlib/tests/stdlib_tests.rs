@@ -1073,15 +1073,10 @@ fn test_graphics_canvas_drawing() {
         .remove(&Capability::FileSystem);
     let mut ctx_unprivileged = RuntimeContext::new(config_unprivileged);
 
-    let mut config_fs = RuntimeConfig::default();
-    config_fs.capabilities.insert(Capability::FileSystem);
-    let mut ctx_fs = RuntimeContext::new(config_fs);
-
     let create_canvas_fn = graphics.exports.get("create_canvas").unwrap();
     let draw_rect_fn = graphics.exports.get("draw_rect").unwrap();
     let draw_circle_fn = graphics.exports.get("draw_circle").unwrap();
     let draw_line_fn = graphics.exports.get("draw_line").unwrap();
-    let save_png_fn = graphics.exports.get("save_png").unwrap();
 
     // 1. Create a 100x100 canvas
     let canvas_handle_val = create_canvas_fn
@@ -1137,6 +1132,34 @@ fn test_graphics_canvas_drawing() {
             ],
         )
         .unwrap();
+}
+
+#[test]
+fn test_graphics_canvas_save_png() {
+    let registry = StdlibRegistry::new();
+    let graphics = registry.get_module("std.graphics").unwrap();
+
+    let mut config_unprivileged = RuntimeConfig::default();
+    config_unprivileged
+        .capabilities
+        .remove(&Capability::FileSystem);
+    let mut ctx_unprivileged = RuntimeContext::new(config_unprivileged);
+
+    let mut config_fs = RuntimeConfig::default();
+    config_fs.capabilities.insert(Capability::FileSystem);
+    let mut ctx_fs = RuntimeContext::new(config_fs);
+
+    let create_canvas_fn = graphics.exports.get("create_canvas").unwrap();
+    let save_png_fn = graphics.exports.get("save_png").unwrap();
+
+    // Create a canvas to save
+    let canvas_handle_val = create_canvas_fn
+        .call(
+            &mut ctx_unprivileged,
+            vec![RuntimeValue::Int(100), RuntimeValue::Int(100)],
+        )
+        .unwrap();
+    let handle = canvas_handle_val.as_int().unwrap();
 
     // 3. Save to PNG file (requires FileSystem capability)
     let temp_file = std::env::temp_dir().join("test_canvas.png");

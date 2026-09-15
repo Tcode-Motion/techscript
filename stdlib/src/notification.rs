@@ -34,11 +34,13 @@ impl StdlibRegistry {
                     {
                         use std::process::Command;
                         let _ = Command::new("powershell")
-                            .env("__TS_BODY", &body)
-                            .env("__TS_TITLE", &title)
                             .args([
                                 "-Command",
-                                "[System.Windows.MessageBox]::Show($env:__TS_BODY, $env:__TS_TITLE)",
+                                &format!(
+                                    "[System.Windows.MessageBox]::Show('{}','{}')",
+                                    body.replace("'", "''"),
+                                    title.replace("'", "''")
+                                ),
                             ])
                             .spawn();
                     }

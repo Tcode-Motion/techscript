@@ -398,9 +398,9 @@ impl StdlibRegistry {
                         Mutex::new(tiny_http::Server::http(format!("0.0.0.0:{}", port)).unwrap());
                     thread::spawn(move || {
                         while SERVER_RUNNING.load(Ordering::SeqCst) {
-                            let page = PAGE_CONTENT.lock().unwrap().clone();
                             if let Ok(mut req) = server.lock().unwrap().recv() {
-                                let r = tiny_http::Response::from_string(&page).with_header(
+                                let page = PAGE_CONTENT.lock().unwrap();
+                                let r = tiny_http::Response::from_string(&*page).with_header(
                                     tiny_http::Header::from_bytes(
                                         &b"Content-Type"[..],
                                         &b"text/html; charset=utf-8"[..],
@@ -466,9 +466,9 @@ impl StdlibRegistry {
                         Mutex::new(tiny_http::Server::http(format!("0.0.0.0:{}", port)).unwrap());
                     thread::spawn(move || {
                         while SERVER_RUNNING.load(Ordering::SeqCst) {
-                            let page = PAGE_CONTENT.lock().unwrap().clone();
                             if let Ok(mut req) = server.lock().unwrap().recv() {
-                                let r = tiny_http::Response::from_string(&page).with_header(
+                                let page = PAGE_CONTENT.lock().unwrap();
+                                let r = tiny_http::Response::from_string(&*page).with_header(
                                     tiny_http::Header::from_bytes(
                                         &b"Content-Type"[..],
                                         &b"text/html; charset=utf-8"[..],

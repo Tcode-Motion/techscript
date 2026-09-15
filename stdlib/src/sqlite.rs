@@ -194,9 +194,13 @@ impl StdlibRegistry {
                                             rusqlite::types::ValueRef::Real(v) => {
                                                 RuntimeValue::Float(v)
                                             }
-                                            rusqlite::types::ValueRef::Text(v) => RuntimeValue::Str(
-                                                std::str::from_utf8(v).unwrap_or_default().to_string(),
-                                            ),
+                                            rusqlite::types::ValueRef::Text(v) => {
+                                                RuntimeValue::Str(
+                                                    std::str::from_utf8(v)
+                                                        .unwrap_or_default()
+                                                        .to_string(),
+                                                )
+                                            }
                                             rusqlite::types::ValueRef::Blob(v) => {
                                                 RuntimeValue::Str(
                                                     String::from_utf8_lossy(v).into_owned(),

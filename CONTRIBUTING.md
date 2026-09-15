@@ -103,3 +103,16 @@ Before submitting a Pull Request:
 - [ ] Link the issue you are fixing in the PR description (e.g., `Fixes #123`).
 
 Once submitted, our CI workflow will run automated checks on Windows, Linux, and macOS. A maintainer will review your code and request adjustments if necessary.
+
+## Project Policies and Support
+
+Before opening a pull request, review the repository policies:
+
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Security Policy](SECURITY.md)
+- [MIT License](LICENSE)
+- [Bug report template](.github/ISSUE_TEMPLATE/bug_report.md)
+- [Feature request template](.github/ISSUE_TEMPLATE/feature_request.md)
+- [Question template](.github/ISSUE_TEMPLATE/question.md)
+
+Use GitHub Discussions for design questions and general community discussion. Do not disclose security vulnerabilities in public issues; follow the private reporting process in [SECURITY.md](SECURITY.md).

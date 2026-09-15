@@ -410,7 +410,7 @@ fn test_regex_operations() {
 #[test]
 fn test_web_module() {
     use std::net::TcpListener;
-    use std::panic;
+
 
     let registry = StdlibRegistry::new();
     let web = registry.get_module("std.web").unwrap();
@@ -433,50 +433,30 @@ fn test_web_module() {
     let listener = TcpListener::bind("0.0.0.0:0").unwrap();
     let port = listener.local_addr().unwrap().port();
 
-    // Test panic on `start` when port is in use
-    let start_result = panic::catch_unwind(panic::AssertUnwindSafe(|| {
-        let mut caps = HashSet::new();
-        caps.insert(Capability::Network);
-        let mut ctx2 = RuntimeContext::new(RuntimeConfig {
-            strict_mode: false,
-            max_recursion_depth: 1000,
-            enable_assertions: true,
-            capabilities: caps,
-        });
-        let _ = start.call(
-            &mut ctx2,
-            vec![
-                RuntimeValue::Int(port as i64),
-                RuntimeValue::Str("<h1>Test</h1>".to_string()),
-            ],
-        );
-    }));
+    // Test error on `start` when port is in use
+    let result = start.call(
+        &mut ctx,
+        vec![
+            RuntimeValue::Int(port as i64),
+            RuntimeValue::Str("<h1>Test</h1>".to_string()),
+        ],
+    );
 
     assert!(
-        start_result.is_err(),
-        "Expected `start` to panic due to port already in use"
+        result.is_err(),
+        "Expected `start` to return error due to port already in use"
     );
 
     // Make sure we stop the server and cleanup the global bool in case of weirdness,
     // although the panic meant it wasn't started fully, but `SERVER_RUNNING` is true.
     let _ = stop.call(&mut ctx, vec![]).unwrap();
 
-    // Test panic on `serve` when port is in use
-    let serve_result = panic::catch_unwind(panic::AssertUnwindSafe(|| {
-        let mut caps = HashSet::new();
-        caps.insert(Capability::Network);
-        let mut ctx3 = RuntimeContext::new(RuntimeConfig {
-            strict_mode: false,
-            max_recursion_depth: 1000,
-            enable_assertions: true,
-            capabilities: caps,
-        });
-        let _ = serve.call(&mut ctx3, vec![RuntimeValue::Int(port as i64)]);
-    }));
+    // Test error on `serve` when port is in use
+    let result = serve.call(&mut ctx, vec![RuntimeValue::Int(port as i64)]);
 
     assert!(
-        serve_result.is_err(),
-        "Expected `serve` to panic due to port already in use"
+        result.is_err(),
+        "Expected `serve` to return error due to port already in use"
     );
 
     // Reset `SERVER_RUNNING` so other tests aren't affected

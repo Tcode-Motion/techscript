@@ -394,8 +394,20 @@ impl StdlibRegistry {
                         return Ok(RuntimeValue::Str("Server already running".to_string()));
                     }
                     SERVER_RUNNING.store(true, Ordering::SeqCst);
-                    let server =
-                        Mutex::new(tiny_http::Server::http(format!("0.0.0.0:{}", port)).unwrap());
+                    let server_result = tiny_http::Server::http(format!("0.0.0.0:{}", port));
+                    let server = match server_result {
+                        Ok(s) => Mutex::new(s),
+                        Err(e) => {
+                            SERVER_RUNNING.store(false, Ordering::SeqCst);
+                            return Err(RuntimeError::new(
+                                techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
+                                    format!("Failed to bind server to port {}: {}", port, e),
+                                ),
+                                None,
+                                None,
+                            ));
+                        }
+                    };
                     thread::spawn(move || {
                         while SERVER_RUNNING.load(Ordering::SeqCst) {
                             let page = PAGE_CONTENT.lock().unwrap().clone();
@@ -462,8 +474,20 @@ impl StdlibRegistry {
                         return Ok(RuntimeValue::Str("Server already running".to_string()));
                     }
                     SERVER_RUNNING.store(true, Ordering::SeqCst);
-                    let server =
-                        Mutex::new(tiny_http::Server::http(format!("0.0.0.0:{}", port)).unwrap());
+                    let server_result = tiny_http::Server::http(format!("0.0.0.0:{}", port));
+                    let server = match server_result {
+                        Ok(s) => Mutex::new(s),
+                        Err(e) => {
+                            SERVER_RUNNING.store(false, Ordering::SeqCst);
+                            return Err(RuntimeError::new(
+                                techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
+                                    format!("Failed to bind server to port {}: {}", port, e),
+                                ),
+                                None,
+                                None,
+                            ));
+                        }
+                    };
                     thread::spawn(move || {
                         while SERVER_RUNNING.load(Ordering::SeqCst) {
                             let page = PAGE_CONTENT.lock().unwrap().clone();

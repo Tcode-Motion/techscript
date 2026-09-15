@@ -286,8 +286,8 @@
   "qna": "https://github.com/Tcode-Motion/techscript/discussions",
   "main": "./extension.js",
   "name": "techscript",
-  "publisher": "tanmoy",
-  "version": "2.0.2",
+  "publisher": "Tcode-Motion",
+  "version": "2.0.3",
   "activationEvents": [
     "onLanguage:techscript"
   ],

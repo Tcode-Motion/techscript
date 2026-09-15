@@ -4,6 +4,12 @@ All notable changes to the **TechScript 2.0** VS Code extension will be document
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [2.0.3] — Virtian — 2026-09-15
+
+### Fixed
+- Updated marketplace icon to high-resolution 256x256 asset for crisp display across Open VSX and VS Code registries.
+- Verified universal target platform packaging and namespace alignment (`Tcode-Motion`).
+
 ---
 
 ## [2.0.2] — Virtian — 2026-09-15

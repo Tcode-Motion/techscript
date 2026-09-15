@@ -12,7 +12,6 @@ use techscript_syntax::{lookup_keyword, Token, TokenKind};
 /// Private token enumeration used internally by Logos for scanning.
 #[derive(Logos, Debug, Clone, Copy, PartialEq, Eq)]
 #[logos(skip r"[ \t\r]+")] // Skip spaces, tabs, and carriage returns
-#[allow(dead_code)]
 enum LogosToken {
     #[token("\n")]
     #[token("\r\n")]

@@ -20,6 +20,3 @@
 ## 2024-08-01 - Bytecode Disassembler String Allocation Optimization
 **Learning:** Formatting directly into a string buffer inside a tight loop with `write!(buffer, ...)` avoids unnecessary string heap allocations compared to `buffer.push_str(&format!(...))`.
 **Action:** Always prefer formatting directly into the target String buffer when concatenating strings in loops in performance-sensitive paths like debuggers or disassemblers.
-## 2024-05-18 - Optimized predecessor mapping in compiler IR builder
-**Learning:** In `compiler/ir/src/builder.rs`, mapping block predecessors using `for other in &func.blocks { if other.successors.contains(&block_id) { ... } }` resulted in $O(N^2 \times S)$ time complexity (where S is the number of successors). In cases with tens of thousands of basic blocks (e.g., large auto-generated match statements or flat scripts), this caused significant compilation latency (scaling to over 4ms for 100k blocks in simple tests).
-**Action:** When reconstructing backwards dataflow graphs (like CFG predecessors) from forward edges (successors), always build an intermediate `HashMap` (or `Vec` indexed by block ID if densely packed) in a single $O(N + E)$ pass, then drain it to populate the backward edges, avoiding the $O(N^2)$ `.contains` bottleneck entirely.

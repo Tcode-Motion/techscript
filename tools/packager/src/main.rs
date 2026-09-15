@@ -22,6 +22,19 @@ struct ReleaseDirectories {
     examples_dir: PathBuf,
 }
 
+struct HashWriter<'a>(&'a mut Sha256);
+
+impl<'a> std::io::Write for HashWriter<'a> {
+    fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
+        self.0.update(buf);
+        Ok(buf.len())
+    }
+
+    fn flush(&mut self) -> std::io::Result<()> {
+        Ok(())
+    }
+}
+
 fn main() -> anyhow::Result<()> {
     println!("=== Starting TechScript 2.0 Packaging Pipeline ===");
 
@@ -726,9 +739,7 @@ fn calculate_checksums_json(release_dir: &Path) -> anyhow::Result<serde_json::Va
         if fpath.exists() {
             let mut file = File::open(&fpath)?;
             let mut hasher = Sha256::new();
-            let mut buffer = Vec::new();
-            file.read_to_end(&mut buffer)?;
-            hasher.update(&buffer);
+            std::io::copy(&mut file, &mut HashWriter(&mut hasher))?;
             let hash = hasher.finalize();
             map.insert(
                 fname.to_string(),
@@ -749,9 +760,7 @@ fn calculate_checksums_json(release_dir: &Path) -> anyhow::Result<serde_json::Va
         if fpath.exists() {
             let mut file = File::open(&fpath)?;
             let mut hasher = Sha256::new();
-            let mut buffer = Vec::new();
-            file.read_to_end(&mut buffer)?;
-            hasher.update(&buffer);
+            std::io::copy(&mut file, &mut HashWriter(&mut hasher))?;
             let hash = hasher.finalize();
             map.insert(
                 fname.to_string(),
@@ -788,9 +797,7 @@ fn generate_checksums_txt(release_dir: &Path) -> anyhow::Result<()> {
         if file_path.exists() {
             let mut file = File::open(file_path)?;
             let mut hasher = Sha256::new();
-            let mut buffer = Vec::new();
-            file.read_to_end(&mut buffer)?;
-            hasher.update(&buffer);
+            std::io::copy(&mut file, &mut HashWriter(&mut hasher))?;
             let hash = hasher.finalize();
 
             // Format to show filename relative to the release root

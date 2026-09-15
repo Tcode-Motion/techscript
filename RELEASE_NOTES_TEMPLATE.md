@@ -1,51 +1,47 @@
-# TechScript v[VERSION] Release Notes
+# TechScript [VERSION] Release Notes
 
-[Add a brief, high-level summary of the release here. Describe the main theme: is it a feature release, stabilization, bug fixes, or performance optimization?]
+**Release date:** [YYYY-MM-DD]
+**Release tag:** `[TAG]`
+**Compatibility line:** `[COMPATIBILITY]`
 
-## 🚀 What's New?
+[Write two or three sentences describing the release purpose and compatibility impact.]
 
-### Feature Highlight A
-[Detail major new features or syntax options introduced in this version.]
+## Highlights
 
-### Feature Highlight B
-[Detail second major addition, standard library modules, or tooling improvements.]
+- [User-facing feature or tooling improvement]
+- [Standard-library, IDE, or runtime improvement]
+- [Performance, security, or reliability improvement]
 
----
+## Added
 
-## 🛠️ Detailed Changelog
+- [New compiler, runtime, CLI, standard-library, or editor capability]
+- [New tests or supported workflow]
 
-### 🚀 Added
-- Add support for [Feature Name] in compiler/VM.
-- New standard library functions under `[module_name]`.
-- [Feature] added to TechScript Studio IDE.
+## Fixed and Security
 
-### 🐛 Fixed
-- Fix parsing bugs related to [Issue Name / Error Code].
-- Resolve memory leak in Garbage Collector during cyclic references.
-- Fix CLI formatting issues.
+- [Bug fix or corrected behavior]
+- [Security fix, capability check, or validation improvement]
 
-### ⚡ Optimized
-- Improve interpreter loop performance.
-- Optimize AST memory footprint.
+## Performance and Maintenance
 
-### ⚠️ Breaking Changes
-- [State any syntax changes or removals that require code refactoring.]
+- [Optimization or reduced allocation]
+- [Refactoring that preserves public behavior]
 
----
+## Compatibility
 
-## 📦 Artifact Checklist & Installation
+- **Breaking changes:** [None, or describe required migration]
+- **Package version:** [SemVer package version and any release-tag convention]
 
-### Windows Installer
-Download `TechScript_v[VERSION]_x64.exe` from the attachments below. This registers `.txs` file associations, adds `tech` to your system `PATH`, installs the IDE, and mounts the VS Code extension automatically.
+## Downloads
 
-### Manual Setup
-Download the archive corresponding to your platform, extract, and copy the `tech` binary to your system bin directory:
-* **Linux**: `techscript-v[VERSION]-linux-x86_64.tar.gz`
-* **macOS**: `techscript-v[VERSION]-macos-universal.tar.gz`
+| Platform | Package | Notes |
+|---|---|---|
+| Windows x64 | `[filename]` | [Installation note] |
+| Linux x64 | `[filename]` | [Installation note] |
+| macOS x64 | `[filename]` | [Installation note] |
+| macOS ARM64 | `[filename]` | [Installation note] |
 
----
+## Documentation
 
-## 🙏 Contributors
-A huge thank you to everyone who contributed to this release:
-* @user1
-* @user2
+- [Installation guide](../docs/getting-started/installation.md)
+- [Migration or compatibility guide](../docs/MigrationGuide.md)

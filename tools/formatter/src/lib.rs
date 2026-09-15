@@ -1,3 +1,4 @@
+use std::fmt::Write;
 use techscript_ast::{DSLBlock, DSLChild, Program, Statement};
 
 pub trait Formatter {
@@ -20,136 +21,160 @@ impl DocumentFormatter {
         self.format(&program)
     }
 
-    fn format_indent(&self, indent: usize) -> String {
-        " ".repeat(indent * self.indent_size)
+    fn format_indent(&self, indent: usize, buf: &mut String) {
+        for _ in 0..(indent * self.indent_size) {
+            buf.push(' ');
+        }
     }
 
-    fn format_dsl_block(&self, block: &DSLBlock, indent: usize) -> String {
-        let mut output = String::new();
-        let base = self.format_indent(indent);
-
-        output.push_str(&base);
-        output.push_str(&block.kind);
+    fn format_dsl_block(&self, block: &DSLBlock, indent: usize, buf: &mut String) {
+        self.format_indent(indent, buf);
+        buf.push_str(&block.kind);
         for arg in &block.args {
-            output.push(' ');
-            output.push_str(&self.format_expr(arg));
+            buf.push(' ');
+            self.format_expr(arg, buf);
         }
-        output.push('\n');
+        buf.push('\n');
 
         for prop in &block.properties {
-            output.push_str(&self.format_indent(indent + 1));
-            output.push_str(&prop.name);
+            self.format_indent(indent + 1, buf);
+            buf.push_str(&prop.name);
             if let Some(ref val) = prop.value {
-                output.push(' ');
-                output.push_str(&self.format_expr(val));
+                buf.push(' ');
+                self.format_expr(val, buf);
             }
-            output.push('\n');
+            buf.push('\n');
         }
 
         for child in &block.children {
             match child {
                 DSLChild::Block(sub_block) => {
-                    output.push_str(&self.format_dsl_block(sub_block, indent + 1));
+                    self.format_dsl_block(sub_block, indent + 1, buf);
                 }
                 DSLChild::Code(code_block) => {
-                    output.push_str(&self.format_indent(indent + 1));
-                    output.push_str("code\n");
+                    self.format_indent(indent + 1, buf);
+                    buf.push_str("code\n");
                     for stmt in &code_block.statements {
-                        output.push_str(&self.format_stmt(stmt, indent + 2));
+                        self.format_stmt(stmt, indent + 2, buf);
                     }
                 }
                 DSLChild::Property(prop) => {
-                    output.push_str(&self.format_indent(indent + 1));
-                    output.push_str(&prop.name);
+                    self.format_indent(indent + 1, buf);
+                    buf.push_str(&prop.name);
                     if let Some(ref val) = prop.value {
-                        output.push(' ');
-                        output.push_str(&self.format_expr(val));
+                        buf.push(' ');
+                        self.format_expr(val, buf);
                     }
-                    output.push('\n');
+                    buf.push('\n');
                 }
             }
         }
 
-        output.push_str(&base);
-        output.push_str("end\n");
-        output
+        self.format_indent(indent, buf);
+        buf.push_str("end\n");
     }
 
-    fn format_expr(&self, expr: &techscript_ast::Expression) -> String {
+    fn format_expr(&self, expr: &techscript_ast::Expression, buf: &mut String) {
         match expr {
-            techscript_ast::Expression::Literal(lit) => self.format_lit(&lit.value),
-            techscript_ast::Expression::Identifier(ident) => ident.name.clone(),
+            techscript_ast::Expression::Literal(lit) => self.format_lit(&lit.value, buf),
+            techscript_ast::Expression::Identifier(ident) => buf.push_str(&ident.name),
             techscript_ast::Expression::FString(fs) => {
-                let mut s = "f\"".to_string();
+                buf.push_str("f\"");
                 for part in &fs.parts {
                     match part {
-                        techscript_ast::FStringPart::Literal(l) => s.push_str(l),
-                        techscript_ast::FStringPart::Expr(_) => s.push_str("{}"),
+                        techscript_ast::FStringPart::Literal(l) => buf.push_str(l),
+                        techscript_ast::FStringPart::Expr(_) => buf.push_str("{}"),
                     }
                 }
-                s.push('"');
-                s
+                buf.push('"');
             }
-            _ => format!("{:?}", expr),
+            _ => {
+                let _ = write!(buf, "{:?}", expr);
+            }
         }
     }
 
-    fn format_lit(&self, lit: &techscript_ast::LiteralVal) -> String {
+    fn format_lit(&self, lit: &techscript_ast::LiteralVal, buf: &mut String) {
         match lit {
-            techscript_ast::LiteralVal::Str(s) => format!("\"{}\"", s),
-            techscript_ast::LiteralVal::Int(i) => i.to_string(),
-            techscript_ast::LiteralVal::Float(f) => f.to_string(),
-            techscript_ast::LiteralVal::Bool(b) => b.to_string(),
-            techscript_ast::LiteralVal::None => "none".to_string(),
-        }
-    }
-
-    fn format_stmt(&self, stmt: &Statement, indent: usize) -> String {
-        let base = self.format_indent(indent);
-        match stmt {
-            Statement::DSL(block) => self.format_dsl_block(block, indent),
-            Statement::VarDecl(decl) => {
-                let name = match &decl.pattern {
-                    techscript_ast::Pattern::Single(ident) => ident.name.clone(),
-                    _ => "<pat>".to_string(),
-                };
-                format!(
-                    "{}make {} = {}\n",
-                    base,
-                    name,
-                    self.format_expr(&decl.initializer)
-                )
+            techscript_ast::LiteralVal::Str(s) => {
+                buf.push('"');
+                buf.push_str(s);
+                buf.push('"');
             }
-            Statement::ConstDecl(decl) => {
-                let name = match &decl.pattern {
-                    techscript_ast::Pattern::Single(ident) => ident.name.clone(),
-                    _ => "<pat>".to_string(),
-                };
-                format!(
-                    "{}const {} = {}\n",
-                    base,
-                    name,
-                    self.format_expr(&decl.initializer)
-                )
+            techscript_ast::LiteralVal::Int(i) => {
+                let _ = write!(buf, "{}", i);
             }
-            Statement::Say(s) => format!("{}say {}\n", base, self.format_expr(&s.value)),
-            Statement::Return(ret) => {
-                if let Some(ref val) = ret.value {
-                    format!("{}return {}\n", base, self.format_expr(val))
+            techscript_ast::LiteralVal::Float(f) => {
+                let _ = write!(buf, "{}", f);
+            }
+            techscript_ast::LiteralVal::Bool(b) => {
+                if *b {
+                    buf.push_str("true");
                 } else {
-                    format!("{}return\n", base)
+                    buf.push_str("false");
                 }
             }
-            _ => format!("{}<stmt>\n", base),
+            techscript_ast::LiteralVal::None => buf.push_str("none"),
+        }
+    }
+
+    fn format_stmt(&self, stmt: &Statement, indent: usize, buf: &mut String) {
+        match stmt {
+            Statement::DSL(block) => self.format_dsl_block(block, indent, buf),
+            Statement::VarDecl(decl) => {
+                self.format_indent(indent, buf);
+                buf.push_str("make ");
+                let name = match &decl.pattern {
+                    techscript_ast::Pattern::Single(ident) => ident.name.clone(),
+                    _ => "<pat>".to_string(),
+                };
+                buf.push_str(&name);
+                buf.push_str(" = ");
+                self.format_expr(&decl.initializer, buf);
+                buf.push('\n');
+            }
+            Statement::ConstDecl(decl) => {
+                self.format_indent(indent, buf);
+                buf.push_str("const ");
+                let name = match &decl.pattern {
+                    techscript_ast::Pattern::Single(ident) => ident.name.clone(),
+                    _ => "<pat>".to_string(),
+                };
+                buf.push_str(&name);
+                buf.push_str(" = ");
+                self.format_expr(&decl.initializer, buf);
+                buf.push('\n');
+            }
+            Statement::Say(s) => {
+                self.format_indent(indent, buf);
+                buf.push_str("say ");
+                self.format_expr(&s.value, buf);
+                buf.push('\n');
+            }
+            Statement::Return(ret) => {
+                self.format_indent(indent, buf);
+                if let Some(ref val) = ret.value {
+                    buf.push_str("return ");
+                    self.format_expr(val, buf);
+                    buf.push('\n');
+                } else {
+                    buf.push_str("return\n");
+                }
+            }
+            _ => {
+                self.format_indent(indent, buf);
+                buf.push_str("<stmt>\n");
+            }
         }
     }
 }
 
 impl Formatter for DocumentFormatter {
     fn format(&self, program: &Program) -> String {
-        let mut output = String::new();
+        // Estimate 64 bytes per statement as a reasonable baseline capacity
+        let mut output = String::with_capacity(program.statements.len() * 64);
         for stmt in &program.statements {
-            output.push_str(&self.format_stmt(stmt, 0));
+            self.format_stmt(stmt, 0, &mut output);
         }
         output
     }

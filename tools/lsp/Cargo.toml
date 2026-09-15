@@ -27,3 +27,7 @@ criterion = "0.8.2"
 [[bench]]
 name = "bench"
 harness = false
+
+[[bench]]
+name = "bench_diagnostic"
+harness = false

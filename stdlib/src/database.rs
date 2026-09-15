@@ -78,8 +78,7 @@ fn std_database_query(
     let sql = args[1].try_into_string()?;
     let params_list = get_params_list(&args);
 
-    let resources = ctx.resources.clone();
-    let resources_borrow = resources.borrow();
+    let resources_borrow = ctx.resources.borrow();
     let conn = resources_borrow
         .get::<rusqlite::Connection>(handle)
         .ok_or_else(|| {
@@ -173,8 +172,7 @@ fn std_database_execute(
     let sql = args[1].try_into_string()?;
     let params_list = get_params_list(&args);
 
-    let resources = ctx.resources.clone();
-    let resources_borrow = resources.borrow();
+    let resources_borrow = ctx.resources.borrow();
     let conn = resources_borrow
         .get::<rusqlite::Connection>(handle)
         .ok_or_else(|| {

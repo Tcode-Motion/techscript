@@ -274,41 +274,7 @@ fn register_web_component_schemas(reg: &mut HashMap<String, DSLSchema>) {
     );
 }
 
-fn register_web_form_schemas(reg: &mut HashMap<String, DSLSchema>) {
-    reg.insert(
-        "form".to_string(),
-        DSLSchema::new(
-            vec!["action".into(), "method".into(), "name".into()],
-            vec![],
-            vec!["input".into(), "button".into()],
-        ),
-    );
 
-    reg.insert(
-        "input".to_string(),
-        DSLSchema::new(
-            vec![
-                "label".into(),
-                "placeholder".into(),
-                "type".into(),
-                "value".into(),
-                "required".into(),
-                "name".into(),
-            ],
-            vec![],
-            vec![],
-        ),
-    );
-}
-
-fn register_web_schemas(reg: &mut HashMap<String, DSLSchema>) {
-    // Web module schemas ──────────────────────────────────────────────
-    register_web_layout_schemas(reg);
-    register_web_component_schemas(reg);
-    register_web_form_schemas(reg);
-}
-fn register_canvas_schemas(reg: &mut HashMap<String, DSLSchema>) {
-    // Canvas module schemas ──────────────────────────────────────────
     reg.insert(
         "logo".to_string(),
         DSLSchema::new(
@@ -323,22 +289,6 @@ fn register_canvas_schemas(reg: &mut HashMap<String, DSLSchema>) {
                 "padding".into(),
             ],
             vec!["text".into()],
-            vec![],
-        ),
-    );
-
-    reg.insert(
-        "rings".to_string(),
-        DSLSchema::new(
-            vec![
-                "count".into(),
-                "color".into(),
-                "size".into(),
-                "thickness".into(),
-                "spacing".into(),
-                "rotation".into(),
-            ],
-            vec![],
             vec![],
         ),
     );
@@ -374,7 +324,9 @@ fn register_canvas_schemas(reg: &mut HashMap<String, DSLSchema>) {
             vec![],
         ),
     );
+}
 
+fn register_canvas_text_schemas(reg: &mut HashMap<String, DSLSchema>) {
     reg.insert(
         "letter".to_string(),
         DSLSchema::new(
@@ -388,21 +340,6 @@ fn register_canvas_schemas(reg: &mut HashMap<String, DSLSchema>) {
                 "transform".into(),
             ],
             vec!["char".into()],
-            vec![],
-        ),
-    );
-
-    reg.insert(
-        "circuits".to_string(),
-        DSLSchema::new(
-            vec![
-                "color".into(),
-                "density".into(),
-                "width".into(),
-                "animated".into(),
-                "complexity".into(),
-            ],
-            vec![],
             vec![],
         ),
     );
@@ -442,6 +379,39 @@ fn register_canvas_schemas(reg: &mut HashMap<String, DSLSchema>) {
         "tagline".to_string(),
         DSLSchema::new(
             vec!["text".into(), "color".into(), "font".into(), "size".into()],
+            vec![],
+            vec![],
+        ),
+    );
+}
+
+fn register_canvas_misc_schemas(reg: &mut HashMap<String, DSLSchema>) {
+    reg.insert(
+        "rings".to_string(),
+        DSLSchema::new(
+            vec![
+                "count".into(),
+                "color".into(),
+                "size".into(),
+                "thickness".into(),
+                "spacing".into(),
+                "rotation".into(),
+            ],
+            vec![],
+            vec![],
+        ),
+    );
+
+    reg.insert(
+        "circuits".to_string(),
+        DSLSchema::new(
+            vec![
+                "color".into(),
+                "density".into(),
+                "width".into(),
+                "animated".into(),
+                "complexity".into(),
+            ],
             vec![],
             vec![],
         ),
@@ -494,6 +464,13 @@ fn register_canvas_schemas(reg: &mut HashMap<String, DSLSchema>) {
             vec![],
         ),
     );
+}
+
+fn register_canvas_schemas(reg: &mut HashMap<String, DSLSchema>) {
+    // Canvas module schemas ──────────────────────────────────────────
+    register_canvas_shape_schemas(reg);
+    register_canvas_text_schemas(reg);
+    register_canvas_misc_schemas(reg);
 }
 
 fn register_generic_schemas(reg: &mut HashMap<String, DSLSchema>) {

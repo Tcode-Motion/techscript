@@ -83,7 +83,7 @@ impl StdlibRegistry {
             StdlibModule {
                 name: "std.hex".to_string(),
                 version: "1.0.0".to_string(),
-                exports: exports.clone(),
+                exports,
                 required_capabilities: Vec::new(),
             },
         );

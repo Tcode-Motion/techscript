@@ -22,4 +22,4 @@ TechScript inherits its memory safety guarantees from its Rust runtime core:
 Objects on the heap are tracked and freed using Automatic Reference Counting (ARC) backed by a cycle-detecting mark-and-sweep Garbage Collector (GC).
 * **Reference Counting**: Objects are deleted immediately when their reference count drops to zero.
 * **Cycle Detector**: Periodically runs in the background to identify and clean up cyclic reference structures (e.g. object A referencing B, which references A).
-See [Ownership Guide](ownership.md) for data lifecycle details.
+See [Ownership Guide](../language/memory.md) for data lifecycle details.

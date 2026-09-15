@@ -46,4 +46,4 @@ end
 
 await main()
 ```
-For true parallelism utilizing CPU cores, see [Multithreading Guide](multithreading.md).
+For true parallelism utilizing CPU cores, see [Multithreading Guide](concurrency.md).

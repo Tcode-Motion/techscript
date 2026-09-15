@@ -5,7 +5,7 @@ This guide gets you up and running with your very first TechScript program.
 ---
 
 ## 💻 Prerequisite
-Make sure you have installed the TechScript compiler and VM on your machine. If not, follow the [Installation Guide](Installation.md).
+Make sure you have installed the TechScript compiler and VM on your machine. If not, follow the [Installation Guide](installation.md).
 
 Validate your installation:
 ```bash
@@ -64,5 +64,5 @@ tech run age_check.txs
 ---
 
 ## 🎮 Explore Next
-- Check out the full [Syntax Guide](syntax.md).
-- Learn how to compile scripts to bytecode using [CLI docs](cli.md).
+- Check out the full [Syntax Guide](../language/overview.md).
+- Learn how to compile scripts to bytecode using [CLI docs](../tooling/cli.md).

@@ -33,8 +33,7 @@ impl DSLSchema {
     }
 }
 
-fn register_web_schemas(reg: &mut HashMap<String, DSLSchema>) {
-    // Web module schemas ──────────────────────────────────────────────
+fn register_web_layout_schemas(reg: &mut HashMap<String, DSLSchema>) {
     reg.insert(
         "website".to_string(),
         DSLSchema::new(
@@ -75,166 +74,6 @@ fn register_web_schemas(reg: &mut HashMap<String, DSLSchema>) {
                 "form".into(),
                 "start".into(),
             ],
-        ),
-    );
-
-    reg.insert(
-        "hero".to_string(),
-        DSLSchema::new(
-            vec![
-                "title".into(),
-                "subtitle".into(),
-                "tagline".into(),
-                "background".into(),
-                "color".into(),
-                "image".into(),
-                "align".into(),
-                "size".into(),
-            ],
-            vec![],
-            vec![
-                "button".into(),
-                "link".into(),
-                "input".into(),
-                "start".into(),
-            ],
-        ),
-    );
-
-    reg.insert(
-        "section".to_string(),
-        DSLSchema::new(
-            vec![
-                "title".into(),
-                "subtitle".into(),
-                "background".into(),
-                "color".into(),
-                "padding".into(),
-                "width".into(),
-                "align".into(),
-                "divider".into(),
-                "id".into(),
-            ],
-            vec![],
-            vec![
-                "card".into(),
-                "button".into(),
-                "link".into(),
-                "form".into(),
-                "hero".into(),
-                "section".into(),
-            ],
-        ),
-    );
-
-    reg.insert(
-        "card".to_string(),
-        DSLSchema::new(
-            vec![
-                "title".into(),
-                "subtitle".into(),
-                "text".into(),
-                "icon".into(),
-                "image".into(),
-                "color".into(),
-                "background".into(),
-                "width".into(),
-                "height".into(),
-                "shadow".into(),
-                "rounded".into(),
-                "border".into(),
-            ],
-            vec![],
-            vec!["button".into(), "link".into(), "input".into()],
-        ),
-    );
-
-    reg.insert(
-        "footer".to_string(),
-        DSLSchema::new(
-            vec![
-                "text".into(),
-                "color".into(),
-                "background".into(),
-                "align".into(),
-                "padding".into(),
-            ],
-            vec![],
-            vec!["link".into(), "nav".into(), "section".into()],
-        ),
-    );
-
-    reg.insert(
-        "button".to_string(),
-        DSLSchema::new(
-            vec![
-                "label".into(),
-                "color".into(),
-                "background".into(),
-                "size".into(),
-                "rounded".into(),
-                "border".into(),
-                "icon".into(),
-                "width".into(),
-                "action".into(),
-            ],
-            vec!["label".into()],
-            vec![],
-        ),
-    );
-
-    reg.insert(
-        "link".to_string(),
-        DSLSchema::new(
-            vec![
-                "label".into(),
-                "url".into(),
-                "color".into(),
-                "size".into(),
-                "icon".into(),
-                "target".into(),
-            ],
-            vec!["label".into()],
-            vec![],
-        ),
-    );
-
-    reg.insert(
-        "input".to_string(),
-        DSLSchema::new(
-            vec![
-                "label".into(),
-                "placeholder".into(),
-                "type".into(),
-                "value".into(),
-                "required".into(),
-                "name".into(),
-            ],
-            vec![],
-            vec![],
-        ),
-    );
-
-    reg.insert(
-        "form".to_string(),
-        DSLSchema::new(
-            vec!["action".into(), "method".into(), "name".into()],
-            vec![],
-            vec!["input".into(), "button".into()],
-        ),
-    );
-
-    reg.insert(
-        "nav".to_string(),
-        DSLSchema::new(
-            vec![
-                "title".into(),
-                "align".into(),
-                "background".into(),
-                "color".into(),
-            ],
-            vec![],
-            vec!["link".into(), "button".into()],
         ),
     );
 
@@ -283,6 +122,143 @@ fn register_web_schemas(reg: &mut HashMap<String, DSLSchema>) {
     );
 
     reg.insert(
+        "footer".to_string(),
+        DSLSchema::new(
+            vec![
+                "text".into(),
+                "color".into(),
+                "background".into(),
+                "align".into(),
+                "padding".into(),
+            ],
+            vec![],
+            vec!["link".into(), "nav".into(), "section".into()],
+        ),
+    );
+
+    reg.insert(
+        "section".to_string(),
+        DSLSchema::new(
+            vec![
+                "title".into(),
+                "subtitle".into(),
+                "background".into(),
+                "color".into(),
+                "padding".into(),
+                "width".into(),
+                "align".into(),
+                "divider".into(),
+                "id".into(),
+            ],
+            vec![],
+            vec![
+                "card".into(),
+                "button".into(),
+                "link".into(),
+                "form".into(),
+                "hero".into(),
+                "section".into(),
+            ],
+        ),
+    );
+
+    reg.insert(
+        "hero".to_string(),
+        DSLSchema::new(
+            vec![
+                "title".into(),
+                "subtitle".into(),
+                "tagline".into(),
+                "background".into(),
+                "color".into(),
+                "image".into(),
+                "align".into(),
+                "size".into(),
+            ],
+            vec![],
+            vec![
+                "button".into(),
+                "link".into(),
+                "input".into(),
+                "start".into(),
+            ],
+        ),
+    );
+
+    reg.insert(
+        "nav".to_string(),
+        DSLSchema::new(
+            vec![
+                "title".into(),
+                "align".into(),
+                "background".into(),
+                "color".into(),
+            ],
+            vec![],
+            vec!["link".into(), "button".into()],
+        ),
+    );
+}
+
+fn register_web_component_schemas(reg: &mut HashMap<String, DSLSchema>) {
+    reg.insert(
+        "card".to_string(),
+        DSLSchema::new(
+            vec![
+                "title".into(),
+                "subtitle".into(),
+                "text".into(),
+                "icon".into(),
+                "image".into(),
+                "color".into(),
+                "background".into(),
+                "width".into(),
+                "height".into(),
+                "shadow".into(),
+                "rounded".into(),
+                "border".into(),
+            ],
+            vec![],
+            vec!["button".into(), "link".into(), "input".into()],
+        ),
+    );
+
+    reg.insert(
+        "button".to_string(),
+        DSLSchema::new(
+            vec![
+                "label".into(),
+                "color".into(),
+                "background".into(),
+                "size".into(),
+                "rounded".into(),
+                "border".into(),
+                "icon".into(),
+                "width".into(),
+                "action".into(),
+            ],
+            vec!["label".into()],
+            vec![],
+        ),
+    );
+
+    reg.insert(
+        "link".to_string(),
+        DSLSchema::new(
+            vec![
+                "label".into(),
+                "url".into(),
+                "color".into(),
+                "size".into(),
+                "icon".into(),
+                "target".into(),
+            ],
+            vec!["label".into()],
+            vec![],
+        ),
+    );
+
+    reg.insert(
         "start".to_string(),
         DSLSchema::new(
             vec![
@@ -298,6 +274,39 @@ fn register_web_schemas(reg: &mut HashMap<String, DSLSchema>) {
     );
 }
 
+fn register_web_form_schemas(reg: &mut HashMap<String, DSLSchema>) {
+    reg.insert(
+        "form".to_string(),
+        DSLSchema::new(
+            vec!["action".into(), "method".into(), "name".into()],
+            vec![],
+            vec!["input".into(), "button".into()],
+        ),
+    );
+
+    reg.insert(
+        "input".to_string(),
+        DSLSchema::new(
+            vec![
+                "label".into(),
+                "placeholder".into(),
+                "type".into(),
+                "value".into(),
+                "required".into(),
+                "name".into(),
+            ],
+            vec![],
+            vec![],
+        ),
+    );
+}
+
+fn register_web_schemas(reg: &mut HashMap<String, DSLSchema>) {
+    // Web module schemas ──────────────────────────────────────────────
+    register_web_layout_schemas(reg);
+    register_web_component_schemas(reg);
+    register_web_form_schemas(reg);
+}
 fn register_canvas_schemas(reg: &mut HashMap<String, DSLSchema>) {
     // Canvas module schemas ──────────────────────────────────────────
     reg.insert(

@@ -12,10 +12,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Configurable format-on-save and lint-on-save actions for TechScript files.
 - A configurable compiler path for installations where `tsc` is not on the default PATH.
 - Canonical 2.0 syntax highlighting for `do`/`end` blocks, `when`, `loop`, `repeat`, `try`, `send`, `class`, `interface`, and interpolated strings.
+- Canonical TechScript 2.0 snippets for functions, control flow, classes, traits, interfaces, modules, and error handling.
 
 ### Fixed
 - Bundled the Language Server Protocol client required to start `techscript-lsp`.
 - Updated indentation rules to use canonical `end`-delimited blocks.
+- Rewrote the extension README for the Virtian release and removed obsolete brace-style examples.
 
 ---
 

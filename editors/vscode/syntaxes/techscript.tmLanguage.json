@@ -3,8 +3,8 @@
   "name": "TechScript",
   "scopeName": "source.techscript",
   "patterns": [
-    { "include": "#comments" },
     { "include": "#attributes" },
+    { "include": "#comments" },
     { "include": "#keywords" },
     { "include": "#types" },
     { "include": "#functions" },

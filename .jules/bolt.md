@@ -20,6 +20,4 @@
 ## 2024-08-01 - Bytecode Disassembler String Allocation Optimization
 **Learning:** Formatting directly into a string buffer inside a tight loop with `write!(buffer, ...)` avoids unnecessary string heap allocations compared to `buffer.push_str(&format!(...))`.
 **Action:** Always prefer formatting directly into the target String buffer when concatenating strings in loops in performance-sensitive paths like debuggers or disassemblers.
-## 2024-11-20 - [SQLite Query Mapping Optimization]
-**Learning:** In dynamically typed environments, unconditionally casting database query results to strings (e.g., via `row.get::<_, String>`) before mapping them to internal types is highly inefficient and creates bugs. Direct iteration matching over native database memory representations (like `rusqlite::types::ValueRef`) preserves typing metadata and prevents unnecessary allocations.
-**Action:** When extracting data from a database adapter layer to dynamic variants, use exact matching (e.g., `ValueRef::Integer`) and initialize the destination collections using `.with_capacity()` based on the column count.
+

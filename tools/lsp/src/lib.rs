@@ -1291,11 +1291,18 @@ impl LanguageServer for Backend {
         let start = range.start.line as usize;
         let end = (range.end.line as usize).min(lines.len() - 1);
 
-        let mut selection = String::new();
-        for i in start..=end {
-            selection.push_str(lines[i]);
-            selection.push('\n');
-        }
+        let selection = if start <= end {
+            let slice = &lines[start..=end];
+            let capacity: usize = slice.iter().map(|l| l.len() + 1).sum();
+            let mut s = String::with_capacity(capacity);
+            for line in slice {
+                s.push_str(line);
+                s.push('\n');
+            }
+            s
+        } else {
+            String::new()
+        };
 
         let formatted = self.format_source(&selection);
         Ok(Some(vec![TextEdit {

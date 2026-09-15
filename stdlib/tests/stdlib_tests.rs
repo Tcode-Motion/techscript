@@ -411,7 +411,6 @@ fn test_regex_operations() {
 fn test_web_module() {
     use std::net::TcpListener;
 
-
     let registry = StdlibRegistry::new();
     let web = registry.get_module("std.web").unwrap();
 

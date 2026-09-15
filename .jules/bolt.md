@@ -20,3 +20,6 @@
 ## 2024-08-01 - Bytecode Disassembler String Allocation Optimization
 **Learning:** Formatting directly into a string buffer inside a tight loop with `write!(buffer, ...)` avoids unnecessary string heap allocations compared to `buffer.push_str(&format!(...))`.
 **Action:** Always prefer formatting directly into the target String buffer when concatenating strings in loops in performance-sensitive paths like debuggers or disassemblers.
+## 2024-03-24 - Bolt: O(N) block predecessor mapping optimization
+**Learning:** O(N^2) behavior in compiler IR graph traversals (`contains` calls inside loops) can severely degrade performance on large inputs. Grouping by target first into a `HashMap` reduces it to O(N).
+**Action:** When reconstructing graph edges (predecessors/successors) or processing lists against each other, group items with a HashMap or IndexMap instead of using nested loops.

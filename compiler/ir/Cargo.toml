@@ -16,3 +16,8 @@ serde = { workspace = true }
 techscript_lexer = { path = "../lexer" }
 techscript_parser = { path = "../parser" }
 techscript_semantic = { path = "../semantic" }
+criterion = "0.5"
+
+[[bench]]
+name = "builder_bench"
+harness = false

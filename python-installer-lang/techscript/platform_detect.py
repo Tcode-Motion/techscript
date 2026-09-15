@@ -3,8 +3,11 @@ TechScript platform detection module.
 Identifies OS, CPU architecture, Termux environment, and Python version.
 """
 
+from __future__ import annotations
+
 import os
 import platform
+import posixpath
 import struct
 import sys
 from dataclasses import dataclass
@@ -80,11 +83,11 @@ class PlatformInfo:
     def install_dir(self) -> str:
         """Return the default installation directory for this platform."""
         if self.is_termux and self.termux_prefix:
-            return os.path.join(self.termux_prefix, "bin")
+            return posixpath.join(self.termux_prefix, "bin")
         if self.os == OS.WINDOWS:
             local_app_data = os.environ.get("LOCALAPPDATA", os.path.expanduser("~\\AppData\\Local"))
             return os.path.join(local_app_data, "TechScript", "bin")
-        return os.path.join(os.path.expanduser("~"), ".local", "bin")
+        return posixpath.join(os.path.expanduser("~"), ".local", "bin")
 
     @property
     def binary_name(self) -> str:

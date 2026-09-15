@@ -82,7 +82,6 @@ jobs:
     name: Publish to PyPI
     needs: [build, test]
     runs-on: ubuntu-latest
-    environment: pypi
     steps:
       - name: Download dist artifacts
         uses: actions/download-artifact@v4

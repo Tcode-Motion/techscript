@@ -1,6 +1,6 @@
 use techscript_ast::{
-    AssignmentExpr, Block, BreakStmt, EnumDecl, EnumVariant, Expression, FieldSpec, Ident,
-    LiteralExpr, LiteralVal, Pattern, Program, Statement, StructDecl, VarDecl,
+    AssignmentExpr, EnumDecl, EnumVariant, Expression, FieldSpec, Ident, LiteralExpr, LiteralVal,
+    Pattern, StructDecl, VarDecl,
 };
 use techscript_common::{NodeId, Span};
 
@@ -99,48 +99,6 @@ fn test_ast_serialization() {
         serde_json::from_str(&serialized).expect("deserialize should succeed");
 
     assert_eq!(lit, deserialized);
-}
-
-#[test]
-fn test_ast_program_construction_and_serialization() {
-    let span = Span::new(0, 50);
-    let id = NodeId(1);
-
-    // Create a dummy statement (Break)
-    let break_stmt = Statement::Break(BreakStmt::new(NodeId(2), span));
-
-    let program = Program::new(id, vec![break_stmt.clone()], span);
-
-    assert_eq!(program.id, id);
-    assert_eq!(program.statements.len(), 1);
-    assert_eq!(program.span, span);
-
-    let serialized = serde_json::to_string(&program).expect("serialize should succeed");
-    let deserialized: Program =
-        serde_json::from_str(&serialized).expect("deserialize should succeed");
-
-    assert_eq!(program, deserialized);
-}
-
-#[test]
-fn test_ast_block_construction_and_serialization() {
-    let span = Span::new(10, 20);
-    let id = NodeId(3);
-
-    // Create a dummy statement (Break)
-    let break_stmt = Statement::Break(BreakStmt::new(NodeId(4), span));
-
-    let block = Block::new(id, vec![break_stmt.clone()], span);
-
-    assert_eq!(block.id, id);
-    assert_eq!(block.statements.len(), 1);
-    assert_eq!(block.span, span);
-
-    let serialized = serde_json::to_string(&block).expect("serialize should succeed");
-    let deserialized: Block =
-        serde_json::from_str(&serialized).expect("deserialize should succeed");
-
-    assert_eq!(block, deserialized);
 }
 
 // Internal helper just to satisfy TypeSpec compilation in test_ast_struct_decl

@@ -100,7 +100,7 @@ impl StdlibRegistry {
             StdlibModule {
                 name: "std.fs".to_string(),
                 version: "1.0.0".to_string(),
-                exports,
+                exports: exports.clone(),
                 required_capabilities: vec![Capability::FileSystem],
             },
         );

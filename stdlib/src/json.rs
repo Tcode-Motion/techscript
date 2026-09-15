@@ -207,13 +207,98 @@ mod tests {
     }
 
     #[test]
-
+    fn test_parse_json_simple_values() {
+        assert_eq!(
+            parse_json_value(serde_json::json!(null)),
+            RuntimeValue::Null
+        );
+        assert_eq!(
+            parse_json_value(serde_json::json!(true)),
+            RuntimeValue::Bool(true)
+        );
+        assert_eq!(
+            parse_json_value(serde_json::json!(false)),
+            RuntimeValue::Bool(false)
+        );
+        assert_eq!(
+            parse_json_value(serde_json::json!(42)),
+            RuntimeValue::Int(42)
+        );
+        assert_eq!(
+            parse_json_value(serde_json::json!(-10)),
+            RuntimeValue::Int(-10)
+        );
+        assert_eq!(
+            parse_json_value(serde_json::json!(3.14)),
+            RuntimeValue::Float(3.14)
+        );
+        assert_eq!(
+            parse_json_value(serde_json::json!("hello")),
             RuntimeValue::Str("hello".to_string())
         );
     }
 
     #[test]
+    fn test_parse_json_complex_values() {
+        // Test Array
+        let arr_val = parse_json_value(serde_json::json!([1, "two", false]));
+        if let RuntimeValue::List { items, is_const } = arr_val {
+            assert!(!is_const);
+            let items = items.borrow();
+            assert_eq!(items.len(), 3);
+            assert_eq!(items[0], RuntimeValue::Int(1));
+            assert_eq!(items[1], RuntimeValue::Str("two".to_string()));
+            assert_eq!(items[2], RuntimeValue::Bool(false));
+        } else {
+            panic!("Expected List");
+        }
 
+        // Test Object
+        let obj_val = parse_json_value(serde_json::json!({"key1": 100, "key2": "value2"}));
+        if let RuntimeValue::Map { entries, is_const } = obj_val {
+            assert!(!is_const);
+            let entries = entries.borrow();
+            assert_eq!(entries.len(), 2);
+            assert_eq!(entries.get("key1").unwrap(), &RuntimeValue::Int(100));
+            assert_eq!(
+                entries.get("key2").unwrap(),
+                &RuntimeValue::Str("value2".to_string())
+            );
+        } else {
+            panic!("Expected Map");
+        }
+
+        // Test Nested Structure
+        let nested_val = parse_json_value(serde_json::json!({
+            "inner_list": [1, "two"],
+            "inner_map": {"key": true}
+        }));
+
+        if let RuntimeValue::Map { entries, is_const } = nested_val {
+            assert!(!is_const);
+            let entries = entries.borrow();
+            assert_eq!(entries.len(), 2);
+
+            let inner_list = entries.get("inner_list").unwrap();
+            if let RuntimeValue::List { items, .. } = inner_list {
+                let items = items.borrow();
+                assert_eq!(items.len(), 2);
+                assert_eq!(items[0], RuntimeValue::Int(1));
+                assert_eq!(items[1], RuntimeValue::Str("two".to_string()));
+            } else {
+                panic!("Expected inner_list to be List");
+            }
+
+            let inner_map = entries.get("inner_map").unwrap();
+            if let RuntimeValue::Map { entries, .. } = inner_map {
+                let entries = entries.borrow();
+                assert_eq!(entries.len(), 1);
+                assert_eq!(entries.get("key").unwrap(), &RuntimeValue::Bool(true));
+            } else {
+                panic!("Expected inner_map to be Map");
+            }
+        } else {
+            panic!("Expected Map");
         }
     }
 }

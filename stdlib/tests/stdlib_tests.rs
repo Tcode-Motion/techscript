@@ -915,11 +915,9 @@ fn test_async_and_channels() {
 }
 
 #[test]
-fn test_crypto_hash_and_compression() {
+fn test_hash_operations() {
     let registry = StdlibRegistry::new();
-    let crypto = registry.get_module("std.crypto").unwrap();
     let hash = registry.get_module("std.hash").unwrap();
-    let compress = registry.get_module("std.compress").unwrap();
 
     let mut config_unprivileged = RuntimeConfig::default();
     config_unprivileged
@@ -927,11 +925,6 @@ fn test_crypto_hash_and_compression() {
         .remove(&Capability::FileSystem);
     let mut ctx_unprivileged = RuntimeContext::new(config_unprivileged);
 
-    let mut config_fs = RuntimeConfig::default();
-    config_fs.capabilities.insert(Capability::FileSystem);
-    let mut ctx_fs = RuntimeContext::new(config_fs);
-
-    // 1. Test hash operations
     let md5_fn = hash.exports.get("md5").unwrap();
     let val = md5_fn
         .call(
@@ -961,8 +954,19 @@ fn test_crypto_hash_and_compression() {
         )
         .unwrap();
     assert!(val.as_int().is_some());
+}
 
-    // 2. Test crypto operations (AES-GCM & Bcrypt)
+#[test]
+fn test_crypto_operations() {
+    let registry = StdlibRegistry::new();
+    let crypto = registry.get_module("std.crypto").unwrap();
+
+    let mut config_unprivileged = RuntimeConfig::default();
+    config_unprivileged
+        .capabilities
+        .remove(&Capability::FileSystem);
+    let mut ctx_unprivileged = RuntimeContext::new(config_unprivileged);
+
     let aes_enc = crypto.exports.get("aes_encrypt").unwrap();
     let aes_dec = crypto.exports.get("aes_decrypt").unwrap();
 
@@ -1010,8 +1014,23 @@ fn test_crypto_hash_and_compression() {
         .call(&mut ctx_unprivileged, vec![pass, hashed.clone()])
         .unwrap();
     assert_eq!(is_valid.as_bool(), Some(true));
+}
 
-    // 3. Test compression capabilities & operations
+#[test]
+fn test_compression_operations() {
+    let registry = StdlibRegistry::new();
+    let compress = registry.get_module("std.compress").unwrap();
+
+    let mut config_unprivileged = RuntimeConfig::default();
+    config_unprivileged
+        .capabilities
+        .remove(&Capability::FileSystem);
+    let mut ctx_unprivileged = RuntimeContext::new(config_unprivileged);
+
+    let mut config_fs = RuntimeConfig::default();
+    config_fs.capabilities.insert(Capability::FileSystem);
+    let mut ctx_fs = RuntimeContext::new(config_fs);
+
     let temp_dir = std::env::temp_dir().join("techscript_archive_test");
     std::fs::create_dir_all(&temp_dir).ok();
 

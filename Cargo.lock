@@ -3995,6 +3995,7 @@ name = "techscript_package_manager"
 version = "2.0.0"
 dependencies = [
  "anyhow",
+ "criterion",
  "serde",
  "serde_json",
  "toml 1.1.4+spec-1.1.0",

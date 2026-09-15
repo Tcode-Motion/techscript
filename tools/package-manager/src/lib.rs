@@ -340,8 +340,10 @@ impl CapabilityValidator {
         dep_name: &str,
     ) -> Result<()> {
         let root_set: HashSet<&String> = root_caps.iter().collect();
+        let allowed_elevations_set: HashSet<&str> =
+            allowed_elevations.iter().map(|s| s.as_str()).collect();
         for cap in dependency_caps {
-            if !root_set.contains(cap) && !allowed_elevations.contains(&dep_name.to_string()) {
+            if !root_set.contains(cap) && !allowed_elevations_set.contains(dep_name) {
                 return Err(anyhow!(
                     "Security validation failed: Dependency '{}' requests capability '{}' which is not granted to the parent package.",
                     dep_name,

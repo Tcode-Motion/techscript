@@ -576,12 +576,12 @@ impl StdlibRegistry {
                 arity: 0,
                 callback: |ctx, _args| {
                     let env = ctx.global_env.borrow();
-                    let blocks = match env.lookup("_dsl_blocks") {
-                        Ok(RuntimeValue::List { items, .. }) => items.borrow().clone(),
+                    let items = match env.lookup("_dsl_blocks") {
+                        Ok(RuntimeValue::List { items, .. }) => items,
                         _ => return Ok(RuntimeValue::Str(String::new())),
                     };
                     let mut html = String::new();
-                    for block in &blocks {
+                    for block in &*items.borrow() {
                         html.push_str(&dsl_to_html(block));
                     }
                     Ok(RuntimeValue::Str(html))

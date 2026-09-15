@@ -20,6 +20,3 @@
 ## 2024-08-01 - Bytecode Disassembler String Allocation Optimization
 **Learning:** Formatting directly into a string buffer inside a tight loop with `write!(buffer, ...)` avoids unnecessary string heap allocations compared to `buffer.push_str(&format!(...))`.
 **Action:** Always prefer formatting directly into the target String buffer when concatenating strings in loops in performance-sensitive paths like debuggers or disassemblers.
-## 2024-10-24 - Optimize string concatenation in the formatter
-**Learning:** In the `techscript_formatter` crate, the code formatting logic was iterating through AST nodes and recursively creating and concatenating new `String` instances at every step using `format!()` and `+` equivalent operations, which is highly inefficient for memory allocation.
-**Action:** When writing Rust formatters or generating large strings from syntax trees, always thread a single `&mut String` buffer through all recursive calls and use `buf.push_str()` and `std::fmt::Write::write!` to avoid intermediate string allocations. Also, pre-allocate the top-level buffer using `String::with_capacity()`.

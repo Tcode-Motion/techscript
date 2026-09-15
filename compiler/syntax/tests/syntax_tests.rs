@@ -378,114 +378,20 @@ fn test_serde_roundtrips() {
 
 #[test]
 fn test_token_uniqueness() {
+    use strum::IntoEnumIterator;
     // Ensure all TokenKind static_lexemes are unique
     let mut lexemes = HashSet::new();
-    let kinds = [
-        TokenKind::Do,
-        TokenKind::Send,
-        TokenKind::When,
-        TokenKind::Loop,
-        TokenKind::Repeat,
-        TokenKind::For,
-        TokenKind::In,
-        TokenKind::Match,
-        TokenKind::Case,
-        TokenKind::Default,
-        TokenKind::Try,
-        TokenKind::Catch,
-        TokenKind::Throw,
-        TokenKind::Use,
-        TokenKind::Class,
-        TokenKind::Struct,
-        TokenKind::Enum,
-        TokenKind::Trait,
-        TokenKind::Interface,
-        TokenKind::Const,
-        TokenKind::Null,
-        TokenKind::Say,
-        TokenKind::Ask,
-        TokenKind::Break,
-        TokenKind::Continue,
-        TokenKind::Else,
-        TokenKind::Async,
-        TokenKind::Await,
-        TokenKind::Parallel,
-        TokenKind::End,
-        TokenKind::Export,
-        TokenKind::New,
-        TokenKind::SelfKw,
-        TokenKind::True,
-        TokenKind::False,
-        TokenKind::Typeof,
-        TokenKind::With,
-        TokenKind::Build,
-        TokenKind::Make,
-        TokenKind::Return,
-        TokenKind::Model,
-        TokenKind::If,
-        TokenKind::Elif,
-        TokenKind::While,
-        TokenKind::Import,
-        TokenKind::From,
-        TokenKind::Let,
-        TokenKind::Var,
-        TokenKind::Fun,
-        TokenKind::Function,
-        TokenKind::Attempt,
-        TokenKind::None,
-        TokenKind::Keep,
-        TokenKind::Give,
-        TokenKind::Stop,
-        TokenKind::Skip,
-        TokenKind::Each,
-        TokenKind::Switch,
-        TokenKind::Be,
-        TokenKind::Equals,
-        TokenKind::Then,
-        TokenKind::Plus,
-        TokenKind::Minus,
-        TokenKind::Star,
-        TokenKind::Slash,
-        TokenKind::DoubleSlash,
-        TokenKind::Percent,
-        TokenKind::DoubleStar,
-        TokenKind::EqualEqual,
-        TokenKind::BangEqual,
-        TokenKind::TripleEqual,
-        TokenKind::BangEqualEqual,
-        TokenKind::Less,
-        TokenKind::Greater,
-        TokenKind::LessEqual,
-        TokenKind::GreaterEqual,
-        TokenKind::Equal,
-        TokenKind::PlusEqual,
-        TokenKind::MinusEqual,
-        TokenKind::StarEqual,
-        TokenKind::SlashEqual,
-        TokenKind::PercentEqual,
-        TokenKind::DotDot,
-        TokenKind::DotDotEqual,
-        TokenKind::QuestionDot,
-        TokenKind::QuestionQuestion,
-        TokenKind::Arrow,
-        TokenKind::LeftParen,
-        TokenKind::RightParen,
-        TokenKind::LeftBrace,
-        TokenKind::RightBrace,
-        TokenKind::LeftBracket,
-        TokenKind::RightBracket,
-        TokenKind::Comma,
-        TokenKind::Dot,
-        TokenKind::Colon,
-        TokenKind::Semicolon,
-    ];
 
-    for kind in kinds {
-        let lexeme = kind.static_lexeme().unwrap();
-        assert!(
-            lexemes.insert(lexeme),
-            "Duplicate static lexeme detected for: {:?}",
-            kind
-        );
+    for kind in TokenKind::iter() {
+        if kind == TokenKind::FStringExprStart || kind == TokenKind::FStringExprEnd {
+            continue; // Overlaps with LeftBrace/RightBrace logically, but handled contextually
+        }
+        if let Some(lexeme) = kind.static_lexeme() {
+            assert!(
+                lexemes.insert(lexeme),
+                "Duplicate static lexeme detected for: {:?}",
+                kind
+            );
+        }
     }
 }

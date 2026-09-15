@@ -183,36 +183,29 @@ impl StdlibRegistry {
                             let mut rows = Vec::new();
                             let row_iter = stmt
                                 .query_map(rusqlite::params_from_iter(params), |row| {
-                                    let mut map = IndexMap::new();
-                                    for name in &col_names {
-                                        map.insert(name.clone(), RuntimeValue::Null);
-                                    }
+                                    let mut map = IndexMap::with_capacity(col_count);
                                     for i in 0..col_count {
                                         let val = row.get_ref_unwrap(i);
-                                        let runtime_val = match val {
-                                            rusqlite::types::ValueRef::Null => continue,
-                                            rusqlite::types::ValueRef::Integer(i) => {
-                                                RuntimeValue::Int(i)
+                                        let rt_val = match val {
+                                            rusqlite::types::ValueRef::Null => RuntimeValue::Null,
+                                            rusqlite::types::ValueRef::Integer(v) => {
+                                                RuntimeValue::Int(v)
                                             }
-                                            rusqlite::types::ValueRef::Real(f) => {
-                                                RuntimeValue::Float(f)
+                                            rusqlite::types::ValueRef::Real(v) => {
+                                                RuntimeValue::Float(v)
                                             }
-                                            rusqlite::types::ValueRef::Text(s) => {
+                                            rusqlite::types::ValueRef::Text(v) => {
                                                 RuntimeValue::Str(
-                                                    std::str::from_utf8(s)
-                                                        .unwrap_or_default()
-                                                        .to_string(),
+                                                    std::str::from_utf8(v).unwrap_or_default().to_string(),
                                                 )
                                             }
-                                            rusqlite::types::ValueRef::Blob(b) => {
+                                            rusqlite::types::ValueRef::Blob(v) => {
                                                 RuntimeValue::Str(
-                                                    String::from_utf8_lossy(b).into_owned(),
+                                                    String::from_utf8_lossy(v).into_owned(),
                                                 )
                                             }
                                         };
-                                        if let Some((_, v)) = map.get_index_mut(i) {
-                                            *v = runtime_val;
-                                        }
+                                        map.insert(col_names[i].clone(), rt_val);
                                     }
                                     Ok(map)
                                 })

@@ -263,15 +263,15 @@ impl IRBuilder {
             }
 
             // Map predecessors
-            for i in 0..num_blocks {
-                let block_id = func.blocks[i].id;
-                let mut preds = Vec::new();
-                for other in &func.blocks {
-                    if other.successors.contains(&block_id) {
-                        preds.push(other.id);
-                    }
+            let mut pred_map = HashMap::new();
+            for block in &func.blocks {
+                for &succ in &block.successors {
+                    pred_map.entry(succ).or_insert_with(Vec::new).push(block.id);
                 }
-                func.blocks[i].predecessors = preds;
+            }
+
+            for block in &mut func.blocks {
+                block.predecessors = pred_map.remove(&block.id).unwrap_or_default();
             }
 
             self.functions.push(func);

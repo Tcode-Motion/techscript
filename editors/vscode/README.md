@@ -2,7 +2,7 @@
 
 TechScript Virtian is the official Visual Studio Code extension for TechScript 2.0. It supports the canonical `do`/`end` language syntax and integrates with the local TechScript toolchain.
 
-## Virtian 2.0.1
+## Virtian 2.0.2
 
 Virtian updates the editor experience for the current TechScript 2.0 release:
 

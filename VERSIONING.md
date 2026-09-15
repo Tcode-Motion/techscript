@@ -14,6 +14,8 @@ $$\text{MAJOR}.\text{MINOR}.\text{PATCH}.\text{REVISION}$$
 
 Example: `v2.0.0.1` indicates the first release revision on top of the `2.0.0` compatibility baseline.
 
+Release revisions are repository and packaging identifiers, not Cargo package versions. Workspace crates keep the valid three-component SemVer version (`2.0.0`) until a normal patch, minor, or major release is made.
+
 ---
 
 ## Pre-Release Phase Tagging

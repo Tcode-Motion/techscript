@@ -4,23 +4,27 @@ Detailed release logs and features added across major TechScript versions.
 
 ---
 
-## 🚀 Version 2.0.0.1 (2026-09-15)
+## Version 2.0.0.1 (2026-09-15)
 
 **Release tag:** `v2.0.0.1`  
 **Base compatibility line:** `v2.0.x`
 
 ### What's New
-* Added a complete release report section for this version, including release scope, tags, and rollout-facing notes.
-* Improved release documentation consistency across changelog, versioning, and installation references.
+* Added `tsc lint --fix` for applying safe, automated lint corrections.
+* Expanded tests across AST construction, JSON parsing, runtime behavior, web error paths, and stdlib module registration.
+* Added coverage for database, CSV, JWT, PDF, FTP, math, Redis, Excel, Word, barcode, graphics, and notification modules.
 
 ### What’s Fixed
-* Formatter internals now avoid temporary string allocations in high-frequency formatting paths.
-* Expression and numeric output formatting now write directly to buffers, reducing overhead in formatter execution.
+* Removed avoidable temporary allocations from formatter, VM debugger, bytecode disassembler, LSP, IR, SQLite, package-manager, and stdlib hot paths.
+* Added missing capability enforcement for web servers, notifications, canvas saves, and process-backed operations.
+* Fixed command-injection risks in the doctor command and Windows notification handling.
+* Corrected loopback IP validation and broken documentation links.
 
 ### Full Report
-* **Area:** Tooling performance and release documentation hardening.
-* **Impact:** Faster formatter behavior under repeated formatting operations and clearer release/tag guidance for maintainers.
-* **Upgrade note:** Existing 2.0 scripts remain compatible; this release focuses on fixes and release-quality documentation updates.
+* **Area:** Compiler and tooling performance, security hardening, test coverage, and maintainability.
+* **Impact:** Faster repeated tooling operations, safer privileged stdlib behavior, and better regression detection.
+* **Compatibility:** Existing TechScript 2.0 source and bytecode contracts remain unchanged.
+* **Package version:** Cargo packages remain `2.0.0`; `2.0.0.1` is the release revision tag used for packaging and publication.
 
 ---
 

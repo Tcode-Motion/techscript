@@ -7,25 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [2.0.0.1] — 2026-09-15 — **Release Report + Formatter Fixes**
+## [2.0.0.1] — 2026-09-15 — **Release Revision: Performance, Security, and Tooling**
 
 > **Release Tag:** `v2.0.0.1`
 
 ### Added
 
-- Full release report in `docs/ReleaseNotes.md` covering tags, highlights, fixes, and rollout notes.
-- Updated release documentation to consistently reference `v2.0.0.1`.
+- Release revision documentation in `docs/ReleaseNotes.md`, covering the complete change set since `v2.0.0`.
+- `tsc lint --fix` support for applying safe linter fixes from the command line.
+- Additional stdlib registration and behavior tests across database, CSV, JWT, PDF, FTP, math, media, and notification modules.
+- Additional AST, parser, runtime, web, and package-manager coverage for previously untested paths.
 
 ### Fixed
 
-- Reduced formatter allocation overhead in `tools/formatter/src/lib.rs` by replacing temporary formatting strings with direct buffered writes.
-- Improved formatter hot-path efficiency for expression and numeric formatting output.
+- Reduced formatter, VM debugger, bytecode disassembler, LSP, IR, package-manager, and stdlib allocation overhead on hot paths.
+- Closed missing capability checks in web, notification, canvas, and related privileged operations.
+- Fixed command-injection risks in the doctor command and Windows notification handling.
+- Corrected the loopback IP safety validation and several documentation links.
 
-### Changed (Release Docs)
+### Changed
 
-- `RELEASE_PROCESS.md` now documents tag formats for both `vMAJOR.MINOR.PATCH` and `vMAJOR.MINOR.PATCH.REVISION`.
-- `VERSIONING.md` now clarifies that a release revision segment (for example `v2.0.0.1`) is a release-tag convention layered on top of SemVer.
-- Updated installation/get-started docs to show current release examples for `v2.0.0.1`.
+- Optimized IR predecessor mapping, diagnostic quick-fix lookup, LSP character lookup, SQLite query preparation, and capability validation.
+- Refactored large stdlib, DSL, semantic-analysis, resolver, packager, and CLI functions into smaller units without changing public behavior.
+- Added release guidance for the `vMAJOR.MINOR.PATCH.REVISION` tag convention. Cargo packages remain at SemVer `2.0.0` for this revision release.
 
 ---
 

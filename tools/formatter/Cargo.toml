@@ -11,3 +11,10 @@ techscript_ast = { path = "../../compiler/ast" }
 techscript_errors = { path = "../../compiler/errors" }
 techscript_lexer = { path = "../../compiler/lexer" }
 techscript_parser = { path = "../../compiler/parser" }
+
+[dev-dependencies]
+criterion = "0.5"
+
+[[bench]]
+name = "formatter_bench"
+harness = false

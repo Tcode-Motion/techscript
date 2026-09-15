@@ -26,7 +26,7 @@ jobs:
 
       - name: Install MkDocs & Material Theme
         run: |
-          pip install mkdocs mkdocs-material mkdocs-minify-plugin
+          pip install "mkdocs<2.0" mkdocs-material mkdocs-minify-plugin
 
       - name: Build MkDocs Site
         run: mkdocs build

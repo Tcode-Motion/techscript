@@ -130,7 +130,7 @@ fn std_database_query(
             None,
         )
     })? {
-        let mut row_map = IndexMap::new();
+        let mut row_map = IndexMap::with_capacity(column_names.len());
         for (idx, name) in column_names.iter().enumerate() {
             let value = match row.get_ref(idx).map_err(|e| {
                 RuntimeError::new(
@@ -151,6 +151,8 @@ fn std_database_query(
                     RuntimeValue::Str(s)
                 }
             };
+            // The clone here is strictly necessary because `IndexMap` requires an owned `String`
+            // key, and each row constructs a fresh map containing these keys.
             row_map.insert(name.clone(), value);
         }
         result_rows.push(RuntimeValue::Map {

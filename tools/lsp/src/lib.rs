@@ -1438,7 +1438,7 @@ impl LanguageServer for Backend {
         for diagnostic in params.context.diagnostics {
             if let Some(ref code) = diagnostic.code {
                 if let NumberOrString::String(ref s) = code {
-                    if s.contains("warning") {
+                    if s == "warning" {
                         let mut const_edits = Vec::new();
                         const_edits.push(TextEdit {
                             range: diagnostic.range,

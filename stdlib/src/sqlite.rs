@@ -63,15 +63,6 @@ impl StdlibRegistry {
                         )
                     })?;
                     let sql = args[1].to_string();
-                    let params_list = if args.len() > 2 {
-                        if let RuntimeValue::List { items, .. } = &args[2] {
-                            items.borrow().clone()
-                        } else {
-                            Vec::new()
-                        }
-                    } else {
-                        Vec::new()
-                    };
 
                     let params: Vec<rusqlite::types::Value> = if let Some(arg) = args.get(2) {
                         if let RuntimeValue::List { items, .. } = arg {
@@ -138,15 +129,6 @@ impl StdlibRegistry {
                         )
                     })?;
                     let sql = args[1].to_string();
-                    let params_list = if args.len() > 2 {
-                        if let RuntimeValue::List { items, .. } = &args[2] {
-                            items.borrow().clone()
-                        } else {
-                            Vec::new()
-                        }
-                    } else {
-                        Vec::new()
-                    };
 
                     let params: Vec<rusqlite::types::Value> = if let Some(arg) = args.get(2) {
                         if let RuntimeValue::List { items, .. } = arg {

@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.0.1] — 2026-09-15 — **Release Report + Formatter Fixes**
+
+> **Release Tag:** `v2.0.0.1`
+
+### Added
+
+- Full release report in `docs/ReleaseNotes.md` covering tags, highlights, fixes, and rollout notes.
+- Updated release documentation to consistently reference `v2.0.0.1`.
+
+### Fixed
+
+- Reduced formatter allocation overhead in `tools/formatter/src/lib.rs` by replacing temporary formatting strings with direct buffered writes.
+- Improved formatter hot-path efficiency for expression and numeric formatting output.
+
+### Changed (Release Docs)
+
+- `RELEASE_PROCESS.md` now documents tag formats for both `vMAJOR.MINOR.PATCH` and `vMAJOR.MINOR.PATCH.REVISION`.
+- `VERSIONING.md` now clarifies that a release revision segment (for example `v2.0.0.1`) is a release-tag convention layered on top of SemVer.
+- Updated installation/get-started docs to show current release examples for `v2.0.0.1`.
+
+---
+
 ## [2.0.0] — 2026-07-26 — **Syntax Freeze**
 
 > _No breaking syntax changes will be made after this release in the 2.x series._

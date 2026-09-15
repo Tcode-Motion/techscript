@@ -11,7 +11,7 @@ Validate your installation:
 ```bash
 tech version
 ```
-This should output the current version of the language (e.g., `TechScript v2.0.0`).
+This should output the current version of the language (e.g., `TechScript v2.0.0.1`).
 
 ---
 

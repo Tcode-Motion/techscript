@@ -6,6 +6,13 @@ For the detailed keep-a-changelog layout, see the root [CHANGELOG.md](../CHANGEL
 
 ---
 
+## [2.0.0.1] - 2026-09-15 (Release Report + Formatter Fixes)
+* **Tags**: Published as `v2.0.0.1` for release revision tracking in the 2.0 line.
+* **Formatter**: Reduced allocation overhead by switching hot-path string formatting to direct buffered writes.
+* **Docs**: Updated release, installation, and versioning documentation to align with `v2.0.0.1`.
+
+---
+
 ## [2.0.0] - 2026-07-26 (Syntax Freeze)
 * **Language Freeze**: Inverted deprecated and canonical keyword lists. Verified syntax is locked for major version 2.x.
 * **New Keywords**: Added `loop`, `parallel`, `default` as canonical keywords.

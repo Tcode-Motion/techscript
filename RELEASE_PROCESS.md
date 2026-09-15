@@ -31,18 +31,18 @@ Before triggering a release, the Release Manager must ensure:
 - [ ] The `CHANGELOG.md` has been updated with a list of user-facing changes since the last release.
 
 ### 2. Tagging & Versioning
-Releases are marked with git tags in the format `v*.*.*`.
+Releases are marked with git tags in the format `v*.*.*` (standard) or `v*.*.*.*` (release revision).
 1. Update version numbers in:
    - All `Cargo.toml` files in the workspace crates.
    - Installer configurations.
    - Documentation version headers.
 2. Commit version bumps:
    ```bash
-   git commit -am "chore: bump version to 0.1.0"
+   git commit -am "chore: bump version to 2.0.0.1"
    ```
 3. Tag the commit:
    ```bash
-   git tag -a v0.1.0 -m "Release v0.1.0 (Alpha)"
+   git tag -a v2.0.0.1 -m "Release v2.0.0.1"
    ```
 4. Push the tag to GitHub:
    ```bash

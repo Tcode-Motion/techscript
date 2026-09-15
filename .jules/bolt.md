@@ -20,6 +20,4 @@
 ## 2024-08-01 - Bytecode Disassembler String Allocation Optimization
 **Learning:** Formatting directly into a string buffer inside a tight loop with `write!(buffer, ...)` avoids unnecessary string heap allocations compared to `buffer.push_str(&format!(...))`.
 **Action:** Always prefer formatting directly into the target String buffer when concatenating strings in loops in performance-sensitive paths like debuggers or disassemblers.
-## 2024-05-19 - [O(N^2) complexity in diagnostic quickfixes]
-**Learning:** String `contains` checks on LSP diagnostic codes (like `s.contains("warning")`) have O(N) complexity where N is the length of the string, while a direct equality check (`s == "warning"`) offers O(1) comparison on length and fast character matching, achieving a 60-70% performance boost in this specific case.
-**Action:** When matching exact known strings like diagnostic codes or categories, always prefer exact equality (`==`) over substring searches (`contains`) to avoid O(N) complexity checks inside hot loops.
+

@@ -98,9 +98,7 @@ static PAGE_CONTENT: Mutex<String> = Mutex::new(String::new());
 
 fn render_children(html: &mut String, dsl: &techscript_runtime::value::DslBlockValue) {
     for child in &dsl.children {
-        html.push_str(&dsl_to_html(
-            &techscript_runtime::value::RuntimeValue::DslBlock(std::rc::Rc::new(child.clone())),
-        ));
+        html.push_str(&dsl_block_to_html(child));
     }
 }
 
@@ -234,129 +232,131 @@ fn render_card(html: &mut String, dsl: &techscript_runtime::value::DslBlockValue
 /// Convert a DslBlockValue tree to HTML string.
 fn dsl_to_html(val: &RuntimeValue) -> String {
     match val {
-        RuntimeValue::DslBlock(dsl) => {
-            let mut html = String::new();
-            match dsl.kind.as_str() {
-                "website" => {
-                    render_website(&mut html, dsl);
-                }
-                "page" => {
-                    render_page(&mut html, dsl);
-                }
-                "hero" => {
-                    render_hero(&mut html, dsl);
-                }
-                "section" => {
-                    render_section(&mut html, dsl);
-                }
-                "card" => {
-                    render_card(&mut html, dsl);
-                }
-                "button" => {
-                    let label = dsl
-                        .properties
-                        .iter()
-                        .find(|p| p.name == "label")
-                        .and_then(|p| p.value.as_ref())
-                        .map(|v| v.to_string())
-                        .unwrap_or_else(|| "Button".to_string());
-                    let _ = write!(html, "<button>{}</button>", label);
-                }
-                "link" => {
-                    let label = dsl
-                        .properties
-                        .iter()
-                        .find(|p| p.name == "label")
-                        .and_then(|p| p.value.as_ref())
-                        .map(|v| v.to_string())
-                        .unwrap_or_else(|| "Link".to_string());
-                    let url = dsl
-                        .properties
-                        .iter()
-                        .find(|p| p.name == "url")
-                        .and_then(|p| p.value.as_ref())
-                        .map(|v| v.to_string());
-                    if let Some(u) = url {
-                        let _ = write!(html, "<a href=\"{}\">{}</a>", u, label);
-                    } else {
-                        let _ = write!(html, "<a href=\"#\">{}</a>", label);
-                    }
-                }
-                "nav" => {
-                    html.push_str("<nav>");
-                    render_children(&mut html, dsl);
-                    html.push_str("</nav>");
-                }
-                "header" => {
-                    html.push_str("<header>");
-                    for prop in &dsl.properties {
-                        if prop.name == "title" {
-                            if let Some(RuntimeValue::Str(t)) = &prop.value {
-                                let _ = write!(html, "<h1>{}</h1>", t);
-                            }
-                        }
-                    }
-                    render_children(&mut html, dsl);
-                    html.push_str("</header>");
-                }
-                "footer" => {
-                    html.push_str("<footer>");
-                    for prop in &dsl.properties {
-                        if prop.name == "text" {
-                            if let Some(RuntimeValue::Str(t)) = &prop.value {
-                                let _ = write!(html, "<p>{}</p>", t);
-                            }
-                        }
-                    }
-                    render_children(&mut html, dsl);
-                    html.push_str("</footer>");
-                }
-                "input" => {
-                    let placeholder = dsl
-                        .properties
-                        .iter()
-                        .find(|p| p.name == "placeholder")
-                        .and_then(|p| p.value.as_ref())
-                        .map(|v| v.to_string());
-                    if let Some(p) = placeholder {
-                        let _ = write!(html, "<input placeholder=\"{}\">", p);
-                    } else {
-                        html.push_str("<input>");
-                    }
-                }
-                "form" => {
-                    html.push_str("<form>");
-                    render_children(&mut html, dsl);
-                    html.push_str("</form>");
-                }
-                "main" => {
-                    html.push_str("<main>");
-                    render_children(&mut html, dsl);
-                    html.push_str("</main>");
-                }
-                "aside" => {
-                    html.push_str("<aside>");
-                    render_children(&mut html, dsl);
-                    html.push_str("</aside>");
-                }
-                "start" => {
-                    let label = dsl
-                        .properties
-                        .iter()
-                        .find(|p| p.name == "label")
-                        .and_then(|p| p.value.as_ref())
-                        .map(|v| v.to_string())
-                        .unwrap_or_else(|| "Get Started".to_string());
-                    let _ = write!(html, "<a class=\"start-button\" href=\"#\">{}</a>", label);
-                }
-                _ => {
-                    let _ = write!(html, "<!-- unknown DSL block: {} -->", dsl.kind);
-                }
-            }
-            html
-        }
+        RuntimeValue::DslBlock(dsl) => dsl_block_to_html(dsl),
         _ => String::new(),
     }
+}
+
+fn dsl_block_to_html(dsl: &techscript_runtime::value::DslBlockValue) -> String {
+    let mut html = String::new();
+    match dsl.kind.as_str() {
+        "website" => {
+            render_website(&mut html, dsl);
+        }
+        "page" => {
+            render_page(&mut html, dsl);
+        }
+        "hero" => {
+            render_hero(&mut html, dsl);
+        }
+        "section" => {
+            render_section(&mut html, dsl);
+        }
+        "card" => {
+            render_card(&mut html, dsl);
+        }
+        "button" => {
+            let label = dsl
+                .properties
+                .iter()
+                .find(|p| p.name == "label")
+                .and_then(|p| p.value.as_ref())
+                .map(|v| v.to_string())
+                .unwrap_or_else(|| "Button".to_string());
+            let _ = write!(html, "<button>{}</button>", label);
+        }
+        "link" => {
+            let label = dsl
+                .properties
+                .iter()
+                .find(|p| p.name == "label")
+                .and_then(|p| p.value.as_ref())
+                .map(|v| v.to_string())
+                .unwrap_or_else(|| "Link".to_string());
+            let url = dsl
+                .properties
+                .iter()
+                .find(|p| p.name == "url")
+                .and_then(|p| p.value.as_ref())
+                .map(|v| v.to_string());
+            if let Some(u) = url {
+                let _ = write!(html, "<a href=\"{}\">{}</a>", u, label);
+            } else {
+                let _ = write!(html, "<a href=\"#\">{}</a>", label);
+            }
+        }
+        "nav" => {
+            html.push_str("<nav>");
+            render_children(&mut html, dsl);
+            html.push_str("</nav>");
+        }
+        "header" => {
+            html.push_str("<header>");
+            for prop in &dsl.properties {
+                if prop.name == "title" {
+                    if let Some(RuntimeValue::Str(t)) = &prop.value {
+                        let _ = write!(html, "<h1>{}</h1>", t);
+                    }
+                }
+            }
+            render_children(&mut html, dsl);
+            html.push_str("</header>");
+        }
+        "footer" => {
+            html.push_str("<footer>");
+            for prop in &dsl.properties {
+                if prop.name == "text" {
+                    if let Some(RuntimeValue::Str(t)) = &prop.value {
+                        let _ = write!(html, "<p>{}</p>", t);
+                    }
+                }
+            }
+            render_children(&mut html, dsl);
+            html.push_str("</footer>");
+        }
+        "input" => {
+            let placeholder = dsl
+                .properties
+                .iter()
+                .find(|p| p.name == "placeholder")
+                .and_then(|p| p.value.as_ref())
+                .map(|v| v.to_string());
+            if let Some(p) = placeholder {
+                let _ = write!(html, "<input placeholder=\"{}\">", p);
+            } else {
+                html.push_str("<input>");
+            }
+        }
+        "form" => {
+            html.push_str("<form>");
+            render_children(&mut html, dsl);
+            html.push_str("</form>");
+        }
+        "main" => {
+            html.push_str("<main>");
+            render_children(&mut html, dsl);
+            html.push_str("</main>");
+        }
+        "aside" => {
+            html.push_str("<aside>");
+            render_children(&mut html, dsl);
+            html.push_str("</aside>");
+        }
+        "start" => {
+            let label = dsl
+                .properties
+                .iter()
+                .find(|p| p.name == "label")
+                .and_then(|p| p.value.as_ref())
+                .map(|v| v.to_string())
+                .unwrap_or_else(|| "Get Started".to_string());
+            let _ = write!(html, "<a class=\"start-button\" href=\"#\">{}</a>", label);
+        }
+        _ => {
+            let _ = write!(html, "<!-- unknown DSL block: {} -->", dsl.kind);
+        }
+    }
+    html
 }
 
 impl StdlibRegistry {
@@ -398,9 +398,9 @@ impl StdlibRegistry {
                         Mutex::new(tiny_http::Server::http(format!("0.0.0.0:{}", port)).unwrap());
                     thread::spawn(move || {
                         while SERVER_RUNNING.load(Ordering::SeqCst) {
-                            let page = PAGE_CONTENT.lock().unwrap().clone();
                             if let Ok(mut req) = server.lock().unwrap().recv() {
-                                let r = tiny_http::Response::from_string(&page).with_header(
+                                let page = PAGE_CONTENT.lock().unwrap();
+                                let r = tiny_http::Response::from_string(&*page).with_header(
                                     tiny_http::Header::from_bytes(
                                         &b"Content-Type"[..],
                                         &b"text/html; charset=utf-8"[..],
@@ -466,9 +466,9 @@ impl StdlibRegistry {
                         Mutex::new(tiny_http::Server::http(format!("0.0.0.0:{}", port)).unwrap());
                     thread::spawn(move || {
                         while SERVER_RUNNING.load(Ordering::SeqCst) {
-                            let page = PAGE_CONTENT.lock().unwrap().clone();
                             if let Ok(mut req) = server.lock().unwrap().recv() {
-                                let r = tiny_http::Response::from_string(&page).with_header(
+                                let page = PAGE_CONTENT.lock().unwrap();
+                                let r = tiny_http::Response::from_string(&*page).with_header(
                                     tiny_http::Header::from_bytes(
                                         &b"Content-Type"[..],
                                         &b"text/html; charset=utf-8"[..],
@@ -576,12 +576,12 @@ impl StdlibRegistry {
                 arity: 0,
                 callback: |ctx, _args| {
                     let env = ctx.global_env.borrow();
-                    let blocks = match env.lookup("_dsl_blocks") {
-                        Ok(RuntimeValue::List { items, .. }) => items.borrow().clone(),
+                    let items = match env.lookup("_dsl_blocks") {
+                        Ok(RuntimeValue::List { items, .. }) => items,
                         _ => return Ok(RuntimeValue::Str(String::new())),
                     };
                     let mut html = String::new();
-                    for block in &blocks {
+                    for block in &*items.borrow() {
                         html.push_str(&dsl_to_html(block));
                     }
                     Ok(RuntimeValue::Str(html))

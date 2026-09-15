@@ -1,6 +1,7 @@
 [package]
 name = "techscript_builtins"
 version = "2.0.0"
+license = "Apache-2.0"
 edition = "2021"
 description = "Pre-registered core functions (say, ask, len) for TechScript 2.0"
 

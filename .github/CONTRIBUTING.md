@@ -103,3 +103,7 @@ Before submitting a Pull Request:
 - [ ] Link the issue you are fixing in the PR description (e.g., `Fixes #123`).
 
 Once submitted, our CI workflow will run automated checks on Windows, Linux, and macOS. A maintainer will review your code and request adjustments if necessary.
+
+## Project Policies and Support
+
+Before opening a pull request, review the [Code of Conduct](../CODE_OF_CONDUCT.md), [Security Policy](../SECURITY.md), [Apache License 2.0](../LICENSE), and the relevant [issue template](ISSUE_TEMPLATE/). Use GitHub Discussions for design questions. Report security vulnerabilities privately according to [SECURITY.md](../SECURITY.md).

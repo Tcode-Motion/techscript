@@ -1,6 +1,7 @@
 [package]
 name = "techscript_formatter"
 version = "2.0.0"
+license = "Apache-2.0"
 edition = "2021"
 description = "Code formatter (fmt) implementing layout specs for TechScript 2.0"
 

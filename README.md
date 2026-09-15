@@ -5,7 +5,7 @@ TechScript is a human-readable programming language with a Rust compiler, a byte
 The language uses explicit English-like keywords for blocks and control flow. The toolchain includes a compiler driver, formatter, linter, language server, package manager, testing support, and standard-library modules for common application tasks.
 
 **Current line:** TechScript 2.0.x
-**License:** [MIT](LICENSE)
+**License:** [Apache License 2.0](LICENSE)
 **Maintainer:** [Tcode-Motion](https://github.com/Tcode-Motion)
 
 [Releases](https://github.com/Tcode-Motion/techscript/releases) | [Documentation](docs/index.md) | [Issue tracker](https://github.com/Tcode-Motion/techscript/issues) | [Discussions](https://github.com/Tcode-Motion/techscript/discussions)
@@ -14,6 +14,8 @@ The language uses explicit English-like keywords for blocks and control flow. Th
 
 - [Overview](#overview)
 - [Language at a glance](#language-at-a-glance)
+- [Why TechScript](#why-techscript)
+- [Syntax comparison](#syntax-comparison)
 - [How the toolchain works](#how-the-toolchain-works)
 - [Installation](#installation)
 - [First program](#first-program)
@@ -22,6 +24,7 @@ The language uses explicit English-like keywords for blocks and control flow. Th
 - [Examples](#examples)
 - [Editor support](#editor-support)
 - [Documentation](#documentation)
+- [Roadmap](#roadmap)
 - [Repository layout](#repository-layout)
 - [Development](#development)
 - [Project policies](#project-policies)
@@ -38,6 +41,33 @@ The 2.0 language line provides:
 - Synchronous, asynchronous, and parallel execution constructs.
 - A standard library for files, JSON, HTTP, databases, collections, cryptography, graphics, web workflows, and more.
 - A formatter, linter, migration tool, REPL, package manager, language server, and test runner.
+
+## Why TechScript
+
+TechScript is intended for developers who want source code to read like a structured description of the work it performs. It replaces punctuation-heavy block syntax with explicit keywords while keeping familiar programming concepts: functions, modules, data structures, error handling, concurrency, and native execution.
+
+| Design goal | TechScript approach |
+| --- | --- |
+| Readable control flow | `do` and `end` delimit blocks; `when`, `else`, `loop`, and `repeat` describe control flow directly. |
+| Small toolchain surface | The `tsc` executable provides compilation, execution, formatting, linting, testing, project creation, and package operations. |
+| Native performance | Rust compiler components, an optimized bytecode VM, and an LLVM backend provide multiple execution targets. |
+| Practical ecosystem | The repository includes a standard library, language server, VS Code extension, examples, package tooling, and platform installers. |
+| Safe evolution | Deprecated 1.x aliases remain migratable during the 2.x line, while the canonical 2.0 syntax is documented separately. |
+
+## Syntax comparison
+
+The following examples show the same basic constructs in TechScript, JavaScript, and Python.
+
+| Construct | TechScript | JavaScript | Python |
+| --- | --- | --- | --- |
+| Variable | `count = 10` | `let count = 10;` | `count = 10` |
+| Constant | `const limit = 10` | `const limit = 10;` | `LIMIT = 10` by convention |
+| Function | `do greet(name)`<br>`    send "Hi " + name`<br>`end` | `function greet(name) {`<br>`  return "Hi " + name;`<br>`}` | `def greet(name):`<br>`    return "Hi " + name` |
+| Condition | `when count > 5`<br>`    say "large"`<br>`else`<br>`    say "small"`<br>`end` | `if (count > 5) { ... } else { ... }` | `if count > 5:`<br>`    print("large")` |
+| Collection loop | `for item in items`<br>`    say item`<br>`end` | `for (const item of items) { ... }` | `for item in items:`<br>`    print(item)` |
+| Error handling | `try`<br>`    work()`<br>`catch error`<br>`    say error`<br>`end` | `try { work(); } catch (error) { ... }` | `try:`<br>`    work()`<br>`except Exception as error:` |
+
+TechScript 2.0 also provides `class`, `struct`, `enum`, `trait`, `interface`, `match`, `async`, `await`, `parallel`, `use`, `export`, and generics. See the [language overview](docs/language/overview.md) and [syntax guide](docs/SyntaxGuide.md) for the complete grammar.
 
 ## Language at a glance
 
@@ -64,28 +94,66 @@ Canonical 2.0 syntax uses `null`, `$"..."` interpolation, `loop` for counted loo
 The following diagram describes the complete path from a `.txs` source file to execution or a native executable. Each stage has a defined responsibility: source text is tokenized, parsed into an AST, validated semantically, optimized, lowered to IR, and then sent to the selected backend.
 
 ```mermaid
-flowchart LR
-    source[TechScript source\n.txs file] --> driver[tsc compiler driver]
-    driver --> lexer[Lexer\nTokens and spans]
-    lexer --> parser[Parser\nExpressions and statements]
-    parser --> ast[Abstract syntax tree\nAST]
-    ast --> semantic[Semantic analysis\nNames, scopes, types, capabilities]
-    semantic --> optimizer[Optimizer\nConstant folding and simplification]
-    optimizer --> ir[Intermediate representation\nIR lowering]
-    ir --> target{Select target}
+flowchart TB
+    subgraph INPUT[1. Source and command layer]
+        source["TechScript source<br/>.txs files"]
+        project["Project manifest<br/>package.toml"]
+        cli["tsc compiler driver<br/>run, build, check, test"]
+        source --> cli
+        project --> cli
+    end
 
-    target -->|run or build| bytecode[Bytecode compiler]
-    bytecode --> artifact[Bytecode artifact\n.txc]
-    artifact --> vm[Stack virtual machine]
-    vm --> runtime[Runtime and standard library]
-    runtime --> program[Program output]
+    subgraph FRONTEND[2. Frontend]
+        lexer["Lexer<br/>tokens, keywords, spans"]
+        parser["Parser<br/>expressions and statements"]
+        ast["Abstract syntax tree<br/>structured program model"]
+        diagnostics["Diagnostics<br/>source locations and error codes"]
+        lexer --> parser --> ast
+        parser -. syntax errors .-> diagnostics
+    end
 
-    target -->|native backend| llvm[LLVM backend]
-    llvm --> native[Standalone native executable]
-    native --> program
+    subgraph ANALYSIS[3. Analysis and optimization]
+        semantic["Semantic analysis<br/>names, scopes, types, capabilities"]
+        resolver["Module resolver<br/>imports, exports, dependencies"]
+        optimizer["Optimizer<br/>constant folding and simplification"]
+        semantic --> resolver --> optimizer
+        semantic -. semantic errors .-> diagnostics
+    end
 
-    driver -.-> tools[Formatter, linter, REPL, tests, LSP, package manager]
-    tools -.-> source
+    subgraph LOWERING[4. Lowering]
+        ir["Intermediate representation<br/>control flow and instructions"]
+        bytecode["Bytecode compiler<br/>portable VM instructions"]
+        llvm["LLVM backend<br/>native code generation"]
+        optimizer --> ir
+        ir --> bytecode
+        ir --> llvm
+    end
+
+    subgraph EXECUTION[5. Execution]
+        artifact["Bytecode artifact<br/>.txc"]
+        vm["Stack virtual machine<br/>frames, values, instructions"]
+        runtime["Runtime services<br/>builtins, GC, standard library"]
+        native["Native executable<br/>platform binary"]
+        output["Program output<br/>files, services, or console"]
+        bytecode --> artifact --> vm --> runtime --> output
+        llvm --> native --> runtime
+    end
+
+    subgraph TOOLS[Developer tools]
+        fmt["Formatter"]
+        lint["Linter and migration"]
+        lsp["Language server"]
+        repl["REPL and test runner"]
+        packages["Package manager"]
+    end
+
+    cli --> lexer
+    ast -. diagnostics .-> diagnostics
+    cli -.-> fmt
+    cli -.-> lint
+    cli -.-> lsp
+    cli -.-> repl
+    cli -.-> packages
 ```
 
 The repository also contains a tree-walking interpreter for development and compatibility workflows. The VM and native backend are the primary execution targets exposed by the compiler architecture.
@@ -95,6 +163,8 @@ The repository also contains a tree-walking interpreter for development and comp
 ### Windows
 
 Download the latest Windows package from the [GitHub Releases](https://github.com/Tcode-Motion/techscript/releases) page. For detailed setup steps, see the [installation guide](docs/getting-started/installation.md).
+
+The Windows installer configures the `tsc` executable, PATH integration, `.txs` file associations, and optional editor integration. Portable archives are available when an installer is not appropriate.
 
 ### Linux and macOS
 
@@ -120,6 +190,18 @@ The optional Python wrapper downloads the matching native release package:
 pip install techscript-lang
 techscript install
 ```
+
+The packages [`techscript`](https://pypi.org/project/techscript/) and [`techscript-lang`](https://pypi.org/project/techscript-lang/) are lightweight bootstrap installers; they download the native compiler rather than embedding compiler binaries. They support Python 3.8 and newer.
+
+### Android and Termux
+
+```bash
+pkg update
+pkg install curl
+curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
+```
+
+The Python installer is also available in Termux when Python is installed. Package-management restrictions may require the environment-specific `--break-system-packages` option.
 
 After installation, verify the CLI:
 
@@ -162,10 +244,15 @@ Run `tsc --help` for the complete command list. The main commands are:
 | `tsc install` | Install a package dependency. |
 | `tsc publish` | Publish a package. |
 | `tsc doctor` | Inspect the local toolchain and project environment. |
+| `tsc clean` | Remove compiled target caches and logs. |
+| `tsc uninstall` | Remove an installed package dependency. |
+| `tsc update` | Update workspace packages within their constraints. |
 | `tsc dump-ast` | Inspect the parsed AST. |
 | `tsc dump-ir` | Inspect lowered intermediate representation. |
 | `tsc dump-bytecode` | Inspect generated VM bytecode. |
 | `tsc emit-llvm` | Emit LLVM intermediate representation. |
+| `tsc emit-asm` | Emit assembly output through the native backend. |
+| `tsc benchmark` | Run runtime and compiler benchmarks. |
 
 ## Standard library
 
@@ -196,6 +283,24 @@ Runnable examples are organized under [`examples/`](examples). Useful starting p
 - [Web API](examples/web_api)
 - [Todo CLI](examples/todo_cli)
 - [Testing](examples/testing)
+
+| Example | Purpose |
+| --- | --- |
+| [AI](examples/ai) | Use the AI standard-library integration. |
+| [Async](examples/async) | Work with asynchronous functions and `await`. |
+| [Canvas](examples/canvas) | Draw shapes and text in a canvas. |
+| [Enums](examples/enums) | Declare and match enum values. |
+| [File reader](examples/file_reader) | Read, write, and remove files. |
+| [Generics](examples/generics) | Use generic and structured data examples. |
+| [Guess number](examples/guess_number) | Follow a complete interactive loop. |
+| [HTTP server](examples/http_server) | Explore web service structure. |
+| [Modules](examples/modules) | Import standard and project modules. |
+| [Object-oriented examples](examples/oop) | Explore classes and object structure. |
+| [Threads](examples/threads) | Spawn and join operating-system threads. |
+| [Todo CLI](examples/todo_cli) | Build a multi-command collection workflow. |
+| [Web API](examples/web_api) | Make an HTTP request from TechScript. |
+
+The repository includes additional examples for AI integrations, asynchronous code, canvas drawing, enums, file access, generics, HTTP services, modules, object-oriented patterns, threads, and package management. Browse the complete [examples directory](examples) or read the [examples guide](docs/guides/ExamplesGuide.md).
 
 Run an example from the repository root:
 
@@ -229,6 +334,19 @@ The language server is implemented in [`tools/lsp/`](tools/lsp). Formatter and l
 - [Roadmap](docs/Roadmap.md)
 - [Supported versions](docs/SUPPORTED_VERSIONS.md)
 
+Additional references include [FAQ](docs/faq.md), [best practices](docs/guides/BestPractices.md), [DSL guide](docs/DSLGuide.md), [performance reference](docs/Performance.md), [Web guide](docs/WebGuide.md), [API reference](docs/reference/APIReference.md), [memory model](docs/specification/memory-model.md), and [FFI specification](docs/specification/ffi.md).
+
+The engineering specifications are also available in [`docs/engineering/`](docs/engineering), including the language freeze, grammar, AST, semantic analysis, runtime, CLI, testing, and coding standards documents.
+
+## Roadmap
+
+Completed foundations include the Pratt parser, canonical 2.0 syntax, the bytecode pipeline, formatter, linter, test runner, asynchronous constructs, and standard-library modules. Planned work is tracked in the [roadmap](docs/Roadmap.md) and includes:
+
+- Completing and expanding LLVM native code generation.
+- Adding debugger and memory-tracing workflows to the standard tools.
+- Expanding package registry and cross-platform distribution support.
+- Strengthening standard-library verification and documentation.
+
 ## Repository layout
 
 ```text
@@ -242,6 +360,10 @@ examples/       Runnable TechScript programs
 editors/        Editor integrations
 installer/      Installer configuration
 scripts/        Installation and maintenance scripts
+benchmarks/     Performance benchmarks and benchmark reports
+assets/         Branding and editor assets
+templates/      New project templates
+third_party/    Vendored or extracted third-party source material
 ```
 
 ## Development
@@ -261,7 +383,7 @@ Before opening a pull request, read the [contribution guide](CONTRIBUTING.md), f
 - [Contributing](CONTRIBUTING.md): development setup, branch rules, testing, commits, and pull requests.
 - [Code of Conduct](CODE_OF_CONDUCT.md): community standards and reporting process.
 - [Security Policy](SECURITY.md): supported versions and private vulnerability reporting.
-- [License](LICENSE): MIT license terms.
+- [License](LICENSE): Apache License 2.0 terms.
 - [Issue tracker](https://github.com/Tcode-Motion/techscript/issues): bug reports and actionable tasks.
 - [Feature requests](https://github.com/Tcode-Motion/techscript/issues/new?template=feature_request.md): proposals for new functionality.
 - [Bug reports](https://github.com/Tcode-Motion/techscript/issues/new?template=bug_report.md): reproducible defects.
@@ -270,4 +392,4 @@ Before opening a pull request, read the [contribution guide](CONTRIBUTING.md), f
 
 ## License
 
-TechScript is distributed under the [MIT License](LICENSE). Third-party components are listed in [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
+TechScript is distributed under the [Apache License 2.0](LICENSE). Third-party components remain under their own licenses and are listed in [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).

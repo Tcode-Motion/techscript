@@ -249,7 +249,7 @@
     "intellisense",
     "snippets"
   ],
-  "license": "MIT",
+  "license": "Apache-2.0",
   "homepage": "https://techscript.is-a.dev",
   "repository": {
     "type": "git",

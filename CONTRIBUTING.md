@@ -110,7 +110,7 @@ Before opening a pull request, review the repository policies:
 
 - [Code of Conduct](CODE_OF_CONDUCT.md)
 - [Security Policy](SECURITY.md)
-- [MIT License](LICENSE)
+- [Apache License 2.0](LICENSE)
 - [Bug report template](.github/ISSUE_TEMPLATE/bug_report.md)
 - [Feature request template](.github/ISSUE_TEMPLATE/feature_request.md)
 - [Question template](.github/ISSUE_TEMPLATE/question.md)

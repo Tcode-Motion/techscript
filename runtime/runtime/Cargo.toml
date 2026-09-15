@@ -1,6 +1,7 @@
 [package]
 name = "techscript_runtime"
 version = "2.0.0"
+license = "Apache-2.0"
 edition = "2021"
 description = "Core runtime representation (values, environment, closures, errors, and context) for TechScript 2.0"
 

@@ -1,6 +1,7 @@
 [package]
 name = "techscript_gc"
 version = "2.0.0"
+license = "Apache-2.0"
 edition = "2021"
 description = "Placeholder garbage collector specification (v2.1 tracing GC) for TechScript 2.0"
 

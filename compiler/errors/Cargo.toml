@@ -1,6 +1,7 @@
 [package]
 name = "techscript_errors"
 version = "2.0.0"
+license = "Apache-2.0"
 edition = "2021"
 description = "Unified error reporting and terminal diagnostics renderer for TechScript 2.0"
 

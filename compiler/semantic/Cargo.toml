@@ -1,6 +1,7 @@
 [package]
 name = "techscript_semantic"
 version = "2.0.0"
+license = "Apache-2.0"
 edition = "2021"
 description = "Static scope resolution, symbol mapping, and validation passes for TechScript 2.0"
 

@@ -1,6 +1,7 @@
 [package]
 name = "techscript_stdlib"
 version = "2.0.0"
+license = "Apache-2.0"
 edition = "2021"
 description = "Extended modular libraries (io, math, string, file, web) for TechScript 2.0"
 

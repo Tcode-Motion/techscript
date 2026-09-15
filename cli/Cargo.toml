@@ -1,6 +1,7 @@
 [package]
 name = "techscript_cli"
 version = "2.0.0"
+license = "Apache-2.0"
 edition = "2021"
 description = "TechScript 2.0 compiler driver — the official tsc executable"
 

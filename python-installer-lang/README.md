@@ -4,7 +4,7 @@
 
 [![PyPI](https://img.shields.io/pypi/v/techscript?style=for-the-badge&color=0DF28B)](https://pypi.org/project/techscript/)
 [![Python](https://img.shields.io/pypi/pyversions/techscript?style=for-the-badge)](https://pypi.org/project/techscript/)
-[![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](../LICENSE)
+[![License](https://img.shields.io/badge/license-Apache--2.0-green?style=for-the-badge)](../LICENSE)
 [![GitHub](https://img.shields.io/badge/GitHub-Tcode--Motion%2Ftechscript-black?style=for-the-badge)](https://github.com/Tcode-Motion/techscript)
 
 **The official Python-based installer for the TechScript 2.0 programming language.**
@@ -221,4 +221,4 @@ python -m build
 
 ## License
 
-MIT License — Copyright © 2026 [Tcode-Motion](https://github.com/Tcode-Motion)
+Apache License 2.0 — Copyright 2026 [Tcode-Motion](https://github.com/Tcode-Motion)

@@ -1,6 +1,7 @@
 [package]
 name = "techscript_lexer"
 version = "2.0.0"
+license = "Apache-2.0"
 edition = "2021"
 description = "UTF-8 source code tokenizer using logos DFA rules for TechScript 2.0"
 

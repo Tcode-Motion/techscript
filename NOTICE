@@ -1,4 +1,11 @@
-TechScript 2.0
-Copyright 2026 Tcode-Motion / TechScript Authors
+TechScript
+Copyright 2026 Tcode-Motion and TechScript contributors
 
-This product includes software developed by the TechScript 2.0 project (https://github.com/Tcode-Motion/TechScript-2.0).
+TechScript is distributed under the Apache License, Version 2.0. The
+complete terms are provided in LICENSE.
+
+This product includes third-party software distributed under separate
+licenses. See THIRD_PARTY_LICENSES.md and licenses/third_party/ for
+attribution and license information.
+
+Project repository: https://github.com/Tcode-Motion/techscript

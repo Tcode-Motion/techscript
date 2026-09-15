@@ -12,6 +12,6 @@ Usage:
     techscript check            # Check for updates
 """
 
-__version__ = "2.0.0"
+__version__ = "2.0.0.1"
 __author__ = "Tcode-Motion"
 __repo__ = "https://github.com/Tcode-Motion/techscript"

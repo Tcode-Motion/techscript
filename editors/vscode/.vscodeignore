@@ -2,9 +2,6 @@
 *.map
 *.vsix
 
-# Exclude node_modules if ever added
-node_modules/**
-
 # Exclude test files
 **/*.test.js
 **/*.spec.js

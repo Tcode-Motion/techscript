@@ -63,15 +63,6 @@ impl StdlibRegistry {
                         )
                     })?;
                     let sql = args[1].to_string();
-                    let params_list = if args.len() > 2 {
-                        if let RuntimeValue::List { items, .. } = &args[2] {
-                            items.borrow().clone()
-                        } else {
-                            Vec::new()
-                        }
-                    } else {
-                        Vec::new()
-                    };
 
                     let params: Vec<rusqlite::types::Value> = if let Some(arg) = args.get(2) {
                         if let RuntimeValue::List { items, .. } = arg {
@@ -138,15 +129,6 @@ impl StdlibRegistry {
                         )
                     })?;
                     let sql = args[1].to_string();
-                    let params_list = if args.len() > 2 {
-                        if let RuntimeValue::List { items, .. } = &args[2] {
-                            items.borrow().clone()
-                        } else {
-                            Vec::new()
-                        }
-                    } else {
-                        Vec::new()
-                    };
 
                     let params: Vec<rusqlite::types::Value> = if let Some(arg) = args.get(2) {
                         if let RuntimeValue::List { items, .. } = arg {
@@ -183,16 +165,29 @@ impl StdlibRegistry {
                             let mut rows = Vec::new();
                             let row_iter = stmt
                                 .query_map(rusqlite::params_from_iter(params), |row| {
-                                    let mut map = IndexMap::new();
-                                    for name in &col_names {
-                                        map.insert(name.clone(), RuntimeValue::Null);
-                                    }
+                                    let mut map = IndexMap::with_capacity(col_count);
                                     for i in 0..col_count {
-                                        let val: String =
-                                            row.get::<_, String>(i).unwrap_or_default();
-                                        if let Some((_, v)) = map.get_index_mut(i) {
-                                            *v = RuntimeValue::Str(val);
-                                        }
+                                        let val = row.get_ref(i)?;
+                                        let rt_val = match val {
+                                            rusqlite::types::ValueRef::Null => RuntimeValue::Null,
+                                            rusqlite::types::ValueRef::Integer(v) => {
+                                                RuntimeValue::Int(v)
+                                            }
+                                            rusqlite::types::ValueRef::Real(v) => {
+                                                RuntimeValue::Float(v)
+                                            }
+                                            rusqlite::types::ValueRef::Text(v) => {
+                                                RuntimeValue::Str(
+                                                    String::from_utf8_lossy(v).into_owned(),
+                                                )
+                                            }
+                                            rusqlite::types::ValueRef::Blob(v) => {
+                                                RuntimeValue::Str(
+                                                    String::from_utf8_lossy(v).into_owned(),
+                                                )
+                                            }
+                                        };
+                                        map.insert(col_names[i].clone(), rt_val);
                                     }
                                     Ok(map)
                                 })

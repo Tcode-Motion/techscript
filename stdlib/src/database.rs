@@ -89,10 +89,8 @@ fn std_database_query(
 ) -> Result<RuntimeValue, RuntimeError> {
     let handle = args[0].try_into_int()? as u32;
     let sql = args[1].try_into_string()?;
-    let params_list = get_params_list(&args);
 
-    let resources = ctx.resources.clone();
-    let resources_borrow = resources.borrow();
+    let resources_borrow = ctx.resources.borrow();
     let conn = resources_borrow
         .get::<rusqlite::Connection>(handle)
         .ok_or_else(|| {
@@ -114,6 +112,7 @@ fn std_database_query(
         )
     })?;
 
+    let params_list = get_params_list(&args);
     let params_converted: Vec<SqlParam<'_>> = params_list.iter().map(SqlParam).collect();
     let column_names: Vec<String> = stmt
         .column_names()
@@ -184,10 +183,8 @@ fn std_database_execute(
 ) -> Result<RuntimeValue, RuntimeError> {
     let handle = args[0].try_into_int()? as u32;
     let sql = args[1].try_into_string()?;
-    let params_list = get_params_list(&args);
 
-    let resources = ctx.resources.clone();
-    let resources_borrow = resources.borrow();
+    let resources_borrow = ctx.resources.borrow();
     let conn = resources_borrow
         .get::<rusqlite::Connection>(handle)
         .ok_or_else(|| {
@@ -201,6 +198,7 @@ fn std_database_execute(
             )
         })?;
 
+    let params_list = get_params_list(&args);
     let params_converted: Vec<SqlParam<'_>> = params_list.iter().map(SqlParam).collect();
     let params_refs: Vec<&dyn rusqlite::types::ToSql> = params_converted
         .iter()

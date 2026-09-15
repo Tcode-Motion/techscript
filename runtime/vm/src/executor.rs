@@ -450,8 +450,8 @@ impl VM {
                 }
 
                 // PERFORMANCE OPTIMIZATION (Bolt):
-                // We reuse the existing mutable `frame` reference acquired at the start of
-                // the loop iteration rather than redundantly calling `self.frames.last_mut()`
+                // We reuse the existing mutable frame reference acquired at the start of
+                // the loop iteration rather than redundantly fetching the last mutable frame
                 // for these control flow and exception opcodes. This reduces bounds checking
                 // and RefCell borrow overhead on the hottest execution paths.
                 Opcode::Jump => {

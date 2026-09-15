@@ -1,24 +1,37 @@
 # Security Policy
 
-## Supported Versions
+## Supported versions
 
-Only the latest release of TechScript receives security updates. If you find a security issue, please update to the newest stable release.
+Security fixes are applied to the current supported 2.0 release line.
 
-| Version | Supported |
-| ------- | --------- |
-| v2.0.x  | ✅ Yes    |
-| v1.0.x  | ❌ No     |
-| < v1.0  | ❌ No     |
+| Version | Support status |
+| --- | --- |
+| `2.0.x` | Supported |
+| `1.0.x` | Unsupported; upgrade to 2.0 where possible |
+| Older versions | Unsupported |
 
-## Reporting a Vulnerability
+## Reporting a vulnerability
 
-We take the security of TechScript seriously. If you discover a vulnerability, please do **NOT** open a public GitHub issue. Instead, report it privately to our security team.
+Do not open a public issue for a suspected vulnerability. Report it privately to `security@techscript.is-a.dev`.
 
-### How to report:
-1. Email us at **security@techscript.is-a.dev** with details of the vulnerability.
-2. Include:
-   * A description of the vulnerability and its potential impact.
-   * Step-by-step instructions or proof-of-concept (PoC) code to reproduce it.
-   * Your GitHub username if you wish to be credited.
+Please include:
 
-We will acknowledge receipt of your report within 48 hours and work with you to patch the issue before making a public disclosure.
+- A clear description of the affected component and potential impact.
+- The affected version, platform, and configuration.
+- Reproduction steps or a minimal proof of concept.
+- Any known mitigation or proposed fix.
+- Your preferred attribution name, if you want to be credited.
+
+Remove secrets, credentials, personal information, and unrelated customer data before sending a report. If the report contains sensitive attachments, mention that in the initial message rather than posting them publicly.
+
+## Response process
+
+Maintainers will acknowledge a report when practical, validate the issue, assess its severity, and coordinate a fix or mitigation. The disclosure timeline will depend on exploitability, affected users, availability of a fix, and coordination with reporters or downstream distributors.
+
+We may request additional details, provide a temporary workaround, publish an advisory, or credit the reporter after disclosure. Please do not publicly disclose the issue until maintainers have had a reasonable opportunity to investigate and release a fix.
+
+## Supply-chain and dependency reports
+
+Reports involving third-party dependencies, release artifacts, package publishing, or compromised credentials should also be sent privately. Include the package name, version, artifact digest or URL, and evidence that helps maintainers reproduce or verify the concern.
+
+For non-security bugs, use the [bug report template](ISSUE_TEMPLATE/bug_report.md). For general questions, use [Discussions](https://github.com/Tcode-Motion/techscript/discussions).

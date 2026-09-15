@@ -73,7 +73,8 @@ fn std_database_query(
     let handle = args[0].try_into_int()? as u32;
     let sql = args[1].try_into_string()?;
 
-    let resources_borrow = ctx.resources.borrow();
+    let resources = ctx.resources.clone();
+    let resources_borrow = resources.borrow();
     let conn = resources_borrow
         .get::<rusqlite::Connection>(handle)
         .ok_or_else(|| {
@@ -166,7 +167,8 @@ fn std_database_execute(
     let handle = args[0].try_into_int()? as u32;
     let sql = args[1].try_into_string()?;
 
-    let resources_borrow = ctx.resources.borrow();
+    let resources = ctx.resources.clone();
+    let resources_borrow = resources.borrow();
     let conn = resources_borrow
         .get::<rusqlite::Connection>(handle)
         .ok_or_else(|| {

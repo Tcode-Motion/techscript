@@ -188,10 +188,30 @@ impl StdlibRegistry {
                                         map.insert(name.clone(), RuntimeValue::Null);
                                     }
                                     for i in 0..col_count {
-                                        let val: String =
-                                            row.get::<_, String>(i).unwrap_or_default();
+                                        let val = row.get_ref_unwrap(i);
+                                        let runtime_val = match val {
+                                            rusqlite::types::ValueRef::Null => continue,
+                                            rusqlite::types::ValueRef::Integer(i) => {
+                                                RuntimeValue::Int(i)
+                                            }
+                                            rusqlite::types::ValueRef::Real(f) => {
+                                                RuntimeValue::Float(f)
+                                            }
+                                            rusqlite::types::ValueRef::Text(s) => {
+                                                RuntimeValue::Str(
+                                                    std::str::from_utf8(s)
+                                                        .unwrap_or_default()
+                                                        .to_string(),
+                                                )
+                                            }
+                                            rusqlite::types::ValueRef::Blob(b) => {
+                                                RuntimeValue::Str(
+                                                    String::from_utf8_lossy(b).into_owned(),
+                                                )
+                                            }
+                                        };
                                         if let Some((_, v)) = map.get_index_mut(i) {
-                                            *v = RuntimeValue::Str(val);
+                                            *v = runtime_val;
                                         }
                                     }
                                     Ok(map)

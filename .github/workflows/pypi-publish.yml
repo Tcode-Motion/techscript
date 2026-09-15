@@ -45,13 +45,19 @@ jobs:
             fi
           done
 
-      - name: Upload dist artifacts
+      - name: Upload techscript distributions
         uses: actions/upload-artifact@v4
         with:
-          name: python-dist
-          path: |
-            python-installer/dist/
-            python-installer-lang/dist/
+          name: techscript-dist
+          path: python-installer/dist/*
+          if-no-files-found: error
+
+      - name: Upload techscript-lang distributions
+        uses: actions/upload-artifact@v4
+        with:
+          name: techscript-lang-dist
+          path: python-installer-lang/dist/*
+          if-no-files-found: error
 
   test:
     name: Run installer tests
@@ -83,10 +89,16 @@ jobs:
     needs: [build, test]
     runs-on: ubuntu-latest
     steps:
-      - name: Download dist artifacts
+      - name: Download techscript distributions
         uses: actions/download-artifact@v4
         with:
-          name: python-dist
+          name: techscript-dist
+          path: dist/
+
+      - name: Download techscript-lang distributions
+        uses: actions/download-artifact@v4
+        with:
+          name: techscript-lang-dist
           path: dist/
 
       - name: Publish to PyPI (Trusted Publishing)

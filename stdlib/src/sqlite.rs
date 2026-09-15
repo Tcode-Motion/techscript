@@ -12,14 +12,34 @@ thread_local! {
 
 static NEXT_ID: AtomicI64 = AtomicI64::new(1);
 
-fn runtime_to_sql_value(v: &RuntimeValue) -> rusqlite::types::Value {
-    match v {
-        RuntimeValue::Null => rusqlite::types::Value::Null,
-        RuntimeValue::Bool(b) => rusqlite::types::Value::Integer(if *b { 1 } else { 0 }),
-        RuntimeValue::Int(i) => rusqlite::types::Value::Integer(*i),
-        RuntimeValue::Float(f) => rusqlite::types::Value::Real(*f),
-        RuntimeValue::Str(s) => rusqlite::types::Value::Text(s.clone()),
-        _ => rusqlite::types::Value::Text(v.to_string()),
+struct SqlValue<'a>(&'a RuntimeValue);
+
+impl<'a> rusqlite::types::ToSql for SqlValue<'a> {
+    fn to_sql(&self) -> rusqlite::Result<rusqlite::types::ToSqlOutput<'_>> {
+        Ok(match self.0 {
+            RuntimeValue::Null => {
+                rusqlite::types::ToSqlOutput::Borrowed(rusqlite::types::ValueRef::Null)
+            }
+            RuntimeValue::Bool(b) => {
+                rusqlite::types::ToSqlOutput::Owned(rusqlite::types::Value::Integer(if *b {
+                    1
+                } else {
+                    0
+                }))
+            }
+            RuntimeValue::Int(i) => {
+                rusqlite::types::ToSqlOutput::Owned(rusqlite::types::Value::Integer(*i))
+            }
+            RuntimeValue::Float(f) => {
+                rusqlite::types::ToSqlOutput::Owned(rusqlite::types::Value::Real(*f))
+            }
+            RuntimeValue::Str(s) => rusqlite::types::ToSqlOutput::Borrowed(
+                rusqlite::types::ValueRef::Text(s.as_bytes()),
+            ),
+            _ => rusqlite::types::ToSqlOutput::Owned(rusqlite::types::Value::Text(
+                self.0.to_string(),
+            )),
+        })
     }
 }
 
@@ -67,20 +87,10 @@ impl StdlibRegistry {
                         if let RuntimeValue::List { items, .. } = &args[2] {
                             items.borrow().clone()
                         } else {
-                            Vec::new()
-                        }
-                    } else {
-                        Vec::new()
-                    };
-
-                    let params: Vec<rusqlite::types::Value> = if let Some(arg) = args.get(2) {
-                        if let RuntimeValue::List { items, .. } = arg {
-                            items.borrow().iter().map(runtime_to_sql_value).collect()
-                        } else {
                             return Err(RuntimeError::new(
                                 RuntimeErrorKind::TypeMismatch {
                                     expected: "list".to_string(),
-                                    found: arg.runtime_type().to_string(),
+                                    found: args[2].runtime_type().to_string(),
                                 },
                                 None,
                                 None,
@@ -89,6 +99,7 @@ impl StdlibRegistry {
                     } else {
                         Vec::new()
                     };
+                    let params: Vec<SqlValue> = params_list.iter().map(SqlValue).collect();
 
                     CONNECTIONS.with(|m| {
                         let mut map = m.borrow_mut();
@@ -142,20 +153,10 @@ impl StdlibRegistry {
                         if let RuntimeValue::List { items, .. } = &args[2] {
                             items.borrow().clone()
                         } else {
-                            Vec::new()
-                        }
-                    } else {
-                        Vec::new()
-                    };
-
-                    let params: Vec<rusqlite::types::Value> = if let Some(arg) = args.get(2) {
-                        if let RuntimeValue::List { items, .. } = arg {
-                            items.borrow().iter().map(runtime_to_sql_value).collect()
-                        } else {
                             return Err(RuntimeError::new(
                                 RuntimeErrorKind::TypeMismatch {
                                     expected: "list".to_string(),
-                                    found: arg.runtime_type().to_string(),
+                                    found: args[2].runtime_type().to_string(),
                                 },
                                 None,
                                 None,
@@ -164,6 +165,7 @@ impl StdlibRegistry {
                     } else {
                         Vec::new()
                     };
+                    let params: Vec<SqlValue> = params_list.iter().map(SqlValue).collect();
 
                     let rows = CONNECTIONS.with(|m| {
                         let mut map = m.borrow_mut();

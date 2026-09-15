@@ -5,7 +5,9 @@ use serde::{Deserialize, Serialize};
 use std::fmt;
 
 /// Classification of literal values in TechScript 2.0.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, strum_macros::EnumIter,
+)]
 pub enum LiteralKind {
     /// Integer literal (e.g., `42`).
     Int,
@@ -50,7 +52,9 @@ impl fmt::Display for NumericLiteralKind {
 /// - **Canonical 2.0**: The one true spelling — no warnings emitted.
 /// - **Deprecated Alias**: Old spelling — still parsed, but emits a `TSW1xxx` warning.
 /// - **Reserved**: Recognised by the lexer but not yet active.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, strum_macros::EnumIter,
+)]
 pub enum TokenKind {
     // ── Canonical 2.0 Keywords ──────────────────────────────────────────────────────
     /// `do` — function/method declaration (replaces `build`, `fun`, `function`)

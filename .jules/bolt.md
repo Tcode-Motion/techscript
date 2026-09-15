@@ -20,6 +20,4 @@
 ## 2024-08-01 - Bytecode Disassembler String Allocation Optimization
 **Learning:** Formatting directly into a string buffer inside a tight loop with `write!(buffer, ...)` avoids unnecessary string heap allocations compared to `buffer.push_str(&format!(...))`.
 **Action:** Always prefer formatting directly into the target String buffer when concatenating strings in loops in performance-sensitive paths like debuggers or disassemblers.
-## 2024-05-19 - [Optimize string concatenation in LSP range_formatting]
-**Learning:** Temporary files created for testing performance locally, especially compiled executable binaries, will cause CI pollution and code review failure if not deleted before submitting a patch. String concatenation in a loop over slices can be highly optimized by pre-calculating capacity.
-**Action:** Always delete scratch benchmark files (e.g. `rm -f test_perf*`) immediately after use and before requesting code review. Always use `String::with_capacity` when iterating over slices to avoid intermediate reallocation overhead.
+

@@ -1,6 +1,5 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use techscript_ast::{Expression, LiteralVal, Pattern, Program, Statement};
-use techscript_formatter::{DocumentFormatter, Formatter};
+use techscript_formatter::DocumentFormatter;
 
 fn bench_format(c: &mut Criterion) {
     let source = "

@@ -176,12 +176,10 @@ impl DoctorContext {
         let extensions = [".txs", ".tsx", ".tech", ".tspkg"];
         for ext in &extensions {
             let output = std::process::Command::new("powershell")
+                .env("EXT", ext)
                 .args([
                     "-Command",
-                    &format!(
-                        "Get-ItemProperty -Path 'HKCU:\\Software\\Classes\\{}' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty '(default)' -ErrorAction SilentlyContinue",
-                        ext
-                    )
+                    "Get-ItemProperty -Path \"HKCU:\\Software\\Classes\\$env:EXT\" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty '(default)' -ErrorAction SilentlyContinue"
                 ])
                 .output();
 
@@ -208,12 +206,10 @@ impl DoctorContext {
                 println!("     Repairing user file associations...");
                 for ext in &extensions {
                     let _ = std::process::Command::new("powershell")
+                        .env("EXT", ext)
                         .args([
                             "-Command",
-                            &format!(
-                                "New-Item -Path 'HKCU:\\Software\\Classes\\{}' -Force -ErrorAction SilentlyContinue; Set-Item -Path 'HKCU:\\Software\\Classes\\{}' -Value 'TechScript.File'",
-                                ext, ext
-                            )
+                            "New-Item -Path \"HKCU:\\Software\\Classes\\$env:EXT\" -Force -ErrorAction SilentlyContinue; Set-Item -Path \"HKCU:\\Software\\Classes\\$env:EXT\" -Value 'TechScript.File'"
                         ])
                         .output();
                 }

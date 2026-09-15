@@ -185,7 +185,7 @@ impl StdlibRegistry {
                                 .query_map(rusqlite::params_from_iter(params), |row| {
                                     let mut map = IndexMap::with_capacity(col_count);
                                     for i in 0..col_count {
-                                        let val = row.get_ref(i)?;
+                                        let val = row.get_ref_unwrap(i);
                                         let rt_val = match val {
                                             rusqlite::types::ValueRef::Null => RuntimeValue::Null,
                                             rusqlite::types::ValueRef::Integer(v) => {
@@ -194,11 +194,9 @@ impl StdlibRegistry {
                                             rusqlite::types::ValueRef::Real(v) => {
                                                 RuntimeValue::Float(v)
                                             }
-                                            rusqlite::types::ValueRef::Text(v) => {
-                                                RuntimeValue::Str(
-                                                    String::from_utf8_lossy(v).into_owned(),
-                                                )
-                                            }
+                                            rusqlite::types::ValueRef::Text(v) => RuntimeValue::Str(
+                                                std::str::from_utf8(v).unwrap_or_default().to_string(),
+                                            ),
                                             rusqlite::types::ValueRef::Blob(v) => {
                                                 RuntimeValue::Str(
                                                     String::from_utf8_lossy(v).into_owned(),

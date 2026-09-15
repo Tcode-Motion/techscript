@@ -20,3 +20,6 @@
 ## 2024-08-01 - Bytecode Disassembler String Allocation Optimization
 **Learning:** Formatting directly into a string buffer inside a tight loop with `write!(buffer, ...)` avoids unnecessary string heap allocations compared to `buffer.push_str(&format!(...))`.
 **Action:** Always prefer formatting directly into the target String buffer when concatenating strings in loops in performance-sensitive paths like debuggers or disassemblers.
+## 2024-05-24 - Optimize rusqlite extraction in query_map
+**Learning:** When mapping `rusqlite` query results to dynamic types like `IndexMap<String, RuntimeValue>` in `techscript_stdlib`, use `row.get_ref_unwrap(i)` to map the underlying `rusqlite::types::ValueRef` directly to the corresponding `RuntimeValue` (e.g., `Int`, `Float`, `Str`), avoiding the overhead and type issues of coercing all numeric and null columns to `String`s.
+**Action:** When extracting data from rusqlite database rows, inspect the `ValueRef` directly with `get_ref` or `get_ref_unwrap` instead of eagerly copying out a target Rust type like `String`, significantly reducing allocations and retaining correct native types for numeric and null data.

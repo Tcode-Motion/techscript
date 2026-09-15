@@ -5,7 +5,7 @@
 ;      HKLM entries use noerror flag. Auto-continues on any registry error.
 
 #define AppName      "TechScript"
-#define AppVersion   "2.0.0"
+#define AppVersion   "2.0.0.1"
 #define AppPublisher "TechScript Language Project"
 #define AppURL       "https://github.com/Tcode-Motion/TechScript-2.0"
 #define AppExeName   "tsc.exe"

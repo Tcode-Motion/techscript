@@ -6,6 +6,15 @@ For the detailed keep-a-changelog layout, see the root [CHANGELOG.md](../CHANGEL
 
 ---
 
+## [2.0.0.1] - 2026-09-15 (Release Revision: Performance, Security, and Tooling)
+* **Tag**: `v2.0.0.1`, the first release revision on the `v2.0.x` compatibility line.
+* **Tooling**: Added `tsc lint --fix` and reduced allocation overhead in formatter, VM, bytecode, LSP, IR, SQLite, and package-manager hot paths.
+* **Security**: Added missing capability checks and fixed command-injection and loopback-validation issues.
+* **Testing**: Expanded AST, runtime, web, and stdlib registration coverage.
+* **Docs**: Aligned release, installation, support, and versioning documentation. Cargo packages remain at `2.0.0`.
+
+---
+
 ## [2.0.0] - 2026-07-26 (Syntax Freeze)
 * **Language Freeze**: Inverted deprecated and canonical keyword lists. Verified syntax is locked for major version 2.x.
 * **New Keywords**: Added `loop`, `parallel`, `default` as canonical keywords.

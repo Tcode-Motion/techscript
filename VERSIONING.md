@@ -8,6 +8,14 @@ $$\text{MAJOR}.\text{MINOR}.\text{PATCH}$$
 * **MINOR** version: Incremented when adding functionality in a backwards-compatible manner (e.g., adding a new standard library module, new keyword extensions, optimization passes).
 * **PATCH** version: Incremented when introducing backwards-compatible bug fixes or minor compiler performance tweaks.
 
+For release publication, tags may include an optional **release revision segment** when needed for packaging/reporting updates:
+
+$$\text{MAJOR}.\text{MINOR}.\text{PATCH}.\text{REVISION}$$
+
+Example: `v2.0.0.1` indicates the first release revision on top of the `2.0.0` compatibility baseline.
+
+Release revisions are repository and packaging identifiers, not Cargo package versions. Workspace crates keep the valid three-component SemVer version (`2.0.0`) until a normal patch, minor, or major release is made.
+
 ---
 
 ## Pre-Release Phase Tagging

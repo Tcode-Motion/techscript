@@ -31,20 +31,18 @@ Before triggering a release, the Release Manager must ensure:
 - [ ] The `CHANGELOG.md` has been updated with a list of user-facing changes since the last release.
 
 ### 2. Tagging & Versioning
-Releases are marked with git tags in the format `v*.*.*`.
-1. Update version numbers in:
-   - All `Cargo.toml` files in the workspace crates.
-   - Installer configurations.
-   - Documentation version headers.
-2. Commit version bumps:
+Releases are marked with git tags in the format `v*.*.*` (standard) or `v*.*.*.*` (release revision).
+1. For a normal SemVer release, update all `Cargo.toml` package versions, installer configuration, and documentation version headers.
+2. For a release revision such as `v2.0.0.1`, keep workspace Cargo packages at `2.0.0`; update the installer and release-facing documentation to the revision identifier.
+3. Commit version and documentation changes:
    ```bash
-   git commit -am "chore: bump version to 0.1.0"
+   git commit -am "chore: bump version to 2.0.0.1"
    ```
-3. Tag the commit:
+4. Tag the commit:
    ```bash
-   git tag -a v0.1.0 -m "Release v0.1.0 (Alpha)"
+   git tag -a v2.0.0.1 -m "Release v2.0.0.1"
    ```
-4. Push the tag to GitHub:
+5. Push the tag to GitHub:
    ```bash
    git push origin main --tags
    ```
@@ -55,21 +53,20 @@ Once the tag is pushed:
 * It builds binaries for:
   - Windows x64 (Standalone executable and Installer)
   - macOS x64/arm64
-  - Linux x86_64
-* Artifacts are packaged, signed, and uploaded to the draft GitHub Release.
+   - Linux x86_64
+* Artifacts are packaged and uploaded to the published GitHub Release.
 
 ### 4. Verification & Testing
-Before publishing the draft release:
+Before publishing the release:
 - [ ] Download the Windows Installer and verify setup completes with PATH updates.
 - [ ] Double-click a `.txs` file to test explorer association.
 - [ ] Open the REPL using `tech repl`.
 - [ ] Run example scripts to ensure they compile and run correctly on the VM.
 
 ### 5. Publishing the Release
-1. Copy notes from `CHANGELOG.md` or use the format in `RELEASE_NOTES_TEMPLATE.md`.
-2. Format the GitHub Release description.
-3. Select "Pre-release" if the version is an alpha or beta (e.g., `v0.1.0` or `v0.5.0`).
-4. Publish the Release.
+1. Use `docs/ReleaseNotes.md` as the GitHub Release description.
+2. Select "Pre-release" only for alpha, beta, or release-candidate tags.
+3. Publish the Release after all build artifacts finish successfully.
 
 ---
 

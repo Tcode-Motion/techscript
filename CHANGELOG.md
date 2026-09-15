@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.0.1] — 2026-09-15 — **Release Revision: Performance, Security, and Tooling**
+
+> **Release Tag:** `v2.0.0.1`
+
+### Added
+
+- Release revision documentation in `docs/ReleaseNotes.md`, covering the complete change set since `v2.0.0`.
+- `tsc lint --fix` support for applying safe linter fixes from the command line.
+- Additional stdlib registration and behavior tests across database, CSV, JWT, PDF, FTP, math, media, and notification modules.
+- Additional AST, parser, runtime, web, and package-manager coverage for previously untested paths.
+
+### Fixed
+
+- Reduced formatter, VM debugger, bytecode disassembler, LSP, IR, package-manager, and stdlib allocation overhead on hot paths.
+- Closed missing capability checks in web, notification, canvas, and related privileged operations.
+- Fixed command-injection risks in the doctor command and Windows notification handling.
+- Corrected the loopback IP safety validation and several documentation links.
+
+### Changed
+
+- Optimized IR predecessor mapping, diagnostic quick-fix lookup, LSP character lookup, SQLite query preparation, and capability validation.
+- Refactored large stdlib, DSL, semantic-analysis, resolver, packager, and CLI functions into smaller units without changing public behavior.
+- Added release guidance for the `vMAJOR.MINOR.PATCH.REVISION` tag convention. Cargo packages remain at SemVer `2.0.0` for this revision release.
+
+---
+
 ## [2.0.0] — 2026-07-26 — **Syntax Freeze**
 
 > _No breaking syntax changes will be made after this release in the 2.x series._

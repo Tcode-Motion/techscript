@@ -8,7 +8,7 @@ TechScript is designed to install cleanly on multiple platforms with zero extern
 
 ### Option 1: Setup Wizard (Recommended)
 1. Go to the [Releases](https://github.com/Tcode-Motion/techscript/releases) page on GitHub.
-2. Download **`TechScript_v2.0.0_x64.exe`** (or the latest setup file).
+2. Download **`TechScript_v2.0.0.1_x64.exe`** (or the latest setup file).
 3. Double-click to execute the installer. The wizard will automatically:
    * Install the native Rust compiler and VM binaries.
    * Add the `tech` command-line executable to your system environment `PATH` variables.
@@ -59,4 +59,4 @@ Verify that the `tech` executable is correctly configured in your `PATH` by runn
 ```bash
 tech version
 ```
-This should output the current active release version (e.g. `TechScript v2.0.0`).
+This should output the current active release version (e.g. `TechScript v2.0.0.1`).

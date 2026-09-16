@@ -161,8 +161,10 @@ impl VM {
                         (RuntimeValue::Float(a), RuntimeValue::Float(b)) => {
                             RuntimeValue::Float(a + b)
                         }
-                        (RuntimeValue::Str(a), RuntimeValue::Str(b)) => {
-                            RuntimeValue::Str(format!("{}{}", a, b))
+                        (RuntimeValue::Str(mut a), RuntimeValue::Str(b)) => {
+                            // Bolt ⚡: In-place string append reuses buffer capacity and avoids fresh allocation
+                            a.push_str(&b);
+                            RuntimeValue::Str(a)
                         }
                         _ => {
                             return Err(VMError::TypeError {

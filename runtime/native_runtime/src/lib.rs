@@ -505,10 +505,11 @@ pub unsafe extern "C" fn ts_add(left: *mut TsValue, right: *mut TsValue) -> *mut
 
     // Concatenation if either is a string
     if l.tag == TsTag::String as u32 || r.tag == TsTag::String as u32 {
-        let l_str = value_to_string(left);
+        let mut l_str = value_to_string(left);
         let r_str = value_to_string(right);
-        let combined = format!("{}{}", l_str, r_str);
-        let combined_cstr = CString::new(combined).unwrap();
+        // Bolt ⚡: In-place string append avoids additional buffer allocations and format! overhead
+        l_str.push_str(&r_str);
+        let combined_cstr = CString::new(l_str).unwrap();
         return ts_alloc_string(combined_cstr.as_ptr());
     }
 

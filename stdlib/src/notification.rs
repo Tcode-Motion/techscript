@@ -34,13 +34,11 @@ impl StdlibRegistry {
                     {
                         use std::process::Command;
                         let _ = Command::new("powershell")
+                            .env("TS_NOTIFY_TITLE", &title)
+                            .env("TS_NOTIFY_BODY", &body)
                             .args([
                                 "-Command",
-                                &format!(
-                                    "[System.Windows.MessageBox]::Show('{}','{}')",
-                                    body.replace("'", "''"),
-                                    title.replace("'", "''")
-                                ),
+                                "[System.Windows.MessageBox]::Show($env:TS_NOTIFY_BODY, $env:TS_NOTIFY_TITLE)"
                             ])
                             .spawn();
                     }

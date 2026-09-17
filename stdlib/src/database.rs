@@ -9,26 +9,33 @@ use techscript_runtime::{
     value::RuntimeValue,
 };
 
-fn extract_sqlite_params(args: &[RuntimeValue]) -> Vec<rusqlite::types::Value> {
-    if args.len() > 2 {
-        if let RuntimeValue::List { items, .. } = &args[2] {
-            return items
-                .borrow()
-                .iter()
-                .map(|p| match p {
-                    RuntimeValue::Null => rusqlite::types::Value::Null,
-                    RuntimeValue::Bool(b) => {
-                        rusqlite::types::Value::Integer(if *b { 1 } else { 0 })
-                    }
-                    RuntimeValue::Int(i) => rusqlite::types::Value::Integer(*i),
-                    RuntimeValue::Float(f) => rusqlite::types::Value::Real(*f),
-                    RuntimeValue::Str(s) => rusqlite::types::Value::Text(s.clone()),
-                    _ => rusqlite::types::Value::Null,
-                })
-                .collect();
+// Bolt performance optimization: Use `SqlParam` wrapper to avoid unnecessary allocations
+// and copying for SQLite bindings.
+struct SqlParam<'a>(&'a RuntimeValue);
+
+impl<'a> rusqlite::types::ToSql for SqlParam<'a> {
+    fn to_sql(&self) -> rusqlite::Result<rusqlite::types::ToSqlOutput<'_>> {
+        match self.0 {
+            RuntimeValue::Null => Ok(rusqlite::types::ToSqlOutput::Borrowed(
+                rusqlite::types::ValueRef::Null,
+            )),
+            RuntimeValue::Bool(b) => Ok(rusqlite::types::ToSqlOutput::Borrowed(
+                rusqlite::types::ValueRef::Integer(if *b { 1 } else { 0 }),
+            )),
+            RuntimeValue::Int(i) => Ok(rusqlite::types::ToSqlOutput::Borrowed(
+                rusqlite::types::ValueRef::Integer(*i),
+            )),
+            RuntimeValue::Float(f) => Ok(rusqlite::types::ToSqlOutput::Borrowed(
+                rusqlite::types::ValueRef::Real(*f),
+            )),
+            RuntimeValue::Str(s) => Ok(rusqlite::types::ToSqlOutput::Borrowed(
+                rusqlite::types::ValueRef::Text(s.as_bytes()),
+            )),
+            _ => Ok(rusqlite::types::ToSqlOutput::Borrowed(
+                rusqlite::types::ValueRef::Null,
+            )),
         }
     }
-    Vec::new()
 }
 
 fn std_database_connect(
@@ -96,16 +103,28 @@ fn std_database_query(
         )
     })?;
 
-    let params_converted = extract_sqlite_params(&args);
+    let mut sql_params = Vec::new();
+    let mut items_ref = None;
+    if args.len() > 2 {
+        if let RuntimeValue::List { items, .. } = &args[2] {
+            let borrow = items.borrow();
+            items_ref = Some(borrow);
+        }
+    }
+    if let Some(borrowed) = &items_ref {
+        for item in &**borrowed {
+            sql_params.push(SqlParam(item));
+        }
+    }
+    let params_refs: Vec<&dyn rusqlite::types::ToSql> = sql_params
+        .iter()
+        .map(|p| p as &dyn rusqlite::types::ToSql)
+        .collect();
+
     let column_names: Vec<String> = stmt
         .column_names()
         .into_iter()
         .map(|s| s.to_string())
-        .collect();
-
-    let params_refs: Vec<&dyn rusqlite::types::ToSql> = params_converted
-        .iter()
-        .map(|p| p as &dyn rusqlite::types::ToSql)
         .collect();
 
     let mut rows = stmt.query(params_refs.as_slice()).map_err(|e| {
@@ -184,8 +203,20 @@ fn std_database_execute(
             )
         })?;
 
-    let params_converted = extract_sqlite_params(&args);
-    let params_refs: Vec<&dyn rusqlite::types::ToSql> = params_converted
+    let mut sql_params = Vec::new();
+    let mut items_ref = None;
+    if args.len() > 2 {
+        if let RuntimeValue::List { items, .. } = &args[2] {
+            let borrow = items.borrow();
+            items_ref = Some(borrow);
+        }
+    }
+    if let Some(borrowed) = &items_ref {
+        for item in &**borrowed {
+            sql_params.push(SqlParam(item));
+        }
+    }
+    let params_refs: Vec<&dyn rusqlite::types::ToSql> = sql_params
         .iter()
         .map(|p| p as &dyn rusqlite::types::ToSql)
         .collect();

@@ -24,8 +24,8 @@ Welcome to the TechScript official documentation! TechScript is an open-source, 
 * [Performance benchmarks](Performance.md) - Speed comparison data and optimization rules.
 
 ### 🤝 Project, Release & Community
-* [Contributing Rules](CONTRIBUTING.md) - Guidelines for setting up environment and pull requests.
-* [Code of Conduct](CODE_OF_CONDUCT.md) - Community standards of engagement.
+* [Contributing Rules](https://github.com/Tcode-Motion/techscript/blob/main/docs/CONTRIBUTING.md) - Guidelines for setting up environment and pull requests.
+* [Code of Conduct](https://github.com/Tcode-Motion/techscript/blob/main/docs/CODE_OF_CONDUCT.md) - Community standards of engagement.
 * [Supported Versions](SUPPORTED_VERSIONS.md) - Support lifetimes and version tracking.
 * [Security Policy](Security.md) - Reporting vulnerability channels.
 * [Migration Guide](MigrationGuide.md) - Code migration from v1.0.8 legacy aliases.

@@ -15,10 +15,9 @@ use techscript_runtime::{
 };
 
 /// Convert a DslBlockValue to SVG string.
-fn dsl_to_svg(val: &RuntimeValue, is_dragon: bool) -> String {
+fn render_dsl_to_svg(svg: &mut String, val: &RuntimeValue, is_dragon: bool) {
     match val {
         RuntimeValue::DslBlock(dsl) => {
-            let mut svg = String::new();
             if is_dragon {
                 match dsl.kind.as_str() {
                     "logo" => {
@@ -249,10 +248,15 @@ fn dsl_to_svg(val: &RuntimeValue, is_dragon: bool) -> String {
                     _ => {}
                 }
             }
-            svg
         }
-        _ => String::new(),
+        _ => {}
     }
+}
+
+fn dsl_to_svg(val: &RuntimeValue, is_dragon: bool) -> String {
+    let mut svg = String::new();
+    render_dsl_to_svg(&mut svg, val, is_dragon);
+    svg
 }
 
 struct CanvasFn {
@@ -684,7 +688,7 @@ impl StdlibRegistry {
   <rect width="100%" height="100%" fill="{}"/>
 "##, bg_color);
                 for block in &blocks {
-                    svg.push_str(&dsl_to_svg(block, is_dragon));
+                    render_dsl_to_svg(&mut svg, block, is_dragon);
                 }
                 svg.push_str("</svg>");
                 Ok(RuntimeValue::Str(svg))

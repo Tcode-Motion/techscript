@@ -26,3 +26,6 @@
 ## 2024-05-18 - String Concatenation Optimization in VM
 **Learning:** String concatenation using `format!("{}{}", a, b)` creates unnecessary intermediate string allocations. Replacing it with `String::with_capacity(a.len() + b.len())` and `push_str()` significantly improves performance by allocating the exact required size once. Even better, if the first string is an owned `String` that is no longer needed (e.g., from popping a stack), reusing its buffer via `mut a` and `a.push_str(&b)` avoids allocating a new buffer entirely.
 **Action:** When concatenating strings in hot paths like VM execution loops or native interop, prefer in-place buffer reuse (`a.push_str(&b)`) or `String::with_capacity` over `format!`.
+## 2026-09-20 - String allocation optimization in stdlib json stringify
+**Learning:** Generating large JSON structures heavily penalizes performance if intermediate strings are allocated inside loops, specifically using `format!` and joining `Vec<String>`. Converting string builders to pass down a mutable `&mut String` buffer to sub-functions significantly improves performance and reduces heap allocations.
+**Action:** Use recursive string builders holding a mutable reference to a `String` inside JSON or tree serialization tasks instead of allocating and returning new `String`s for every sub-node.

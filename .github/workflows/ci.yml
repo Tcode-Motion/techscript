@@ -51,8 +51,4 @@ jobs:
       - name: Verify hello world example
         shell: bash
         run: |
-          if [ "${{ matrix.os }}" = "windows-latest" ]; then
-            target/release/tsc.exe run examples/hello_world/hello.txs
-          else
-            target/release/tsc run examples/hello_world/hello.txs
-          fi
+          cargo run --bin tsc --release -- run examples/hello_world/hello.txs

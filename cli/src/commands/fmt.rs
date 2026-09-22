@@ -3,7 +3,9 @@
 //! Formats TechScript source code files recursively in the specified path.
 
 use crate::exit_code::ExitCode;
+use rayon::prelude::*;
 use std::path::{Path, PathBuf};
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 pub fn execute(path_str: Option<&str>) -> ExitCode {
     let current_dir = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
@@ -41,11 +43,11 @@ pub fn execute(path_str: Option<&str>) -> ExitCode {
         files_to_format.push(target_path);
     }
 
-    let formatter = techscript_formatter::DocumentFormatter::new(4);
-    let mut formatted_count = 0;
+    let formatted_count = AtomicUsize::new(0);
 
-    for file in files_to_format {
-        match std::fs::read_to_string(&file) {
+    files_to_format.par_iter().for_each(|file| {
+        let formatter = techscript_formatter::DocumentFormatter::new(4);
+        match std::fs::read_to_string(file) {
             Ok(content) => {
                 let formatted = formatter.format_source(&content);
                 // In skeletal phase, if format_source returns empty, we just skip writing to avoid wiping out files.
@@ -55,11 +57,11 @@ pub fn execute(path_str: Option<&str>) -> ExitCode {
                     && !formatted.contains("<stmt>")
                     && !formatted.contains("<pat>")
                 {
-                    if let Err(e) = std::fs::write(&file, formatted) {
+                    if let Err(e) = std::fs::write(file, formatted) {
                         eprintln!("Error writing formatted file {:?}: {}", file, e);
                     } else {
                         println!("Formatted: {:?}", file);
-                        formatted_count += 1;
+                        formatted_count.fetch_add(1, Ordering::Relaxed);
                     }
                 }
             }
@@ -67,8 +69,8 @@ pub fn execute(path_str: Option<&str>) -> ExitCode {
                 eprintln!("Error reading file {:?}: {}", file, e);
             }
         }
-    }
+    });
 
-    println!("Formatted {} files.", formatted_count);
+    println!("Formatted {} files.", formatted_count.into_inner());
     ExitCode::Success
 }

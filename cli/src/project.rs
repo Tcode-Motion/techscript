@@ -217,19 +217,75 @@ impl ProjectBuildGraph {
             let mut lexer = techscript_lexer::Lexer::new(source_file.source());
             let tokens = lexer.lex(&mut reporter).unwrap_or_default();
 
+            // Fast token scan for dependency resolution to avoid N+1 full parsing loops
             let mut imports = Vec::new();
-            let mut parser = techscript_parser::Parser::new(&tokens);
-            let mut parse_reporter = techscript_errors::DiagnosticReporter::new();
-            if let Ok(program) = parser.parse(&mut parse_reporter) {
-                for stmt in &program.statements {
-                    if let techscript_ast::Statement::Import(import_stmt) = stmt {
-                        let path_vec: Vec<String> = import_stmt
-                            .path
-                            .iter()
-                            .map(|ident| ident.name.clone())
-                            .collect();
+            let mut i = 0;
+            while i < tokens.len() {
+                let kind = &tokens[i].kind;
+
+                if *kind == techscript_syntax::TokenKind::Import
+                    || *kind == techscript_syntax::TokenKind::Use
+                {
+                    i += 1;
+                    let mut path_vec = Vec::new();
+                    while i < tokens.len() {
+                        let t = &tokens[i];
+                        if t.kind == techscript_syntax::TokenKind::Identifier {
+                            path_vec.push(t.lexeme.clone());
+                            i += 1;
+                        } else {
+                            break;
+                        }
+
+                        if i < tokens.len() && tokens[i].kind == techscript_syntax::TokenKind::Dot {
+                            i += 1;
+                        } else {
+                            break;
+                        }
+                    }
+                    if !path_vec.is_empty() {
                         imports.push(path_vec);
                     }
+                } else if *kind == techscript_syntax::TokenKind::From
+                    || (*kind == techscript_syntax::TokenKind::Identifier
+                        && tokens[i].lexeme == "from")
+                {
+                    i += 1;
+                    let mut path_vec = Vec::new();
+                    while i < tokens.len() {
+                        let t = &tokens[i];
+                        if t.kind == techscript_syntax::TokenKind::Identifier {
+                            path_vec.push(t.lexeme.clone());
+                            i += 1;
+                        } else {
+                            break;
+                        }
+
+                        if i < tokens.len() && tokens[i].kind == techscript_syntax::TokenKind::Dot {
+                            i += 1;
+                        } else {
+                            break;
+                        }
+                    }
+                    if !path_vec.is_empty() {
+                        imports.push(path_vec);
+                    }
+
+                    // Consume subsequent 'import' token to prevent double extraction
+                    while i < tokens.len() {
+                        if tokens[i].kind == techscript_syntax::TokenKind::Import {
+                            i += 1;
+                            break;
+                        }
+                        if tokens[i].kind == techscript_syntax::TokenKind::Semicolon
+                            || tokens[i].kind == techscript_syntax::TokenKind::Newline
+                        {
+                            break;
+                        }
+                        i += 1;
+                    }
+                } else {
+                    i += 1;
                 }
             }
 

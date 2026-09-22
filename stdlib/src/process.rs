@@ -32,6 +32,15 @@ impl StdlibRegistry {
                         ));
                     }
                     let cmd = args[0].try_into_string()?;
+                    if cmd.contains("..") || cmd.contains('\0') {
+                        return Err(RuntimeError::new(
+                            RuntimeErrorKind::InvalidOperation(
+                                "Security policy violation: Path traversal or null bytes in command are denied".to_string(),
+                            ),
+                            None,
+                            None,
+                        ));
+                    }
                     let args_list = match &args[1] {
                         RuntimeValue::List { items, .. } => {
                             let mut list = Vec::new();
@@ -114,6 +123,16 @@ impl StdlibRegistry {
                             ))
                         }
                     };
+
+                    if cmd.contains("..") || cmd.contains('\0') {
+                        return Err(RuntimeError::new(
+                            RuntimeErrorKind::InvalidOperation(
+                                "Security policy violation: Path traversal or null bytes in command are denied".to_string(),
+                            ),
+                            None,
+                            None,
+                        ));
+                    }
 
                     let parsed = shlex::split(&cmd).ok_or_else(|| {
                         RuntimeError::new(

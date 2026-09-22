@@ -402,8 +402,19 @@ impl StdlibRegistry {
                         return Ok(RuntimeValue::Str("Server already running".to_string()));
                     }
                     SERVER_RUNNING.store(true, Ordering::SeqCst);
-                    let server =
-                        Mutex::new(tiny_http::Server::http(format!("0.0.0.0:{}", port)).unwrap());
+                    let server = match tiny_http::Server::http(format!("0.0.0.0:{}", port)) {
+                        Ok(s) => Mutex::new(s),
+                        Err(e) => {
+                            SERVER_RUNNING.store(false, Ordering::SeqCst);
+                            return Err(RuntimeError::new(
+                                techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
+                                    format!("Failed to start server: {}", e),
+                                ),
+                                None,
+                                None,
+                            ));
+                        }
+                    };
                     thread::spawn(move || {
                         while SERVER_RUNNING.load(Ordering::SeqCst) {
                             if let Ok(mut req) = server.lock().unwrap().recv() {
@@ -413,7 +424,7 @@ impl StdlibRegistry {
                                         &b"Content-Type"[..],
                                         &b"text/html; charset=utf-8"[..],
                                     )
-                                    .unwrap(),
+                                    .expect("valid header"),
                                 );
                                 let _ = req.respond(r);
                             }
@@ -470,8 +481,19 @@ impl StdlibRegistry {
                         return Ok(RuntimeValue::Str("Server already running".to_string()));
                     }
                     SERVER_RUNNING.store(true, Ordering::SeqCst);
-                    let server =
-                        Mutex::new(tiny_http::Server::http(format!("0.0.0.0:{}", port)).unwrap());
+                    let server = match tiny_http::Server::http(format!("0.0.0.0:{}", port)) {
+                        Ok(s) => Mutex::new(s),
+                        Err(e) => {
+                            SERVER_RUNNING.store(false, Ordering::SeqCst);
+                            return Err(RuntimeError::new(
+                                techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
+                                    format!("Failed to start server: {}", e),
+                                ),
+                                None,
+                                None,
+                            ));
+                        }
+                    };
                     thread::spawn(move || {
                         while SERVER_RUNNING.load(Ordering::SeqCst) {
                             if let Ok(mut req) = server.lock().unwrap().recv() {
@@ -481,7 +503,7 @@ impl StdlibRegistry {
                                         &b"Content-Type"[..],
                                         &b"text/html; charset=utf-8"[..],
                                     )
-                                    .unwrap(),
+                                    .expect("valid header"),
                                 );
                                 let _ = req.respond(r);
                             }

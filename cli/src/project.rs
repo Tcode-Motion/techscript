@@ -153,16 +153,56 @@ impl ProjectBuildGraph {
         let mut to_resolve = Vec::new();
 
         // 1. Add all entry points to compilation list
-        for pkg in self.workspace.packages.values_mut() {
-            if let Ok(source) = std::fs::read_to_string(&pkg.entry_file) {
-                let fid = source_mgr.add_file(pkg.entry_file.clone(), source.clone());
+        let mut entry_reads = Vec::new();
+        std::thread::scope(|s| {
+            let mut handles = Vec::new();
+            let num_threads = std::thread::available_parallelism()
+                .map(|n| n.get())
+                .unwrap_or(4);
+
+            let pkg_data: Vec<_> = self
+                .workspace
+                .packages
+                .values()
+                .map(|pkg| (pkg.name.clone(), pkg.entry_file.clone()))
+                .collect();
+
+            let chunk_size = (pkg_data.len() + num_threads - 1) / num_threads;
+            if chunk_size == 0 {
+                return;
+            }
+
+            for chunk in pkg_data.chunks(chunk_size) {
+                let chunk = chunk.to_vec();
+                handles.push(s.spawn(move || {
+                    let mut results = Vec::with_capacity(chunk.len());
+                    for (name, path) in chunk {
+                        if let Ok(source) = std::fs::read_to_string(&path) {
+                            results.push((name, path, source));
+                        }
+                    }
+                    results
+                }));
+            }
+
+            for handle in handles {
+                if let Ok(res) = handle.join() {
+                    entry_reads.extend(res);
+                }
+            }
+        });
+
+        for (pkg_name, path, source) in entry_reads {
+            if let Some(pkg) = self.workspace.packages.get_mut(&pkg_name) {
+                let fid = source_mgr.add_file(path.clone(), source);
                 pkg.entry_file_id = Some(fid);
-                to_resolve.push((fid, pkg.entry_file.clone(), pkg.name.clone()));
+                to_resolve.push((fid, path, pkg_name));
             }
         }
 
         // 2. Resolve imports recursively
         let mut visited = HashSet::new();
+        let mut manifest_cache: HashMap<PathBuf, String> = HashMap::new();
         while let Some((fid, path, pkg_name)) = to_resolve.pop() {
             if visited.contains(&fid) {
                 continue;
@@ -178,19 +218,75 @@ impl ProjectBuildGraph {
             let mut lexer = techscript_lexer::Lexer::new(source_file.source());
             let tokens = lexer.lex(&mut reporter).unwrap_or_default();
 
+            // Fast token scan for dependency resolution to avoid N+1 full parsing loops
             let mut imports = Vec::new();
-            let mut parser = techscript_parser::Parser::new(&tokens);
-            let mut parse_reporter = techscript_errors::DiagnosticReporter::new();
-            if let Ok(program) = parser.parse(&mut parse_reporter) {
-                for stmt in &program.statements {
-                    if let techscript_ast::Statement::Import(import_stmt) = stmt {
-                        let path_vec: Vec<String> = import_stmt
-                            .path
-                            .iter()
-                            .map(|ident| ident.name.clone())
-                            .collect();
+            let mut i = 0;
+            while i < tokens.len() {
+                let kind = &tokens[i].kind;
+
+                if *kind == techscript_syntax::TokenKind::Import
+                    || *kind == techscript_syntax::TokenKind::Use
+                {
+                    i += 1;
+                    let mut path_vec = Vec::new();
+                    while i < tokens.len() {
+                        let t = &tokens[i];
+                        if t.kind == techscript_syntax::TokenKind::Identifier {
+                            path_vec.push(t.lexeme.clone());
+                            i += 1;
+                        } else {
+                            break;
+                        }
+
+                        if i < tokens.len() && tokens[i].kind == techscript_syntax::TokenKind::Dot {
+                            i += 1;
+                        } else {
+                            break;
+                        }
+                    }
+                    if !path_vec.is_empty() {
                         imports.push(path_vec);
                     }
+                } else if *kind == techscript_syntax::TokenKind::From
+                    || (*kind == techscript_syntax::TokenKind::Identifier
+                        && tokens[i].lexeme == "from")
+                {
+                    i += 1;
+                    let mut path_vec = Vec::new();
+                    while i < tokens.len() {
+                        let t = &tokens[i];
+                        if t.kind == techscript_syntax::TokenKind::Identifier {
+                            path_vec.push(t.lexeme.clone());
+                            i += 1;
+                        } else {
+                            break;
+                        }
+
+                        if i < tokens.len() && tokens[i].kind == techscript_syntax::TokenKind::Dot {
+                            i += 1;
+                        } else {
+                            break;
+                        }
+                    }
+                    if !path_vec.is_empty() {
+                        imports.push(path_vec);
+                    }
+
+                    // Consume subsequent 'import' token to prevent double extraction
+                    while i < tokens.len() {
+                        if tokens[i].kind == techscript_syntax::TokenKind::Import {
+                            i += 1;
+                            break;
+                        }
+                        if tokens[i].kind == techscript_syntax::TokenKind::Semicolon
+                            || tokens[i].kind == techscript_syntax::TokenKind::Newline
+                        {
+                            break;
+                        }
+                        i += 1;
+                    }
+                } else {
+                    i += 1;
                 }
             }
 
@@ -256,14 +352,18 @@ impl ProjectBuildGraph {
                     }
                     if !try_file.exists() {
                         let manifest_toml = pkg_path.join("tech.toml");
-                        if manifest_toml.exists() {
+                        if let Some(cached_entry) = manifest_cache.get(&manifest_toml) {
+                            try_file = pkg_path.join(cached_entry);
+                        } else if manifest_toml.exists() {
                             if let Ok(toml_content) = std::fs::read_to_string(&manifest_toml) {
                                 if let Ok(manifest) =
                                     toml::from_str::<techscript_package_manager::Manifest>(
                                         &toml_content,
                                     )
                                 {
-                                    try_file = pkg_path.join(manifest.package.entry);
+                                    let entry = manifest.package.entry;
+                                    try_file = pkg_path.join(&entry);
+                                    manifest_cache.insert(manifest_toml, entry);
                                 }
                             }
                         }

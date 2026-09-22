@@ -82,3 +82,10 @@ bin/
 build/
 dist/
 site/
+mock_heavy_project/
+mock_project/
+mock_project_fast/
+run_bench.sh
+run_heavy_bench.sh
+mock_many_imports/
+run_many_imports.sh

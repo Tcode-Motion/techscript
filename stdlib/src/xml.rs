@@ -19,12 +19,14 @@ impl StdlibRegistry {
                 callback: |_ctx, args| {
                     let xml = args[0].try_into_string()?;
                     let mut map = IndexMap::new();
-                    if xml.starts_with('<') && xml.contains('>') {
-                        let tag_name = xml[1..xml.find('>').unwrap_or(1)].to_string();
-                        let close_tag = format!("</{}>", tag_name);
-                        if let Some(close_pos) = xml.find(&close_tag) {
-                            let content = xml[xml.find('>').unwrap() + 1..close_pos].to_string();
-                            map.insert(tag_name, RuntimeValue::Str(content));
+                    if xml.starts_with('<') {
+                        if let Some(gt_pos) = xml.find('>') {
+                            let tag_name = xml[1..gt_pos].to_string();
+                            let close_tag = format!("</{}>", tag_name);
+                            if let Some(close_pos) = xml.find(&close_tag) {
+                                let content = xml[gt_pos + 1..close_pos].to_string();
+                                map.insert(tag_name, RuntimeValue::Str(content));
+                            }
                         }
                     }
                     Ok(RuntimeValue::Map {

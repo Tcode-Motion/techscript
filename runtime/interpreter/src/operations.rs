@@ -49,7 +49,7 @@ pub fn eval_unary(op: &str, right: RuntimeValue) -> Result<RuntimeValue, Runtime
                         if let RuntimeValue::Str(s) = &state {
                             if s == "pending" {
                                 techscript_stdlib::async_runtime::tick();
-                                std::thread::sleep(std::time::Duration::from_millis(1));
+                                std::thread::yield_now();
                                 continue;
                             } else if s == "resolved" {
                                 let val = entries

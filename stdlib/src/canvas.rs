@@ -110,34 +110,39 @@ fn render_dsl_to_svg(svg: &mut String, val: &RuntimeValue, is_dragon: bool) {
                         );
                     }
                     "rings" => {
-                        let count = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "count")
-                            .and_then(|p| p.value.as_ref())
-                            .and_then(|v| v.try_into_int().ok())
-                            .unwrap_or(3);
-                        let color = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "color")
-                            .and_then(|p| p.value.as_ref())
-                            .map(|v| v.to_string())
-                            .unwrap_or_else(|| "#00d4ff".to_string());
-                        let size = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "size")
-                            .and_then(|p| p.value.as_ref())
-                            .and_then(|v| v.try_into_int().ok())
-                            .unwrap_or(40);
-                        let thickness = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "thickness")
-                            .and_then(|p| p.value.as_ref())
-                            .and_then(|v| v.try_into_int().ok())
-                            .unwrap_or(3);
+                        let mut count = 3;
+                        let mut color = None;
+                        let mut size = 40;
+                        let mut thickness = 3;
+
+                        for p in &dsl.properties {
+                            if let Some(v) = &p.value {
+                                match p.name.as_str() {
+                                    "count" => {
+                                        if let Ok(c) = v.try_into_int() {
+                                            count = c;
+                                        }
+                                    }
+                                    "color" => {
+                                        color = Some(v.to_string());
+                                    }
+                                    "size" => {
+                                        if let Ok(s) = v.try_into_int() {
+                                            size = s;
+                                        }
+                                    }
+                                    "thickness" => {
+                                        if let Ok(t) = v.try_into_int() {
+                                            thickness = t;
+                                        }
+                                    }
+                                    _ => {}
+                                }
+                            }
+                        }
+
+                        let color = color.unwrap_or_else(|| "#00d4ff".to_string());
+
                         for i in 0..count {
                             let r = 80 + i as i64 * (size / 2);
                             let opacity = 0.4 - (i as f32 * 0.08);

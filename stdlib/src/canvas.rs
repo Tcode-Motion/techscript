@@ -132,7 +132,11 @@ fn render_dsl_to_svg(svg: &mut String, val: &RuntimeValue, is_dragon: bool) {
                                 "thickness" if thickness_prop.is_none() => thickness_prop = Some(p),
                                 _ => {}
                             }
-                            if count_prop.is_some() && color_prop.is_some() && size_prop.is_some() && thickness_prop.is_some() {
+                            if count_prop.is_some()
+                                && color_prop.is_some()
+                                && size_prop.is_some()
+                                && thickness_prop.is_some()
+                            {
                                 break;
                             }
                         }

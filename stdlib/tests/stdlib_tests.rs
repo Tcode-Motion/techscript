@@ -446,7 +446,10 @@ fn test_web_module() {
         "Expected `start` to return an error due to port already in use"
     );
     assert!(
-        start_result.unwrap_err().message.contains("Failed to start server"),
+        start_result
+            .unwrap_err()
+            .message
+            .contains("Failed to start server"),
         "Expected error message to mention failure to start server"
     );
 
@@ -458,7 +461,10 @@ fn test_web_module() {
         "Expected `serve` to return an error due to port already in use"
     );
     assert!(
-        serve_result.unwrap_err().message.contains("Failed to start server"),
+        serve_result
+            .unwrap_err()
+            .message
+            .contains("Failed to start server"),
         "Expected error message to mention failure to start server"
     );
 

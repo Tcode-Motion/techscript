@@ -269,16 +269,35 @@ capabilities = ["FileSystem", "Environment", "Process", "Network"]
 
 fn levenshtein(a: &str, b: &str, cache: &mut [usize]) -> usize {
     let b_len = b.len();
-
-    // We only need bytes since commands are ascii
     let a_bytes = a.as_bytes();
     let b_bytes = b.as_bytes();
 
-    for (i, val) in cache[..=b_len].iter_mut().enumerate() {
-        *val = i;
+    if a_bytes.is_empty() {
+        return b_len;
     }
-    for (i, &ca) in a_bytes.iter().enumerate() {
-        let mut temp = i + 1;
+    if b_len == 0 {
+        return a_bytes.len();
+    }
+
+    let mut a_iter = a_bytes.iter();
+    let &ca = a_iter.next().unwrap();
+    let mut temp = 1;
+
+    // Fold the first row initialization into the first loop iteration
+    // to avoid a redundant loop initialization.
+    for (j, &cb) in b_bytes.iter().enumerate() {
+        let next = if ca == cb {
+            j
+        } else {
+            std::cmp::min(j, temp) + 1
+        };
+        cache[j] = temp;
+        temp = next;
+    }
+    cache[b_len] = temp;
+
+    for (i, &ca) in a_iter.enumerate() {
+        let mut temp = i + 2;
         for (j, &cb) in b_bytes.iter().enumerate() {
             let next = if ca == cb {
                 cache[j]

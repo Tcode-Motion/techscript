@@ -3867,6 +3867,7 @@ dependencies = [
  "dirs",
  "indexmap",
  "num_cpus",
+ "rayon",
  "rustyline",
  "serde",
  "serde_json",

@@ -8,7 +8,7 @@ use techscript_errors::{Diagnostic, DiagnosticLevel, ErrorCode};
 use techscript_semantic::CheckedProgram;
 
 /// Trait definition for static analysis lint rules.
-pub trait LintRule {
+pub trait LintRule: Send + Sync {
     fn name(&self) -> &'static str;
     fn check(&self, program: &CheckedProgram) -> Vec<Diagnostic>;
 }

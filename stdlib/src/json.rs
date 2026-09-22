@@ -286,51 +286,65 @@ mod tests {
 
     #[test]
     fn test_parse_json_value() {
-        assert_eq!(
-            parse_json_value(serde_json::Value::Null),
-            RuntimeValue::Null
-        );
-        assert_eq!(
-            parse_json_value(serde_json::Value::Bool(true)),
-            RuntimeValue::Bool(true)
-        );
+        use serde_json::json;
 
-        // Using serde_json::Number constructor via from_f64/from_i64 is not straightforward,
-        // so we use serde_json::json! macro to generate Value objects easily.
+        // Test Null
+        assert_eq!(parse_json_value(json!(null)), RuntimeValue::Null);
+
+        // Test Bool
+        assert_eq!(parse_json_value(json!(true)), RuntimeValue::Bool(true));
+        assert_eq!(parse_json_value(json!(false)), RuntimeValue::Bool(false));
+
+        // Test Numbers (Int and Float)
+        assert_eq!(parse_json_value(json!(42)), RuntimeValue::Int(42));
+        assert_eq!(parse_json_value(json!(-10)), RuntimeValue::Int(-10));
+        assert_eq!(parse_json_value(json!(3.14)), RuntimeValue::Float(3.14));
+
+        // Test String
         assert_eq!(
-            parse_json_value(serde_json::json!(42)),
-            RuntimeValue::Int(42)
-        );
-        assert_eq!(
-            parse_json_value(serde_json::json!(3.14)),
-            RuntimeValue::Float(3.14)
-        );
-        assert_eq!(
-            parse_json_value(serde_json::json!("hello")),
+            parse_json_value(json!("hello")),
             RuntimeValue::Str("hello".to_string())
         );
 
-        let parsed_list = parse_json_value(serde_json::json!([1, "two", false]));
-        if let RuntimeValue::List { items, .. } = parsed_list {
-            let items = items.borrow();
-            assert_eq!(items.len(), 3);
-            assert_eq!(items[0], RuntimeValue::Int(1));
-            assert_eq!(items[1], RuntimeValue::Str("two".to_string()));
-            assert_eq!(items[2], RuntimeValue::Bool(false));
+        // Test Array
+        let list_val = parse_json_value(json!([1, "two", false]));
+        if let RuntimeValue::List { items, is_const } = list_val {
+            assert!(!is_const);
+            let items_ref = items.borrow();
+            assert_eq!(items_ref.len(), 3);
+            assert_eq!(items_ref[0], RuntimeValue::Int(1));
+            assert_eq!(items_ref[1], RuntimeValue::Str("two".to_string()));
+            assert_eq!(items_ref[2], RuntimeValue::Bool(false));
         } else {
-            panic!("Expected List");
+            panic!("Expected List, got {:?}", list_val);
         }
 
-        let parsed_map = parse_json_value(serde_json::json!({"key": "value"}));
-        if let RuntimeValue::Map { entries, .. } = parsed_map {
-            let entries = entries.borrow();
-            assert_eq!(entries.len(), 1);
+        // Test Object
+        let map_val = parse_json_value(json!({"key1": 100, "key2": "value2"}));
+        if let RuntimeValue::Map { entries, is_const } = map_val {
+            assert!(!is_const);
+            let entries_ref = entries.borrow();
+            assert_eq!(entries_ref.len(), 2);
+            assert_eq!(entries_ref.get("key1"), Some(&RuntimeValue::Int(100)));
             assert_eq!(
-                entries.get("key").unwrap(),
-                &RuntimeValue::Str("value".to_string())
+                entries_ref.get("key2"),
+                Some(&RuntimeValue::Str("value2".to_string()))
             );
         } else {
-            panic!("Expected Map");
+            panic!("Expected Map, got {:?}", map_val);
+        }
+
+        // Test Nested Structure
+        let nested_val = parse_json_value(json!({
+            "inner_list": [1, 2],
+            "inner_map": {"key": "val"}
+        }));
+        if let RuntimeValue::Map { entries, .. } = nested_val {
+            let entries_ref = entries.borrow();
+            assert!(entries_ref.contains_key("inner_list"));
+            assert!(entries_ref.contains_key("inner_map"));
+        } else {
+            panic!("Expected Map, got {:?}", nested_val);
         }
     }
 }

@@ -252,7 +252,6 @@ impl<'a> CodegenEngine<'a> {
         let i64_ty = LLVMInt64TypeInContext(context);
         let i1_ty = LLVMInt1TypeInContext(context);
         let i32_ty = LLVMInt32TypeInContext(context);
-        let double_ty = LLVMDoubleTypeInContext(context);
 
         let llvm_val = match &inst.op {
             Op::Constant(lit) => {
@@ -1055,7 +1054,6 @@ impl<'a> CodegenEngine<'a> {
                 map_val
             }
             Op::Cast { value, target_type } => {
-                let _double_ty = double_ty; // avoid unused warning
                 let val_val = self.codegen_val(value)?;
                 let boxed_val = self.box_val(val_val)?;
                 let tag = match target_type {

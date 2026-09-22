@@ -4,6 +4,7 @@
 
 use crate::commands::migrate::migrate_source;
 use crate::exit_code::ExitCode;
+use rayon::prelude::*;
 use std::path::{Path, PathBuf};
 
 pub fn execute(path_str: Option<&str>, fix: bool) -> ExitCode {
@@ -43,46 +44,52 @@ pub fn execute(path_str: Option<&str>, fix: bool) -> ExitCode {
     }
 
     let linter = techscript_linter::Linter::new();
-    let mut violation_count = 0;
-    let mut fixed_count = 0;
 
-    for file in files_to_lint {
-        if let Ok(content) = std::fs::read_to_string(&file) {
-            let mut reporter = techscript_errors::DiagnosticReporter::new();
-            if let Ok(tokens) = techscript_lexer::lex(&content, &mut reporter) {
-                if let Ok(program) = techscript_parser::parse(&tokens, &mut reporter) {
-                    if let Ok(checked) = techscript_semantic::analyze(program, &mut reporter) {
-                        let violations = linter.lint(&checked);
-                        violation_count += violations.len();
+    let (violation_count, fixed_count) = files_to_lint
+        .into_par_iter()
+        .map(|file| {
+            let mut local_violations = 0;
+            let mut local_fixed = 0;
 
-                        let source_mgr = techscript_common::SourceManager::new();
-                        let renderer =
-                            crate::diagnostics::DiagnosticRenderer::auto_detect(&source_mgr);
-                        for diag in violations {
-                            let rich = crate::diagnostics::RichDiagnostic::from_legacy(
-                                &diag,
-                                techscript_common::FileId(0),
-                            );
-                            renderer.emit(&rich);
+            if let Ok(content) = std::fs::read_to_string(&file) {
+                let mut reporter = techscript_errors::DiagnosticReporter::new();
+                if let Ok(tokens) = techscript_lexer::lex(&content, &mut reporter) {
+                    if let Ok(program) = techscript_parser::parse(&tokens, &mut reporter) {
+                        if let Ok(checked) = techscript_semantic::analyze(program, &mut reporter) {
+                            let violations = linter.lint(&checked);
+                            local_violations += violations.len();
+
+                            let source_mgr = techscript_common::SourceManager::new();
+                            let renderer =
+                                crate::diagnostics::DiagnosticRenderer::auto_detect(&source_mgr);
+                            for diag in violations {
+                                let rich = crate::diagnostics::RichDiagnostic::from_legacy(
+                                    &diag,
+                                    techscript_common::FileId(0),
+                                );
+                                renderer.emit(&rich);
+                            }
+                        }
+                    }
+                }
+
+                // Fix deprecation warnings
+                if fix {
+                    let migrated = migrate_source(&content);
+                    if migrated != content {
+                        if let Err(e) = std::fs::write(&file, migrated) {
+                            eprintln!("Error writing fixed file {:?}: {}", file, e);
+                        } else {
+                            println!("Fixed deprecated keywords in: {:?}", file);
+                            local_fixed += 1;
                         }
                     }
                 }
             }
 
-            // Fix deprecation warnings
-            if fix {
-                let migrated = migrate_source(&content);
-                if migrated != content {
-                    if let Err(e) = std::fs::write(&file, migrated) {
-                        eprintln!("Error writing fixed file {:?}: {}", file, e);
-                    } else {
-                        println!("Fixed deprecated keywords in: {:?}", file);
-                        fixed_count += 1;
-                    }
-                }
-            }
-        }
-    }
+            (local_violations, local_fixed)
+        })
+        .reduce(|| (0, 0), |a, b| (a.0 + b.0, a.1 + b.1));
 
     if fix && fixed_count > 0 {
         println!("Fixed deprecation warnings in {} file(s).", fixed_count);

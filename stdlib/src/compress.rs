@@ -308,4 +308,58 @@ mod tests {
 
         std::fs::remove_dir_all(&temp_dir).unwrap();
     }
+
+    #[test]
+    fn test_zip_dir_success() {
+        let temp_dir = std::env::temp_dir().join("techscript_zip_test");
+        std::fs::create_dir_all(&temp_dir).unwrap();
+
+        let file1_path = temp_dir.join("file1.txt");
+        std::fs::write(&file1_path, b"hello world").unwrap();
+
+        let file2_path = temp_dir.join("file2.txt");
+        std::fs::write(&file2_path, b"test content").unwrap();
+
+        let zip_path = std::env::temp_dir().join("output.zip");
+
+        // Use zip_dir to compress
+        let result = zip_dir(temp_dir.to_str().unwrap(), zip_path.to_str().unwrap());
+        assert!(result.is_ok());
+
+        // Verify the zip file
+        let file = std::fs::File::open(&zip_path).unwrap();
+        let mut archive = zip::ZipArchive::new(file).unwrap();
+
+        let mut files_in_zip: Vec<String> = (0..archive.len())
+            .map(|i| archive.by_index(i).unwrap().name().to_string())
+            .collect();
+        files_in_zip.sort();
+
+        println!("Files in zip: {:?}", files_in_zip);
+
+        {
+            let mut f1 = archive.by_name("file1.txt").unwrap();
+            let mut buf1 = String::new();
+            std::io::Read::read_to_string(&mut f1, &mut buf1).unwrap();
+            assert_eq!(buf1, "hello world");
+        }
+
+        {
+            let mut f2 = archive.by_name("file2.txt").unwrap();
+            let mut buf2 = String::new();
+            std::io::Read::read_to_string(&mut f2, &mut buf2).unwrap();
+            assert_eq!(buf2, "test content");
+        }
+
+        std::fs::remove_dir_all(&temp_dir).unwrap();
+        std::fs::remove_file(&zip_path).unwrap();
+    }
+
+    #[test]
+    fn test_zip_dir_invalid_src() {
+        let zip_path = std::env::temp_dir().join("output_invalid_src.zip");
+        let result = zip_dir("non_existent_dir_12345", zip_path.to_str().unwrap());
+        assert!(result.is_err());
+        let _ = std::fs::remove_file(&zip_path); // Cleanup just in case it was created
+    }
 }

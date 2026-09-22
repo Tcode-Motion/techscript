@@ -21,24 +21,29 @@ fn render_dsl_to_svg(svg: &mut String, val: &RuntimeValue, is_dragon: bool) {
             if is_dragon {
                 match dsl.kind.as_str() {
                     "logo" => {
-                        let text = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "text")
+                        let mut text_prop = None;
+                        let mut color_prop = None;
+                        let mut size_prop = None;
+                        for p in &dsl.properties {
+                            match p.name.as_str() {
+                                "text" if text_prop.is_none() => text_prop = Some(p),
+                                "color" if color_prop.is_none() => color_prop = Some(p),
+                                "size" if size_prop.is_none() => size_prop = Some(p),
+                                _ => {}
+                            }
+                            if text_prop.is_some() && color_prop.is_some() && size_prop.is_some() {
+                                break;
+                            }
+                        }
+                        let text = text_prop
                             .and_then(|p| p.value.as_ref())
                             .map(|v| v.to_string())
                             .unwrap_or_else(|| "Logo".to_string());
-                        let color = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "color")
+                        let color = color_prop
                             .and_then(|p| p.value.as_ref())
                             .map(|v| v.to_string())
                             .unwrap_or_else(|| "#00d4ff".to_string());
-                        let size = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "size")
+                        let size = size_prop
                             .and_then(|p| p.value.as_ref())
                             .and_then(|v| v.try_into_int().ok())
                             .unwrap_or(48);
@@ -82,24 +87,29 @@ fn render_dsl_to_svg(svg: &mut String, val: &RuntimeValue, is_dragon: bool) {
                 // RENDER OLD GEOMETRIC LOGO
                 match dsl.kind.as_str() {
                     "logo" => {
-                        let text = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "text")
+                        let mut text_prop = None;
+                        let mut color_prop = None;
+                        let mut size_prop = None;
+                        for p in &dsl.properties {
+                            match p.name.as_str() {
+                                "text" if text_prop.is_none() => text_prop = Some(p),
+                                "color" if color_prop.is_none() => color_prop = Some(p),
+                                "size" if size_prop.is_none() => size_prop = Some(p),
+                                _ => {}
+                            }
+                            if text_prop.is_some() && color_prop.is_some() && size_prop.is_some() {
+                                break;
+                            }
+                        }
+                        let text = text_prop
                             .and_then(|p| p.value.as_ref())
                             .map(|v| v.to_string())
                             .unwrap_or_else(|| "Logo".to_string());
-                        let color = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "color")
+                        let color = color_prop
                             .and_then(|p| p.value.as_ref())
                             .map(|v| v.to_string())
                             .unwrap_or_else(|| "#00d4ff".to_string());
-                        let size = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "size")
+                        let size = size_prop
                             .and_then(|p| p.value.as_ref())
                             .and_then(|v| v.try_into_int().ok())
                             .unwrap_or(48);
@@ -110,31 +120,35 @@ fn render_dsl_to_svg(svg: &mut String, val: &RuntimeValue, is_dragon: bool) {
                         );
                     }
                     "rings" => {
-                        let count = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "count")
+                        let mut count_prop = None;
+                        let mut color_prop = None;
+                        let mut size_prop = None;
+                        let mut thickness_prop = None;
+                        for p in &dsl.properties {
+                            match p.name.as_str() {
+                                "count" if count_prop.is_none() => count_prop = Some(p),
+                                "color" if color_prop.is_none() => color_prop = Some(p),
+                                "size" if size_prop.is_none() => size_prop = Some(p),
+                                "thickness" if thickness_prop.is_none() => thickness_prop = Some(p),
+                                _ => {}
+                            }
+                            if count_prop.is_some() && color_prop.is_some() && size_prop.is_some() && thickness_prop.is_some() {
+                                break;
+                            }
+                        }
+                        let count = count_prop
                             .and_then(|p| p.value.as_ref())
                             .and_then(|v| v.try_into_int().ok())
                             .unwrap_or(3);
-                        let color = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "color")
+                        let color = color_prop
                             .and_then(|p| p.value.as_ref())
                             .map(|v| v.to_string())
                             .unwrap_or_else(|| "#00d4ff".to_string());
-                        let size = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "size")
+                        let size = size_prop
                             .and_then(|p| p.value.as_ref())
                             .and_then(|v| v.try_into_int().ok())
                             .unwrap_or(40);
-                        let thickness = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "thickness")
+                        let thickness = thickness_prop
                             .and_then(|p| p.value.as_ref())
                             .and_then(|v| v.try_into_int().ok())
                             .unwrap_or(3);
@@ -149,17 +163,23 @@ fn render_dsl_to_svg(svg: &mut String, val: &RuntimeValue, is_dragon: bool) {
                         }
                     }
                     "emblem" => {
-                        let color = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "color")
+                        let mut color_prop = None;
+                        let mut size_prop = None;
+                        for p in &dsl.properties {
+                            match p.name.as_str() {
+                                "color" if color_prop.is_none() => color_prop = Some(p),
+                                "size" if size_prop.is_none() => size_prop = Some(p),
+                                _ => {}
+                            }
+                            if color_prop.is_some() && size_prop.is_some() {
+                                break;
+                            }
+                        }
+                        let color = color_prop
                             .and_then(|p| p.value.as_ref())
                             .map(|v| v.to_string())
                             .unwrap_or_else(|| "#0088cc".to_string());
-                        let size = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "size")
+                        let size = size_prop
                             .and_then(|p| p.value.as_ref())
                             .and_then(|v| v.try_into_int().ok())
                             .unwrap_or(120);
@@ -177,24 +197,29 @@ fn render_dsl_to_svg(svg: &mut String, val: &RuntimeValue, is_dragon: bool) {
                         );
                     }
                     "letter" => {
-                        let ch = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "char")
+                        let mut char_prop = None;
+                        let mut color_prop = None;
+                        let mut size_prop = None;
+                        for p in &dsl.properties {
+                            match p.name.as_str() {
+                                "char" if char_prop.is_none() => char_prop = Some(p),
+                                "color" if color_prop.is_none() => color_prop = Some(p),
+                                "size" if size_prop.is_none() => size_prop = Some(p),
+                                _ => {}
+                            }
+                            if char_prop.is_some() && color_prop.is_some() && size_prop.is_some() {
+                                break;
+                            }
+                        }
+                        let ch = char_prop
                             .and_then(|p| p.value.as_ref())
                             .map(|v| v.to_string())
                             .unwrap_or_else(|| "T".to_string());
-                        let color = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "color")
+                        let color = color_prop
                             .and_then(|p| p.value.as_ref())
                             .map(|v| v.to_string())
                             .unwrap_or_else(|| "#0a0e27".to_string());
-                        let size = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "size")
+                        let size = size_prop
                             .and_then(|p| p.value.as_ref())
                             .and_then(|v| v.try_into_int().ok())
                             .unwrap_or(32);
@@ -205,17 +230,23 @@ fn render_dsl_to_svg(svg: &mut String, val: &RuntimeValue, is_dragon: bool) {
                         );
                     }
                     "core" => {
-                        let color = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "color")
+                        let mut color_prop = None;
+                        let mut size_prop = None;
+                        for p in &dsl.properties {
+                            match p.name.as_str() {
+                                "color" if color_prop.is_none() => color_prop = Some(p),
+                                "size" if size_prop.is_none() => size_prop = Some(p),
+                                _ => {}
+                            }
+                            if color_prop.is_some() && size_prop.is_some() {
+                                break;
+                            }
+                        }
+                        let color = color_prop
                             .and_then(|p| p.value.as_ref())
                             .map(|v| v.to_string())
                             .unwrap_or_else(|| "#66e0ff".to_string());
-                        let size = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "size")
+                        let size = size_prop
                             .and_then(|p| p.value.as_ref())
                             .and_then(|v| v.try_into_int().ok())
                             .unwrap_or(40);

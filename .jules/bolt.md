@@ -32,3 +32,7 @@
 ## 2026-09-22 - String allocation optimization in std.web DSL rendering
 **Learning:** Generating deep HTML structures in `std.web` heavily penalized performance because `dsl_to_html` allocated and returned a new `String` for every child DSL node. This causes `O(N)` heap allocations and redundant copying in the render tree. By passing a mutable `&mut String` buffer recursively downwards, we avoid all intermediate string heap allocations and significantly improve serialization speed.
 **Action:** Always prefer using a recursive builder pattern passing a single mutable `&mut String` buffer to `write!` or `push_str` when rendering nested tree structures (like HTML, JSON, or ASTs) instead of returning newly allocated strings at each layer.
+
+## 2024-05-24 - Avoid Repeated Array Searches in Rust
+**Learning:** Multiple `.find()` calls on the same array to extract different properties result in repeated O(N) iterations. Combining them into a single `for` loop that captures all required values significantly improves performance, particularly in hot paths like DSL rendering. However, to preserve the exact semantic behavior of `.find()` (which returns the *first* matching element), you must only assign to variables if they are currently `None` (`if my_prop.is_none()`).
+**Action:** When extracting multiple attributes from a collection (like DSL block properties), use a single pass loop and early exit instead of chained `.find()` methods. Always ensure original match semantics are preserved.

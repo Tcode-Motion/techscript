@@ -98,9 +98,10 @@ static PAGE_CONTENT: Mutex<String> = Mutex::new(String::new());
 
 fn render_children(html: &mut String, dsl: &techscript_runtime::value::DslBlockValue) {
     for child in &dsl.children {
-        html.push_str(&dsl_to_html(
+        dsl_to_html_inner(
             &techscript_runtime::value::RuntimeValue::DslBlock(std::rc::Rc::new(child.clone())),
-        ));
+            html,
+        );
     }
 }
 
@@ -233,129 +234,136 @@ fn render_card(html: &mut String, dsl: &techscript_runtime::value::DslBlockValue
 
 /// Convert a DslBlockValue tree to HTML string.
 fn dsl_to_html(val: &RuntimeValue) -> String {
+    // ⚡ Bolt Performance Optimization:
+    // This function previously allocated and returned a new String for every single DSL node,
+    // causing heavy heap allocations when rendering deeply nested HTML structures.
+    // By passing a single mutable `String` buffer downwards via `dsl_to_html_inner`,
+    // we eliminate intermediate string heap allocations and significantly improve rendering speed.
+    let mut html = String::new();
+    dsl_to_html_inner(val, &mut html);
+    html
+}
+
+fn dsl_to_html_inner(val: &RuntimeValue, html: &mut String) {
     match val {
-        RuntimeValue::DslBlock(dsl) => {
-            let mut html = String::new();
-            match dsl.kind.as_str() {
-                "website" => {
-                    render_website(&mut html, dsl);
-                }
-                "page" => {
-                    render_page(&mut html, dsl);
-                }
-                "hero" => {
-                    render_hero(&mut html, dsl);
-                }
-                "section" => {
-                    render_section(&mut html, dsl);
-                }
-                "card" => {
-                    render_card(&mut html, dsl);
-                }
-                "button" => {
-                    let label = dsl
-                        .properties
-                        .iter()
-                        .find(|p| p.name == "label")
-                        .and_then(|p| p.value.as_ref())
-                        .map(|v| v.to_string())
-                        .unwrap_or_else(|| "Button".to_string());
-                    let _ = write!(html, "<button>{}</button>", label);
-                }
-                "link" => {
-                    let label = dsl
-                        .properties
-                        .iter()
-                        .find(|p| p.name == "label")
-                        .and_then(|p| p.value.as_ref())
-                        .map(|v| v.to_string())
-                        .unwrap_or_else(|| "Link".to_string());
-                    let url = dsl
-                        .properties
-                        .iter()
-                        .find(|p| p.name == "url")
-                        .and_then(|p| p.value.as_ref())
-                        .map(|v| v.to_string());
-                    if let Some(u) = url {
-                        let _ = write!(html, "<a href=\"{}\">{}</a>", u, label);
-                    } else {
-                        let _ = write!(html, "<a href=\"#\">{}</a>", label);
-                    }
-                }
-                "nav" => {
-                    html.push_str("<nav>");
-                    render_children(&mut html, dsl);
-                    html.push_str("</nav>");
-                }
-                "header" => {
-                    html.push_str("<header>");
-                    for prop in &dsl.properties {
-                        if prop.name == "title" {
-                            if let Some(RuntimeValue::Str(t)) = &prop.value {
-                                let _ = write!(html, "<h1>{}</h1>", t);
-                            }
-                        }
-                    }
-                    render_children(&mut html, dsl);
-                    html.push_str("</header>");
-                }
-                "footer" => {
-                    html.push_str("<footer>");
-                    for prop in &dsl.properties {
-                        if prop.name == "text" {
-                            if let Some(RuntimeValue::Str(t)) = &prop.value {
-                                let _ = write!(html, "<p>{}</p>", t);
-                            }
-                        }
-                    }
-                    render_children(&mut html, dsl);
-                    html.push_str("</footer>");
-                }
-                "input" => {
-                    let placeholder = dsl
-                        .properties
-                        .iter()
-                        .find(|p| p.name == "placeholder")
-                        .and_then(|p| p.value.as_ref())
-                        .map(|v| v.to_string());
-                    if let Some(p) = placeholder {
-                        let _ = write!(html, "<input placeholder=\"{}\">", p);
-                    } else {
-                        html.push_str("<input>");
-                    }
-                }
-                "form" => {
-                    html.push_str("<form>");
-                    render_children(&mut html, dsl);
-                    html.push_str("</form>");
-                }
-                "main" => {
-                    html.push_str("<main>");
-                    render_children(&mut html, dsl);
-                    html.push_str("</main>");
-                }
-                "aside" => {
-                    html.push_str("<aside>");
-                    render_children(&mut html, dsl);
-                    html.push_str("</aside>");
-                }
-                "start" => {
-                    let label = dsl
-                        .properties
-                        .iter()
-                        .find(|p| p.name == "label")
-                        .and_then(|p| p.value.as_ref())
-                        .map(|v| v.to_string())
-                        .unwrap_or_else(|| "Get Started".to_string());
-                    let _ = write!(html, "<a class=\"start-button\" href=\"#\">{}</a>", label);
-                }
-                _ => {
-                    let _ = write!(html, "<!-- unknown DSL block: {} -->", dsl.kind);
+        RuntimeValue::DslBlock(dsl) => match dsl.kind.as_str() {
+            "website" => {
+                render_website(html, dsl);
+            }
+            "page" => {
+                render_page(html, dsl);
+            }
+            "hero" => {
+                render_hero(html, dsl);
+            }
+            "section" => {
+                render_section(html, dsl);
+            }
+            "card" => {
+                render_card(html, dsl);
+            }
+            "button" => {
+                let label = dsl
+                    .properties
+                    .iter()
+                    .find(|p| p.name == "label")
+                    .and_then(|p| p.value.as_ref())
+                    .map(|v| v.to_string())
+                    .unwrap_or_else(|| "Button".to_string());
+                let _ = write!(html, "<button>{}</button>", label);
+            }
+            "link" => {
+                let label = dsl
+                    .properties
+                    .iter()
+                    .find(|p| p.name == "label")
+                    .and_then(|p| p.value.as_ref())
+                    .map(|v| v.to_string())
+                    .unwrap_or_else(|| "Link".to_string());
+                let url = dsl
+                    .properties
+                    .iter()
+                    .find(|p| p.name == "url")
+                    .and_then(|p| p.value.as_ref())
+                    .map(|v| v.to_string());
+                if let Some(u) = url {
+                    let _ = write!(html, "<a href=\"{}\">{}</a>", u, label);
+                } else {
+                    let _ = write!(html, "<a href=\"#\">{}</a>", label);
                 }
             }
-            html
-        }
-        _ => String::new(),
+            "nav" => {
+                html.push_str("<nav>");
+                render_children(html, dsl);
+                html.push_str("</nav>");
+            }
+            "header" => {
+                html.push_str("<header>");
+                for prop in &dsl.properties {
+                    if prop.name == "title" {
+                        if let Some(RuntimeValue::Str(t)) = &prop.value {
+                            let _ = write!(html, "<h1>{}</h1>", t);
+                        }
+                    }
+                }
+                render_children(html, dsl);
+                html.push_str("</header>");
+            }
+            "footer" => {
+                html.push_str("<footer>");
+                for prop in &dsl.properties {
+                    if prop.name == "text" {
+                        if let Some(RuntimeValue::Str(t)) = &prop.value {
+                            let _ = write!(html, "<p>{}</p>", t);
+                        }
+                    }
+                }
+                render_children(html, dsl);
+                html.push_str("</footer>");
+            }
+            "input" => {
+                let placeholder = dsl
+                    .properties
+                    .iter()
+                    .find(|p| p.name == "placeholder")
+                    .and_then(|p| p.value.as_ref())
+                    .map(|v| v.to_string());
+                if let Some(p) = placeholder {
+                    let _ = write!(html, "<input placeholder=\"{}\">", p);
+                } else {
+                    html.push_str("<input>");
+                }
+            }
+            "form" => {
+                html.push_str("<form>");
+                render_children(html, dsl);
+                html.push_str("</form>");
+            }
+            "main" => {
+                html.push_str("<main>");
+                render_children(html, dsl);
+                html.push_str("</main>");
+            }
+            "aside" => {
+                html.push_str("<aside>");
+                render_children(html, dsl);
+                html.push_str("</aside>");
+            }
+            "start" => {
+                let label = dsl
+                    .properties
+                    .iter()
+                    .find(|p| p.name == "label")
+                    .and_then(|p| p.value.as_ref())
+                    .map(|v| v.to_string())
+                    .unwrap_or_else(|| "Get Started".to_string());
+                let _ = write!(html, "<a class=\"start-button\" href=\"#\">{}</a>", label);
+            }
+            _ => {
+                let _ = write!(html, "<!-- unknown DSL block: {} -->", dsl.kind);
+            }
+        },
+        _ => {}
     }
 }
 
@@ -582,7 +590,7 @@ impl StdlibRegistry {
                     };
                     let mut html = String::new();
                     for block in &blocks {
-                        html.push_str(&dsl_to_html(block));
+                        dsl_to_html_inner(block, &mut html);
                     }
                     Ok(RuntimeValue::Str(html))
                 },

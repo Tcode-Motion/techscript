@@ -403,7 +403,7 @@ impl StdlibRegistry {
                     }
                     SERVER_RUNNING.store(true, Ordering::SeqCst);
                     let server =
-                        Mutex::new(tiny_http::Server::http(format!("0.0.0.0:{}", port)).unwrap());
+                        Mutex::new(tiny_http::Server::http(format!("127.0.0.1:{}", port)).unwrap());
                     thread::spawn(move || {
                         while SERVER_RUNNING.load(Ordering::SeqCst) {
                             if let Ok(mut req) = server.lock().unwrap().recv() {
@@ -471,7 +471,7 @@ impl StdlibRegistry {
                     }
                     SERVER_RUNNING.store(true, Ordering::SeqCst);
                     let server =
-                        Mutex::new(tiny_http::Server::http(format!("0.0.0.0:{}", port)).unwrap());
+                        Mutex::new(tiny_http::Server::http(format!("127.0.0.1:{}", port)).unwrap());
                     thread::spawn(move || {
                         while SERVER_RUNNING.load(Ordering::SeqCst) {
                             if let Ok(mut req) = server.lock().unwrap().recv() {

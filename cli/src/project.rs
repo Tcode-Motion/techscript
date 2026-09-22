@@ -153,11 +153,50 @@ impl ProjectBuildGraph {
         let mut to_resolve = Vec::new();
 
         // 1. Add all entry points to compilation list
-        for pkg in self.workspace.packages.values_mut() {
-            if let Ok(source) = std::fs::read_to_string(&pkg.entry_file) {
-                let fid = source_mgr.add_file(pkg.entry_file.clone(), source.clone());
+        let mut entry_reads = Vec::new();
+        std::thread::scope(|s| {
+            let mut handles = Vec::new();
+            let num_threads = std::thread::available_parallelism()
+                .map(|n| n.get())
+                .unwrap_or(4);
+
+            let pkg_data: Vec<_> = self
+                .workspace
+                .packages
+                .values()
+                .map(|pkg| (pkg.name.clone(), pkg.entry_file.clone()))
+                .collect();
+
+            let chunk_size = (pkg_data.len() + num_threads - 1) / num_threads;
+            if chunk_size == 0 {
+                return;
+            }
+
+            for chunk in pkg_data.chunks(chunk_size) {
+                let chunk = chunk.to_vec();
+                handles.push(s.spawn(move || {
+                    let mut results = Vec::with_capacity(chunk.len());
+                    for (name, path) in chunk {
+                        if let Ok(source) = std::fs::read_to_string(&path) {
+                            results.push((name, path, source));
+                        }
+                    }
+                    results
+                }));
+            }
+
+            for handle in handles {
+                if let Ok(res) = handle.join() {
+                    entry_reads.extend(res);
+                }
+            }
+        });
+
+        for (pkg_name, path, source) in entry_reads {
+            if let Some(pkg) = self.workspace.packages.get_mut(&pkg_name) {
+                let fid = source_mgr.add_file(path.clone(), source);
                 pkg.entry_file_id = Some(fid);
-                to_resolve.push((fid, pkg.entry_file.clone(), pkg.name.clone()));
+                to_resolve.push((fid, path, pkg_name));
             }
         }
 

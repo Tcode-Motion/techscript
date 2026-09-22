@@ -274,9 +274,10 @@ fn levenshtein(a: &str, b: &str, cache: &mut [usize]) -> usize {
     let a_bytes = a.as_bytes();
     let b_bytes = b.as_bytes();
 
-    for (i, val) in cache[..=b_len].iter_mut().enumerate() {
-        *val = i;
-    }
+    cache[..=b_len]
+        .iter_mut()
+        .enumerate()
+        .for_each(|(i, val)| *val = i);
     for (i, &ca) in a_bytes.iter().enumerate() {
         let mut temp = i + 1;
         for (j, &cb) in b_bytes.iter().enumerate() {

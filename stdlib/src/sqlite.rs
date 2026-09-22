@@ -12,14 +12,30 @@ thread_local! {
 
 static NEXT_ID: AtomicI64 = AtomicI64::new(1);
 
-fn runtime_to_sql_value(v: &RuntimeValue) -> rusqlite::types::Value {
-    match v {
-        RuntimeValue::Null => rusqlite::types::Value::Null,
-        RuntimeValue::Bool(b) => rusqlite::types::Value::Integer(if *b { 1 } else { 0 }),
-        RuntimeValue::Int(i) => rusqlite::types::Value::Integer(*i),
-        RuntimeValue::Float(f) => rusqlite::types::Value::Real(*f),
-        RuntimeValue::Str(s) => rusqlite::types::Value::Text(s.clone()),
-        _ => rusqlite::types::Value::Text(v.to_string()),
+struct SqlParam<'a>(&'a RuntimeValue);
+
+impl<'a> rusqlite::types::ToSql for SqlParam<'a> {
+    fn to_sql(&self) -> rusqlite::Result<rusqlite::types::ToSqlOutput<'_>> {
+        match self.0 {
+            RuntimeValue::Null => Ok(rusqlite::types::ToSqlOutput::Borrowed(
+                rusqlite::types::ValueRef::Null,
+            )),
+            RuntimeValue::Bool(b) => Ok(rusqlite::types::ToSqlOutput::Borrowed(
+                rusqlite::types::ValueRef::Integer(if *b { 1 } else { 0 }),
+            )),
+            RuntimeValue::Int(i) => Ok(rusqlite::types::ToSqlOutput::Borrowed(
+                rusqlite::types::ValueRef::Integer(*i),
+            )),
+            RuntimeValue::Float(f) => Ok(rusqlite::types::ToSqlOutput::Borrowed(
+                rusqlite::types::ValueRef::Real(*f),
+            )),
+            RuntimeValue::Str(s) => Ok(rusqlite::types::ToSqlOutput::Borrowed(
+                rusqlite::types::ValueRef::Text(s.as_bytes()),
+            )),
+            _ => Ok(rusqlite::types::ToSqlOutput::Owned(
+                rusqlite::types::Value::Text(self.0.to_string()),
+            )),
+        }
     }
 }
 
@@ -63,19 +79,11 @@ impl StdlibRegistry {
                         )
                     })?;
                     let sql = args[1].to_string();
-                    let params_list = if args.len() > 2 {
-                        if let RuntimeValue::List { items, .. } = &args[2] {
-                            items.borrow().clone()
-                        } else {
-                            Vec::new()
-                        }
-                    } else {
-                        Vec::new()
-                    };
-
-                    let params: Vec<rusqlite::types::Value> = if let Some(arg) = args.get(2) {
+                    let _items_borrow;
+                    let params: Vec<SqlParam> = if let Some(arg) = args.get(2) {
                         if let RuntimeValue::List { items, .. } = arg {
-                            items.borrow().iter().map(runtime_to_sql_value).collect()
+                            _items_borrow = items.borrow();
+                            _items_borrow.iter().map(SqlParam).collect()
                         } else {
                             return Err(RuntimeError::new(
                                 RuntimeErrorKind::TypeMismatch {
@@ -138,19 +146,11 @@ impl StdlibRegistry {
                         )
                     })?;
                     let sql = args[1].to_string();
-                    let params_list = if args.len() > 2 {
-                        if let RuntimeValue::List { items, .. } = &args[2] {
-                            items.borrow().clone()
-                        } else {
-                            Vec::new()
-                        }
-                    } else {
-                        Vec::new()
-                    };
-
-                    let params: Vec<rusqlite::types::Value> = if let Some(arg) = args.get(2) {
+                    let _items_borrow;
+                    let params: Vec<SqlParam> = if let Some(arg) = args.get(2) {
                         if let RuntimeValue::List { items, .. } = arg {
-                            items.borrow().iter().map(runtime_to_sql_value).collect()
+                            _items_borrow = items.borrow();
+                            _items_borrow.iter().map(SqlParam).collect()
                         } else {
                             return Err(RuntimeError::new(
                                 RuntimeErrorKind::TypeMismatch {

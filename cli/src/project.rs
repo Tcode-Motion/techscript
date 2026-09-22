@@ -163,6 +163,7 @@ impl ProjectBuildGraph {
 
         // 2. Resolve imports recursively
         let mut visited = HashSet::new();
+        let mut manifest_cache: HashMap<PathBuf, String> = HashMap::new();
         while let Some((fid, path, pkg_name)) = to_resolve.pop() {
             if visited.contains(&fid) {
                 continue;
@@ -256,14 +257,18 @@ impl ProjectBuildGraph {
                     }
                     if !try_file.exists() {
                         let manifest_toml = pkg_path.join("tech.toml");
-                        if manifest_toml.exists() {
+                        if let Some(cached_entry) = manifest_cache.get(&manifest_toml) {
+                            try_file = pkg_path.join(cached_entry);
+                        } else if manifest_toml.exists() {
                             if let Ok(toml_content) = std::fs::read_to_string(&manifest_toml) {
                                 if let Ok(manifest) =
                                     toml::from_str::<techscript_package_manager::Manifest>(
                                         &toml_content,
                                     )
                                 {
-                                    try_file = pkg_path.join(manifest.package.entry);
+                                    let entry = manifest.package.entry;
+                                    try_file = pkg_path.join(&entry);
+                                    manifest_cache.insert(manifest_toml, entry);
                                 }
                             }
                         }

@@ -202,7 +202,7 @@ fn main() {
 }
 
 fn perform_first_run_check() {
-    if let Some(home) = dirs::home_dir() {
+    if let Some(home) = techscript_cli::dirs::home_dir() {
         let config_dir = home.join(".techscript");
         let config_file = config_dir.join("config.toml");
 

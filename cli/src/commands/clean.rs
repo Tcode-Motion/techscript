@@ -26,7 +26,7 @@ pub fn execute(all: bool) -> ExitCode {
 
     if all {
         println!("Cleaning global package caches...");
-        if let Some(home) = home_dir() {
+        if let Some(home) = crate::dirs::home_dir() {
             let cache_dir = home.join(".techscript").join("cache");
             if cache_dir.exists() {
                 if std::fs::remove_dir_all(&cache_dir).is_ok() {
@@ -48,9 +48,4 @@ pub fn execute(all: bool) -> ExitCode {
     } else {
         ExitCode::IoError
     }
-}
-
-fn home_dir() -> Option<std::path::PathBuf> {
-    #[allow(deprecated)]
-    std::env::home_dir()
 }

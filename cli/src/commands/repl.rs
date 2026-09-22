@@ -39,7 +39,7 @@ pub fn execute() -> ExitCode {
     };
 
     // Load persistent history
-    let history_path = dirs::home_dir().map(|h| h.join(".techscript").join("repl_history"));
+    let history_path = crate::dirs::home_dir().map(|h| h.join(".techscript").join("repl_history"));
     if let Some(ref path) = history_path {
         std::fs::create_dir_all(path.parent().unwrap()).ok();
         rl.load_history(path).ok();
@@ -269,13 +269,5 @@ fn dump_repl_bytecode(expr: &str) {
                 println!("Bytecode function: {:?}", bc.functions);
             }
         }
-    }
-}
-
-mod dirs {
-    use std::path::PathBuf;
-    pub fn home_dir() -> Option<PathBuf> {
-        #[allow(deprecated)]
-        std::env::home_dir()
     }
 }

@@ -97,7 +97,7 @@ impl ConfigManager {
         let mut base = EffectiveConfig::default();
 
         // 2. Global user config (~/.techscript/config.toml)
-        if let Some(home) = dirs::home_dir() {
+        if let Some(home) = crate::dirs::home_dir() {
             let global_path = home.join(".techscript").join("config.toml");
             if let Ok(content) = std::fs::read_to_string(global_path) {
                 if let Ok(toml_cfg) = toml::from_str::<TomlConfig>(&content) {
@@ -255,13 +255,5 @@ fn apply_cli(base: &mut EffectiveConfig, cli: &CliConfig) {
     }
     if let Some(jobs) = cli.parallel_jobs {
         base.parallel_jobs = jobs;
-    }
-}
-
-mod dirs {
-    use std::path::PathBuf;
-    pub fn home_dir() -> Option<PathBuf> {
-        #[allow(deprecated)]
-        std::env::home_dir()
     }
 }

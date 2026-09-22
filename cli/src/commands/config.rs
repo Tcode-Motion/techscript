@@ -9,7 +9,7 @@ use std::path::PathBuf;
 pub fn execute(subcommand_str: Option<&str>) -> ExitCode {
     let sub = subcommand_str.unwrap_or("show").to_lowercase();
 
-    let home = match dirs::home_dir() {
+    let home = match crate::dirs::home_dir() {
         Some(h) => h,
         None => {
             eprintln!("Error: Home directory not found.");

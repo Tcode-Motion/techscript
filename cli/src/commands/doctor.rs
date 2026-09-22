@@ -96,7 +96,7 @@ impl DoctorContext {
     }
 
     fn check_cache_dirs(&mut self) {
-        if let Some(home) = dirs::home_dir() {
+        if let Some(home) = crate::dirs::home_dir() {
             let config_dir = home.join(".techscript");
             let cache_dir = config_dir.join("cache");
             let packages_dir = config_dir.join("packages");
@@ -222,7 +222,7 @@ impl DoctorContext {
         if self.fix && !self.overall_success {
             println!("Performing automatic repair routines...");
             // Auto-initialize directories
-            if let Some(home) = dirs::home_dir() {
+            if let Some(home) = crate::dirs::home_dir() {
                 let config_dir = home.join(".techscript");
                 std::fs::create_dir_all(config_dir.join("cache")).ok();
                 std::fs::create_dir_all(config_dir.join("packages")).ok();
@@ -298,13 +298,5 @@ pub fn execute(fix: bool) -> ExitCode {
                 .bold()
         );
         ExitCode::CompilationError
-    }
-}
-
-mod dirs {
-    use std::path::PathBuf;
-    pub fn home_dir() -> Option<PathBuf> {
-        #[allow(deprecated)]
-        std::env::home_dir()
     }
 }

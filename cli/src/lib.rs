@@ -11,6 +11,7 @@ pub mod compile_db;
 pub mod config;
 pub mod crash;
 pub mod diagnostics;
+pub mod dirs;
 pub mod events;
 pub mod exit_code;
 pub mod logging;

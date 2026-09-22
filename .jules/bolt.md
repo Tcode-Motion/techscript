@@ -29,3 +29,6 @@
 ## 2026-09-20 - String allocation optimization in stdlib json stringify
 **Learning:** Generating large JSON structures heavily penalizes performance if intermediate strings are allocated inside loops, specifically using `format!` and joining `Vec<String>`. Converting string builders to pass down a mutable `&mut String` buffer to sub-functions significantly improves performance and reduces heap allocations.
 **Action:** Use recursive string builders holding a mutable reference to a `String` inside JSON or tree serialization tasks instead of allocating and returning new `String`s for every sub-node.
+## 2026-09-22 - String allocation optimization in std.web DSL rendering
+**Learning:** Generating deep HTML structures in `std.web` heavily penalized performance because `dsl_to_html` allocated and returned a new `String` for every child DSL node. This causes `O(N)` heap allocations and redundant copying in the render tree. By passing a mutable `&mut String` buffer recursively downwards, we avoid all intermediate string heap allocations and significantly improve serialization speed.
+**Action:** Always prefer using a recursive builder pattern passing a single mutable `&mut String` buffer to `write!` or `push_str` when rendering nested tree structures (like HTML, JSON, or ASTs) instead of returning newly allocated strings at each layer.

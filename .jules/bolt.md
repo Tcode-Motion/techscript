@@ -32,3 +32,6 @@
 ## 2026-09-22 - String allocation optimization in std.web DSL rendering
 **Learning:** Generating deep HTML structures in `std.web` heavily penalized performance because `dsl_to_html` allocated and returned a new `String` for every child DSL node. This causes `O(N)` heap allocations and redundant copying in the render tree. By passing a mutable `&mut String` buffer recursively downwards, we avoid all intermediate string heap allocations and significantly improve serialization speed.
 **Action:** Always prefer using a recursive builder pattern passing a single mutable `&mut String` buffer to `write!` or `push_str` when rendering nested tree structures (like HTML, JSON, or ASTs) instead of returning newly allocated strings at each layer.
+## 2024-05-24 - Canvas Property Extraction Optimization
+**Learning:** Extracting properties from the `RuntimeValue` DSL property lists in `canvas.rs` was inefficient because the code called `.iter().find()` multiple times for each property in `logo`, `rings`, `emblem`, `letter`, `core`, and `circuits` definitions.
+**Action:** Replace multiple `.find()` calls with a single-pass `for p in &dsl.properties` loop and `match` on the property names, mutating local fallback variables.

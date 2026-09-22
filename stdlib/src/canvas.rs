@@ -21,27 +21,24 @@ fn render_dsl_to_svg(svg: &mut String, val: &RuntimeValue, is_dragon: bool) {
             if is_dragon {
                 match dsl.kind.as_str() {
                     "logo" => {
-                        let text = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "text")
-                            .and_then(|p| p.value.as_ref())
-                            .map(|v| v.to_string())
-                            .unwrap_or_else(|| "Logo".to_string());
-                        let color = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "color")
-                            .and_then(|p| p.value.as_ref())
-                            .map(|v| v.to_string())
-                            .unwrap_or_else(|| "#00d4ff".to_string());
-                        let size = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "size")
-                            .and_then(|p| p.value.as_ref())
-                            .and_then(|v| v.try_into_int().ok())
-                            .unwrap_or(48);
+                        let mut text_val = None;
+                        let mut color_val = None;
+                        let mut size_val = None;
+
+                        for p in &dsl.properties {
+                            match p.name.as_str() {
+                                "text" => text_val = p.value.as_ref().map(|v| v.to_string()),
+                                "color" => color_val = p.value.as_ref().map(|v| v.to_string()),
+                                "size" => {
+                                    size_val = p.value.as_ref().and_then(|v| v.try_into_int().ok())
+                                }
+                                _ => {}
+                            }
+                        }
+
+                        let text = text_val.unwrap_or_else(|| "Logo".to_string());
+                        let color = color_val.unwrap_or_else(|| "#00d4ff".to_string());
+                        let size = size_val.unwrap_or(48);
                         let _ = write!(
                             svg,
                             r#"<text x="250" y="440" text-anchor="middle" dominant-baseline="central" font-size="{}" font-weight="800" fill="{}" font-family="system-ui, -apple-system, sans-serif" letter-spacing="3">{}</text>"#,
@@ -82,27 +79,24 @@ fn render_dsl_to_svg(svg: &mut String, val: &RuntimeValue, is_dragon: bool) {
                 // RENDER OLD GEOMETRIC LOGO
                 match dsl.kind.as_str() {
                     "logo" => {
-                        let text = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "text")
-                            .and_then(|p| p.value.as_ref())
-                            .map(|v| v.to_string())
-                            .unwrap_or_else(|| "Logo".to_string());
-                        let color = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "color")
-                            .and_then(|p| p.value.as_ref())
-                            .map(|v| v.to_string())
-                            .unwrap_or_else(|| "#00d4ff".to_string());
-                        let size = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "size")
-                            .and_then(|p| p.value.as_ref())
-                            .and_then(|v| v.try_into_int().ok())
-                            .unwrap_or(48);
+                        let mut text_val = None;
+                        let mut color_val = None;
+                        let mut size_val = None;
+
+                        for p in &dsl.properties {
+                            match p.name.as_str() {
+                                "text" => text_val = p.value.as_ref().map(|v| v.to_string()),
+                                "color" => color_val = p.value.as_ref().map(|v| v.to_string()),
+                                "size" => {
+                                    size_val = p.value.as_ref().and_then(|v| v.try_into_int().ok())
+                                }
+                                _ => {}
+                            }
+                        }
+
+                        let text = text_val.unwrap_or_else(|| "Logo".to_string());
+                        let color = color_val.unwrap_or_else(|| "#00d4ff".to_string());
+                        let size = size_val.unwrap_or(48);
                         let _ = write!(
                             svg,
                             r#"<text x="250" y="380" text-anchor="middle" dominant-baseline="central" font-size="{}" font-weight="800" fill="{}" font-family="system-ui, -apple-system, sans-serif" letter-spacing="3">{}</text>"#,
@@ -110,34 +104,32 @@ fn render_dsl_to_svg(svg: &mut String, val: &RuntimeValue, is_dragon: bool) {
                         );
                     }
                     "rings" => {
-                        let count = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "count")
-                            .and_then(|p| p.value.as_ref())
-                            .and_then(|v| v.try_into_int().ok())
-                            .unwrap_or(3);
-                        let color = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "color")
-                            .and_then(|p| p.value.as_ref())
-                            .map(|v| v.to_string())
-                            .unwrap_or_else(|| "#00d4ff".to_string());
-                        let size = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "size")
-                            .and_then(|p| p.value.as_ref())
-                            .and_then(|v| v.try_into_int().ok())
-                            .unwrap_or(40);
-                        let thickness = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "thickness")
-                            .and_then(|p| p.value.as_ref())
-                            .and_then(|v| v.try_into_int().ok())
-                            .unwrap_or(3);
+                        let mut count_val = None;
+                        let mut color_val = None;
+                        let mut size_val = None;
+                        let mut thickness_val = None;
+
+                        for p in &dsl.properties {
+                            match p.name.as_str() {
+                                "count" => {
+                                    count_val = p.value.as_ref().and_then(|v| v.try_into_int().ok())
+                                }
+                                "color" => color_val = p.value.as_ref().map(|v| v.to_string()),
+                                "size" => {
+                                    size_val = p.value.as_ref().and_then(|v| v.try_into_int().ok())
+                                }
+                                "thickness" => {
+                                    thickness_val =
+                                        p.value.as_ref().and_then(|v| v.try_into_int().ok())
+                                }
+                                _ => {}
+                            }
+                        }
+
+                        let count = count_val.unwrap_or(3);
+                        let color = color_val.unwrap_or_else(|| "#00d4ff".to_string());
+                        let size = size_val.unwrap_or(40);
+                        let thickness = thickness_val.unwrap_or(3);
                         for i in 0..count {
                             let r = 80 + i as i64 * (size / 2);
                             let opacity = 0.4 - (i as f32 * 0.08);
@@ -149,20 +141,21 @@ fn render_dsl_to_svg(svg: &mut String, val: &RuntimeValue, is_dragon: bool) {
                         }
                     }
                     "emblem" => {
-                        let color = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "color")
-                            .and_then(|p| p.value.as_ref())
-                            .map(|v| v.to_string())
-                            .unwrap_or_else(|| "#0088cc".to_string());
-                        let size = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "size")
-                            .and_then(|p| p.value.as_ref())
-                            .and_then(|v| v.try_into_int().ok())
-                            .unwrap_or(120);
+                        let mut color_val = None;
+                        let mut size_val = None;
+
+                        for p in &dsl.properties {
+                            match p.name.as_str() {
+                                "color" => color_val = p.value.as_ref().map(|v| v.to_string()),
+                                "size" => {
+                                    size_val = p.value.as_ref().and_then(|v| v.try_into_int().ok())
+                                }
+                                _ => {}
+                            }
+                        }
+
+                        let color = color_val.unwrap_or_else(|| "#0088cc".to_string());
+                        let size = size_val.unwrap_or(120);
                         let x = 250 - size / 2;
                         let y = 180 - size / 2;
                         let _ = write!(
@@ -177,27 +170,24 @@ fn render_dsl_to_svg(svg: &mut String, val: &RuntimeValue, is_dragon: bool) {
                         );
                     }
                     "letter" => {
-                        let ch = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "char")
-                            .and_then(|p| p.value.as_ref())
-                            .map(|v| v.to_string())
-                            .unwrap_or_else(|| "T".to_string());
-                        let color = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "color")
-                            .and_then(|p| p.value.as_ref())
-                            .map(|v| v.to_string())
-                            .unwrap_or_else(|| "#0a0e27".to_string());
-                        let size = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "size")
-                            .and_then(|p| p.value.as_ref())
-                            .and_then(|v| v.try_into_int().ok())
-                            .unwrap_or(32);
+                        let mut ch_val = None;
+                        let mut color_val = None;
+                        let mut size_val = None;
+
+                        for p in &dsl.properties {
+                            match p.name.as_str() {
+                                "char" => ch_val = p.value.as_ref().map(|v| v.to_string()),
+                                "color" => color_val = p.value.as_ref().map(|v| v.to_string()),
+                                "size" => {
+                                    size_val = p.value.as_ref().and_then(|v| v.try_into_int().ok())
+                                }
+                                _ => {}
+                            }
+                        }
+
+                        let ch = ch_val.unwrap_or_else(|| "T".to_string());
+                        let color = color_val.unwrap_or_else(|| "#0a0e27".to_string());
+                        let size = size_val.unwrap_or(32);
                         let _ = write!(
                             svg,
                             r#"<text x="250" y="180" text-anchor="middle" dominant-baseline="central" font-size="{}" font-weight="900" fill="{}" font-family="system-ui, -apple-system, sans-serif">{}</text>"#,
@@ -205,20 +195,21 @@ fn render_dsl_to_svg(svg: &mut String, val: &RuntimeValue, is_dragon: bool) {
                         );
                     }
                     "core" => {
-                        let color = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "color")
-                            .and_then(|p| p.value.as_ref())
-                            .map(|v| v.to_string())
-                            .unwrap_or_else(|| "#66e0ff".to_string());
-                        let size = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "size")
-                            .and_then(|p| p.value.as_ref())
-                            .and_then(|v| v.try_into_int().ok())
-                            .unwrap_or(40);
+                        let mut color_val = None;
+                        let mut size_val = None;
+
+                        for p in &dsl.properties {
+                            match p.name.as_str() {
+                                "color" => color_val = p.value.as_ref().map(|v| v.to_string()),
+                                "size" => {
+                                    size_val = p.value.as_ref().and_then(|v| v.try_into_int().ok())
+                                }
+                                _ => {}
+                            }
+                        }
+
+                        let color = color_val.unwrap_or_else(|| "#66e0ff".to_string());
+                        let size = size_val.unwrap_or(40);
                         let _ = write!(
                             svg,
                             r#"<circle cx="250" cy="180" r="{}" fill="{}" opacity="0.8"/>"#,
@@ -227,13 +218,15 @@ fn render_dsl_to_svg(svg: &mut String, val: &RuntimeValue, is_dragon: bool) {
                         );
                     }
                     "circuits" => {
-                        let color = dsl
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "color")
-                            .and_then(|p| p.value.as_ref())
-                            .map(|v| v.to_string())
-                            .unwrap_or_else(|| "#00d4ff".to_string());
+                        let mut color_val = None;
+
+                        for p in &dsl.properties {
+                            if p.name == "color" {
+                                color_val = p.value.as_ref().map(|v| v.to_string());
+                            }
+                        }
+
+                        let color = color_val.unwrap_or_else(|| "#00d4ff".to_string());
                         let _ = write!(
                             svg,
                             r#"<line x1="50" y1="180" x2="450" y2="180" stroke="{}" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.6"/>

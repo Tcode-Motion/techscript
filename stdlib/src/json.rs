@@ -249,4 +249,88 @@ mod tests {
         let err = result.unwrap_err();
         assert!(err.to_string().contains("Cannot stringify type"));
     }
+
+    #[test]
+    fn test_stringify_escaping() {
+        let map_with_quotes = RuntimeValue::Map {
+            entries: Rc::new(RefCell::new({
+                let mut m = IndexMap::new();
+                m.insert(
+                    "key\"with\"quotes".to_string(),
+                    RuntimeValue::Str("value\"with\"quotes".to_string()),
+                );
+                m
+            })),
+            is_const: false,
+        };
+        assert_eq!(
+            stringify_value(&map_with_quotes).unwrap(),
+            "{\"key\\\"with\\\"quotes\":\"value\\\"with\\\"quotes\"}"
+        );
+    }
+
+    #[test]
+    fn test_stringify_empty_collections() {
+        let empty_list = RuntimeValue::List {
+            items: Rc::new(RefCell::new(Vec::new())),
+            is_const: false,
+        };
+        assert_eq!(stringify_value(&empty_list).unwrap(), "[]");
+
+        let empty_map = RuntimeValue::Map {
+            entries: Rc::new(RefCell::new(IndexMap::new())),
+            is_const: false,
+        };
+        assert_eq!(stringify_value(&empty_map).unwrap(), "{}");
+    }
+
+    #[test]
+    fn test_parse_json_value() {
+        assert_eq!(
+            parse_json_value(serde_json::Value::Null),
+            RuntimeValue::Null
+        );
+        assert_eq!(
+            parse_json_value(serde_json::Value::Bool(true)),
+            RuntimeValue::Bool(true)
+        );
+
+        // Using serde_json::Number constructor via from_f64/from_i64 is not straightforward,
+        // so we use serde_json::json! macro to generate Value objects easily.
+        assert_eq!(
+            parse_json_value(serde_json::json!(42)),
+            RuntimeValue::Int(42)
+        );
+        assert_eq!(
+            parse_json_value(serde_json::json!(3.14)),
+            RuntimeValue::Float(3.14)
+        );
+        assert_eq!(
+            parse_json_value(serde_json::json!("hello")),
+            RuntimeValue::Str("hello".to_string())
+        );
+
+        let parsed_list = parse_json_value(serde_json::json!([1, "two", false]));
+        if let RuntimeValue::List { items, .. } = parsed_list {
+            let items = items.borrow();
+            assert_eq!(items.len(), 3);
+            assert_eq!(items[0], RuntimeValue::Int(1));
+            assert_eq!(items[1], RuntimeValue::Str("two".to_string()));
+            assert_eq!(items[2], RuntimeValue::Bool(false));
+        } else {
+            panic!("Expected List");
+        }
+
+        let parsed_map = parse_json_value(serde_json::json!({"key": "value"}));
+        if let RuntimeValue::Map { entries, .. } = parsed_map {
+            let entries = entries.borrow();
+            assert_eq!(entries.len(), 1);
+            assert_eq!(
+                entries.get("key").unwrap(),
+                &RuntimeValue::Str("value".to_string())
+            );
+        } else {
+            panic!("Expected Map");
+        }
+    }
 }

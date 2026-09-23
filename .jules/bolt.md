@@ -35,3 +35,6 @@
 ## 2024-05-24 - Canvas Property Extraction Optimization
 **Learning:** Extracting properties from the `RuntimeValue` DSL property lists in `canvas.rs` was inefficient because the code called `.iter().find()` multiple times for each property in `logo`, `rings`, `emblem`, `letter`, `core`, and `circuits` definitions.
 **Action:** Replace multiple `.find()` calls with a single-pass `for p in &dsl.properties` loop and `match` on the property names, mutating local fallback variables.
+## 2024-11-20 - Avoid `format!` inside loops for hex string encoding
+**Learning:** Using `.iter().map(|b| format!("{:02x}", b)).collect::<String>()` to encode a byte array to a hex string incurs a heavy performance penalty because it allocates a new temporary `String` for every single byte processed before concatenating them. The `hex::encode()` function from the `hex` crate performs this conversion directly into a single pre-allocated `String` with zero intermediate allocations.
+**Action:** Always prefer `hex::encode(bytes)` over iterative `format!` mapping when performing hexadecimal encoding of byte arrays or slices to eliminate intermediate string allocations and significantly boost performance.

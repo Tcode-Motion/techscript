@@ -18,7 +18,8 @@ impl StdlibRegistry {
                     use rand::Rng;
                     let bytes: Vec<u8> =
                         rand::thread_rng().gen::<[u8; 32]>()[..len.min(32)].to_vec();
-                    let hex: String = bytes.iter().map(|b| format!("{:02x}", b)).collect();
+                    // ⚡ Bolt Performance Optimization: Replaced iterative format! with hex::encode for single-allocation hex string conversion.
+                    let hex = hex::encode(bytes);
                     Ok(RuntimeValue::Str(hex))
                 },
             }),
@@ -48,7 +49,8 @@ impl StdlibRegistry {
                     let input = args[0].to_string();
                     use sha2::Digest;
                     let digest = sha2::Sha256::digest(input.as_bytes());
-                    let hex: String = digest.iter().map(|b| format!("{:02x}", b)).collect();
+                    // ⚡ Bolt Performance Optimization: Replaced iterative format! with hex::encode for single-allocation hex string conversion.
+                    let hex = hex::encode(digest);
                     Ok(RuntimeValue::Str(hex))
                 },
             }),

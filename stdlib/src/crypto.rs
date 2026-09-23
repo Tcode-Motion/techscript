@@ -61,10 +61,8 @@ impl StdlibRegistry {
                     combined.extend_from_slice(&ciphertext);
 
                     // Hex encode ciphertext
-                    let hex_ciphertext = combined
-                        .iter()
-                        .map(|b| format!("{:02x}", b))
-                        .collect::<String>();
+                    // ⚡ Bolt Performance Optimization: Replaced iterative format! with hex::encode for single-allocation hex string conversion.
+                    let hex_ciphertext = hex::encode(combined);
                     Ok(RuntimeValue::Str(hex_ciphertext))
                 },
             }),

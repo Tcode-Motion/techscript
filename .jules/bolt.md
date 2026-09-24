@@ -38,3 +38,6 @@
 ## 2024-11-20 - Avoid `format!` inside loops for hex string encoding
 **Learning:** Using `.iter().map(|b| format!("{:02x}", b)).collect::<String>()` to encode a byte array to a hex string incurs a heavy performance penalty because it allocates a new temporary `String` for every single byte processed before concatenating them. The `hex::encode()` function from the `hex` crate performs this conversion directly into a single pre-allocated `String` with zero intermediate allocations.
 **Action:** Always prefer `hex::encode(bytes)` over iterative `format!` mapping when performing hexadecimal encoding of byte arrays or slices to eliminate intermediate string allocations and significantly boost performance.
+## 2026-09-24 - Zero-allocation hex decoding
+**Learning:** Using `hex::decode` from the `hex` crate provides a significant performance boost over manually iterating through strings and calling `u8::from_str_radix`, even though `hex::decode` allocates a new `Vec<u8>`. It avoids the heavy intermediate allocations and processing overhead of manual string slice iterations.
+**Action:** Always prefer `hex::decode` and `hex::encode` when working with hexadecimal encoding/decoding instead of manual iterative string parsing to significantly boost performance.

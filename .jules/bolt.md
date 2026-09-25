@@ -41,3 +41,6 @@
 ## 2026-09-24 - Zero-allocation hex decoding
 **Learning:** Using `hex::decode` from the `hex` crate provides a significant performance boost over manually iterating through strings and calling `u8::from_str_radix`, even though `hex::decode` allocates a new `Vec<u8>`. It avoids the heavy intermediate allocations and processing overhead of manual string slice iterations.
 **Action:** Always prefer `hex::decode` and `hex::encode` when working with hexadecimal encoding/decoding instead of manual iterative string parsing to significantly boost performance.
+## 2024-05-18 - Optimized CFG Successor Lookup
+**Learning:** During control flow graph validation in `compiler/optimizer/src/verifier.rs`, using `func.blocks.iter().find(|b| b.id == succ)` for every successor of every block created an O(V * E) time complexity bottleneck. By pre-computing a `HashMap` of `BlockId` to `&BasicBlock` in a single pass, the verification complexity was reduced to O(V + E).
+**Action:** When validating graph structures or resolving many cross-references within a known collection, construct a lookup map in advance instead of performing repeated O(N) linear scans.

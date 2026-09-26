@@ -1,9 +1,9 @@
 // runtime/native_runtime/src/lib.rs
 #![allow(clippy::not_unsafe_ptr_arg_deref, clippy::missing_safety_doc)]
 
-use std::fmt::Write as FmtWrite;
 use std::collections::HashMap;
 use std::ffi::{CStr, CString};
+use std::fmt::Write as FmtWrite;
 use std::io::{self, Write};
 use std::os::raw::{c_char, c_void};
 

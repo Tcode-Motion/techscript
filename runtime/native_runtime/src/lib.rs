@@ -1,6 +1,7 @@
 // runtime/native_runtime/src/lib.rs
 #![allow(clippy::not_unsafe_ptr_arg_deref, clippy::missing_safety_doc)]
 
+use std::fmt::Write as FmtWrite;
 use std::collections::HashMap;
 use std::ffi::{CStr, CString};
 use std::io::{self, Write};
@@ -233,83 +234,113 @@ pub unsafe extern "C" fn ts_free_value(val: *mut TsValue) {
 }
 
 // Convert TsValue to Rust String helper
-unsafe fn value_to_string(val: *mut TsValue) -> String {
+unsafe fn value_to_string_impl(val: *mut TsValue, buf: &mut String) {
     if val.is_null() {
-        return "null".to_string();
+        let _ = write!(buf, "null");
+        return;
     }
     let v = &*val;
     if v.tag == TsTag::Null as u32 {
-        "null".to_string()
+        let _ = write!(buf, "null");
     } else if v.tag == TsTag::Bool as u32 {
-        v.data.boolean.to_string()
+        let _ = write!(buf, "{}", v.data.boolean);
     } else if v.tag == TsTag::Int as u32 {
-        v.data.integer.to_string()
+        let _ = write!(buf, "{}", v.data.integer);
     } else if v.tag == TsTag::Float as u32 {
-        v.data.float.to_string()
+        let _ = write!(buf, "{}", v.data.float);
     } else if v.tag == TsTag::String as u32 {
         if v.data.pointer.is_null() {
-            "null".to_string()
+            let _ = write!(buf, "null");
         } else {
-            (*(v.data.pointer as *const String)).clone()
+            buf.push_str(&*(v.data.pointer as *const String));
         }
     } else if v.tag == TsTag::List as u32 {
         if v.data.pointer.is_null() {
-            "[]".to_string()
+            let _ = write!(buf, "[]");
         } else {
+            let _ = write!(buf, "[");
             let list = &*(v.data.pointer as *const Vec<*mut TsValue>);
-            let mut parts = Vec::new();
-            for &item in list {
-                parts.push(value_to_string(item));
+            for (i, &item) in list.iter().enumerate() {
+                if i > 0 {
+                    let _ = write!(buf, ", ");
+                }
+                value_to_string_impl(item, buf);
             }
-            format!("[{}]", parts.join(", "))
+            let _ = write!(buf, "]");
         }
     } else if v.tag == TsTag::Map as u32 {
         if v.data.pointer.is_null() {
-            "{}".to_string()
+            let _ = write!(buf, "{{}}");
         } else {
+            let _ = write!(buf, "{{");
             let map = &*(v.data.pointer as *const HashMap<String, *mut TsValue>);
-            let mut parts = Vec::new();
+            let mut first = true;
             for (k, &val) in map {
-                parts.push(format!("{}: {}", k, value_to_string(val)));
+                if !first {
+                    let _ = write!(buf, ", ");
+                }
+                first = false;
+                let _ = write!(buf, "{}: ", k);
+                value_to_string_impl(val, buf);
             }
-            format!("{{{}}}", parts.join(", "))
+            let _ = write!(buf, "}}");
         }
     } else if v.tag == TsTag::Struct as u32 {
         if v.data.pointer.is_null() {
-            "unknown struct".to_string()
+            let _ = write!(buf, "unknown struct");
         } else {
             let s = &*(v.data.pointer as *const TsStruct);
-            let mut parts = Vec::new();
+            let _ = write!(buf, "{} {{", s.name);
+            let mut first = true;
             for (k, &val) in &s.fields {
-                parts.push(format!("{}: {}", k, value_to_string(val)));
+                if !first {
+                    let _ = write!(buf, ", ");
+                }
+                first = false;
+                let _ = write!(buf, "{}: ", k);
+                value_to_string_impl(val, buf);
             }
-            format!("{} {{{}}}", s.name, parts.join(", "))
+            let _ = write!(buf, "}}");
         }
     } else if v.tag == TsTag::Model as u32 {
         if v.data.pointer.is_null() {
-            "unknown model".to_string()
+            let _ = write!(buf, "unknown model");
         } else {
             let m = &*(v.data.pointer as *const TsModel);
-            let mut parts = Vec::new();
+            let _ = write!(buf, "{} {{", m.name);
+            let mut first = true;
             for (k, &val) in &m.fields {
-                parts.push(format!("{}: {}", k, value_to_string(val)));
+                if !first {
+                    let _ = write!(buf, ", ");
+                }
+                first = false;
+                let _ = write!(buf, "{}: ", k);
+                value_to_string_impl(val, buf);
             }
-            format!("{} {{{}}}", m.name, parts.join(", "))
+            let _ = write!(buf, "}}");
         }
     } else if v.tag == TsTag::Enum as u32 {
         if v.data.pointer.is_null() {
-            "unknown enum".to_string()
+            let _ = write!(buf, "unknown enum");
         } else {
             let e = &*(v.data.pointer as *const TsEnum);
             if e.value.is_null() {
-                format!("{}.{}", e.name, e.variant)
+                let _ = write!(buf, "{}.{}", e.name, e.variant);
             } else {
-                format!("{}.{}({})", e.name, e.variant, value_to_string(e.value))
+                let _ = write!(buf, "{}.{}(", e.name, e.variant);
+                value_to_string_impl(e.value, buf);
+                let _ = write!(buf, ")");
             }
         }
     } else {
-        "unknown".to_string()
+        let _ = write!(buf, "unknown");
     }
+}
+
+unsafe fn value_to_string(val: *mut TsValue) -> String {
+    let mut s = String::new();
+    value_to_string_impl(val, &mut s);
+    s
 }
 
 // Built-in functions

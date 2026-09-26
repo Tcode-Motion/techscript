@@ -44,3 +44,9 @@
 ## 2024-05-18 - Optimized CFG Successor Lookup
 **Learning:** During control flow graph validation in `compiler/optimizer/src/verifier.rs`, using `func.blocks.iter().find(|b| b.id == succ)` for every successor of every block created an O(V * E) time complexity bottleneck. By pre-computing a `HashMap` of `BlockId` to `&BasicBlock` in a single pass, the verification complexity was reduced to O(V + E).
 **Action:** When validating graph structures or resolving many cross-references within a known collection, construct a lookup map in advance instead of performing repeated O(N) linear scans.
+## 2026-09-26 - Native Runtime Stringification Optimization
+**Learning:** In the native runtime C FFI, generating strings for nested  structures heavily penalized performance by using `format!` and `Vec::join`, creating `O(N)` intermediate heap allocations.
+**Action:** Use a recursive builder pattern by passing a mutable `&mut String` buffer downward and utilizing `std::fmt::Write` to directly push onto the buffer without intermediate allocations.
+## 2026-09-26 - Native Runtime Stringification Optimization
+**Learning:** In the native runtime C FFI, generating strings for nested TsValue structures heavily penalized performance by using format! and Vec::join, creating O(N) intermediate heap allocations.
+**Action:** Use a recursive builder pattern by passing a mutable &mut String buffer downward and utilizing std::fmt::Write to directly push onto the buffer without intermediate allocations.

@@ -50,3 +50,6 @@
 ## 2026-09-26 - Native Runtime Stringification Optimization
 **Learning:** In the native runtime C FFI, generating strings for nested TsValue structures heavily penalized performance by using format! and Vec::join, creating O(N) intermediate heap allocations.
 **Action:** Use a recursive builder pattern by passing a mutable &mut String buffer downward and utilizing std::fmt::Write to directly push onto the buffer without intermediate allocations.
+## 2024-05-24 - CI formatting issue
+**Learning:** cargo fmt needs to run locally before commits to avoid CI formatting errors.
+**Action:** Always include a cargo fmt --all step in execution plans before submitting.

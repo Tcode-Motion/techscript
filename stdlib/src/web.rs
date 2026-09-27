@@ -263,30 +263,39 @@ fn dsl_to_html_inner(val: &RuntimeValue, html: &mut String) {
                 render_card(html, dsl);
             }
             "button" => {
-                let label = dsl
-                    .properties
-                    .iter()
-                    .find(|p| p.name == "label")
-                    .and_then(|p| p.value.as_ref())
-                    .map(|v| v.to_string())
-                    .unwrap_or_else(|| "Button".to_string());
+                let mut label_val = None;
+                for p in &dsl.properties {
+                    if p.name == "label" {
+                        label_val = p.value.as_ref().map(|v| v.to_string());
+                        break;
+                    }
+                }
+                let label = label_val.unwrap_or_else(|| "Button".to_string());
                 let _ = write!(html, "<button>{}</button>", label);
             }
             "link" => {
-                let label = dsl
-                    .properties
-                    .iter()
-                    .find(|p| p.name == "label")
-                    .and_then(|p| p.value.as_ref())
-                    .map(|v| v.to_string())
-                    .unwrap_or_else(|| "Link".to_string());
-                let url = dsl
-                    .properties
-                    .iter()
-                    .find(|p| p.name == "url")
-                    .and_then(|p| p.value.as_ref())
-                    .map(|v| v.to_string());
-                if let Some(u) = url {
+                let mut label_val = None;
+                let mut url_val = None;
+                for p in &dsl.properties {
+                    match p.name.as_str() {
+                        "label" => {
+                            if label_val.is_none() {
+                                label_val = p.value.as_ref().map(|v| v.to_string());
+                            }
+                        }
+                        "url" => {
+                            if url_val.is_none() {
+                                url_val = p.value.as_ref().map(|v| v.to_string());
+                            }
+                        }
+                        _ => {}
+                    }
+                    if label_val.is_some() && url_val.is_some() {
+                        break;
+                    }
+                }
+                let label = label_val.unwrap_or_else(|| "Link".to_string());
+                if let Some(u) = url_val {
                     let _ = write!(html, "<a href=\"{}\">{}</a>", u, label);
                 } else {
                     let _ = write!(html, "<a href=\"#\">{}</a>", label);
@@ -322,13 +331,14 @@ fn dsl_to_html_inner(val: &RuntimeValue, html: &mut String) {
                 html.push_str("</footer>");
             }
             "input" => {
-                let placeholder = dsl
-                    .properties
-                    .iter()
-                    .find(|p| p.name == "placeholder")
-                    .and_then(|p| p.value.as_ref())
-                    .map(|v| v.to_string());
-                if let Some(p) = placeholder {
+                let mut placeholder_val = None;
+                for p in &dsl.properties {
+                    if p.name == "placeholder" {
+                        placeholder_val = p.value.as_ref().map(|v| v.to_string());
+                        break;
+                    }
+                }
+                if let Some(p) = placeholder_val {
                     let _ = write!(html, "<input placeholder=\"{}\">", p);
                 } else {
                     html.push_str("<input>");
@@ -350,13 +360,14 @@ fn dsl_to_html_inner(val: &RuntimeValue, html: &mut String) {
                 html.push_str("</aside>");
             }
             "start" => {
-                let label = dsl
-                    .properties
-                    .iter()
-                    .find(|p| p.name == "label")
-                    .and_then(|p| p.value.as_ref())
-                    .map(|v| v.to_string())
-                    .unwrap_or_else(|| "Get Started".to_string());
+                let mut label_val = None;
+                for p in &dsl.properties {
+                    if p.name == "label" {
+                        label_val = p.value.as_ref().map(|v| v.to_string());
+                        break;
+                    }
+                }
+                let label = label_val.unwrap_or_else(|| "Get Started".to_string());
                 let _ = write!(html, "<a class=\"start-button\" href=\"#\">{}</a>", label);
             }
             _ => {

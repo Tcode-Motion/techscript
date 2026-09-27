@@ -53,3 +53,6 @@
 ## 2024-05-24 - CI formatting issue
 **Learning:** cargo fmt needs to run locally before commits to avoid CI formatting errors.
 **Action:** Always include a cargo fmt --all step in execution plans before submitting.
+## 2024-05-24 - Canvas Property Extraction Optimization
+**Learning:** Extracting properties from the `RuntimeValue` DSL property lists in `canvas.rs` was inefficient because the code called `.iter().find()` multiple times for each property. In `stdlib/src/web.rs`, a similar pattern was found where `.iter().find()` was called multiple times on `dsl.properties` for elements like "button", "link", "input", and "start".
+**Action:** Replace multiple `.find()` calls with a single-pass `for p in &dsl.properties` loop and `match` or `if` statements on the property names, mutating local fallback variables. This reduces time complexity from O(N^2) to O(N) per block.

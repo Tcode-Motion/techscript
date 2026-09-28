@@ -208,8 +208,8 @@ impl StdlibRegistry {
 pub fn zip_dir(src_dir: &str, dst_file: &str) -> std::io::Result<()> {
     let file = File::create(dst_file)?;
     let mut zip = zip::ZipWriter::new(file);
-    let options =
-        zip::write::FileOptions::default().compression_method(zip::CompressionMethod::Deflated);
+    let options = zip::write::SimpleFileOptions::default()
+        .compression_method(zip::CompressionMethod::Deflated);
 
     let walkdir = std::fs::read_dir(src_dir)?;
     for entry in walkdir {

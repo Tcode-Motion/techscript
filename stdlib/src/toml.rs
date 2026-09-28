@@ -80,7 +80,11 @@ pub fn parse_toml_value(v: toml::Value) -> RuntimeValue {
             }
         }
         toml::Value::Table(tab) => {
-            let mut entries = IndexMap::new();
+            // ⚡ Bolt Performance Optimization:
+            // Pre-allocating the IndexMap capacity matching the TOML table length
+            // avoids intermediate allocations and re-hashing during insertion,
+            // resulting in faster map creation, especially for larger tables.
+            let mut entries = IndexMap::with_capacity(tab.len());
             for (k, v) in tab {
                 entries.insert(k, parse_toml_value(v));
             }

@@ -90,13 +90,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download techscript distributions
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: techscript-dist
           path: dist/
 
       - name: Download techscript-lang distributions
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: techscript-lang-dist
           path: dist/

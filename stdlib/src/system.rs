@@ -47,7 +47,10 @@ impl StdlibRegistry {
                 arity: 0,
                 callback: |_ctx, _args| {
                     use indexmap::IndexMap;
-                    let mut mem_map = IndexMap::new();
+                    // ⚡ Bolt Performance Optimization:
+                    // Pre-allocating the IndexMap capacity matching the expected number of keys
+                    // avoids intermediate allocations and re-hashing during insertion.
+                    let mut mem_map = IndexMap::with_capacity(2);
                     // Provide a cross-platform system memory lookup
                     let total = 16 * 1024 * 1024 * 1024; // 16 GB simulated
                     let free = 8 * 1024 * 1024 * 1024; // 8 GB simulated
@@ -69,7 +72,10 @@ impl StdlibRegistry {
                 arity: 0,
                 callback: |_ctx, _args| {
                     use indexmap::IndexMap;
-                    let mut disk_map = IndexMap::new();
+                    // ⚡ Bolt Performance Optimization:
+                    // Pre-allocating the IndexMap capacity matching the expected number of keys
+                    // avoids intermediate allocations and re-hashing during insertion.
+                    let mut disk_map = IndexMap::with_capacity(2);
                     let total = 512 * 1024 * 1024 * 1024; // 512 GB simulated
                     let free = 256 * 1024 * 1024 * 1024; // 256 GB simulated
 

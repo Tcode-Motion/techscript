@@ -17,7 +17,10 @@ impl StdlibRegistry {
                 arity: 1,
                 callback: |_ctx, args| {
                     let url = args[0].try_into_string()?;
-                    let mut map = IndexMap::new();
+                    // ⚡ Bolt Performance Optimization:
+                    // Pre-allocating the IndexMap capacity matching the expected number of keys
+                    // avoids intermediate allocations and re-hashing during insertion.
+                    let mut map = IndexMap::with_capacity(9);
                     map.insert(
                         "protocol".to_string(),
                         RuntimeValue::Str("http".to_string()),

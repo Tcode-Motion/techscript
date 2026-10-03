@@ -53,7 +53,10 @@ impl StdlibRegistry {
                         )
                     })?;
 
-                    let mut res_map = IndexMap::new();
+                    // ⚡ Bolt Performance Optimization:
+                    // Pre-allocating the IndexMap capacity matching the expected number of keys
+                    // avoids intermediate allocations and re-hashing during insertion.
+                    let mut res_map = IndexMap::with_capacity(2);
                     res_map.insert("status".to_string(), RuntimeValue::Int(status as i64));
                     res_map.insert("body".to_string(), RuntimeValue::Str(body));
                     Ok(RuntimeValue::Map {
@@ -104,7 +107,10 @@ impl StdlibRegistry {
                         )
                     })?;
 
-                    let mut res_map = IndexMap::new();
+                    // ⚡ Bolt Performance Optimization:
+                    // Pre-allocating the IndexMap capacity matching the expected number of keys
+                    // avoids intermediate allocations and re-hashing during insertion.
+                    let mut res_map = IndexMap::with_capacity(2);
                     res_map.insert("status".to_string(), RuntimeValue::Int(status as i64));
                     res_map.insert("body".to_string(), RuntimeValue::Str(res_body));
                     Ok(RuntimeValue::Map {

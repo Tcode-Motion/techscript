@@ -114,3 +114,15 @@ impl StdlibRegistry {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_script_mutex_new() {
+        let mutex = ScriptMutex::new();
+        let guard = mutex.locked.lock().unwrap();
+        assert_eq!(*guard, false);
+    }
+}

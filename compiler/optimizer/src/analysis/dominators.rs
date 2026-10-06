@@ -41,12 +41,19 @@ impl DominatorAnalysis {
                     continue;
                 }
 
-                let mut new_dom = all_blocks.clone();
+                let mut new_dom: Option<HashSet<BlockId>> = None;
                 for &pred in &block.predecessors {
                     if let Some(pred_doms) = dominators.get(&pred) {
-                        new_dom = new_dom.intersection(pred_doms).cloned().collect();
+                        if let Some(mut current_dom) = new_dom.take() {
+                            current_dom.retain(|x| pred_doms.contains(x));
+                            new_dom = Some(current_dom);
+                        } else {
+                            new_dom = Some(pred_doms.clone());
+                        }
                     }
                 }
+
+                let mut new_dom = new_dom.unwrap_or_else(|| all_blocks.clone());
                 new_dom.insert(block.id);
 
                 if let Some(old_doms) = dominators.get_mut(&block.id) {

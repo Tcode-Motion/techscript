@@ -564,6 +564,20 @@ fn test_system_diagnostics_and_process_execution() {
         panic!("disk did not return a Map");
     }
 
+    // 1.5 Verify command injection protection
+    let run = process.exports.get("run").unwrap();
+    let res = run.call(
+        &mut ctx,
+        vec![
+            RuntimeValue::Str("echo; ls".to_string()),
+            RuntimeValue::List {
+                items: std::rc::Rc::new(std::cell::RefCell::new(vec![])),
+                is_const: false,
+            },
+        ],
+    );
+    assert!(res.is_err());
+
     // 2. Process run under granted Capability::Process
     let run = process.exports.get("run").unwrap();
     let cmd = if cfg!(windows) { "cmd" } else { "echo" };

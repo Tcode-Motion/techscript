@@ -32,10 +32,11 @@ impl StdlibRegistry {
                         ));
                     }
                     let cmd = args[0].try_into_string()?;
-                    if cmd.contains("..") || cmd.contains('\0') {
+                    let forbidden_chars = ['&', '|', ';', '$', '>', '<', '`', '!', '\n', '\r', ' ', '\t'];
+                    if cmd.contains("..") || cmd.contains('\0') || cmd.contains(|c| forbidden_chars.contains(&c)) {
                         return Err(RuntimeError::new(
                             RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Path traversal or null bytes in command are denied".to_string(),
+                                "Security policy violation: Path traversal, null bytes, or shell metacharacters in command are denied".to_string(),
                             ),
                             None,
                             None,
@@ -124,10 +125,11 @@ impl StdlibRegistry {
                         }
                     };
 
-                    if cmd.contains("..") || cmd.contains('\0') {
+                    let forbidden_chars = ['&', '|', ';', '$', '>', '<', '`', '!', '\n', '\r', ' ', '\t'];
+                    if cmd.contains("..") || cmd.contains('\0') || cmd.contains(|c| forbidden_chars.contains(&c)) {
                         return Err(RuntimeError::new(
                             RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Path traversal or null bytes in command are denied".to_string(),
+                                "Security policy violation: Path traversal, null bytes, or shell metacharacters in command are denied".to_string(),
                             ),
                             None,
                             None,

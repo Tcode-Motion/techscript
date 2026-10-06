@@ -10,7 +10,7 @@ techscript_runtime = { path = "../runtime/runtime" }
 serde_json = { workspace = true }
 serde = { workspace = true }
 indexmap = { version = "2", features = ["serde"] }
-ureq = { version = "3.4", features = ["json"] }
+ureq = { version = "2.9", features = ["json"] }
 toml = { workspace = true }
 rusqlite = { version = "0.40", features = ["bundled"] }
 md5 = "0.8"
@@ -24,7 +24,7 @@ flate2 = "1.0"
 crc = "3.0"
 image = "0.25"
 tiny_http = "0.12"
-rand = "0.10"
+rand = "0.8"
 zip = "8.6"
 shlex = "2.0"
 url = "2.5"

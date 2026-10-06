@@ -10,6 +10,129 @@ use std::collections::HashMap;
 use std::rc::Rc;
 use techscript_runtime::{error::RuntimeError, error::RuntimeErrorKind, value::RuntimeValue};
 
+fn helper_aes_encrypt(args: &[RuntimeValue]) -> Result<RuntimeValue, RuntimeError> {
+    let key_str = args[0].try_into_string()?;
+    let text = args[1].try_into_string()?;
+
+    // Derive a 32-byte key from key_str using Sha256
+    let mut hasher = sha2::Sha256::new();
+    hasher.update(key_str.as_bytes());
+    let hashed_key = hasher.finalize();
+
+    let cipher = Aes256Gcm::new_from_slice(&hashed_key).map_err(|e| {
+        RuntimeError::new(
+            RuntimeErrorKind::InvalidOperation(format!("AES key init error: {}", e)),
+            None,
+            None,
+        )
+    })?;
+
+    // Generate a random 12-byte nonce for secure encryption
+    let mut nonce_bytes = [0u8; 12];
+    rand::thread_rng().fill(&mut nonce_bytes);
+    let nonce = Nonce::from_slice(&nonce_bytes);
+
+    let ciphertext = cipher.encrypt(nonce, text.as_bytes()).map_err(|e| {
+        RuntimeError::new(
+            RuntimeErrorKind::InvalidOperation(format!("AES encryption error: {}", e)),
+            None,
+            None,
+        )
+    })?;
+
+    // Prepend nonce to ciphertext
+    let mut combined = nonce_bytes.to_vec();
+    combined.extend_from_slice(&ciphertext);
+
+    // Hex encode ciphertext
+    // ⚡ Bolt Performance Optimization: Replaced iterative format! with hex::encode for single-allocation hex string conversion.
+    let hex_ciphertext = hex::encode(combined);
+    Ok(RuntimeValue::Str(hex_ciphertext))
+}
+
+fn helper_aes_decrypt(args: &[RuntimeValue]) -> Result<RuntimeValue, RuntimeError> {
+    let key_str = args[0].try_into_string()?;
+    let hex_ciphertext = args[1].try_into_string()?;
+
+    // Decode hex string
+    // ⚡ Bolt Performance Optimization: Replaced manual hex decoding with hex::decode for zero-allocation decoding.
+    let ciphertext = hex::decode(&hex_ciphertext).map_err(|_| {
+        RuntimeError::new(
+            RuntimeErrorKind::InvalidOperation("Invalid hex ciphertext".to_string()),
+            None,
+            None,
+        )
+    })?;
+
+    let mut hasher = sha2::Sha256::new();
+    hasher.update(key_str.as_bytes());
+    let hashed_key = hasher.finalize();
+
+    let cipher = Aes256Gcm::new_from_slice(&hashed_key).map_err(|e| {
+        RuntimeError::new(
+            RuntimeErrorKind::InvalidOperation(format!("AES key init error: {}", e)),
+            None,
+            None,
+        )
+    })?;
+
+    if ciphertext.len() < 12 {
+        return Err(RuntimeError::new(
+            RuntimeErrorKind::InvalidOperation("Ciphertext too short (missing nonce)".to_string()),
+            None,
+            None,
+        ));
+    }
+
+    let nonce_bytes = &ciphertext[0..12];
+    let actual_ciphertext = &ciphertext[12..];
+    let nonce = Nonce::from_slice(nonce_bytes);
+
+    let plaintext_bytes = cipher.decrypt(nonce, actual_ciphertext).map_err(|e| {
+        RuntimeError::new(
+            RuntimeErrorKind::InvalidOperation(format!("AES decryption error: {}", e)),
+            None,
+            None,
+        )
+    })?;
+
+    let plaintext = String::from_utf8(plaintext_bytes).map_err(|e| {
+        RuntimeError::new(
+            RuntimeErrorKind::InvalidOperation(format!("Invalid UTF-8 in plaintext: {}", e)),
+            None,
+            None,
+        )
+    })?;
+
+    Ok(RuntimeValue::Str(plaintext))
+}
+
+fn helper_bcrypt_hash(args: &[RuntimeValue]) -> Result<RuntimeValue, RuntimeError> {
+    let password = args[0].try_into_string()?;
+    let cost = args[1].try_into_int()? as u32;
+    let hashed = bcrypt::hash(&password, cost).map_err(|e| {
+        RuntimeError::new(
+            RuntimeErrorKind::InvalidOperation(format!("Bcrypt hash error: {}", e)),
+            None,
+            None,
+        )
+    })?;
+    Ok(RuntimeValue::Str(hashed))
+}
+
+fn helper_bcrypt_verify(args: &[RuntimeValue]) -> Result<RuntimeValue, RuntimeError> {
+    let password = args[0].try_into_string()?;
+    let hash = args[1].try_into_string()?;
+    let matches = bcrypt::verify(&password, &hash).map_err(|e| {
+        RuntimeError::new(
+            RuntimeErrorKind::InvalidOperation(format!("Bcrypt verify error: {}", e)),
+            None,
+            None,
+        )
+    })?;
+    Ok(RuntimeValue::Bool(matches))
+}
+
 impl StdlibRegistry {
     pub fn register_crypto(&mut self) {
         let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
@@ -20,51 +143,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "aes_encrypt".to_string(),
                 arity: 2,
-                callback: |_ctx, args| {
-                    let key_str = args[0].try_into_string()?;
-                    let text = args[1].try_into_string()?;
-
-                    // Derive a 32-byte key from key_str using Sha256
-                    let mut hasher = sha2::Sha256::new();
-                    hasher.update(key_str.as_bytes());
-                    let hashed_key = hasher.finalize();
-
-                    let cipher = Aes256Gcm::new_from_slice(&hashed_key).map_err(|e| {
-                        RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!(
-                                "AES key init error: {}",
-                                e
-                            )),
-                            None,
-                            None,
-                        )
-                    })?;
-
-                    // Generate a random 12-byte nonce for secure encryption
-                    let mut nonce_bytes = [0u8; 12];
-                    rand::thread_rng().fill(&mut nonce_bytes);
-                    let nonce = Nonce::from_slice(&nonce_bytes);
-
-                    let ciphertext = cipher.encrypt(nonce, text.as_bytes()).map_err(|e| {
-                        RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!(
-                                "AES encryption error: {}",
-                                e
-                            )),
-                            None,
-                            None,
-                        )
-                    })?;
-
-                    // Prepend nonce to ciphertext
-                    let mut combined = nonce_bytes.to_vec();
-                    combined.extend_from_slice(&ciphertext);
-
-                    // Hex encode ciphertext
-                    // ⚡ Bolt Performance Optimization: Replaced iterative format! with hex::encode for single-allocation hex string conversion.
-                    let hex_ciphertext = hex::encode(combined);
-                    Ok(RuntimeValue::Str(hex_ciphertext))
-                },
+                callback: |_ctx, args| helper_aes_encrypt(args),
             }),
         );
 
@@ -73,76 +152,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "aes_decrypt".to_string(),
                 arity: 2,
-                callback: |_ctx, args| {
-                    let key_str = args[0].try_into_string()?;
-                    let hex_ciphertext = args[1].try_into_string()?;
-
-                    // Decode hex string
-                    // ⚡ Bolt Performance Optimization: Replaced manual hex decoding with hex::decode for zero-allocation decoding.
-                    let ciphertext = hex::decode(&hex_ciphertext).map_err(|_| {
-                        RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(
-                                "Invalid hex ciphertext".to_string(),
-                            ),
-                            None,
-                            None,
-                        )
-                    })?;
-
-                    let mut hasher = sha2::Sha256::new();
-                    hasher.update(key_str.as_bytes());
-                    let hashed_key = hasher.finalize();
-
-                    let cipher = Aes256Gcm::new_from_slice(&hashed_key).map_err(|e| {
-                        RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!(
-                                "AES key init error: {}",
-                                e
-                            )),
-                            None,
-                            None,
-                        )
-                    })?;
-
-                    if ciphertext.len() < 12 {
-                        return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(
-                                "Ciphertext too short (missing nonce)".to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
-
-                    let nonce_bytes = &ciphertext[0..12];
-                    let actual_ciphertext = &ciphertext[12..];
-                    let nonce = Nonce::from_slice(nonce_bytes);
-
-                    let plaintext_bytes =
-                        cipher.decrypt(nonce, actual_ciphertext).map_err(|e| {
-                            RuntimeError::new(
-                                RuntimeErrorKind::InvalidOperation(format!(
-                                    "AES decryption error: {}",
-                                    e
-                                )),
-                                None,
-                                None,
-                            )
-                        })?;
-
-                    let plaintext = String::from_utf8(plaintext_bytes).map_err(|e| {
-                        RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!(
-                                "Invalid UTF-8 in plaintext: {}",
-                                e
-                            )),
-                            None,
-                            None,
-                        )
-                    })?;
-
-                    Ok(RuntimeValue::Str(plaintext))
-                },
+                callback: |_ctx, args| helper_aes_decrypt(args),
             }),
         );
 
@@ -151,18 +161,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "bcrypt_hash".to_string(),
                 arity: 2,
-                callback: |_ctx, args| {
-                    let password = args[0].try_into_string()?;
-                    let cost = args[1].try_into_int()? as u32;
-                    let hashed = bcrypt::hash(&password, cost).map_err(|e| {
-                        RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("Bcrypt hash error: {}", e)),
-                            None,
-                            None,
-                        )
-                    })?;
-                    Ok(RuntimeValue::Str(hashed))
-                },
+                callback: |_ctx, args| helper_bcrypt_hash(args),
             }),
         );
 
@@ -171,21 +170,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "bcrypt_verify".to_string(),
                 arity: 2,
-                callback: |_ctx, args| {
-                    let password = args[0].try_into_string()?;
-                    let hash = args[1].try_into_string()?;
-                    let matches = bcrypt::verify(&password, &hash).map_err(|e| {
-                        RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!(
-                                "Bcrypt verify error: {}",
-                                e
-                            )),
-                            None,
-                            None,
-                        )
-                    })?;
-                    Ok(RuntimeValue::Bool(matches))
-                },
+                callback: |_ctx, args| helper_bcrypt_verify(args),
             }),
         );
 

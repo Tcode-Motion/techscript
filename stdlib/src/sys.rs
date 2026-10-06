@@ -4,10 +4,96 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 use techscript_runtime::{
-    context::Capability,
+    context::{Capability, RuntimeContext},
     error::{RuntimeError, RuntimeErrorKind},
     value::RuntimeValue,
 };
+
+fn sys_read_file(
+    ctx: &mut RuntimeContext,
+    args: Vec<RuntimeValue>,
+) -> Result<RuntimeValue, RuntimeError> {
+    if !ctx.config.capabilities.contains(&Capability::FileSystem) {
+        return Err(RuntimeError::new(
+            RuntimeErrorKind::InvalidOperation(
+                "Security policy violation: FileSystem capability is denied".to_string(),
+            ),
+            None,
+            None,
+        ));
+    }
+    let path = args[0].try_into_string()?;
+    let content = std::fs::read_to_string(path).map_err(|e| {
+        RuntimeError::new(
+            RuntimeErrorKind::InvalidOperation(format!("IO error: {}", e)),
+            None,
+            None,
+        )
+    })?;
+    Ok(RuntimeValue::Str(content))
+}
+
+fn sys_write_file(
+    ctx: &mut RuntimeContext,
+    args: Vec<RuntimeValue>,
+) -> Result<RuntimeValue, RuntimeError> {
+    if !ctx.config.capabilities.contains(&Capability::FileSystem) {
+        return Err(RuntimeError::new(
+            RuntimeErrorKind::InvalidOperation(
+                "Security policy violation: FileSystem capability is denied".to_string(),
+            ),
+            None,
+            None,
+        ));
+    }
+    let path = args[0].try_into_string()?;
+    let content = args[1].try_into_string()?;
+    std::fs::write(path, content).map_err(|e| {
+        RuntimeError::new(
+            RuntimeErrorKind::InvalidOperation(format!("IO error: {}", e)),
+            None,
+            None,
+        )
+    })?;
+    Ok(RuntimeValue::Null)
+}
+
+fn sys_exists(
+    ctx: &mut RuntimeContext,
+    args: Vec<RuntimeValue>,
+) -> Result<RuntimeValue, RuntimeError> {
+    if !ctx.config.capabilities.contains(&Capability::FileSystem) {
+        return Err(RuntimeError::new(
+            RuntimeErrorKind::InvalidOperation(
+                "Security policy violation: FileSystem capability is denied".to_string(),
+            ),
+            None,
+            None,
+        ));
+    }
+    let path = args[0].try_into_string()?;
+    Ok(RuntimeValue::Bool(std::path::Path::new(&path).exists()))
+}
+
+fn sys_now(
+    _ctx: &mut RuntimeContext,
+    _args: Vec<RuntimeValue>,
+) -> Result<RuntimeValue, RuntimeError> {
+    let start = std::time::SystemTime::now();
+    let since_the_epoch = start
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default();
+    Ok(RuntimeValue::Float(since_the_epoch.as_secs_f64()))
+}
+
+fn sys_sleep(
+    _ctx: &mut RuntimeContext,
+    args: Vec<RuntimeValue>,
+) -> Result<RuntimeValue, RuntimeError> {
+    let ms = args[0].try_into_int()?;
+    std::thread::sleep(std::time::Duration::from_millis(ms as u64));
+    Ok(RuntimeValue::Null)
+}
 
 impl StdlibRegistry {
     pub fn register_sys(&mut self) {
@@ -19,27 +105,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "read_file".to_string(),
                 arity: 1,
-                callback: |ctx, args| {
-                    if !ctx.config.capabilities.contains(&Capability::FileSystem) {
-                        return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: FileSystem capability is denied"
-                                    .to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
-                    let path = args[0].try_into_string()?;
-                    let content = std::fs::read_to_string(path).map_err(|e| {
-                        RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("IO error: {}", e)),
-                            None,
-                            None,
-                        )
-                    })?;
-                    Ok(RuntimeValue::Str(content))
-                },
+                callback: sys_read_file,
             }),
         );
 
@@ -48,28 +114,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "write_file".to_string(),
                 arity: 2,
-                callback: |ctx, args| {
-                    if !ctx.config.capabilities.contains(&Capability::FileSystem) {
-                        return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: FileSystem capability is denied"
-                                    .to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
-                    let path = args[0].try_into_string()?;
-                    let content = args[1].try_into_string()?;
-                    std::fs::write(path, content).map_err(|e| {
-                        RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("IO error: {}", e)),
-                            None,
-                            None,
-                        )
-                    })?;
-                    Ok(RuntimeValue::Null)
-                },
+                callback: sys_write_file,
             }),
         );
 
@@ -78,20 +123,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "exists".to_string(),
                 arity: 1,
-                callback: |ctx, args| {
-                    if !ctx.config.capabilities.contains(&Capability::FileSystem) {
-                        return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: FileSystem capability is denied"
-                                    .to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
-                    let path = args[0].try_into_string()?;
-                    Ok(RuntimeValue::Bool(std::path::Path::new(&path).exists()))
-                },
+                callback: sys_exists,
             }),
         );
 
@@ -112,13 +144,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "now".to_string(),
                 arity: 0,
-                callback: |_ctx, _args| {
-                    let start = std::time::SystemTime::now();
-                    let since_the_epoch = start
-                        .duration_since(std::time::UNIX_EPOCH)
-                        .unwrap_or_default();
-                    Ok(RuntimeValue::Float(since_the_epoch.as_secs_f64()))
-                },
+                callback: sys_now,
             }),
         );
 
@@ -127,11 +153,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "sleep".to_string(),
                 arity: 1,
-                callback: |_ctx, args| {
-                    let ms = args[0].try_into_int()?;
-                    std::thread::sleep(std::time::Duration::from_millis(ms as u64));
-                    Ok(RuntimeValue::Null)
-                },
+                callback: sys_sleep,
             }),
         );
 

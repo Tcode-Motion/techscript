@@ -1,7 +1,10 @@
 use std::cell::RefCell;
 use std::collections::HashSet;
 use std::rc::Rc;
-use techscript_runtime::{context::Capability, value::RuntimeValue, RuntimeConfig, RuntimeContext};
+use techscript_runtime::{
+    context::Capability, error::RuntimeErrorKind, value::RuntimeValue, RuntimeConfig,
+    RuntimeContext,
+};
 use techscript_stdlib::StdlibRegistry;
 
 #[test]
@@ -470,6 +473,33 @@ fn test_web_module() {
 
     // Reset `SERVER_RUNNING` so other tests aren't affected
     let _ = stop.call(&mut ctx, vec![]).unwrap();
+}
+
+#[test]
+fn test_http_module_capability_denied() {
+    let registry = StdlibRegistry::new();
+    let http = registry.get_module("std.http").unwrap();
+
+    let mut config_unprivileged = RuntimeConfig::default();
+    config_unprivileged
+        .capabilities
+        .remove(&Capability::Network);
+    let mut ctx_unprivileged = RuntimeContext::new(config_unprivileged);
+
+    let get = http.exports.get("get").unwrap();
+    let res = get.call(
+        &mut ctx_unprivileged,
+        vec![RuntimeValue::Str("http://example.com".to_string())],
+    );
+
+    assert!(res.is_err());
+    let err = res.unwrap_err();
+    match err.kind {
+        RuntimeErrorKind::InvalidOperation(msg) => {
+            assert!(msg.contains("Security policy violation: Network capability is denied"));
+        }
+        _ => panic!("Expected InvalidOperation error"),
+    }
 }
 
 #[test]

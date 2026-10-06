@@ -569,9 +569,12 @@ fn test_system_diagnostics_and_process_execution() {
     let res = run.call(
         &mut ctx,
         vec![
-            RuntimeValue::Str("echo; ls".to_string()),
+            RuntimeValue::Str("sh".to_string()),
             RuntimeValue::List {
-                items: std::rc::Rc::new(std::cell::RefCell::new(vec![])),
+                items: std::rc::Rc::new(std::cell::RefCell::new(vec![
+                    RuntimeValue::Str("-c".to_string()),
+                    RuntimeValue::Str("echo hacked".to_string()),
+                ])),
                 is_const: false,
             },
         ],
@@ -580,12 +583,9 @@ fn test_system_diagnostics_and_process_execution() {
 
     // 2. Process run under granted Capability::Process
     let run = process.exports.get("run").unwrap();
-    let cmd = if cfg!(windows) { "cmd" } else { "echo" };
+    let cmd = if cfg!(windows) { "whoami" } else { "echo" };
     let args = if cfg!(windows) {
-        vec![
-            RuntimeValue::Str("/c".to_string()),
-            RuntimeValue::Str("echo hello".to_string()),
-        ]
+        vec![]
     } else {
         vec![RuntimeValue::Str("hello".to_string())]
     };

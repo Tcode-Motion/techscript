@@ -32,11 +32,21 @@ impl StdlibRegistry {
                         ));
                     }
                     let cmd = args[0].try_into_string()?;
-                    let forbidden_chars = ['&', '|', ';', '$', '>', '<', '`', '!', '\n', '\r', ' ', '\t'];
-                    if cmd.contains("..") || cmd.contains('\0') || cmd.contains(|c| forbidden_chars.contains(&c)) {
+                    let shell_interpreters = [
+                        "sh", "bash", "zsh", "csh", "ksh", "dash", "ash", "tcsh",
+                        "powershell", "pwsh", "cmd", "cmd.exe", "bat", "ps1"
+                    ];
+                    let cmd_lower = cmd.to_lowercase();
+                    let is_shell = shell_interpreters.iter().any(|&s| {
+                        cmd_lower == s
+                            || cmd_lower.ends_with(&format!("/{}", s))
+                            || cmd_lower.ends_with(&format!("\\{}", s))
+                    });
+
+                    if cmd.contains("..") || cmd.contains('\0') || is_shell {
                         return Err(RuntimeError::new(
                             RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Path traversal, null bytes, or shell metacharacters in command are denied".to_string(),
+                                "Security policy violation: Path traversal, null bytes, or shell interpreters in command are denied".to_string(),
                             ),
                             None,
                             None,
@@ -125,11 +135,21 @@ impl StdlibRegistry {
                         }
                     };
 
-                    let forbidden_chars = ['&', '|', ';', '$', '>', '<', '`', '!', '\n', '\r', ' ', '\t'];
-                    if cmd.contains("..") || cmd.contains('\0') || cmd.contains(|c| forbidden_chars.contains(&c)) {
+                    let shell_interpreters = [
+                        "sh", "bash", "zsh", "csh", "ksh", "dash", "ash", "tcsh",
+                        "powershell", "pwsh", "cmd", "cmd.exe", "bat", "ps1"
+                    ];
+                    let cmd_lower = cmd.to_lowercase();
+                    let is_shell = shell_interpreters.iter().any(|&s| {
+                        cmd_lower == s
+                            || cmd_lower.ends_with(&format!("/{}", s))
+                            || cmd_lower.ends_with(&format!("\\{}", s))
+                    });
+
+                    if cmd.contains("..") || cmd.contains('\0') || is_shell {
                         return Err(RuntimeError::new(
                             RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Path traversal, null bytes, or shell metacharacters in command are denied".to_string(),
+                                "Security policy violation: Path traversal, null bytes, or shell interpreters in command are denied".to_string(),
                             ),
                             None,
                             None,

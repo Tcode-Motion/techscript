@@ -513,11 +513,13 @@ fn test_http_module() {
     let port = listener.local_addr().unwrap().port();
 
     thread::spawn(move || {
-        if let Ok((mut stream, _)) = listener.accept() {
-            let mut buf = [0; 1024];
-            if stream.read(&mut buf).is_ok() {
-                let response = "HTTP/1.1 200 OK\r\nContent-Length: 13\r\nContent-Type: text/plain\r\n\r\nHello Server!";
-                stream.write_all(response.as_bytes()).ok();
+        for _ in 0..2 {
+            if let Ok((mut stream, _)) = listener.accept() {
+                let mut buf = [0; 1024];
+                if stream.read(&mut buf).is_ok() {
+                    let response = "HTTP/1.1 200 OK\r\nContent-Length: 13\r\nContent-Type: text/plain\r\n\r\nHello Server!";
+                    stream.write_all(response.as_bytes()).ok();
+                }
             }
         }
     });
@@ -525,6 +527,32 @@ fn test_http_module() {
     let registry = StdlibRegistry::new();
     let http = registry.get_module("std.http").unwrap();
 
+    // Test without Network capability
+    let mut ctx_unprivileged = RuntimeContext::new(RuntimeConfig {
+        strict_mode: false,
+        max_recursion_depth: 1000,
+        enable_assertions: true,
+        capabilities: HashSet::new(),
+    });
+
+    let get = http.exports.get("get").unwrap();
+    let res_get = get.call(
+        &mut ctx_unprivileged,
+        vec![RuntimeValue::Str(format!("http://127.0.0.1:{}", port))],
+    );
+    assert!(matches!(res_get, Err(techscript_runtime::RuntimeError { kind: techscript_runtime::RuntimeErrorKind::InvalidOperation(msg), .. }) if msg.contains("Security policy violation")));
+
+    let post = http.exports.get("post").unwrap();
+    let res_post = post.call(
+        &mut ctx_unprivileged,
+        vec![
+            RuntimeValue::Str(format!("http://127.0.0.1:{}", port)),
+            RuntimeValue::Str("body".to_string()),
+        ],
+    );
+    assert!(matches!(res_post, Err(techscript_runtime::RuntimeError { kind: techscript_runtime::RuntimeErrorKind::InvalidOperation(msg), .. }) if msg.contains("Security policy violation")));
+
+    // Test with Network capability
     let mut caps = HashSet::new();
     caps.insert(Capability::Network);
     let mut ctx = RuntimeContext::new(RuntimeConfig {
@@ -534,7 +562,6 @@ fn test_http_module() {
         capabilities: caps,
     });
 
-    let get = http.exports.get("get").unwrap();
     let res = get
         .call(
             &mut ctx,
@@ -551,6 +578,27 @@ fn test_http_module() {
         );
     } else {
         panic!("get did not return a Map");
+    }
+
+    let res2 = post
+        .call(
+            &mut ctx,
+            vec![
+                RuntimeValue::Str(format!("http://127.0.0.1:{}", port)),
+                RuntimeValue::Str("body".to_string()),
+            ],
+        )
+        .unwrap();
+
+    if let RuntimeValue::Map { entries, .. } = res2 {
+        let entries_borrow = entries.borrow();
+        assert_eq!(entries_borrow.get("status").unwrap().as_int(), Some(200));
+        assert_eq!(
+            entries_borrow.get("body").unwrap().as_string(),
+            Some("Hello Server!")
+        );
+    } else {
+        panic!("post did not return a Map");
     }
 }
 

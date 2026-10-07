@@ -552,6 +552,16 @@ fn test_http_module() {
     );
     assert!(matches!(res_post, Err(techscript_runtime::RuntimeError { kind: techscript_runtime::RuntimeErrorKind::InvalidOperation(msg), .. }) if msg.contains("Security policy violation")));
 
+    let listen = http.exports.get("listen").unwrap();
+    let res_listen = listen.call(
+        &mut ctx_unprivileged,
+        vec![
+            RuntimeValue::Int(8080),
+            RuntimeValue::Null,
+        ],
+    );
+    assert!(matches!(res_listen, Err(techscript_runtime::RuntimeError { kind: techscript_runtime::RuntimeErrorKind::InvalidOperation(msg), .. }) if msg.contains("Security policy violation")));
+
     // Test with Network capability
     let mut caps = HashSet::new();
     caps.insert(Capability::Network);

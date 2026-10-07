@@ -362,6 +362,200 @@ fn dsl_to_html_inner(val: &RuntimeValue, html: &mut String) {
     }
 }
 
+fn web_start(ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<RuntimeValue, RuntimeError> {
+    if !ctx.config.capabilities.contains(&Capability::Network) {
+        return Err(RuntimeError::new(
+            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
+                "Security policy violation: Network capability is denied".to_string(),
+            ),
+            None,
+            None,
+        ));
+    }
+    let port = args[0].try_into_int().map_err(|e| {
+        RuntimeError::new(
+            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(e.to_string()),
+            None,
+            None,
+        )
+    })? as u16;
+    let content = args[1].to_string();
+    *PAGE_CONTENT.lock().unwrap() = content;
+    if SERVER_RUNNING.load(Ordering::SeqCst) {
+        return Ok(RuntimeValue::Str("Server already running".to_string()));
+    }
+    SERVER_RUNNING.store(true, Ordering::SeqCst);
+    let server = match tiny_http::Server::http(format!("0.0.0.0:{}", port)) {
+        Ok(s) => Mutex::new(s),
+        Err(e) => {
+            SERVER_RUNNING.store(false, Ordering::SeqCst);
+            return Err(RuntimeError::new(
+                techscript_runtime::error::RuntimeErrorKind::InvalidOperation(format!(
+                    "Failed to start server: {}",
+                    e
+                )),
+                None,
+                None,
+            ));
+        }
+    };
+    thread::spawn(move || {
+        while SERVER_RUNNING.load(Ordering::SeqCst) {
+            if let Ok(mut req) = server.lock().unwrap().recv() {
+                let page = PAGE_CONTENT.lock().unwrap();
+                let r = tiny_http::Response::from_string(&*page).with_header(
+                    tiny_http::Header::from_bytes(
+                        &b"Content-Type"[..],
+                        &b"text/html; charset=utf-8"[..],
+                    )
+                    .expect("valid header"),
+                );
+                let _ = req.respond(r);
+            }
+        }
+    });
+    Ok(RuntimeValue::Str(format!("Server started on port {}", port)))
+}
+
+fn web_page(_ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<RuntimeValue, RuntimeError> {
+    let _path = args[0].to_string();
+    let content = args[1].to_string();
+    *PAGE_CONTENT.lock().unwrap() = content;
+    Ok(RuntimeValue::Null)
+}
+
+fn web_serve(ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<RuntimeValue, RuntimeError> {
+    if !ctx.config.capabilities.contains(&Capability::Network) {
+        return Err(RuntimeError::new(
+            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
+                "Security policy violation: Network capability is denied".to_string(),
+            ),
+            None,
+            None,
+        ));
+    }
+    let port = args[0].try_into_int().map_err(|e| {
+        RuntimeError::new(
+            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(e.to_string()),
+            None,
+            None,
+        )
+    })? as u16;
+    if SERVER_RUNNING.load(Ordering::SeqCst) {
+        return Ok(RuntimeValue::Str("Server already running".to_string()));
+    }
+    SERVER_RUNNING.store(true, Ordering::SeqCst);
+    let server = match tiny_http::Server::http(format!("0.0.0.0:{}", port)) {
+        Ok(s) => Mutex::new(s),
+        Err(e) => {
+            SERVER_RUNNING.store(false, Ordering::SeqCst);
+            return Err(RuntimeError::new(
+                techscript_runtime::error::RuntimeErrorKind::InvalidOperation(format!(
+                    "Failed to start server: {}",
+                    e
+                )),
+                None,
+                None,
+            ));
+        }
+    };
+    thread::spawn(move || {
+        while SERVER_RUNNING.load(Ordering::SeqCst) {
+            if let Ok(mut req) = server.lock().unwrap().recv() {
+                let page = PAGE_CONTENT.lock().unwrap();
+                let r = tiny_http::Response::from_string(&*page).with_header(
+                    tiny_http::Header::from_bytes(
+                        &b"Content-Type"[..],
+                        &b"text/html; charset=utf-8"[..],
+                    )
+                    .expect("valid header"),
+                );
+                let _ = req.respond(r);
+            }
+        }
+    });
+    Ok(RuntimeValue::Str(format!("Server started on port {}", port)))
+}
+
+fn web_stop(_ctx: &mut RuntimeContext, _args: Vec<RuntimeValue>) -> Result<RuntimeValue, RuntimeError> {
+    SERVER_RUNNING.store(false, Ordering::SeqCst);
+    Ok(RuntimeValue::Null)
+}
+
+fn web_set_content(_ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<RuntimeValue, RuntimeError> {
+    let new_content = args[0].to_string();
+    *PAGE_CONTENT.lock().unwrap() = new_content;
+    Ok(RuntimeValue::Str("Content updated".to_string()))
+}
+
+fn web_fetch(ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<RuntimeValue, RuntimeError> {
+    if !ctx.config.capabilities.contains(&Capability::Network) {
+        return Err(RuntimeError::new(
+            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
+                "Security policy violation: Network capability is denied".to_string(),
+            ),
+            None,
+            None,
+        ));
+    }
+    let url = args[0].to_string();
+
+    if !is_safe_url(&url) {
+        return Err(RuntimeError::new(
+            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
+                format!("Access denied: the URL '{}' points to a blocked or internal destination (SSRF prevention).", url)
+            ),
+            None,
+            None,
+        ));
+    }
+
+    let agent = ureq::builder()
+        .resolver(SafeResolver)
+        .redirects(0)
+        .build();
+    let body = agent.get(&url)
+        .call()
+        .map_err(|e| {
+            RuntimeError::new(
+                techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
+                    e.to_string(),
+                ),
+                None,
+                None,
+            )
+        })?
+        .into_string()
+        .map_err(|e| {
+            RuntimeError::new(
+                techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
+                    e.to_string(),
+                ),
+                None,
+                None,
+            )
+        })?;
+    Ok(RuntimeValue::Str(body))
+}
+
+fn web_render_html(ctx: &mut RuntimeContext, _args: Vec<RuntimeValue>) -> Result<RuntimeValue, RuntimeError> {
+    let env = ctx.global_env.borrow();
+    let blocks = match env.lookup("_dsl_blocks") {
+        Ok(RuntimeValue::List { items, .. }) => items.borrow().clone(),
+        _ => return Ok(RuntimeValue::Str(String::new())),
+    };
+    let mut html = String::new();
+    for block in &blocks {
+        dsl_to_html_inner(block, &mut html);
+    }
+    Ok(RuntimeValue::Str(html))
+}
+
+fn web_render_dsl(_ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<RuntimeValue, RuntimeError> {
+    let html = dsl_to_html(&args[0]);
+    Ok(RuntimeValue::Str(html))
+}
+
 impl StdlibRegistry {
     pub fn register_web(&mut self) {
         let mut exports: HashMap<String, Rc<dyn Callable>> = HashMap::new();
@@ -371,65 +565,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "start".to_string(),
                 arity: 2,
-                callback: |ctx, args| {
-                    if !ctx.config.capabilities.contains(&Capability::Network) {
-                        return Err(RuntimeError::new(
-                            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Network capability is denied"
-                                    .to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
-                    let port = args[0].try_into_int().map_err(|e| {
-                        RuntimeError::new(
-                            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
-                                e.to_string(),
-                            ),
-                            None,
-                            None,
-                        )
-                    })? as u16;
-                    let content = args[1].to_string();
-                    *PAGE_CONTENT.lock().unwrap() = content;
-                    if SERVER_RUNNING.load(Ordering::SeqCst) {
-                        return Ok(RuntimeValue::Str("Server already running".to_string()));
-                    }
-                    SERVER_RUNNING.store(true, Ordering::SeqCst);
-                    let server = match tiny_http::Server::http(format!("0.0.0.0:{}", port)) {
-                        Ok(s) => Mutex::new(s),
-                        Err(e) => {
-                            SERVER_RUNNING.store(false, Ordering::SeqCst);
-                            return Err(RuntimeError::new(
-                                techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
-                                    format!("Failed to start server: {}", e),
-                                ),
-                                None,
-                                None,
-                            ));
-                        }
-                    };
-                    thread::spawn(move || {
-                        while SERVER_RUNNING.load(Ordering::SeqCst) {
-                            if let Ok(mut req) = server.lock().unwrap().recv() {
-                                let page = PAGE_CONTENT.lock().unwrap();
-                                let r = tiny_http::Response::from_string(&*page).with_header(
-                                    tiny_http::Header::from_bytes(
-                                        &b"Content-Type"[..],
-                                        &b"text/html; charset=utf-8"[..],
-                                    )
-                                    .expect("valid header"),
-                                );
-                                let _ = req.respond(r);
-                            }
-                        }
-                    });
-                    Ok(RuntimeValue::Str(format!(
-                        "Server started on port {}",
-                        port
-                    )))
-                },
+                callback: web_start,
             }),
         );
 
@@ -438,12 +574,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "page".to_string(),
                 arity: 2,
-                callback: |_ctx, args| {
-                    let _path = args[0].to_string();
-                    let content = args[1].to_string();
-                    *PAGE_CONTENT.lock().unwrap() = content;
-                    Ok(RuntimeValue::Null)
-                },
+                callback: web_page,
             }),
         );
 
@@ -452,63 +583,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "serve".to_string(),
                 arity: 1,
-                callback: |ctx, args| {
-                    if !ctx.config.capabilities.contains(&Capability::Network) {
-                        return Err(RuntimeError::new(
-                            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Network capability is denied"
-                                    .to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
-                    let port = args[0].try_into_int().map_err(|e| {
-                        RuntimeError::new(
-                            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
-                                e.to_string(),
-                            ),
-                            None,
-                            None,
-                        )
-                    })? as u16;
-                    if SERVER_RUNNING.load(Ordering::SeqCst) {
-                        return Ok(RuntimeValue::Str("Server already running".to_string()));
-                    }
-                    SERVER_RUNNING.store(true, Ordering::SeqCst);
-                    let server = match tiny_http::Server::http(format!("0.0.0.0:{}", port)) {
-                        Ok(s) => Mutex::new(s),
-                        Err(e) => {
-                            SERVER_RUNNING.store(false, Ordering::SeqCst);
-                            return Err(RuntimeError::new(
-                                techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
-                                    format!("Failed to start server: {}", e),
-                                ),
-                                None,
-                                None,
-                            ));
-                        }
-                    };
-                    thread::spawn(move || {
-                        while SERVER_RUNNING.load(Ordering::SeqCst) {
-                            if let Ok(mut req) = server.lock().unwrap().recv() {
-                                let page = PAGE_CONTENT.lock().unwrap();
-                                let r = tiny_http::Response::from_string(&*page).with_header(
-                                    tiny_http::Header::from_bytes(
-                                        &b"Content-Type"[..],
-                                        &b"text/html; charset=utf-8"[..],
-                                    )
-                                    .expect("valid header"),
-                                );
-                                let _ = req.respond(r);
-                            }
-                        }
-                    });
-                    Ok(RuntimeValue::Str(format!(
-                        "Server started on port {}",
-                        port
-                    )))
-                },
+                callback: web_serve,
             }),
         );
 
@@ -517,10 +592,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "stop".to_string(),
                 arity: 0,
-                callback: |_ctx, _args| {
-                    SERVER_RUNNING.store(false, Ordering::SeqCst);
-                    Ok(RuntimeValue::Null)
-                },
+                callback: web_stop,
             }),
         );
 
@@ -529,11 +601,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "set_content".to_string(),
                 arity: 1,
-                callback: |_ctx, args| {
-                    let new_content = args[0].to_string();
-                    *PAGE_CONTENT.lock().unwrap() = new_content;
-                    Ok(RuntimeValue::Str("Content updated".to_string()))
-                },
+                callback: web_set_content,
             }),
         );
 
@@ -542,55 +610,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "fetch".to_string(),
                 arity: 1,
-                callback: |ctx, args| {
-                    if !ctx.config.capabilities.contains(&Capability::Network) {
-                        return Err(RuntimeError::new(
-                            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Network capability is denied".to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
-                    let url = args[0].to_string();
-
-                    if !is_safe_url(&url) {
-                        return Err(RuntimeError::new(
-                            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
-                                format!("Access denied: the URL '{}' points to a blocked or internal destination (SSRF prevention).", url)
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
-
-                    let agent = ureq::builder()
-                        .resolver(SafeResolver)
-                        .redirects(0)
-                        .build();
-                    let body = agent.get(&url)
-                        .call()
-                        .map_err(|e| {
-                            RuntimeError::new(
-                                techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
-                                    e.to_string(),
-                                ),
-                                None,
-                                None,
-                            )
-                        })?
-                        .into_string()
-                        .map_err(|e| {
-                            RuntimeError::new(
-                                techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
-                                    e.to_string(),
-                                ),
-                                None,
-                                None,
-                            )
-                        })?;
-                    Ok(RuntimeValue::Str(body))
-                },
+                callback: web_fetch,
             }),
         );
 
@@ -599,18 +619,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "render_html".to_string(),
                 arity: 0,
-                callback: |ctx, _args| {
-                    let env = ctx.global_env.borrow();
-                    let blocks = match env.lookup("_dsl_blocks") {
-                        Ok(RuntimeValue::List { items, .. }) => items.borrow().clone(),
-                        _ => return Ok(RuntimeValue::Str(String::new())),
-                    };
-                    let mut html = String::new();
-                    for block in &blocks {
-                        dsl_to_html_inner(block, &mut html);
-                    }
-                    Ok(RuntimeValue::Str(html))
-                },
+                callback: web_render_html,
             }),
         );
 
@@ -619,10 +628,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "render_dsl".to_string(),
                 arity: 1,
-                callback: |_ctx, args| {
-                    let html = dsl_to_html(&args[0]);
-                    Ok(RuntimeValue::Str(html))
-                },
+                callback: web_render_dsl,
             }),
         );
 

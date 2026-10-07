@@ -61,13 +61,16 @@ impl LivenessAnalysis {
 
         // Iterative dataflow solver
         let mut changed = true;
+        let mut new_in = HashSet::new();
+        let mut new_out = HashSet::new();
+
         while changed {
             changed = false;
             for block in &func.blocks {
                 let block_id = block.id;
 
                 // LiveOut = union of LiveIn(succs)
-                let mut new_out = HashSet::new();
+                new_out.clear();
                 for &succ in &block.successors {
                     if let Some(succ_in) = live_in.get(&succ) {
                         new_out.extend(succ_in);
@@ -75,24 +78,25 @@ impl LivenessAnalysis {
                 }
 
                 // LiveIn = Use union (LiveOut diff Def)
-                let mut new_in = uses[&block_id].clone();
+                new_in.clear();
+                new_in.extend(uses[&block_id].iter().copied());
                 let def = &defs[&block_id];
-                for &val in &new_out {
-                    if !def.contains(&val) {
-                        new_in.insert(val);
+                for val in &new_out {
+                    if !def.contains(val) {
+                        new_in.insert(*val);
                     }
                 }
 
                 if let Some(old_in) = live_in.get_mut(&block_id) {
-                    if *old_in != new_in {
-                        *old_in = new_in;
+                    if old_in.len() != new_in.len() {
+                        *old_in = new_in.clone();
                         changed = true;
                     }
                 }
 
                 if let Some(old_out) = live_out.get_mut(&block_id) {
-                    if *old_out != new_out {
-                        *old_out = new_out;
+                    if old_out.len() != new_out.len() {
+                        *old_out = new_out.clone();
                         changed = true;
                     }
                 }

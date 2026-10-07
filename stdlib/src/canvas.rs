@@ -11,238 +11,298 @@ use techscript_runtime::{
     context::{Capability, RuntimeContext},
     error::RuntimeError,
     function::Callable,
-    value::RuntimeValue,
+    value::{DslBlockValue, RuntimeValue},
 };
 
 /// Convert a DslBlockValue to SVG string.
-fn render_dsl_to_svg(svg: &mut String, val: &RuntimeValue, is_dragon: bool) {
-    match val {
-        RuntimeValue::DslBlock(dsl) => {
-            if is_dragon {
-                match dsl.kind.as_str() {
-                    "logo" => {
-                        let mut text_val = None;
-                        let mut color_val = None;
-                        let mut size_val = None;
+fn render_circuits(svg: &mut String, dsl: &DslBlockValue, is_dragon: bool) {
+    if is_dragon {
+        // Subtle circular grids / tech lines background
 
-                        for p in &dsl.properties {
-                            match p.name.as_str() {
-                                "text" => text_val = p.value.as_ref().map(|v| v.to_string()),
-                                "color" => color_val = p.value.as_ref().map(|v| v.to_string()),
-                                "size" => {
-                                    size_val = p.value.as_ref().and_then(|v| v.try_into_int().ok())
-                                }
-                                _ => {}
-                            }
-                        }
+        svg.push_str(
 
-                        let text = text_val.unwrap_or_else(|| "Logo".to_string());
-                        let color = color_val.unwrap_or_else(|| "#00d4ff".to_string());
-                        let size = size_val.unwrap_or(48);
-                        let _ = write!(
-                            svg,
-                            r#"<text x="250" y="440" text-anchor="middle" dominant-baseline="central" font-size="{}" font-weight="800" fill="{}" font-family="system-ui, -apple-system, sans-serif" letter-spacing="3">{}</text>"#,
-                            size, color, text
-                        );
-                    }
-                    "rings" => {
-                        // BLUE FLAME / WING (Bottom-Left Swirl)
-                        svg.push_str(
-                            r##"<path d="M 142 240 L 133 248 L 124 260 L 124 262 L 122 264 L 120 270 L 118 272 L 118 275 L 116 278 L 115 284 L 115 308 L 119 323 L 122 328 L 122 330 L 128 342 L 134 351 L 142 361 L 154 373 L 179 390 L 181 390 L 190 395 L 195 396 L 198 398 L 207 401 L 224 405 L 233 406 L 260 406 L 266 405 L 257 404 L 238 398 L 224 390 L 215 382 L 209 374 L 203 361 L 200 347 L 200 342 L 202 337 L 202 332 L 205 321 L 207 319 L 207 317 L 209 315 L 212 309 L 215 307 L 216 304 L 220 301 L 224 296 L 242 284 L 244 284 L 252 279 L 254 279 L 266 273 L 268 273 L 270 271 L 277 269 L 279 267 L 281 267 L 289 262 L 299 253 L 301 250 L 302 245 L 297 248 L 290 250 L 260 252 L 254 251 L 247 253 L 240 253 L 229 255 L 213 260 L 192 272 L 181 284 L 176 292 L 176 294 L 174 296 L 173 300 L 171 301 L 167 294 L 164 284 L 163 267 L 165 256 L 169 247 L 169 245 L 173 237 L 182 224 L 178 224 L 162 229 L 157 232 L 155 232 L 150 236 L 148 236 L 145 239 Z" fill="url(#blueFlame)" />"##
-                        );
-                    }
-                    "emblem" => {
-                        // ORANGE-RED TAIL (Bottom-Right Swirl)
-                        svg.push_str(
-                            r##"<path d="M 389 251 L 388 255 L 386 257 L 384 256 L 382 254 L 381 262 L 379 260 L 379 258 L 378 256 L 378 260 L 377 267 L 378 271 L 377 273 L 379 278 L 380 306 L 379 313 L 377 318 L 378 320 L 376 328 L 374 331 L 374 335 L 376 333 L 376 331 L 379 326 L 379 324 L 383 317 L 385 311 L 385 308 L 387 305 L 390 292 L 391 283 L 390 281 L 392 273 L 391 270 L 391 266 L 392 262 L 391 265 L 389 260 Z" fill="url(#orangeFlame)" />
-                            <path d="M 372 252 L 372 254 L 370 257 L 368 258 L 366 256 L 353 257 L 349 255 L 344 257 L 339 257 L 336 254 L 333 253 L 333 251 L 332 253 L 334 255 L 337 256 L 335 258 L 330 258 L 328 261 L 328 265 L 326 265 L 310 281 L 307 282 L 302 286 L 290 292 L 288 292 L 286 294 L 281 295 L 275 299 L 273 299 L 265 303 L 263 305 L 260 306 L 247 317 L 244 321 L 242 326 L 239 330 L 237 337 L 236 347 L 239 361 L 241 365 L 243 367 L 244 370 L 251 378 L 254 379 L 258 383 L 260 383 L 267 387 L 269 387 L 272 389 L 289 392 L 298 391 L 300 392 L 308 391 L 322 387 L 327 384 L 329 384 L 339 377 L 341 377 L 350 370 L 358 361 L 356 361 L 351 364 L 345 366 L 335 368 L 320 368 L 316 367 L 312 365 L 316 361 L 319 360 L 330 351 L 335 345 L 338 343 L 345 334 L 353 322 L 353 320 L 355 318 L 359 310 L 359 308 L 363 301 L 368 285 L 370 276 L 371 267 L 370 265 L 370 263 L 372 262 L 372 260 L 370 259 L 372 258 L 373 256 Z" fill="url(#orangeFlame)" />"##
-                        );
-                    }
-                    "letter" => {
-                        // GOLDEN DRAGON HEAD (Top-Center Crest)
-                        svg.push_str(
-                            r##"<path d="M 118 196 L 120 205 L 127 214 L 137 220 L 150 222 L 146 216 L 147 213 L 165 205 L 180 204 L 188 206 L 190 205 L 197 208 L 198 212 L 191 232 L 191 240 L 201 230 L 221 217 L 244 208 L 255 207 L 259 205 L 275 207 L 285 211 L 298 222 L 302 230 L 304 227 L 304 213 L 299 201 L 290 191 L 282 185 L 261 176 L 274 172 L 292 172 L 301 175 L 316 184 L 331 202 L 337 221 L 336 223 L 338 225 L 338 235 L 335 249 L 330 260 L 322 269 L 326 265 L 328 266 L 333 262 L 335 265 L 337 263 L 366 263 L 368 260 L 371 266 L 372 252 L 376 261 L 378 276 L 379 271 L 382 267 L 390 263 L 391 273 L 392 261 L 389 239 L 384 222 L 377 207 L 367 194 L 367 192 L 355 180 L 336 167 L 346 165 L 357 166 L 383 173 L 367 157 L 344 144 L 325 138 L 303 134 L 315 127 L 330 112 L 338 99 L 342 87 L 342 82 L 330 95 L 309 109 L 285 120 L 275 122 L 273 124 L 267 123 L 276 115 L 285 103 L 292 86 L 294 70 L 282 87 L 273 96 L 251 113 L 215 133 L 182 147 L 174 156 L 170 164 L 160 174 Z" fill="url(#dragonGold)" />
-                            <!-- DRAGON EYE (Hole/Slit) -->
-                            <path d="M 216 157 L 216 158 L 215 159 L 214 159 L 214 160 L 212 162 L 212 163 L 211 164 L 211 165 L 210 166 L 210 167 L 206 171 L 205 171 L 205 172 L 203 174 L 202 174 L 201 175 L 200 175 L 199 176 L 196 176 L 195 177 L 192 177 L 191 176 L 190 176 L 189 177 L 185 177 L 183 175 L 183 174 L 187 170 L 187 169 L 188 168 L 189 168 L 191 166 L 192 166 L 194 164 L 196 164 L 197 163 L 198 163 L 199 162 L 200 162 L 201 161 L 203 161 L 204 160 L 205 160 L 206 159 L 210 159 L 212 157 L 214 157 L 215 156 Z" fill="#030408" />"##
-                        );
-                    }
-                    "circuits" => {
-                        // Subtle circular grids / tech lines background
-                        svg.push_str(
-                            r##"<circle cx="250" cy="250" r="200" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.03" stroke-dasharray="10 10"/>
-                            <circle cx="250" cy="250" r="150" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.02"/>"##
-                        );
-                    }
-                    _ => {}
-                }
-            } else {
-                // RENDER OLD GEOMETRIC LOGO
-                match dsl.kind.as_str() {
-                    "logo" => {
-                        let mut text_val = None;
-                        let mut color_val = None;
-                        let mut size_val = None;
+        r##"<circle cx="250" cy="250" r="200" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.03" stroke-dasharray="10 10"/>
 
-                        for p in &dsl.properties {
-                            match p.name.as_str() {
-                                "text" => text_val = p.value.as_ref().map(|v| v.to_string()),
-                                "color" => color_val = p.value.as_ref().map(|v| v.to_string()),
-                                "size" => {
-                                    size_val = p.value.as_ref().and_then(|v| v.try_into_int().ok())
-                                }
-                                _ => {}
-                            }
-                        }
+        <circle cx="250" cy="250" r="150" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.02"/>"##
 
-                        let text = text_val.unwrap_or_else(|| "Logo".to_string());
-                        let color = color_val.unwrap_or_else(|| "#00d4ff".to_string());
-                        let size = size_val.unwrap_or(48);
-                        let _ = write!(
-                            svg,
-                            r#"<text x="250" y="380" text-anchor="middle" dominant-baseline="central" font-size="{}" font-weight="800" fill="{}" font-family="system-ui, -apple-system, sans-serif" letter-spacing="3">{}</text>"#,
-                            size, color, text
-                        );
-                    }
-                    "rings" => {
-                        let mut count_val = None;
-                        let mut color_val = None;
-                        let mut size_val = None;
-                        let mut thickness_val = None;
+        );
+    } else {
+        let mut color_val = None;
 
-                        for p in &dsl.properties {
-                            match p.name.as_str() {
-                                "count" => {
-                                    count_val = p.value.as_ref().and_then(|v| v.try_into_int().ok())
-                                }
-                                "color" => color_val = p.value.as_ref().map(|v| v.to_string()),
-                                "size" => {
-                                    size_val = p.value.as_ref().and_then(|v| v.try_into_int().ok())
-                                }
-                                "thickness" => {
-                                    thickness_val =
-                                        p.value.as_ref().and_then(|v| v.try_into_int().ok())
-                                }
-                                _ => {}
-                            }
-                        }
-
-                        let count = count_val.unwrap_or(3);
-                        let color = color_val.unwrap_or_else(|| "#00d4ff".to_string());
-                        let size = size_val.unwrap_or(40);
-                        let thickness = thickness_val.unwrap_or(3);
-                        for i in 0..count {
-                            let r = 80 + i as i64 * (size / 2);
-                            let opacity = 0.4 - (i as f32 * 0.08);
-                            let _ = write!(
-                                svg,
-                                r#"<circle cx="250" cy="180" r="{}" fill="none" stroke="{}" stroke-width="{}" opacity="{}"/>"#,
-                                r, color, thickness, opacity
-                            );
-                        }
-                    }
-                    "emblem" => {
-                        let mut color_val = None;
-                        let mut size_val = None;
-
-                        for p in &dsl.properties {
-                            match p.name.as_str() {
-                                "color" => color_val = p.value.as_ref().map(|v| v.to_string()),
-                                "size" => {
-                                    size_val = p.value.as_ref().and_then(|v| v.try_into_int().ok())
-                                }
-                                _ => {}
-                            }
-                        }
-
-                        let color = color_val.unwrap_or_else(|| "#0088cc".to_string());
-                        let size = size_val.unwrap_or(120);
-                        let x = 250 - size / 2;
-                        let y = 180 - size / 2;
-                        let _ = write!(
-                            svg,
-                            r#"<rect x="{}" y="{}" width="{}" height="{}" rx="{}" fill="{}" transform="rotate(45 250 180)" filter="url(#glow)"/>"#,
-                            x,
-                            y,
-                            size,
-                            size,
-                            size / 4,
-                            color
-                        );
-                    }
-                    "letter" => {
-                        let mut ch_val = None;
-                        let mut color_val = None;
-                        let mut size_val = None;
-
-                        for p in &dsl.properties {
-                            match p.name.as_str() {
-                                "char" => ch_val = p.value.as_ref().map(|v| v.to_string()),
-                                "color" => color_val = p.value.as_ref().map(|v| v.to_string()),
-                                "size" => {
-                                    size_val = p.value.as_ref().and_then(|v| v.try_into_int().ok())
-                                }
-                                _ => {}
-                            }
-                        }
-
-                        let ch = ch_val.unwrap_or_else(|| "T".to_string());
-                        let color = color_val.unwrap_or_else(|| "#0a0e27".to_string());
-                        let size = size_val.unwrap_or(32);
-                        let _ = write!(
-                            svg,
-                            r#"<text x="250" y="180" text-anchor="middle" dominant-baseline="central" font-size="{}" font-weight="900" fill="{}" font-family="system-ui, -apple-system, sans-serif">{}</text>"#,
-                            size, color, ch
-                        );
-                    }
-                    "core" => {
-                        let mut color_val = None;
-                        let mut size_val = None;
-
-                        for p in &dsl.properties {
-                            match p.name.as_str() {
-                                "color" => color_val = p.value.as_ref().map(|v| v.to_string()),
-                                "size" => {
-                                    size_val = p.value.as_ref().and_then(|v| v.try_into_int().ok())
-                                }
-                                _ => {}
-                            }
-                        }
-
-                        let color = color_val.unwrap_or_else(|| "#66e0ff".to_string());
-                        let size = size_val.unwrap_or(40);
-                        let _ = write!(
-                            svg,
-                            r#"<circle cx="250" cy="180" r="{}" fill="{}" opacity="0.8"/>"#,
-                            size / 2,
-                            color
-                        );
-                    }
-                    "circuits" => {
-                        let mut color_val = None;
-
-                        for p in &dsl.properties {
-                            if p.name == "color" {
-                                color_val = p.value.as_ref().map(|v| v.to_string());
-                            }
-                        }
-
-                        let color = color_val.unwrap_or_else(|| "#00d4ff".to_string());
-                        let _ = write!(
-                            svg,
-                            r#"<line x1="50" y1="180" x2="450" y2="180" stroke="{}" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.6"/>
-                            <line x1="250" y1="30" x2="250" y2="330" stroke="{}" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.6"/>
-                            <circle cx="50" cy="180" r="4" fill="{}"/>
-                            <circle cx="450" cy="180" r="4" fill="{}"/>
-                            <circle cx="250" cy="30" r="4" fill="{}"/>
-                            <circle cx="250" cy="330" r="4" fill="{}"/>"#,
-                            color, color, color, color, color, color
-                        );
-                    }
-                    _ => {}
-                }
+        for p in &dsl.properties {
+            if p.name == "color" {
+                color_val = p.value.as_ref().map(|v| v.to_string());
             }
         }
-        _ => {}
+
+        let color = color_val.unwrap_or_else(|| "#00d4ff".to_string());
+
+        let _ = write!(
+            svg,
+            r#"<line x1="50" y1="180" x2="450" y2="180" stroke="{}" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.6"/>
+
+        <line x1="250" y1="30" x2="250" y2="330" stroke="{}" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.6"/>
+
+        <circle cx="50" cy="180" r="4" fill="{}"/>
+
+        <circle cx="450" cy="180" r="4" fill="{}"/>
+
+        <circle cx="250" cy="30" r="4" fill="{}"/>
+
+        <circle cx="250" cy="330" r="4" fill="{}"/>"#,
+            color, color, color, color, color, color
+        );
+    }
+}
+
+fn render_letter(svg: &mut String, dsl: &DslBlockValue, is_dragon: bool) {
+    if is_dragon {
+        // GOLDEN DRAGON HEAD (Top-Center Crest)
+
+        svg.push_str(
+
+        r##"<path d="M 118 196 L 120 205 L 127 214 L 137 220 L 150 222 L 146 216 L 147 213 L 165 205 L 180 204 L 188 206 L 190 205 L 197 208 L 198 212 L 191 232 L 191 240 L 201 230 L 221 217 L 244 208 L 255 207 L 259 205 L 275 207 L 285 211 L 298 222 L 302 230 L 304 227 L 304 213 L 299 201 L 290 191 L 282 185 L 261 176 L 274 172 L 292 172 L 301 175 L 316 184 L 331 202 L 337 221 L 336 223 L 338 225 L 338 235 L 335 249 L 330 260 L 322 269 L 326 265 L 328 266 L 333 262 L 335 265 L 337 263 L 366 263 L 368 260 L 371 266 L 372 252 L 376 261 L 378 276 L 379 271 L 382 267 L 390 263 L 391 273 L 392 261 L 389 239 L 384 222 L 377 207 L 367 194 L 367 192 L 355 180 L 336 167 L 346 165 L 357 166 L 383 173 L 367 157 L 344 144 L 325 138 L 303 134 L 315 127 L 330 112 L 338 99 L 342 87 L 342 82 L 330 95 L 309 109 L 285 120 L 275 122 L 273 124 L 267 123 L 276 115 L 285 103 L 292 86 L 294 70 L 282 87 L 273 96 L 251 113 L 215 133 L 182 147 L 174 156 L 170 164 L 160 174 Z" fill="url(#dragonGold)" />
+
+        <!-- DRAGON EYE (Hole/Slit) -->
+
+        <path d="M 216 157 L 216 158 L 215 159 L 214 159 L 214 160 L 212 162 L 212 163 L 211 164 L 211 165 L 210 166 L 210 167 L 206 171 L 205 171 L 205 172 L 203 174 L 202 174 L 201 175 L 200 175 L 199 176 L 196 176 L 195 177 L 192 177 L 191 176 L 190 176 L 189 177 L 185 177 L 183 175 L 183 174 L 187 170 L 187 169 L 188 168 L 189 168 L 191 166 L 192 166 L 194 164 L 196 164 L 197 163 L 198 163 L 199 162 L 200 162 L 201 161 L 203 161 L 204 160 L 205 160 L 206 159 L 210 159 L 212 157 L 214 157 L 215 156 Z" fill="#030408" />"##
+
+        );
+    } else {
+        let mut ch_val = None;
+
+        let mut color_val = None;
+
+        let mut size_val = None;
+
+        for p in &dsl.properties {
+            match p.name.as_str() {
+                "char" => ch_val = p.value.as_ref().map(|v| v.to_string()),
+
+                "color" => color_val = p.value.as_ref().map(|v| v.to_string()),
+
+                "size" => size_val = p.value.as_ref().and_then(|v| v.try_into_int().ok()),
+
+                _ => {}
+            }
+        }
+
+        let ch = ch_val.unwrap_or_else(|| "T".to_string());
+
+        let color = color_val.unwrap_or_else(|| "#0a0e27".to_string());
+
+        let size = size_val.unwrap_or(32);
+
+        let _ = write!(
+            svg,
+            r#"<text x="250" y="180" text-anchor="middle" dominant-baseline="central" font-size="{}" font-weight="900" fill="{}" font-family="system-ui, -apple-system, sans-serif">{}</text>"#,
+            size, color, ch
+        );
+    }
+}
+
+fn render_logo(svg: &mut String, dsl: &DslBlockValue, is_dragon: bool) {
+    if is_dragon {
+        let mut text_val = None;
+
+        let mut color_val = None;
+
+        let mut size_val = None;
+
+        for p in &dsl.properties {
+            match p.name.as_str() {
+                "text" => text_val = p.value.as_ref().map(|v| v.to_string()),
+
+                "color" => color_val = p.value.as_ref().map(|v| v.to_string()),
+
+                "size" => size_val = p.value.as_ref().and_then(|v| v.try_into_int().ok()),
+
+                _ => {}
+            }
+        }
+
+        let text = text_val.unwrap_or_else(|| "Logo".to_string());
+
+        let color = color_val.unwrap_or_else(|| "#00d4ff".to_string());
+
+        let size = size_val.unwrap_or(48);
+
+        let _ = write!(
+            svg,
+            r#"<text x="250" y="440" text-anchor="middle" dominant-baseline="central" font-size="{}" font-weight="800" fill="{}" font-family="system-ui, -apple-system, sans-serif" letter-spacing="3">{}</text>"#,
+            size, color, text
+        );
+    } else {
+        let mut text_val = None;
+
+        let mut color_val = None;
+
+        let mut size_val = None;
+
+        for p in &dsl.properties {
+            match p.name.as_str() {
+                "text" => text_val = p.value.as_ref().map(|v| v.to_string()),
+
+                "color" => color_val = p.value.as_ref().map(|v| v.to_string()),
+
+                "size" => size_val = p.value.as_ref().and_then(|v| v.try_into_int().ok()),
+
+                _ => {}
+            }
+        }
+
+        let text = text_val.unwrap_or_else(|| "Logo".to_string());
+
+        let color = color_val.unwrap_or_else(|| "#00d4ff".to_string());
+
+        let size = size_val.unwrap_or(48);
+
+        let _ = write!(
+            svg,
+            r#"<text x="250" y="380" text-anchor="middle" dominant-baseline="central" font-size="{}" font-weight="800" fill="{}" font-family="system-ui, -apple-system, sans-serif" letter-spacing="3">{}</text>"#,
+            size, color, text
+        );
+    }
+}
+
+fn render_core(svg: &mut String, dsl: &DslBlockValue) {
+    let mut color_val = None;
+    let mut size_val = None;
+
+    for p in &dsl.properties {
+        match p.name.as_str() {
+            "color" => color_val = p.value.as_ref().map(|v| v.to_string()),
+            "size" => size_val = p.value.as_ref().and_then(|v| v.try_into_int().ok()),
+            _ => {}
+        }
+    }
+
+    let color = color_val.unwrap_or_else(|| "#66e0ff".to_string());
+    let size = size_val.unwrap_or(40);
+    let _ = write!(
+        svg,
+        r#"<circle cx="250" cy="180" r="{}" fill="{}" opacity="0.8"/>"#,
+        size / 2,
+        color
+    );
+}
+
+fn render_emblem(svg: &mut String, dsl: &DslBlockValue, is_dragon: bool) {
+    if is_dragon {
+        // ORANGE-RED TAIL (Bottom-Right Swirl)
+
+        svg.push_str(
+
+        r##"<path d="M 389 251 L 388 255 L 386 257 L 384 256 L 382 254 L 381 262 L 379 260 L 379 258 L 378 256 L 378 260 L 377 267 L 378 271 L 377 273 L 379 278 L 380 306 L 379 313 L 377 318 L 378 320 L 376 328 L 374 331 L 374 335 L 376 333 L 376 331 L 379 326 L 379 324 L 383 317 L 385 311 L 385 308 L 387 305 L 390 292 L 391 283 L 390 281 L 392 273 L 391 270 L 391 266 L 392 262 L 391 265 L 389 260 Z" fill="url(#orangeFlame)" />
+
+        <path d="M 372 252 L 372 254 L 370 257 L 368 258 L 366 256 L 353 257 L 349 255 L 344 257 L 339 257 L 336 254 L 333 253 L 333 251 L 332 253 L 334 255 L 337 256 L 335 258 L 330 258 L 328 261 L 328 265 L 326 265 L 310 281 L 307 282 L 302 286 L 290 292 L 288 292 L 286 294 L 281 295 L 275 299 L 273 299 L 265 303 L 263 305 L 260 306 L 247 317 L 244 321 L 242 326 L 239 330 L 237 337 L 236 347 L 239 361 L 241 365 L 243 367 L 244 370 L 251 378 L 254 379 L 258 383 L 260 383 L 267 387 L 269 387 L 272 389 L 289 392 L 298 391 L 300 392 L 308 391 L 322 387 L 327 384 L 329 384 L 339 377 L 341 377 L 350 370 L 358 361 L 356 361 L 351 364 L 345 366 L 335 368 L 320 368 L 316 367 L 312 365 L 316 361 L 319 360 L 330 351 L 335 345 L 338 343 L 345 334 L 353 322 L 353 320 L 355 318 L 359 310 L 359 308 L 363 301 L 368 285 L 370 276 L 371 267 L 370 265 L 370 263 L 372 262 L 372 260 L 370 259 L 372 258 L 373 256 Z" fill="url(#orangeFlame)" />"##
+
+        );
+    } else {
+        let mut color_val = None;
+
+        let mut size_val = None;
+
+        for p in &dsl.properties {
+            match p.name.as_str() {
+                "color" => color_val = p.value.as_ref().map(|v| v.to_string()),
+
+                "size" => size_val = p.value.as_ref().and_then(|v| v.try_into_int().ok()),
+
+                _ => {}
+            }
+        }
+
+        let color = color_val.unwrap_or_else(|| "#0088cc".to_string());
+
+        let size = size_val.unwrap_or(120);
+
+        let x = 250 - size / 2;
+
+        let y = 180 - size / 2;
+
+        let _ = write!(
+            svg,
+            r#"<rect x="{}" y="{}" width="{}" height="{}" rx="{}" fill="{}" transform="rotate(45 250 180)" filter="url(#glow)"/>"#,
+            x,
+            y,
+            size,
+            size,
+            size / 4,
+            color
+        );
+    }
+}
+
+fn render_rings(svg: &mut String, dsl: &DslBlockValue, is_dragon: bool) {
+    if is_dragon {
+        // BLUE FLAME / WING (Bottom-Left Swirl)
+
+        svg.push_str(
+
+        r##"<path d="M 142 240 L 133 248 L 124 260 L 124 262 L 122 264 L 120 270 L 118 272 L 118 275 L 116 278 L 115 284 L 115 308 L 119 323 L 122 328 L 122 330 L 128 342 L 134 351 L 142 361 L 154 373 L 179 390 L 181 390 L 190 395 L 195 396 L 198 398 L 207 401 L 224 405 L 233 406 L 260 406 L 266 405 L 257 404 L 238 398 L 224 390 L 215 382 L 209 374 L 203 361 L 200 347 L 200 342 L 202 337 L 202 332 L 205 321 L 207 319 L 207 317 L 209 315 L 212 309 L 215 307 L 216 304 L 220 301 L 224 296 L 242 284 L 244 284 L 252 279 L 254 279 L 266 273 L 268 273 L 270 271 L 277 269 L 279 267 L 281 267 L 289 262 L 299 253 L 301 250 L 302 245 L 297 248 L 290 250 L 260 252 L 254 251 L 247 253 L 240 253 L 229 255 L 213 260 L 192 272 L 181 284 L 176 292 L 176 294 L 174 296 L 173 300 L 171 301 L 167 294 L 164 284 L 163 267 L 165 256 L 169 247 L 169 245 L 173 237 L 182 224 L 178 224 L 162 229 L 157 232 L 155 232 L 150 236 L 148 236 L 145 239 Z" fill="url(#blueFlame)" />"##
+
+        );
+    } else {
+        let mut count_val = None;
+
+        let mut color_val = None;
+
+        let mut size_val = None;
+
+        let mut thickness_val = None;
+
+        for p in &dsl.properties {
+            match p.name.as_str() {
+                "count" => count_val = p.value.as_ref().and_then(|v| v.try_into_int().ok()),
+
+                "color" => color_val = p.value.as_ref().map(|v| v.to_string()),
+
+                "size" => size_val = p.value.as_ref().and_then(|v| v.try_into_int().ok()),
+
+                "thickness" => thickness_val = p.value.as_ref().and_then(|v| v.try_into_int().ok()),
+
+                _ => {}
+            }
+        }
+
+        let count = count_val.unwrap_or(3);
+
+        let color = color_val.unwrap_or_else(|| "#00d4ff".to_string());
+
+        let size = size_val.unwrap_or(40);
+
+        let thickness = thickness_val.unwrap_or(3);
+
+        for i in 0..count {
+            let r = 80 + i as i64 * (size / 2);
+
+            let opacity = 0.4 - (i as f32 * 0.08);
+
+            let _ = write!(
+                svg,
+                r#"<circle cx="250" cy="180" r="{}" fill="none" stroke="{}" stroke-width="{}" opacity="{}"/>"#,
+                r, color, thickness, opacity
+            );
+        }
+    }
+}
+
+fn render_dsl_to_svg(svg: &mut String, val: &RuntimeValue, is_dragon: bool) {
+    if let RuntimeValue::DslBlock(dsl) = val {
+        match dsl.kind.as_str() {
+            "circuits" => render_circuits(svg, dsl, is_dragon),
+            "letter" => render_letter(svg, dsl, is_dragon),
+            "logo" => render_logo(svg, dsl, is_dragon),
+            "core" => {
+                if !is_dragon {
+                    render_core(svg, dsl);
+                }
+            }
+            "emblem" => render_emblem(svg, dsl, is_dragon),
+            "rings" => render_rings(svg, dsl, is_dragon),
+            _ => {}
+        }
     }
 }
 

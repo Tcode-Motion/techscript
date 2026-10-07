@@ -118,10 +118,51 @@ impl StdlibRegistry {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::sync::Arc;
+    use std::thread;
+    use std::time::Duration;
 
     #[test]
     fn test_script_mutex_new() {
         let mutex = ScriptMutex::new();
+        let guard = mutex.locked.lock().unwrap();
+        assert_eq!(*guard, false);
+    }
+
+    #[test]
+    fn test_script_mutex_unlock() {
+        let mutex = ScriptMutex::new();
+        mutex.lock();
+        assert_eq!(*mutex.locked.lock().unwrap(), true);
+
+        mutex.unlock();
+        assert_eq!(*mutex.locked.lock().unwrap(), false);
+    }
+
+    #[test]
+    fn test_script_mutex_lock_unlock_multithreaded() {
+        let mutex = Arc::new(ScriptMutex::new());
+        let mutex_clone = Arc::clone(&mutex);
+
+        let progress = Arc::new(Mutex::new(false));
+        let progress_clone = Arc::clone(&progress);
+
+        mutex.lock();
+
+        let thread_handle = thread::spawn(move || {
+            mutex_clone.lock();
+            *progress_clone.lock().unwrap() = true;
+            mutex_clone.unlock();
+        });
+
+        thread::sleep(Duration::from_millis(50));
+        assert_eq!(*progress.lock().unwrap(), false);
+
+        mutex.unlock();
+
+        thread_handle.join().unwrap();
+        assert_eq!(*progress.lock().unwrap(), true);
+
         let guard = mutex.locked.lock().unwrap();
         assert_eq!(*guard, false);
     }

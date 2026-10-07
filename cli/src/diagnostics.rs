@@ -228,6 +228,14 @@ impl<'a> DiagnosticRenderer<'a> {
             String::new()
         };
 
+        self.render_header(&mut out, diag, &header);
+        self.render_primary_span(&mut out, diag);
+        self.render_footer(&mut out, diag);
+
+        out
+    }
+
+    fn render_header(&self, out: &mut String, diag: &RichDiagnostic, header: &str) {
         if self.output == DiagnosticOutput::Colored {
             if header.is_empty() {
                 let _ = write!(
@@ -258,8 +266,9 @@ impl<'a> DiagnosticRenderer<'a> {
                 );
             }
         }
+    }
 
-        // Primary span with source snippet
+    fn render_primary_span(&self, out: &mut String, diag: &RichDiagnostic) {
         if let Some(primary) = &diag.primary_span {
             if let Some(file) = self.source_manager.get_file(primary.file_id) {
                 let (line, col) = file.line_col(primary.span.start).unwrap_or((1, 1));
@@ -304,7 +313,9 @@ impl<'a> DiagnosticRenderer<'a> {
                 }
             }
         }
+    }
 
+    fn render_footer(&self, out: &mut String, diag: &RichDiagnostic) {
         // Related diagnostics (help, notes)
         for related in &diag.related {
             if self.output == DiagnosticOutput::Colored {
@@ -358,8 +369,6 @@ impl<'a> DiagnosticRenderer<'a> {
                 );
             }
         }
-
-        out
     }
 
     fn render_json(&self, diag: &RichDiagnostic) -> String {

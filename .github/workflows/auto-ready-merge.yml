@@ -23,4 +23,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr merge "${{ github.event.pull_request.html_url }}" --auto --merge
+          gh pr merge "${{ github.event.pull_request.html_url }}" --auto --merge || true

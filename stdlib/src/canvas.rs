@@ -460,164 +460,44 @@ fn parse_height(svg: &str) -> i64 {
     600
 }
 
+fn build_canvas_api(buffer: Rc<RefCell<String>>) -> HashMap<String, Rc<dyn Callable>> {
+    let mut exports: HashMap<String, Rc<dyn Callable>> = HashMap::new();
+
+    let mut add = |name: &str, min: usize, max: usize, kind: CanvasOp| {
+        exports.insert(
+            name.to_string(),
+            Rc::new(CanvasFn {
+                name: name.into(),
+                min_arity: min,
+                max_arity: max,
+                buffer: buffer.clone(),
+                kind,
+            }),
+        );
+    };
+
+    add("create", 2, 2, CanvasOp::Create);
+    add("background", 1, 1, CanvasOp::Background);
+    add("rect", 5, 5, CanvasOp::Rect);
+    add("circle", 4, 4, CanvasOp::Circle);
+    add("text", 3, 5, CanvasOp::Text);
+    add("polygon", 2, 2, CanvasOp::Polygon);
+    add("line", 5, 5, CanvasOp::Line);
+    add("close", 0, 0, CanvasOp::Close);
+    add("save", 1, 1, CanvasOp::Save);
+    add("append", 1, 1, CanvasOp::Append);
+    add("stroke", 4, 6, CanvasOp::Stroke);
+    add("reset", 0, 0, CanvasOp::Reset);
+    add("content", 0, 0, CanvasOp::Content);
+    add("size", 2, 2, CanvasOp::Create);
+
+    exports
+}
+
 impl StdlibRegistry {
     pub fn register_canvas(&mut self) {
         let buffer: Rc<RefCell<String>> = Rc::new(RefCell::new(String::new()));
-        let mut exports: HashMap<String, Rc<dyn Callable>> = HashMap::new();
-
-        let b = buffer.clone();
-        exports.insert(
-            "create".to_string(),
-            Rc::new(CanvasFn {
-                name: "create".into(),
-                min_arity: 2,
-                max_arity: 2,
-                buffer: b,
-                kind: CanvasOp::Create,
-            }),
-        );
-        let b = buffer.clone();
-        exports.insert(
-            "background".to_string(),
-            Rc::new(CanvasFn {
-                name: "background".into(),
-                min_arity: 1,
-                max_arity: 1,
-                buffer: b,
-                kind: CanvasOp::Background,
-            }),
-        );
-        let b = buffer.clone();
-        exports.insert(
-            "rect".to_string(),
-            Rc::new(CanvasFn {
-                name: "rect".into(),
-                min_arity: 5,
-                max_arity: 5,
-                buffer: b,
-                kind: CanvasOp::Rect,
-            }),
-        );
-        let b = buffer.clone();
-        exports.insert(
-            "circle".to_string(),
-            Rc::new(CanvasFn {
-                name: "circle".into(),
-                min_arity: 4,
-                max_arity: 4,
-                buffer: b,
-                kind: CanvasOp::Circle,
-            }),
-        );
-        let b = buffer.clone();
-        exports.insert(
-            "text".to_string(),
-            Rc::new(CanvasFn {
-                name: "text".into(),
-                min_arity: 3,
-                max_arity: 5,
-                buffer: b,
-                kind: CanvasOp::Text,
-            }),
-        );
-        let b = buffer.clone();
-        exports.insert(
-            "polygon".to_string(),
-            Rc::new(CanvasFn {
-                name: "polygon".into(),
-                min_arity: 2,
-                max_arity: 2,
-                buffer: b,
-                kind: CanvasOp::Polygon,
-            }),
-        );
-        let b = buffer.clone();
-        exports.insert(
-            "line".to_string(),
-            Rc::new(CanvasFn {
-                name: "line".into(),
-                min_arity: 5,
-                max_arity: 5,
-                buffer: b,
-                kind: CanvasOp::Line,
-            }),
-        );
-        let b = buffer.clone();
-        exports.insert(
-            "close".to_string(),
-            Rc::new(CanvasFn {
-                name: "close".into(),
-                min_arity: 0,
-                max_arity: 0,
-                buffer: b,
-                kind: CanvasOp::Close,
-            }),
-        );
-        let b = buffer.clone();
-        exports.insert(
-            "save".to_string(),
-            Rc::new(CanvasFn {
-                name: "save".into(),
-                min_arity: 1,
-                max_arity: 1,
-                buffer: b,
-                kind: CanvasOp::Save,
-            }),
-        );
-        let b = buffer.clone();
-        exports.insert(
-            "append".to_string(),
-            Rc::new(CanvasFn {
-                name: "append".into(),
-                min_arity: 1,
-                max_arity: 1,
-                buffer: b,
-                kind: CanvasOp::Append,
-            }),
-        );
-        let b = buffer.clone();
-        exports.insert(
-            "stroke".to_string(),
-            Rc::new(CanvasFn {
-                name: "stroke".into(),
-                min_arity: 4,
-                max_arity: 6,
-                buffer: b,
-                kind: CanvasOp::Stroke,
-            }),
-        );
-        let b = buffer.clone();
-        exports.insert(
-            "reset".to_string(),
-            Rc::new(CanvasFn {
-                name: "reset".into(),
-                min_arity: 0,
-                max_arity: 0,
-                buffer: b,
-                kind: CanvasOp::Reset,
-            }),
-        );
-        let b = buffer.clone();
-        exports.insert(
-            "content".to_string(),
-            Rc::new(CanvasFn {
-                name: "content".into(),
-                min_arity: 0,
-                max_arity: 0,
-                buffer: b,
-                kind: CanvasOp::Content,
-            }),
-        );
-        exports.insert(
-            "size".to_string(),
-            Rc::new(CanvasFn {
-                name: "size".into(),
-                min_arity: 2,
-                max_arity: 2,
-                buffer: buffer.clone(),
-                kind: CanvasOp::Create,
-            }),
-        );
+        let mut exports = build_canvas_api(buffer.clone());
 
         // DSL block rendering: convert DSL blocks to SVG
         exports.insert(

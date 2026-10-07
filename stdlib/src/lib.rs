@@ -54,6 +54,7 @@ pub mod mock;
 pub mod mongodb;
 pub mod mysql;
 pub mod net;
+pub mod net_handler;
 pub mod notification;
 pub mod oauth;
 pub mod os;

@@ -131,20 +131,29 @@ mod tests {
         use std::sync::Arc;
         use std::thread;
         use std::time::Duration;
+        use std::sync::atomic::{AtomicBool, Ordering};
 
         let mutex = Arc::new(ScriptMutex::new());
         let mutex_clone = Arc::clone(&mutex);
+        let flag = Arc::new(AtomicBool::new(false));
+        let flag_clone = Arc::clone(&flag);
 
         mutex.lock();
 
         let handle = thread::spawn(move || {
             mutex_clone.lock();
+            flag_clone.store(true, Ordering::SeqCst);
             mutex_clone.unlock();
         });
 
         thread::sleep(Duration::from_millis(50));
+        // Verify the second thread is blocked and hasn't set the flag
+        assert_eq!(flag.load(Ordering::SeqCst), false);
+
         mutex.unlock();
 
         handle.join().unwrap();
+        // Verify the second thread acquired the lock and set the flag
+        assert_eq!(flag.load(Ordering::SeqCst), true);
     }
 }

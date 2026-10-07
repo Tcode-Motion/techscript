@@ -233,11 +233,44 @@ pub fn unzip_archive(archive_path: &str, dest_dir: &str) -> std::io::Result<()> 
     let mut archive = zip::ZipArchive::new(file)?;
     std::fs::create_dir_all(dest_dir)?;
 
-    // The zip crate's `extract` method already has built-in directory traversal
-    // protections which prevent absolute paths and parent directory traversals
-    // from escaping the destination directory. Therefore, we revert the manual
-    // path validation that caused a regression with uncanonicalized relative paths.
-    archive.extract(dest_dir)?;
+    for i in 0..archive.len() {
+        let mut file = archive.by_index(i)?;
+        let outpath = match file.enclosed_name() {
+            Some(path) => std::path::Path::new(dest_dir).join(path),
+            None => continue,
+        };
+
+        if (*file.name()).ends_with('/') {
+            std::fs::create_dir_all(&outpath)?;
+        } else {
+            if let Some(p) = outpath.parent() {
+                if !p.exists() {
+                    std::fs::create_dir_all(p)?;
+                }
+            }
+
+                if let Some(p) = outpath.parent() {
+                    let canonical_parent = std::fs::canonicalize(p)?;
+                    let canonical_dest = std::fs::canonicalize(dest_dir)?;
+                    if !canonical_parent.starts_with(&canonical_dest) {
+                        return Err(std::io::Error::new(
+                            std::io::ErrorKind::InvalidData,
+                            "Path traversal detected",
+                        ));
+                    }
+                }
+
+            let mut outfile = std::fs::File::create(&outpath)?;
+            std::io::copy(&mut file, &mut outfile)?;
+        }
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            if let Some(mode) = file.unix_mode() {
+                let _ = std::fs::set_permissions(&outpath, std::fs::Permissions::from_mode(mode));
+            }
+        }
+    }
     Ok(())
 }
 
@@ -253,12 +286,38 @@ pub fn untar_archive(archive_path: &str, dest_dir: &str) -> std::io::Result<()> 
     let file = File::open(archive_path)?;
     let mut a = tar::Archive::new(file);
 
-    // The tar crate's `unpack_in` method already has built-in directory traversal
-    // protections which prevent absolute paths and parent directory traversals
-    // from escaping the destination directory. Therefore, we revert the manual
-    // path validation that caused a regression with uncanonicalized relative paths.
+    let dest = std::path::Path::new(dest_dir);
+    for entry in a.entries()? {
+        let mut entry = entry?;
+        let path = entry.path()?;
 
-    a.unpack(dest_dir)?;
+        let mut safe = true;
+        for component in path.components() {
+            match component {
+                std::path::Component::ParentDir | std::path::Component::RootDir | std::path::Component::Prefix(_) => {
+                    safe = false;
+                    break;
+                }
+                _ => {}
+            }
+        }
+
+        if safe {
+            let outpath = dest.join(path);
+            if let Some(p) = outpath.parent() {
+                std::fs::create_dir_all(p)?;
+                let canonical_parent = std::fs::canonicalize(p)?;
+                let canonical_dest = std::fs::canonicalize(dest)?;
+                if !canonical_parent.starts_with(&canonical_dest) {
+                     return Err(std::io::Error::new(
+                        std::io::ErrorKind::InvalidData,
+                        "Path traversal detected",
+                    ));
+                }
+            }
+            entry.unpack_in(dest)?;
+        }
+    }
     Ok(())
 }
 

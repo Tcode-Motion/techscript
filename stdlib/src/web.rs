@@ -37,31 +37,9 @@ fn is_safe_url(url_str: &str) -> bool {
     };
 
     match parsed_url.scheme() {
-        "http" | "https" => {}
-        _ => return false, // Block file://, ftp://, gopher://, etc.
+        "http" | "https" => true,
+        _ => false, // Block file://, ftp://, gopher://, etc.
     }
-
-    let host = match parsed_url.host_str() {
-        Some(h) => h,
-        None => return false, // No host provided
-    };
-
-    let port = parsed_url.port_or_known_default().unwrap_or(80);
-    let addr_str = format!("{}:{}", host, port);
-
-    // Resolve the domain to IPs
-    let addrs = match addr_str.to_socket_addrs() {
-        Ok(a) => a,
-        Err(_) => return false, // DNS resolution failed
-    };
-
-    for addr in addrs {
-        if !is_safe_ip(&addr.ip()) {
-            return false; // Found an unsafe IP
-        }
-    }
-
-    true
 }
 
 struct SafeResolver;
@@ -73,12 +51,17 @@ impl Resolver for SafeResolver {
         for addr in addrs {
             if is_safe_ip(&addr.ip()) {
                 safe_addrs.push(addr);
+            } else {
+                return Err(std::io::Error::new(
+                    std::io::ErrorKind::PermissionDenied,
+                    "DNS resolution returned a blocked/internal IP address (SSRF prevention).",
+                ));
             }
         }
         if safe_addrs.is_empty() {
             return Err(std::io::Error::new(
                 std::io::ErrorKind::PermissionDenied,
-                "DNS resolution returned only blocked/internal IP addresses (SSRF prevention).",
+                "DNS resolution returned no valid IP addresses.",
             ));
         }
         Ok(safe_addrs)

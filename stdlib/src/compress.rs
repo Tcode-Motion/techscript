@@ -283,7 +283,10 @@ pub fn untar_archive(archive_path: &str, dest_dir: &str) -> std::io::Result<()> 
     // from escaping the destination directory. Therefore, we revert the manual
     // path validation that caused a regression with uncanonicalized relative paths.
 
-    a.unpack(dest_dir)?;
+    for entry in a.entries()? {
+        let mut entry = entry?;
+        entry.unpack_in(dest_dir)?;
+    }
     Ok(())
 }
 

@@ -540,9 +540,7 @@ fn test_http_module() {
         &mut ctx_unprivileged,
         vec![RuntimeValue::Str(format!("http://127.0.0.1:{}", port))],
     );
-    assert!(
-        matches!(res_get, Err(techscript_runtime::RuntimeError { kind: techscript_runtime::RuntimeErrorKind::InvalidOperation(msg), .. }) if msg.contains("Security policy violation"))
-    );
+    assert!(matches!(res_get, Err(techscript_runtime::RuntimeError { kind: techscript_runtime::RuntimeErrorKind::InvalidOperation(msg), .. }) if msg.contains("Security policy violation")));
 
     let post = http.exports.get("post").unwrap();
     let res_post = post.call(
@@ -552,9 +550,7 @@ fn test_http_module() {
             RuntimeValue::Str("body".to_string()),
         ],
     );
-    assert!(
-        matches!(res_post, Err(techscript_runtime::RuntimeError { kind: techscript_runtime::RuntimeErrorKind::InvalidOperation(msg), .. }) if msg.contains("Security policy violation"))
-    );
+    assert!(matches!(res_post, Err(techscript_runtime::RuntimeError { kind: techscript_runtime::RuntimeErrorKind::InvalidOperation(msg), .. }) if msg.contains("Security policy violation")));
 
     // Test with Network capability
     let mut caps = HashSet::new();

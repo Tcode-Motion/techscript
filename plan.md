@@ -111,20 +111,22 @@ def main():
 
     helpers_code = "\n\n".join(helpers)
 
+    match_arms = []
+    for key in keys:
+        if key == "core":
+            match_arms.append('            "core" => {')
+            match_arms.append('                if !is_dragon {')
+            match_arms.append('                    render_core(svg, dsl);')
+            match_arms.append('                }')
+            match_arms.append('            }')
+        else:
+            match_arms.append(f'            "{key}" => render_{key}(svg, dsl, is_dragon),')
+
+    match_arms.append('            _ => {}')
+
     new_func = """fn render_dsl_to_svg(svg: &mut String, val: &RuntimeValue, is_dragon: bool) {
     if let RuntimeValue::DslBlock(dsl) = val {
-        match dsl.kind.as_str() {
-            "logo" => render_logo(svg, dsl, is_dragon),
-            "rings" => render_rings(svg, dsl, is_dragon),
-            "emblem" => render_emblem(svg, dsl, is_dragon),
-            "letter" => render_letter(svg, dsl, is_dragon),
-            "core" => {
-                if !is_dragon {
-                    render_core(svg, dsl);
-                }
-            }
-            "circuits" => render_circuits(svg, dsl, is_dragon),
-            _ => {}
+        match dsl.kind.as_str() {\n""" + "\n".join(match_arms) + """
         }
     }
 }"""
@@ -143,16 +145,34 @@ if __name__ == '__main__':
 ```
    - Use `run_in_bash_session` to execute `python3 /tmp/refactor.py`.
    - Use `run_in_bash_session` to execute `rm /tmp/refactor.py`.
-4. **Visually verify Step 3**
+4. **Fix GitHub Actions workflow**
+   - Use `replace_with_git_merge_diff` to add `|| true` to the `gh pr merge` command in `.github/workflows/auto-ready-merge.yml`. This addresses the "Protected branch rules not configured" error which fails the workflow.
+```
+<<<<<<< SEARCH
+      - name: Enable Auto-Merge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr merge "${{ github.event.pull_request.html_url }}" --auto --merge
+=======
+      - name: Enable Auto-Merge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr merge "${{ github.event.pull_request.html_url }}" --auto --merge || true
+>>>>>>> REPLACE
+```
+5. **Visually verify Step 3 and 4**
    - Use `run_in_bash_session` with `cat stdlib/src/canvas.rs | grep -A 30 "fn render_dsl_to_svg"` to verify the modified `render_dsl_to_svg` function and the helpers.
-5. **Format the file**
+   - Use `run_in_bash_session` with `cat .github/workflows/auto-ready-merge.yml` to verify the modified workflow.
+6. **Format the file**
    - Use `run_in_bash_session` to execute `cargo fmt` because the indentation might be a little off.
-6. **Run tests to verify functionality**
+7. **Run tests to verify functionality**
    - Use `run_in_bash_session` to execute `cargo test --workspace --all-targets` to ensure no functionality is broken.
-7. **Complete pre-commit steps**
+8. **Complete pre-commit steps**
    - Complete pre-commit steps to ensure proper testing, verification, review, and reflection are done.
-8. **Submit the PR**
-   - Use `submit` tool to create a PR:
+9. **Submit the PR**
+   - Use `submit` tool to update the PR.
      - Branch name: `fix-canvas-refactor`
      - Title: "🧹 [Refactor canvas SVG generation]"
-     - Description: "🎯 **What:** Extracted SVG generation logic in `canvas.rs` into smaller helper functions based on `dsl.kind`.\n💡 **Why:** Refactoring deeply nested `match` statements prevents massive function sizes and improves overall code readability and maintainability.\n✅ **Verification:** Visually verified the split function logic using `cat` and successfully ran `cargo test --workspace --all-targets` to confirm no regressions.\n✨ **Result:** Cleanly segmented, modular SVG generation that is easier to maintain."
+     - Description: "🎯 **What:** Extracted SVG generation logic in `canvas.rs` into smaller helper functions based on `dsl.kind`, and added `|| true` to `.github/workflows/auto-ready-merge.yml` to fix CI failure.\n💡 **Why:** Refactoring deeply nested `match` statements prevents massive function sizes and improves overall code readability and maintainability. Appending `|| true` to the `gh pr merge` command prevents the workflow from failing when branch protection rules are absent.\n✅ **Verification:** Visually verified the split function logic using `cat` and successfully ran `cargo test --workspace --all-targets` to confirm no regressions.\n✨ **Result:** Cleanly segmented, modular SVG generation that is easier to maintain."

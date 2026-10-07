@@ -33,12 +33,18 @@ impl StdlibRegistry {
                     #[cfg(target_os = "windows")]
                     {
                         use std::process::Command;
+                        use base64::Engine;
+                        let b64_title = base64::prelude::BASE64_STANDARD.encode(title.as_bytes());
+                        let b64_body = base64::prelude::BASE64_STANDARD.encode(body.as_bytes());
+                        let script = format!(
+                            "[System.Windows.MessageBox]::Show([System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('{}')), [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('{}')))",
+                            b64_body, b64_title
+                        );
                         let _ = Command::new("powershell")
-                            .env("TS_NOTIFY_TITLE", &title)
-                            .env("TS_NOTIFY_BODY", &body)
                             .args([
+                                "-NoProfile",
                                 "-Command",
-                                "[System.Windows.MessageBox]::Show($env:TS_NOTIFY_BODY, $env:TS_NOTIFY_TITLE)"
+                                &script
                             ])
                             .spawn();
                     }

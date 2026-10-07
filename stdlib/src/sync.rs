@@ -125,4 +125,31 @@ mod tests {
         let guard = mutex.locked.lock().unwrap();
         assert_eq!(*guard, false);
     }
+
+    #[test]
+    fn test_script_mutex_unlock() {
+        use std::sync::Arc;
+        use std::thread;
+        use std::time::Duration;
+
+        let mutex = Arc::new(ScriptMutex::new());
+        mutex.lock();
+
+        let mutex_clone = Arc::clone(&mutex);
+        let handle = thread::spawn(move || {
+            // This will block until the main thread unlocks it.
+            mutex_clone.lock();
+            // Now unlock it so the test can finish cleanly
+            mutex_clone.unlock();
+        });
+
+        // Give the spawned thread a moment to block on the mutex.
+        thread::sleep(Duration::from_millis(50));
+
+        // Unlock, which should wake the sleeping thread.
+        mutex.unlock();
+
+        // If unlock() doesn't work, this join will hang indefinitely.
+        handle.join().unwrap();
+    }
 }

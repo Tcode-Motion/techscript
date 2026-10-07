@@ -41,24 +41,8 @@ fn is_safe_url(url_str: &str) -> bool {
         _ => return false, // Block file://, ftp://, gopher://, etc.
     }
 
-    let host = match parsed_url.host_str() {
-        Some(h) => h,
-        None => return false, // No host provided
-    };
-
-    let port = parsed_url.port_or_known_default().unwrap_or(80);
-    let addr_str = format!("{}:{}", host, port);
-
-    // Resolve the domain to IPs
-    let addrs = match addr_str.to_socket_addrs() {
-        Ok(a) => a,
-        Err(_) => return false, // DNS resolution failed
-    };
-
-    for addr in addrs {
-        if !is_safe_ip(&addr.ip()) {
-            return false; // Found an unsafe IP
-        }
+    if parsed_url.host_str().is_none() {
+        return false; // No host provided
     }
 
     true

@@ -181,9 +181,16 @@ impl StdlibRegistry {
                                 .collect();
 
                             let mut rows = Vec::new();
+                            let mut prototype_map = IndexMap::with_capacity(col_count);
+                            let mut col_to_map_idx = Vec::with_capacity(col_count);
+                            for name in col_names.iter() {
+                                let (map_idx, _) = prototype_map.insert_full(name.clone(), RuntimeValue::Null);
+                                col_to_map_idx.push(map_idx);
+                            }
+
                             let row_iter = stmt
                                 .query_map(rusqlite::params_from_iter(params), |row| {
-                                    let mut map = IndexMap::with_capacity(col_count);
+                                    let mut map = prototype_map.clone();
                                     for i in 0..col_count {
                                         let val = row.get_ref_unwrap(i);
                                         let rt_val = match val {
@@ -207,7 +214,10 @@ impl StdlibRegistry {
                                                 )
                                             }
                                         };
-                                        map.insert(col_names[i].clone(), rt_val);
+                                        let map_idx = col_to_map_idx[i];
+                                        if let Some((_, v)) = map.get_index_mut(map_idx) {
+                                            *v = rt_val;
+                                        }
                                     }
                                     Ok(map)
                                 })

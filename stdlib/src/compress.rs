@@ -5,8 +5,105 @@ use std::io::{Read, Write};
 use std::path::Path;
 use std::rc::Rc;
 use techscript_runtime::{
-    context::Capability, error::RuntimeError, error::RuntimeErrorKind, value::RuntimeValue,
+    context::{Capability, RuntimeContext}, error::RuntimeError, error::RuntimeErrorKind, value::RuntimeValue,
 };
+
+fn check_fs_capability(ctx: &RuntimeContext) -> Result<(), RuntimeError> {
+    if !ctx.config.capabilities.contains(&Capability::FileSystem) {
+        return Err(RuntimeError::new(
+            RuntimeErrorKind::InvalidOperation(
+                "Security policy violation: FileSystem capability is denied".to_string(),
+            ),
+            None,
+            None,
+        ));
+    }
+    Ok(())
+}
+
+fn builtin_zip(ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<RuntimeValue, RuntimeError> {
+    check_fs_capability(ctx)?;
+    let src_dir = args[0].try_into_string()?;
+    let archive_path = args[1].try_into_string()?;
+    zip_dir(&src_dir, &archive_path).map_err(|e| {
+        RuntimeError::new(
+            RuntimeErrorKind::InvalidOperation(format!("ZIP error: {}", e)),
+            None,
+            None,
+        )
+    })?;
+    Ok(RuntimeValue::Null)
+}
+
+fn builtin_unzip(ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<RuntimeValue, RuntimeError> {
+    check_fs_capability(ctx)?;
+    let archive_path = args[0].try_into_string()?;
+    let dest_dir = args[1].try_into_string()?;
+    unzip_archive(&archive_path, &dest_dir).map_err(|e| {
+        RuntimeError::new(
+            RuntimeErrorKind::InvalidOperation(format!("UNZIP error: {}", e)),
+            None,
+            None,
+        )
+    })?;
+    Ok(RuntimeValue::Null)
+}
+
+fn builtin_tar(ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<RuntimeValue, RuntimeError> {
+    check_fs_capability(ctx)?;
+    let src_dir = args[0].try_into_string()?;
+    let archive_path = args[1].try_into_string()?;
+    tar_dir(&src_dir, &archive_path).map_err(|e| {
+        RuntimeError::new(
+            RuntimeErrorKind::InvalidOperation(format!("TAR error: {}", e)),
+            None,
+            None,
+        )
+    })?;
+    Ok(RuntimeValue::Null)
+}
+
+fn builtin_untar(ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<RuntimeValue, RuntimeError> {
+    check_fs_capability(ctx)?;
+    let archive_path = args[0].try_into_string()?;
+    let dest_dir = args[1].try_into_string()?;
+    untar_archive(&archive_path, &dest_dir).map_err(|e| {
+        RuntimeError::new(
+            RuntimeErrorKind::InvalidOperation(format!("UNTAR error: {}", e)),
+            None,
+            None,
+        )
+    })?;
+    Ok(RuntimeValue::Null)
+}
+
+fn builtin_gzip(ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<RuntimeValue, RuntimeError> {
+    check_fs_capability(ctx)?;
+    let src_file = args[0].try_into_string()?;
+    let archive_path = args[1].try_into_string()?;
+    gzip_file(&src_file, &archive_path).map_err(|e| {
+        RuntimeError::new(
+            RuntimeErrorKind::InvalidOperation(format!("GZIP error: {}", e)),
+            None,
+            None,
+        )
+    })?;
+    Ok(RuntimeValue::Null)
+}
+
+fn builtin_gunzip(ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<RuntimeValue, RuntimeError> {
+    check_fs_capability(ctx)?;
+    let archive_path = args[0].try_into_string()?;
+    let dest_file = args[1].try_into_string()?;
+    gunzip_archive(&archive_path, &dest_file).map_err(|e| {
+        RuntimeError::new(
+            RuntimeErrorKind::InvalidOperation(format!("GUNZIP error: {}", e)),
+            None,
+            None,
+        )
+    })?;
+    Ok(RuntimeValue::Null)
+}
 
 impl StdlibRegistry {
     pub fn register_compress(&mut self) {
@@ -18,28 +115,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "zip".to_string(),
                 arity: 2,
-                callback: |ctx, args| {
-                    if !ctx.config.capabilities.contains(&Capability::FileSystem) {
-                        return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: FileSystem capability is denied"
-                                    .to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
-                    let src_dir = args[0].try_into_string()?;
-                    let archive_path = args[1].try_into_string()?;
-                    zip_dir(&src_dir, &archive_path).map_err(|e| {
-                        RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("ZIP error: {}", e)),
-                            None,
-                            None,
-                        )
-                    })?;
-                    Ok(RuntimeValue::Null)
-                },
+                callback: builtin_zip,
             }),
         );
 
@@ -48,28 +124,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "unzip".to_string(),
                 arity: 2,
-                callback: |ctx, args| {
-                    if !ctx.config.capabilities.contains(&Capability::FileSystem) {
-                        return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: FileSystem capability is denied"
-                                    .to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
-                    let archive_path = args[0].try_into_string()?;
-                    let dest_dir = args[1].try_into_string()?;
-                    unzip_archive(&archive_path, &dest_dir).map_err(|e| {
-                        RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("UNZIP error: {}", e)),
-                            None,
-                            None,
-                        )
-                    })?;
-                    Ok(RuntimeValue::Null)
-                },
+                callback: builtin_unzip,
             }),
         );
 
@@ -78,28 +133,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "tar".to_string(),
                 arity: 2,
-                callback: |ctx, args| {
-                    if !ctx.config.capabilities.contains(&Capability::FileSystem) {
-                        return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: FileSystem capability is denied"
-                                    .to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
-                    let src_dir = args[0].try_into_string()?;
-                    let archive_path = args[1].try_into_string()?;
-                    tar_dir(&src_dir, &archive_path).map_err(|e| {
-                        RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("TAR error: {}", e)),
-                            None,
-                            None,
-                        )
-                    })?;
-                    Ok(RuntimeValue::Null)
-                },
+                callback: builtin_tar,
             }),
         );
 
@@ -108,28 +142,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "untar".to_string(),
                 arity: 2,
-                callback: |ctx, args| {
-                    if !ctx.config.capabilities.contains(&Capability::FileSystem) {
-                        return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: FileSystem capability is denied"
-                                    .to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
-                    let archive_path = args[0].try_into_string()?;
-                    let dest_dir = args[1].try_into_string()?;
-                    untar_archive(&archive_path, &dest_dir).map_err(|e| {
-                        RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("UNTAR error: {}", e)),
-                            None,
-                            None,
-                        )
-                    })?;
-                    Ok(RuntimeValue::Null)
-                },
+                callback: builtin_untar,
             }),
         );
 
@@ -138,28 +151,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "gzip".to_string(),
                 arity: 2,
-                callback: |ctx, args| {
-                    if !ctx.config.capabilities.contains(&Capability::FileSystem) {
-                        return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: FileSystem capability is denied"
-                                    .to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
-                    let src_file = args[0].try_into_string()?;
-                    let archive_path = args[1].try_into_string()?;
-                    gzip_file(&src_file, &archive_path).map_err(|e| {
-                        RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("GZIP error: {}", e)),
-                            None,
-                            None,
-                        )
-                    })?;
-                    Ok(RuntimeValue::Null)
-                },
+                callback: builtin_gzip,
             }),
         );
 
@@ -168,28 +160,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "gunzip".to_string(),
                 arity: 2,
-                callback: |ctx, args| {
-                    if !ctx.config.capabilities.contains(&Capability::FileSystem) {
-                        return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: FileSystem capability is denied"
-                                    .to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
-                    let archive_path = args[0].try_into_string()?;
-                    let dest_file = args[1].try_into_string()?;
-                    gunzip_archive(&archive_path, &dest_file).map_err(|e| {
-                        RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!("GUNZIP error: {}", e)),
-                            None,
-                            None,
-                        )
-                    })?;
-                    Ok(RuntimeValue::Null)
-                },
+                callback: builtin_gunzip,
             }),
         );
 

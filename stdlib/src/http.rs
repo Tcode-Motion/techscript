@@ -186,3 +186,40 @@ impl StdlibRegistry {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use techscript_runtime::context::{RuntimeConfig, RuntimeContext};
+    use techscript_runtime::value::RuntimeValue;
+
+    #[test]
+    fn test_http_listen_capability_denied() {
+        let mut registry = StdlibRegistry::new();
+        registry.register_http();
+
+        let mut config = RuntimeConfig::default();
+        config.capabilities.remove(&Capability::Network); // Ensure network is disabled
+        let mut ctx = RuntimeContext::new(config);
+
+        let module = registry.get_module("std.http").unwrap();
+        let listen_func = module.exports.get("listen").unwrap();
+
+        let port_val = RuntimeValue::Int(8080);
+        let callback = RuntimeValue::Function(Rc::new(crate::StdFunction {
+            name: "dummy".to_string(),
+            arity: 1,
+            callback: |_, _| Ok(RuntimeValue::Null),
+        }));
+
+        let result = listen_func.call(&mut ctx, vec![port_val, callback]);
+
+        assert!(result.is_err());
+        let err = result.unwrap_err();
+        if let RuntimeErrorKind::InvalidOperation(msg) = err.kind {
+            assert!(msg.contains("Security policy violation: Network capability is denied"));
+        } else {
+            panic!("Expected InvalidOperation error");
+        }
+    }
+}

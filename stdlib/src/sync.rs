@@ -125,4 +125,26 @@ mod tests {
         let guard = mutex.locked.lock().unwrap();
         assert_eq!(*guard, false);
     }
+
+    #[test]
+    fn test_script_mutex_lock() {
+        use std::sync::Arc;
+        use std::thread;
+        use std::time::Duration;
+
+        let mutex = Arc::new(ScriptMutex::new());
+        let mutex_clone = Arc::clone(&mutex);
+
+        mutex.lock();
+
+        let handle = thread::spawn(move || {
+            mutex_clone.lock();
+            mutex_clone.unlock();
+        });
+
+        thread::sleep(Duration::from_millis(50));
+        mutex.unlock();
+
+        handle.join().unwrap();
+    }
 }

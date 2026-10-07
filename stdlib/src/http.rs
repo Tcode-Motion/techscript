@@ -9,6 +9,54 @@ use techscript_runtime::{
     value::RuntimeValue,
 };
 
+macro_rules! execute_request {
+    ($ctx:expr, $req_name:expr, $req:expr) => {{
+        if !$ctx.config.capabilities.contains(&Capability::Network) {
+            return Err(RuntimeError::new(
+                RuntimeErrorKind::InvalidOperation(
+                    "Security policy violation: Network capability is denied".to_string(),
+                ),
+                None,
+                None,
+            ));
+        }
+
+        let response = $req.map_err(|e| {
+            RuntimeError::new(
+                RuntimeErrorKind::InvalidOperation(format!(
+                    "HTTP {} request failed: {}",
+                    $req_name, e
+                )),
+                None,
+                None,
+            )
+        })?;
+
+        let status = response.status();
+        let body = response.into_string().map_err(|e| {
+            RuntimeError::new(
+                RuntimeErrorKind::InvalidOperation(format!(
+                    "Failed to read HTTP response body: {}",
+                    e
+                )),
+                None,
+                None,
+            )
+        })?;
+
+        // ⚡ Bolt Performance Optimization:
+        // Pre-allocating the IndexMap capacity matching the expected number of keys
+        // avoids intermediate allocations and re-hashing during insertion.
+        let mut res_map = IndexMap::with_capacity(2);
+        res_map.insert("status".to_string(), RuntimeValue::Int(status as i64));
+        res_map.insert("body".to_string(), RuntimeValue::Str(body));
+        Ok(RuntimeValue::Map {
+            entries: Rc::new(RefCell::new(res_map)),
+            is_const: false,
+        })
+    }};
+}
+
 impl StdlibRegistry {
     pub fn register_http(&mut self) {
         let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
@@ -20,49 +68,8 @@ impl StdlibRegistry {
                 name: "get".to_string(),
                 arity: 1,
                 callback: |ctx, args| {
-                    if !ctx.config.capabilities.contains(&Capability::Network) {
-                        return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Network capability is denied"
-                                    .to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
                     let url = args[0].try_into_string()?;
-                    let response = ureq::get(&url).call().map_err(|e| {
-                        RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!(
-                                "HTTP GET request failed: {}",
-                                e
-                            )),
-                            None,
-                            None,
-                        )
-                    })?;
-                    let status = response.status();
-                    let body = response.into_string().map_err(|e| {
-                        RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!(
-                                "Failed to read HTTP response body: {}",
-                                e
-                            )),
-                            None,
-                            None,
-                        )
-                    })?;
-
-                    // ⚡ Bolt Performance Optimization:
-                    // Pre-allocating the IndexMap capacity matching the expected number of keys
-                    // avoids intermediate allocations and re-hashing during insertion.
-                    let mut res_map = IndexMap::with_capacity(2);
-                    res_map.insert("status".to_string(), RuntimeValue::Int(status as i64));
-                    res_map.insert("body".to_string(), RuntimeValue::Str(body));
-                    Ok(RuntimeValue::Map {
-                        entries: Rc::new(RefCell::new(res_map)),
-                        is_const: false,
-                    })
+                    execute_request!(ctx, "GET", ureq::get(&url).call())
                 },
             }),
         );
@@ -73,50 +80,9 @@ impl StdlibRegistry {
                 name: "post".to_string(),
                 arity: 2,
                 callback: |ctx, args| {
-                    if !ctx.config.capabilities.contains(&Capability::Network) {
-                        return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Network capability is denied"
-                                    .to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
                     let url = args[0].try_into_string()?;
                     let body = args[1].try_into_string()?;
-                    let response = ureq::post(&url).send_string(&body).map_err(|e| {
-                        RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!(
-                                "HTTP POST request failed: {}",
-                                e
-                            )),
-                            None,
-                            None,
-                        )
-                    })?;
-                    let status = response.status();
-                    let res_body = response.into_string().map_err(|e| {
-                        RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(format!(
-                                "Failed to read HTTP response body: {}",
-                                e
-                            )),
-                            None,
-                            None,
-                        )
-                    })?;
-
-                    // ⚡ Bolt Performance Optimization:
-                    // Pre-allocating the IndexMap capacity matching the expected number of keys
-                    // avoids intermediate allocations and re-hashing during insertion.
-                    let mut res_map = IndexMap::with_capacity(2);
-                    res_map.insert("status".to_string(), RuntimeValue::Int(status as i64));
-                    res_map.insert("body".to_string(), RuntimeValue::Str(res_body));
-                    Ok(RuntimeValue::Map {
-                        entries: Rc::new(RefCell::new(res_map)),
-                        is_const: false,
-                    })
+                    execute_request!(ctx, "POST", ureq::post(&url).send_string(&body))
                 },
             }),
         );

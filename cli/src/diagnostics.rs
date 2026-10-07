@@ -221,6 +221,14 @@ impl<'a> DiagnosticRenderer<'a> {
     fn render_human(&self, diag: &RichDiagnostic) -> String {
         let mut out = String::new();
 
+        self.render_header(&mut out, diag);
+        self.render_primary_span(&mut out, diag);
+        self.render_footer(&mut out, diag);
+
+        out
+    }
+
+    fn render_header(&self, out: &mut String, diag: &RichDiagnostic) {
         // Header: "error[E0300]: message"
         let header = if let Some(code) = diag.code {
             format!("{:?}", code)
@@ -258,7 +266,9 @@ impl<'a> DiagnosticRenderer<'a> {
                 );
             }
         }
+    }
 
+    fn render_primary_span(&self, out: &mut String, diag: &RichDiagnostic) {
         // Primary span with source snippet
         if let Some(primary) = &diag.primary_span {
             if let Some(file) = self.source_manager.get_file(primary.file_id) {
@@ -304,7 +314,9 @@ impl<'a> DiagnosticRenderer<'a> {
                 }
             }
         }
+    }
 
+    fn render_footer(&self, out: &mut String, diag: &RichDiagnostic) {
         // Related diagnostics (help, notes)
         for related in &diag.related {
             if self.output == DiagnosticOutput::Colored {
@@ -358,8 +370,6 @@ impl<'a> DiagnosticRenderer<'a> {
                 );
             }
         }
-
-        out
     }
 
     fn render_json(&self, diag: &RichDiagnostic) -> String {

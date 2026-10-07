@@ -32,14 +32,20 @@ impl StdlibRegistry {
                     let body = args[1].to_string();
                     #[cfg(target_os = "windows")]
                     {
+                        use base64::Engine;
                         use std::process::Command;
+
+                        let b64_title = base64::engine::general_purpose::STANDARD.encode(title.encode_utf16().flat_map(|c| c.to_le_bytes()).collect::<Vec<u8>>());
+                        let b64_body = base64::engine::general_purpose::STANDARD.encode(body.encode_utf16().flat_map(|c| c.to_le_bytes()).collect::<Vec<u8>>());
+
+                        let script = format!(
+                            "Add-Type -AssemblyName PresentationFramework; [System.Windows.MessageBox]::Show([System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('{}')), [System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('{}')))",
+                            b64_body, b64_title
+                        );
+                        let b64_script = base64::engine::general_purpose::STANDARD.encode(script.encode_utf16().flat_map(|c| c.to_le_bytes()).collect::<Vec<u8>>());
+
                         let _ = Command::new("powershell")
-                            .env("TS_NOTIFY_TITLE", &title)
-                            .env("TS_NOTIFY_BODY", &body)
-                            .args([
-                                "-Command",
-                                "[System.Windows.MessageBox]::Show($env:TS_NOTIFY_BODY, $env:TS_NOTIFY_TITLE)"
-                            ])
+                            .args(["-EncodedCommand", &b64_script])
                             .spawn();
                     }
                     #[cfg(not(target_os = "windows"))]

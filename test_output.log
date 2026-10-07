@@ -1,966 +1,184 @@
-    Updating crates.io index
-     Locking 404 packages to latest compatible versions
-      Adding adler2 v2.0.1
-      Adding aead v0.6.1
-      Adding aes v0.9.3
-      Adding aes-gcm v0.11.1
-      Adding aho-corasick v1.1.5
-      Adding aliasable v0.1.3
-      Adding aligned v0.4.3
-      Adding aligned-vec v0.6.4
-      Adding alloc-no-stdlib v2.0.4
-      Adding alloc-stdlib v0.2.4
-      Adding alloca v0.4.0
-      Adding allsorts-azul v0.17.2
-      Adding android_system_properties v0.1.6
-      Adding anes v0.1.6
-      Adding anstream v1.0.0
-      Adding anstyle v1.0.14
-      Adding anstyle-parse v1.0.0
-      Adding anstyle-query v1.1.5
-      Adding anstyle-wincon v3.0.11
-      Adding anyhow v1.0.104
-      Adding arbitrary v1.5.0
-      Adding arg_enum_proc_macro v0.3.4
-      Adding arrayvec v0.7.8
-      Adding as-slice v0.2.1
-      Adding ascii v1.1.0
-      Adding atoi_simd v0.18.1
-      Adding auto_impl v1.4.0
-      Adding av-scenechange v0.14.1
-      Adding av1-grain v0.2.5
-      Adding avif-serialize v0.8.9
-      Adding aws-lc-rs v1.18.1
-      Adding aws-lc-sys v0.45.0
-      Adding azul-core v0.0.16
-      Adding azul-css v0.0.16
-      Adding azul-layout v0.0.16
-      Adding azul-simplecss v0.2.2
-      Adding base64 v0.22.1
-      Adding base64 v0.23.1
-      Adding bcrypt v0.19.3
-      Adding bincode v1.3.3
-      Adding bincode v3.0.0
-      Adding bit_field v0.10.3
-      Adding bitflags v1.3.2
-      Adding bitstream-io v4.10.0
-      Adding block-buffer v0.10.4
-      Adding block-buffer v0.12.1
-      Adding block-padding v0.4.2
-      Adding blowfish v0.10.0
-      Adding brotli-decompressor v5.0.3
-      Adding built v0.8.1
-      Adding bytemuck v1.25.2
-      Adding byteorder v1.5.0
-      Adding byteorder-lite v0.1.0
-      Adding bytes v1.12.1
-      Adding bzip2 v0.6.1
-      Adding calamine v0.36.1
-      Adding cast v0.3.0
-      Adding cbc v0.2.1
-      Adding cfg_aliases v0.2.2
-      Adding chacha20 v0.10.2
-      Adding chrono v0.4.45
-      Adding chunked_transfer v1.5.0
-      Adding ciborium v0.2.2
-      Adding ciborium-io v0.2.2
-      Adding ciborium-ll v0.2.2
-      Adding cipher v0.5.2
-      Adding clap v4.6.7
-      Adding clap_builder v4.6.7
-      Adding clap_complete v4.6.11
-      Adding clap_derive v4.6.7
-      Adding clap_lex v1.1.1
-      Adding clipboard-win v5.4.1
-      Adding cmake v0.1.58
-      Adding cmov v0.5.4
-      Adding codepage v0.1.3
-      Adding color_quant v1.1.0
-      Adding colorchoice v1.0.5
-      Adding colored v3.1.1
-      Adding const-oid v0.10.2
-      Adding constant_time_eq v0.4.2
-      Adding cookie v0.18.2
-      Adding cookie_store v0.22.1
-      Adding core-foundation-sys v0.8.7
-      Adding core_detect v1.0.0
-      Adding cpubits v0.1.1
-      Adding cpufeatures v0.2.17
-      Adding cpufeatures v0.3.1
-      Adding crc v3.4.0
-      Adding crc-catalog v2.5.0
-      Adding crc32fast v1.5.2
-      Adding criterion v0.8.2
-      Adding criterion-plot v0.8.2
-      Adding crossbeam-deque v0.8.8
-      Adding crossbeam-epoch v0.9.21
-      Adding crunchy v0.2.4
-      Adding crypto-common v0.1.7
-      Adding crypto-common v0.2.2
-      Adding csv v1.4.0
-      Adding csv-core v0.1.13
-      Adding ctr v0.10.1
-      Adding ctutils v0.4.3
-      Adding dashmap v5.5.3
-      Adding debug_unsafe v0.1.4
-      Adding deflate64 v0.1.12
-      Adding digest v0.10.7
-      Adding digest v0.11.3
-      Adding dirs v7.0.0
-      Adding dirs-sys v0.5.0
-      Adding displaydoc v0.2.7
-      Adding document-features v0.2.12
-      Adding dunce v1.0.5
-      Adding ecb v0.2.1
-      Adding either v1.19.0
-      Adding encoding_rs v0.8.42
-      Adding endian-type v0.2.0
-      Adding equator v0.4.2
-      Adding equator-macro v0.4.2
-      Adding error-code v3.4.0
-      Adding exr v1.74.2
-      Adding fallible-iterator v0.3.0
-      Adding fallible-streaming-iterator v0.1.9
-      Adding fast-float2 v0.2.4
-      Adding fax v0.2.7
-      Adding fdeflate v0.3.7
-      Adding filetime v0.2.29
-      Adding flate2 v1.1.10
-      Adding fnv v1.0.7
-      Adding foldhash v0.2.0
-      Adding form_urlencoded v1.2.2
-      Adding fs_extra v1.3.0
-      Adding fst v0.4.7
-      Adding futures v0.3.34
-      Adding futures-channel v0.3.34
-      Adding futures-macro v0.3.34
-      Adding futures-sink v0.3.34
-      Adding generic-array v0.14.7 (available: v0.14.9)
-      Adding getrandom v0.2.17
-      Adding getrandom v0.3.4
-      Adding ghash v0.6.0
-      Adding gif v0.14.2
-      Adding gl-context-loader v0.1.10
-      Adding glyph-names v0.2.0
-      Adding grid v1.0.1
-      Adding half v2.7.1
-      Adding hashbrown v0.14.5
-      Adding hashbrown v0.16.1
-      Adding hashlink v0.12.2
-      Adding heck v0.4.1
-      Adding heck v0.5.0
-      Adding hmac v0.13.0
-      Adding home v0.5.12
-      Adding http v1.5.0
-      Adding httparse v1.10.1
-      Adding httpdate v1.0.3
-      Adding hybrid-array v0.4.15
-      Adding hyphenation v0.8.4
-      Adding hyphenation_commons v0.8.4
-      Adding iana-time-zone v0.1.65
-      Adding iana-time-zone-haiku v0.1.2
-      Adding icu_collections v2.3.0
-      Adding icu_locale_core v2.3.0
-      Adding icu_normalizer v2.3.0
-      Adding icu_normalizer_data v2.3.0
-      Adding icu_properties v2.3.0
-      Adding icu_properties_data v2.3.0
-      Adding icu_provider v2.3.1
-      Adding idna v1.1.0
-      Adding idna_adapter v1.2.2
-      Adding image v0.25.10
-      Adding image-webp v0.2.4
-      Adding imgref v1.12.3
-      Adding inout v0.2.2
-      Adding interpolate_name v0.2.4
-      Adding is_terminal_polyfill v1.70.2
-      Adding itertools v0.13.0
-      Adding itertools v0.14.0
-      Adding itoa v1.0.18
-      Adding jobserver v0.1.35
-      Adding lazy_static v1.5.1
-      Adding lebe v0.5.3
-      Adding libbz2-rs-sys v0.2.5
-      Adding libfuzzer-sys v0.4.13
-      Adding libm v0.2.16
-      Adding libredox v0.1.25
-      Adding libsqlite3-sys v0.38.2
-      Adding litemap v0.8.3
-      Adding litrs v1.0.0
-      Adding llvm-sys v231.0.0
-      Adding lock_api v0.4.14
-      Adding logos v0.16.1
-      Adding logos-codegen v0.16.1
-      Adding logos-derive v0.16.1
-      Adding loop9 v0.1.5
-      Adding lopdf v0.44.0
-      Adding lru v0.18.5
-      Adding lsp-types v0.94.1
-      Adding lzma-rust2 v0.16.5
-      Adding maybe-rayon v0.1.1
-      Adding md-5 v0.11.0
-      Adding md5 v0.8.1
-      Adding miniz_oxide v0.8.9
-      Adding miniz_oxide v0.9.1
-      Adding mio v1.2.4
-      Adding mmapio v0.9.1
-      Adding moxcms v0.8.1
-      Adding multiversion_no_op v1.0.0
-      Adding new_debug_unreachable v1.0.6
-      Adding nibble_vec v0.1.0
-      Adding nix v0.31.3
-      Adding no_std_io2 v0.9.4
-      Adding nom v8.0.0
-      Adding noop_proc_macro v0.3.0
-      Adding num-bigint v0.4.8
-      Adding num-complex v0.4.6
-      Adding num-derive v0.4.2
-      Adding num-integer v0.1.47
-      Adding num-rational v0.4.2
-      Adding num-traits v0.2.19
-      Adding num_cpus v1.17.0
-      Adding once_cell_polyfill v1.70.2
-      Adding oorandom v11.1.5
-      Adding option-ext v0.2.0
-      Adding ouroboros v0.18.5
-      Adding ouroboros_macro v0.18.5
-      Adding page_size v0.6.0
-      Adding parking_lot v0.12.5
-      Adding parking_lot_core v0.9.12
-      Adding paste v1.0.15
-      Adding pastey v0.1.1
-      Adding pathfinder_geometry v0.5.1
-      Adding pathfinder_simd v0.5.6
-      Adding pbkdf2 v0.13.0
-      Adding percent-encoding v2.3.2
-      Adding pin-project v1.1.13
-      Adding pin-project-internal v1.1.13
-      Adding pkg-config v0.3.34
-      Adding plotters v0.3.7
-      Adding plotters-backend v0.3.7
-      Adding plotters-svg v0.3.7
-      Adding png v0.18.1
-      Adding pocket-resources v0.3.2
-      Adding polyval v0.7.3
-      Adding potential_utf v0.1.6
-      Adding ppmd-rust v1.5.0
-      Adding ppv-lite86 v0.2.21
-      Adding printpdf v0.12.8
-      Adding proc-macro2-diagnostics v0.10.1
-      Adding profiling v1.0.18
-      Adding profiling-procmacros v1.0.18
-      Adding pulp v0.22.3
-      Adding pulp-wasm-simd-flag v0.1.1
-      Adding pxfm v0.1.30
-      Adding qoi v0.4.1
-      Adding qrcode v0.14.1
-      Adding quick-error v2.0.1
-      Adding quick-xml v0.41.0
-      Adding quick-xml v0.42.0
-      Adding r-efi v5.3.0
-      Adding radix_trie v0.3.0
-      Adding rand v0.9.5
-      Adding rand v0.10.3
-      Adding rand_chacha v0.9.0
-      Adding rand_core v0.9.5
-      Adding rand_core v0.10.1
-      Adding rangemap v1.8.0
-      Adding rav1e v0.8.1
-      Adding ravif v0.13.0
-      Adding raw-cpuid v11.6.0
-      Adding rayon v1.12.0
-      Adding rayon-core v1.13.0
-      Adding reborrow v0.5.5
-      Adding redox_syscall v0.5.18
-      Adding redox_users v0.5.3
-      Adding regex v1.13.1
-      Adding regex-automata v0.4.18
-      Adding regex-lite v0.1.9
-      Adding regex-syntax v0.8.11
-      Adding rgb v0.8.53
-      Adding ring v0.17.14
-      Adding roxmltree v0.21.1
-      Adding rsqlite-vfs v0.1.1
-      Adding rusqlite v0.40.2
-      Adding rust-fontconfig v5.0.1
-      Adding rustc-hash v2.1.3
-      Adding rustc_version v0.4.1
-      Adding rustls v0.23.45
-      Adding rustls-pki-types v1.15.1
-      Adding rustls-webpki v0.103.15
-      Adding rustyline v18.0.1
-      Adding ryu v1.0.23
-      Adding same-file v1.0.6
-      Adding scopeguard v1.2.0
-      Adding semver v1.0.28
-      Adding serde_json v1.0.151
-      Adding serde_spanned v1.1.1
-      Adding sha-1 v0.10.1
-      Adding sha1 v0.11.0
-      Adding sha2 v0.11.0
-      Adding simd-adler32 v0.3.10
-      Adding simd_helpers v0.1.0
-      Adding simdutf8 v0.1.5
-      Adding slotmap v1.1.1
-      Adding smallvec v1.16.2
-      Adding socket2 v0.6.5
-      Adding sqlite-wasm-rs v0.5.5
-      Adding stable_deref_trait v1.2.1
-      Adding static_assertions v1.1.0
-      Adding stringprep v0.1.5
-      Adding strsim v0.11.1
-      Adding strum v0.28.0
-      Adding strum_macros v0.28.0
-      Adding subtle v2.6.1
-      Adding synstructure v0.14.0
-      Adding taffy v0.10.1
-      Adding tar v0.4.46
-      Adding tiff v0.11.3
-      Adding time-macros v0.2.32
-      Adding tiny_http v0.12.0
-      Adding tinystr v0.8.4
-      Adding tinytemplate v1.2.1
-      Adding tinyvec v1.13.3
-      Adding tokio v1.53.2
-      Adding tokio-macros v2.7.2
-      Adding tokio-util v0.7.19
-      Adding toml v0.5.11
-      Adding toml v1.1.6+spec-1.1.0
-      Adding toml_writer v1.1.2+spec-1.1.0
-      Adding tower v0.4.13
-      Adding tower-layer v0.3.3
-      Adding tower-lsp v0.20.0
-      Adding tower-lsp-macros v0.9.0
-      Adding tower-service v0.3.3
-      Adding typed-path v0.12.3
-      Adding typenum v1.20.1
-      Adding ucd-trie v0.1.7
-      Adding unicode-bidi v0.3.18
-      Adding unicode-canonical-combining-class v1.0.0
-      Adding unicode-general-category v1.1.0
-      Adding unicode-joining-type v1.0.0
-      Adding unicode-normalization v0.1.25
-      Adding unicode-properties v0.1.4
-      Adding unicode-segmentation v1.13.3
-      Adding unicode-width v0.2.2
-      Adding universal-hash v0.6.1
-      Adding untrusted v0.9.0
-      Adding ureq v3.4.2
-      Adding ureq-proto v0.6.4
-      Adding url v2.5.8
-      Adding utf8-zero v0.8.1
-      Adding utf8_iter v1.0.4
-      Adding utf8parse v0.2.2
-      Adding v_frame v0.3.9
-      Adding vcpkg v0.2.15
-      Adding version_check v0.9.5
-      Adding walkdir v2.5.0
-      Adding wasi v0.11.1+wasi-snapshot-preview1
-      Adding wasip2 v1.0.4+wasi-0.2.12
-      Adding wasm-bindgen-futures v0.4.77 (available: v0.4.79)
-      Adding web-sys v0.3.104 (available: v0.3.106)
-      Adding webpki-roots v1.0.9
-      Adding weezl v0.1.12
-      Adding weezl v0.2.1
-      Adding winapi v0.3.9
-      Adding winapi-i686-pc-windows-gnu v0.4.0
-      Adding winapi-util v0.1.11
-      Adding winapi-x86_64-pc-windows-gnu v0.4.0
-      Adding windows-sys v0.52.0
-      Adding windows-targets v0.52.6
-      Adding windows_aarch64_gnullvm v0.52.6
-      Adding windows_aarch64_msvc v0.52.6
-      Adding windows_i686_gnu v0.52.6
-      Adding windows_i686_gnullvm v0.52.6
-      Adding windows_i686_msvc v0.52.6
-      Adding windows_x86_64_gnu v0.52.6
-      Adding windows_x86_64_gnullvm v0.52.6
-      Adding windows_x86_64_msvc v0.52.6
-      Adding winres v0.1.12
-      Adding wit-bindgen v0.57.1
-      Adding writeable v0.6.4
-      Adding xattr v1.6.1
-      Adding xmlparser v0.13.6
-      Adding xmlwriter v0.1.0
-      Adding y4m v0.8.0
-      Adding yansi v1.0.1
-      Adding yoke v0.8.3
-      Adding yoke-derive v0.8.4
-      Adding zerocopy v0.8.61
-      Adding zerocopy-derive v0.8.61
-      Adding zerofrom v0.1.8
-      Adding zerofrom-derive v0.1.8
-      Adding zeroize v1.9.1
-      Adding zerotrie v0.2.5
-      Adding zerovec v0.11.8
-      Adding zerovec-derive v0.11.6
-      Adding zip v8.6.0
-      Adding zlib-rs v0.6.8
-      Adding zmij v1.0.23
-      Adding zopfli v0.8.3
-      Adding zstd v0.13.3
-      Adding zstd-safe v7.3.0
-      Adding zstd-sys v2.1.0+zstd.1.5.7
-      Adding zune-core v0.5.3
-      Adding zune-inflate v0.2.54
-      Adding zune-jpeg v0.5.15
  Downloading crates ...
-  Downloaded aead v0.6.1
-  Downloaded arg_enum_proc_macro v0.3.4
-  Downloaded aligned v0.4.3
-  Downloaded aligned-vec v0.6.4
-  Downloaded displaydoc v0.2.7
-  Downloaded document-features v0.2.12
-  Downloaded endian-type v0.2.0
-  Downloaded equator v0.4.2
-  Downloaded equator-macro v0.4.2
-  Downloaded crypto-common v0.2.2
-  Downloaded num-derive v0.4.2
-  Downloaded ouroboros v0.18.5
-  Downloaded pkg-config v0.3.34
-  Downloaded proc-macro2-diagnostics v0.10.1
-  Downloaded rand_core v0.10.1
-  Downloaded sha-1 v0.10.1
-  Downloaded semver v1.0.28
-  Downloaded tower-service v0.3.3
-  Downloaded ucd-trie v0.1.7
-  Downloaded thiserror v2.0.21
-  Downloaded tokio-macros v2.7.2
-  Downloaded untrusted v0.9.0
-  Downloaded utf8parse v0.2.2
-  Downloaded yoke-derive v0.8.4
-  Downloaded yoke v0.8.3
-  Downloaded pxfm v0.1.30
-  Downloaded typed-path v0.12.3
-  Downloaded azul-layout v0.0.16
-  Downloaded weezl v0.1.12
-  Downloaded zune-inflate v0.2.54
-  Downloaded rustls-webpki v0.103.15
-  Downloaded zstd-safe v7.3.0
-  Downloaded zmij v1.0.23
-  Downloaded zopfli v0.8.3
-  Downloaded zerovec-derive v0.11.6
-  Downloaded rustls v0.23.45
-  Downloaded regex-syntax v0.8.11
-  Downloaded zeroize v1.9.1
-  Downloaded regex-automata v0.4.18
-  Downloaded rust-fontconfig v5.0.1
-  Downloaded rusqlite v0.40.2
-  Downloaded tar v0.4.46
-  Downloaded taffy v0.10.1
-  Downloaded hyphenation v0.8.4
-  Downloaded rayon v1.12.0
-  Downloaded zstd v0.13.3
-  Downloaded ring v0.17.14
-  Downloaded rav1e v0.8.1
-  Downloaded zerofrom-derive v0.1.8
-  Downloaded zerofrom v0.1.8
-  Downloaded tiff v0.11.3
-  Downloaded rustyline v18.0.1
-  Downloaded zerocopy-derive v0.8.61
-  Downloaded zerocopy v0.8.61
-  Downloaded wasm-bindgen-macro-support v0.2.127
-  Downloaded webpki-roots v1.0.9
-  Downloaded zerovec v0.11.8
-  Downloaded zerotrie v0.2.5
-  Downloaded wasm-bindgen v0.2.127
-  Downloaded tower v0.4.13
-  Downloaded printpdf v0.12.8
-  Downloaded url v2.5.8
-  Downloaded ureq-proto v0.6.4
-  Downloaded ureq v3.4.2
-  Downloaded unicode-segmentation v1.13.3
-  Downloaded tokio-util v0.7.19
-  Downloaded yansi v1.0.1
-  Downloaded unicode-normalization v0.1.25
-  Downloaded vcpkg v0.2.15
-  Downloaded zlib-rs v0.6.8
-  Downloaded time v0.3.55
-  Downloaded unicode-width v0.2.2
-  Downloaded zstd-sys v2.1.0+zstd.1.5.7
-  Downloaded weezl v0.2.1
-  Downloaded tokio v1.53.2
-  Downloaded zune-jpeg v0.5.15
-  Downloaded libsqlite3-sys v0.38.2
-  Downloaded zip v8.6.0
-  Downloaded raw-cpuid v11.6.0
-  Downloaded regex v1.13.1
-  Downloaded rayon-core v1.13.0
-  Downloaded zune-core v0.5.3
-  Downloaded regex-lite v0.1.9
-  Downloaded fst v0.4.7
-  Downloaded unicode-general-category v1.1.0
-  Downloaded typenum v1.20.1
-  Downloaded tinyvec v1.13.3
-  Downloaded smallvec v1.16.2
-  Downloaded y4m v0.8.0
-  Downloaded xmlwriter v0.1.0
-  Downloaded xmlparser v0.13.6
-  Downloaded xattr v1.6.1
-  Downloaded writeable v0.6.4
-  Downloaded winres v0.1.12
-  Downloaded wasm-bindgen-shared v0.2.127
-  Downloaded wasm-bindgen-macro v0.2.127
-  Downloaded walkdir v2.5.0
-  Downloaded version_check v0.9.5
-  Downloaded v_frame v0.3.9
-  Downloaded universal-hash v0.6.1
-  Downloaded unicode-properties v0.1.4
-  Downloaded unicode-canonical-combining-class v1.0.0
-  Downloaded toml v0.5.11
-  Downloaded tinytemplate v1.2.1
-  Downloaded tiny_http v0.12.0
-  Downloaded simdutf8 v0.1.5
-  Downloaded utf8_iter v1.0.4
-  Downloaded utf8-zero v0.8.1
-  Downloaded unicode-joining-type v1.0.0
-  Downloaded unicode-bidi v0.3.18
-  Downloaded toml v1.1.6+spec-1.1.0
-  Downloaded socket2 v0.6.5
-  Downloaded slotmap v1.1.1
-  Downloaded toml_writer v1.1.2+spec-1.1.0
-  Downloaded time-macros v0.2.32
-  Downloaded time-core v0.1.9
-  Downloaded serde_json v1.0.151
-  Downloaded radix_trie v0.3.0
-  Downloaded quick-xml v0.42.0
-  Downloaded icu_normalizer v2.3.0
-  Downloaded encoding_rs v0.8.42
-  Downloaded tinystr v0.8.4
-  Downloaded thiserror-impl v2.0.21
-  Downloaded synstructure v0.14.0
-  Downloaded strum_macros v0.28.0
-  Downloaded strum v0.28.0
-  Downloaded strsim v0.11.1
-  Downloaded static_assertions v1.1.0
-  Downloaded simd_helpers v0.1.0
-  Downloaded simd-adler32 v0.3.10
-  Downloaded sha2 v0.11.0
-  Downloaded rand v0.10.3
-  Downloaded quick-xml v0.41.0
-  Downloaded qrcode v0.14.1
-  Downloaded qoi v0.4.1
-  Downloaded pulp v0.22.3
-  Downloaded nix v0.31.3
-  Downloaded subtle v2.6.1
-  Downloaded shlex v2.0.1
-  Downloaded lzma-rust2 v0.16.5
-  Downloaded image v0.25.10
-  Downloaded exr v1.74.2
-  Downloaded tower-lsp v0.20.0
-  Downloaded stringprep v0.1.5
-  Downloaded stable_deref_trait v1.2.1
-  Downloaded sha1 v0.11.0
-  Downloaded moxcms v0.8.1
-  Downloaded lopdf v0.44.0
-  Downloaded futures-util v0.3.34
-  Downloaded tower-lsp-macros v0.9.0
-  Downloaded tower-layer v0.3.3
-  Downloaded rustversion v1.0.23
-  Downloaded rustls-pki-types v1.15.1
-  Downloaded rustc_version v0.4.1
-  Downloaded rustc-hash v2.1.3
-  Downloaded roxmltree v0.21.1
-  Downloaded rgb v0.8.53
-  Downloaded reborrow v0.5.5
-  Downloaded ravif v0.13.0
-  Downloaded rangemap v1.8.0
-  Downloaded png v0.18.1
-  Downloaded plotters v0.3.7
-  Downloaded num-bigint v0.4.8
-  Downloaded nom v8.0.0
-  Downloaded libm v0.2.16
-  Downloaded itertools v0.14.0
-  Downloaded itertools v0.13.0
-  Downloaded idna v1.1.0
-  Downloaded icu_properties_data v2.3.0
-  Downloaded icu_properties v2.3.0
-  Downloaded icu_collections v2.3.0
-  Downloaded hashbrown v0.14.5
-  Downloaded azul-core v0.0.16
-  Downloaded ryu v1.0.23
-  Downloaded mio v1.2.4
-  Downloaded miniz_oxide v0.9.1
-  Downloaded miniz_oxide v0.8.9
-  Downloaded lsp-types v0.94.1
-  Downloaded image-webp v0.2.4
-  Downloaded icu_normalizer_data v2.3.0
-  Downloaded icu_locale_core v2.3.0
-  Downloaded http v1.5.0
-  Downloaded flate2 v1.1.10
-  Downloaded csv v1.4.0
-  Downloaded azul-css v0.0.16
-  Downloaded serde_spanned v1.1.1
-  Downloaded scopeguard v1.2.0
-  Downloaded same-file v1.0.6
-  Downloaded quick-error v2.0.1
-  Downloaded pulp-wasm-simd-flag v0.1.1
-  Downloaded profiling-procmacros v1.0.18
-  Downloaded profiling v1.0.18
-  Downloaded num-traits v0.2.19
-  Downloaded logos-codegen v0.16.1
-  Downloaded litemap v0.8.3
-  Downloaded libbz2-rs-sys v0.2.5
-  Downloaded jobserver v0.1.35
-  Downloaded imgref v1.12.3
-  Downloaded icu_provider v2.3.1
-  Downloaded iana-time-zone v0.1.65
-  Downloaded hybrid-array v0.4.15
-  Downloaded httparse v1.10.1
-  Downloaded hmac v0.13.0
-  Downloaded hashlink v0.12.2
-  Downloaded half v2.7.1
-  Downloaded glyph-names v0.2.0
-  Downloaded gl-context-loader v0.1.10
-  Downloaded gif v0.14.2
-  Downloaded getrandom v0.2.17
-  Downloaded futures-channel v0.3.34
-  Downloaded futures v0.3.34
-  Downloaded foldhash v0.2.0
-  Downloaded filetime v0.2.29
-  Downloaded fax v0.2.7
-  Downloaded fast-float2 v0.2.4
-  Downloaded fallible-iterator v0.3.0
-  Downloaded av-scenechange v0.14.1
-  Downloaded allsorts-azul v0.17.2
-  Downloaded ppmd-rust v1.5.0
-  Downloaded polyval v0.7.3
-  Downloaded pathfinder_geometry v0.5.1
-  Downloaded pastey v0.1.1
-  Downloaded ouroboros_macro v0.18.5
-  Downloaded num-complex v0.4.6
-  Downloaded no_std_io2 v0.9.4
-  Downloaded mmapio v0.9.1
-  Downloaded lru v0.18.5
-  Downloaded logos v0.16.1
-  Downloaded litrs v1.0.0
-  Downloaded is_terminal_polyfill v1.70.2
-  Downloaded futures-macro v0.3.34
-  Downloaded form_urlencoded v1.2.2
-  Downloaded find-msvc-tools v0.1.11
-  Downloaded chrono v0.4.45
-  Downloaded powerfmt v0.2.0
-  Downloaded potential_utf v0.1.6
-  Downloaded pocket-resources v0.3.2
   Downloaded plotters-svg v0.3.7
+  Downloaded same-file v1.0.6
   Downloaded plotters-backend v0.3.7
-  Downloaded pin-project v1.1.13
-  Downloaded parking_lot_core v0.9.12
-  Downloaded parking_lot v0.12.5
-  Downloaded noop_proc_macro v0.3.0
-  Downloaded new_debug_unreachable v1.0.6
-  Downloaded md-5 v0.11.0
-  Downloaded maybe-rayon v0.1.1
-  Downloaded logos-derive v0.16.1
-  Downloaded lock_api v0.4.14
-  Downloaded lebe v0.5.3
-  Downloaded inout v0.2.2
-  Downloaded hyphenation_commons v0.8.4
-  Downloaded httpdate v1.0.3
-  Downloaded home v0.5.12
-  Downloaded heck v0.4.1
-  Downloaded ghash v0.6.0
-  Downloaded futures-task v0.3.34
-  Downloaded futures-sink v0.3.34
-  Downloaded criterion v0.8.2
-  Downloaded clap_builder v4.6.7
-  Downloaded cc v1.4.3
-  Downloaded calamine v0.36.1
-  Downloaded bumpalo v3.20.3
-  Downloaded brotli-decompressor v5.0.3
-  Downloaded base64 v0.23.1
-  Downloaded aho-corasick v1.1.5
-  Downloaded aes-gcm v0.11.1
-  Downloaded aes v0.9.3
-  Downloaded pin-project-internal v1.1.13
-  Downloaded percent-encoding v2.3.2
-  Downloaded pbkdf2 v0.13.0
-  Downloaded pathfinder_simd v0.5.6
-  Downloaded paste v1.0.15
-  Downloaded page_size v0.6.0
-  Downloaded oorandom v11.1.5
-  Downloaded multiversion_no_op v1.0.0
-  Downloaded md5 v0.8.1
-  Downloaded loop9 v0.1.5
-  Downloaded idna_adapter v1.2.2
-  Downloaded grid v1.0.1
-  Downloaded fnv v1.0.7
-  Downloaded fdeflate v0.3.7
-  Downloaded dashmap v5.5.3
-  Downloaded ctutils v0.4.3
-  Downloaded crossbeam-epoch v0.9.21
-  Downloaded crc32fast v1.5.2
-  Downloaded core_detect v1.0.0
-  Downloaded cookie_store v0.22.1
-  Downloaded cookie v0.18.2
-  Downloaded const-oid v0.10.2
-  Downloaded colored v3.1.1
-  Downloaded cmov v0.5.4
-  Downloaded clap_derive v4.6.7
-  Downloaded clap_complete v4.6.11
-  Downloaded clap v4.6.7
-  Downloaded ciborium v0.2.2
-  Downloaded chacha20 v0.10.2
-  Downloaded bzip2 v0.6.1
-  Downloaded bytes v1.12.1
-  Downloaded bytemuck v1.25.2
-  Downloaded built v0.8.1
-  Downloaded bitstream-io v4.10.0
-  Downloaded bitflags v1.3.2
-  Downloaded bincode v1.3.3
-  Downloaded base64 v0.22.1
-  Downloaded azul-simplecss v0.2.2
-  Downloaded av1-grain v0.2.5
-  Downloaded auto_impl v1.4.0
-  Downloaded ascii v1.1.0
-  Downloaded anes v0.1.6
-  Downloaded option-ext v0.2.0
-  Downloaded num_cpus v1.17.0
-  Downloaded num-rational v0.4.2
-  Downloaded num-integer v0.1.47
-  Downloaded num-conv v0.2.2
-  Downloaded nibble_vec v0.1.0
-  Downloaded itoa v1.0.18
-  Downloaded heck v0.5.0
-  Downloaded generic-array v0.14.7
-  Downloaded fallible-streaming-iterator v0.1.9
-  Downloaded ecb v0.2.1
-  Downloaded digest v0.11.3
-  Downloaded deranged v0.5.8
-  Downloaded deflate64 v0.1.12
-  Downloaded ctr v0.10.1
-  Downloaded csv-core v0.1.13
-  Downloaded criterion-plot v0.8.2
-  Downloaded crc-catalog v2.5.0
-  Downloaded constant_time_eq v0.4.2
-  Downloaded cipher v0.5.2
-  Downloaded ciborium-ll v0.2.2
-  Downloaded cbc v0.2.1
-  Downloaded byteorder v1.5.0
-  Downloaded blowfish v0.10.0
-  Downloaded block-buffer v0.10.4
-  Downloaded avif-serialize v0.8.9
-  Downloaded atoi_simd v0.18.1
-  Downloaded arrayvec v0.7.8
-  Downloaded anyhow v1.0.104
-  Downloaded either v1.19.0
-  Downloaded dirs-sys v0.5.0
-  Downloaded digest v0.10.7
-  Downloaded crossbeam-deque v0.8.8
-  Downloaded crc v3.4.0
-  Downloaded cpubits v0.1.1
-  Downloaded cfg_aliases v0.2.2
-  Downloaded cast v0.3.0
-  Downloaded bincode v3.0.0
-  Downloaded anstyle-parse v1.0.0
-  Downloaded anstyle v1.0.14
-  Downloaded anstream v1.0.0
-  Downloaded crypto-common v0.1.7
-  Downloaded cpufeatures v0.2.17
-  Downloaded codepage v0.1.3
-  Downloaded bcrypt v0.19.3
-  Downloaded debug_unsafe v0.1.4
-  Downloaded color_quant v1.1.0
-  Downloaded clap_lex v1.1.1
-  Downloaded block-buffer v0.12.1
-  Downloaded cpufeatures v0.3.1
-  Downloaded colorchoice v1.0.5
-  Downloaded ciborium-io v0.2.2
-  Downloaded byteorder-lite v0.1.0
-  Downloaded block-padding v0.4.2
-  Downloaded bit_field v0.10.3
-  Downloaded dirs v7.0.0
-  Downloaded chunked_transfer v1.5.0
-  Downloaded alloc-no-stdlib v2.0.4
-  Downloaded aliasable v0.1.3
-  Downloaded adler2 v2.0.1
-  Downloaded as-slice v0.2.1
-  Downloaded anstyle-query v1.1.5
   Downloaded alloca v0.4.0
-  Downloaded alloc-stdlib v0.2.4
-   Compiling proc-macro2 v1.0.107
-   Compiling quote v1.0.47
+  Downloaded ciborium v0.2.2
+  Downloaded ciborium-ll v0.2.2
+  Downloaded walkdir v2.5.0
+  Downloaded tinytemplate v1.2.1
+  Downloaded page_size v0.6.0
+  Downloaded itertools v0.13.0
+  Downloaded oorandom v11.1.5
+  Downloaded criterion-plot v0.8.2
+  Downloaded ciborium-io v0.2.2
+  Downloaded criterion v0.8.2
+  Downloaded regex v1.13.1
+  Downloaded plotters v0.3.7
+  Downloaded cast v0.3.0
+  Downloaded anes v0.1.6
    Compiling unicode-ident v1.0.24
-   Compiling serde_core v1.0.229
    Compiling cfg-if v1.0.4
+   Compiling serde_core v1.0.229
    Compiling serde v1.0.229
    Compiling libc v0.2.189
+   Compiling proc-macro2 v1.0.107
    Compiling memchr v2.8.3
-   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
    Compiling syn v3.0.3
    Compiling syn v2.0.119
-   Compiling autocfg v1.5.1
-   Compiling getrandom v0.4.3
+   Compiling typenum v1.20.1
    Compiling rand_core v0.10.1
-   Compiling zeroize v1.9.1
+   Compiling zeroize v1.9.0
    Compiling shlex v2.0.1
-   Compiling find-msvc-tools v0.1.11
-   Compiling jobserver v0.1.35
-   Compiling heck v0.5.0
    Compiling cc v1.4.3
-   Compiling hybrid-array v0.4.15
+   Compiling getrandom v0.4.3
+   Compiling hybrid-array v0.4.14
    Compiling log v0.4.33
-   Compiling crossbeam-utils v0.8.22
-   Compiling version_check v0.9.5
    Compiling simd-adler32 v0.3.10
+   Compiling crossbeam-utils v0.8.22
    Compiling crypto-common v0.2.2
-   Compiling num-traits v0.2.19
    Compiling bitflags v2.13.1
    Compiling adler2 v2.0.1
-   Compiling crc32fast v1.5.2
    Compiling itoa v1.0.18
-   Compiling serde_derive v1.0.229
+   Compiling num-traits v0.2.19
    Compiling stable_deref_trait v1.2.1
-   Compiling zmij v1.0.23
-   Compiling pin-project-lite v0.2.17
+   Compiling crc32fast v1.5.0
    Compiling winnow v1.0.4
+   Compiling pin-project-lite v0.2.17
    Compiling miniz_oxide v0.9.1
+   Compiling serde_derive v1.0.229
    Compiling strum_macros v0.28.0
    Compiling block-buffer v0.12.1
-   Compiling zlib-rs v0.6.8
+   Compiling zlib-rs v0.6.7
    Compiling strum v0.28.0
-   Compiling serde_json v1.0.151
    Compiling equivalent v1.0.2
-   Compiling techscript_common v2.0.0 (/app/compiler/common)
-   Compiling smallvec v1.16.2
-   Compiling techscript_syntax v2.0.0 (/app/compiler/syntax)
-   Compiling synstructure v0.14.0
-   Compiling techscript_errors v2.0.0 (/app/compiler/errors)
+   Compiling zmij v1.0.23
+   Compiling serde_json v1.0.151
+   Compiling synstructure v0.13.2
    Compiling futures-core v0.3.34
-   Compiling crossbeam-epoch v0.9.21
    Compiling cmov v0.5.4
-   Compiling zerofrom-derive v0.1.8
-   Compiling crossbeam-deque v0.8.8
-   Compiling ctutils v0.4.3
-   Compiling scopeguard v1.2.0
-   Compiling yoke-derive v0.8.4
+   Compiling zerofrom-derive v0.1.7
+   Compiling ctutils v0.4.2
+   Compiling crossbeam-epoch v0.9.20
+   Compiling techscript_common v2.0.0 (/app/compiler/common)
+   Compiling smallvec v1.15.2
    Compiling flate2 v1.1.10
-   Compiling block-padding v0.4.2
-   Compiling either v1.19.0
-   Compiling rayon-core v1.13.0
-   Compiling rustversion v1.0.23
-   Compiling inout v0.2.2
+   Compiling techscript_syntax v2.0.0 (/app/compiler/syntax)
+   Compiling techscript_errors v2.0.0 (/app/compiler/errors)
    Compiling zerofrom v0.1.8
-   Compiling yoke v0.8.3
+   Compiling yoke-derive v0.8.2
+   Compiling block-padding v0.4.2
+   Compiling either v1.17.0
+   Compiling inout v0.2.2
+   Compiling crossbeam-deque v0.8.7
    Compiling enumflags2_derive v0.7.12
-   Compiling anyhow v1.0.104
-   Compiling cpufeatures v0.3.1
-   Compiling zerocopy v0.8.61
-   Compiling zerovec-derive v0.11.6
-   Compiling zerocopy-derive v0.8.61
-   Compiling pkg-config v0.3.34
-   Compiling once_cell v1.21.4
+   Compiling cpufeatures v0.3.0
+   Compiling rayon-core v1.13.0
+   Compiling zerocopy-derive v0.8.56
+   Compiling zerovec-derive v0.11.5
+   Compiling yoke v0.8.3
    Compiling futures-io v0.3.34
    Compiling parking v2.2.1
+   Compiling once_cell v1.21.4
+   Compiling anyhow v1.0.104
    Compiling cipher v0.5.2
-   Compiling zerovec v0.11.8
    Compiling displaydoc v0.2.7
-   Compiling const-oid v0.10.2
    Compiling foldhash v0.2.0
-   Compiling hashbrown v0.17.1
+   Compiling zerovec v0.11.7
+   Compiling const-oid v0.10.2
+   Compiling zerocopy v0.8.56
    Compiling digest v0.11.3
+   Compiling hashbrown v0.17.1
    Compiling rayon v1.12.0
-   Compiling encoding_rs v0.8.42
    Compiling techscript_ast v2.0.0 (/app/compiler/ast)
    Compiling ring v0.17.14
    Compiling bytes v1.12.1
    Compiling indexmap v2.14.2
    Compiling toml_parser v1.1.3+spec-1.1.0
-   Compiling multiversion_no_op v1.0.0
-   Compiling semver v1.0.28
-   Compiling slab v0.4.12
-   Compiling simdutf8 v0.1.5
-   Compiling core_detect v1.0.0
-   Compiling libm v0.2.16
-   Compiling thiserror v2.0.21
-   Compiling httparse v1.10.1
    Compiling percent-encoding v2.3.2
-   Compiling toml_datetime v1.1.1+spec-1.1.0
    Compiling arrayvec v0.7.8
-   Compiling rustix v1.1.4
+   Compiling slab v0.4.12
    Compiling toml_edit v0.25.13+spec-1.1.0
-   Compiling half v2.7.1
-   Compiling rustc_version v0.4.1
    Compiling tinystr v0.8.4
    Compiling enumflags2 v0.7.12
-   Compiling thiserror-impl v2.0.21
    Compiling equator-macro v0.4.2
-   Compiling proc-macro2-diagnostics v0.10.1
+   Compiling half v2.7.1
+   Compiling thiserror-impl v2.0.21
    Compiling rustls-pki-types v1.15.1
    Compiling getrandom v0.2.17
+   Compiling encoding_rs v0.8.35
+   Compiling litemap v0.8.3
+   Compiling writeable v0.6.4
+   Compiling cpubits v0.1.1
+   Compiling untrusted v0.9.0
    Compiling fastrand v2.5.0
    Compiling linux-raw-sys v0.12.1
-   Compiling untrusted v0.9.0
-   Compiling writeable v0.6.4
-   Compiling litemap v0.8.3
-   Compiling cpubits v0.1.1
-   Compiling fst v0.4.7
+   Compiling tinyvec_macros v0.1.1
+   Compiling tinyvec v1.12.0
+   Compiling thiserror v2.0.21
    Compiling icu_locale_core v2.3.0
    Compiling equator v0.4.2
-   Compiling pathfinder_simd v0.5.6
+   Compiling rustix v1.1.4
    Compiling proc-macro-crate v3.5.0
+   Compiling httparse v1.10.1
+   Compiling libm v0.2.16
    Compiling zerotrie v0.2.5
    Compiling potential_utf v0.1.6
+   Compiling zstd-sys v2.0.16+zstd.1.5.7
    Compiling event-listener v5.4.2
-   Compiling zstd-sys v2.1.0+zstd.1.5.7
    Compiling zvariant_utils v4.2.0
    Compiling num-integer v0.1.47
    Compiling concurrent-queue v2.5.0
    Compiling errno v0.3.14
-   Compiling subtle v2.6.1
-   Compiling utf8_iter v1.0.4
-   Compiling paste v1.0.15
-   Compiling tinyvec v1.13.3
-   Compiling rustls v0.23.45
-   Compiling icu_properties_data v2.3.0
-   Compiling yansi v1.0.1
-   Compiling icu_normalizer_data v2.3.0
    Compiling base64 v0.23.1
-   Compiling zvariant_derive v5.15.0
-   Compiling rustls-webpki v0.103.15
+   Compiling utf8_iter v1.0.4
+   Compiling subtle v2.6.1
    Compiling icu_collections v2.3.0
+   Compiling proc-macro2-diagnostics v0.10.1
+   Compiling rustls v0.23.45
    Compiling signal-hook-registry v1.4.8
    Compiling num-bigint v0.4.8
-   Compiling icu_provider v2.3.1
+   Compiling zvariant_derive v5.15.0
    Compiling event-listener-strategy v0.5.4
+   Compiling icu_provider v2.3.0
+   Compiling rustls-webpki v0.103.14
    Compiling aligned-vec v0.6.4
+   Compiling fst v0.4.7
    Compiling futures-lite v2.6.1
    Compiling http v1.5.0
    Compiling serde_spanned v1.1.1
+   Compiling toml_datetime v1.1.1+spec-1.1.0
    Compiling nom v8.0.0
-   Compiling unicode-joining-type v1.0.0
-   Compiling alloc-no-stdlib v2.0.4
-   Compiling unicode-canonical-combining-class v1.0.0
    Compiling toml_writer v1.1.2+spec-1.1.0
    Compiling endi v1.1.1
-   Compiling heck v0.4.1
-   Compiling unicode-general-category v1.1.0
-   Compiling ouroboros_macro v0.18.5
+   Compiling alloc-no-stdlib v2.0.4
    Compiling toml v1.1.6+spec-1.1.0
    Compiling alloc-stdlib v0.2.4
+   Compiling ouroboros_macro v0.18.5
    Compiling ureq-proto v0.6.4
-   Compiling num-rational v0.4.2
    Compiling v_frame v0.3.9
-   Compiling aes v0.9.3
+   Compiling pathfinder_simd v0.5.6
+   Compiling num-rational v0.4.2
+   Compiling icu_properties_data v2.3.0
+   Compiling icu_normalizer_data v2.3.0
+   Compiling aes v0.9.2
    Compiling webpki-roots v1.0.9
    Compiling sha2 v0.11.0
    Compiling as-slice v0.2.1
-   Compiling generic-array v0.14.7
-   Compiling async-io v2.6.0
-   Compiling aliasable v0.1.3
    Compiling static_assertions v1.1.0
+   Compiling aliasable v0.1.3
    Compiling bytemuck v1.25.2
    Compiling utf8-zero v0.8.1
-   Compiling built v0.8.1
-   Compiling av-scenechange v0.14.1
-   Compiling zstd-safe v7.3.0
    Compiling ouroboros v0.18.5
    Compiling aligned v0.4.3
-   Compiling rav1e v0.8.1
    Compiling icu_normalizer v2.3.0
    Compiling icu_properties v2.3.0
    Compiling pathfinder_geometry v0.5.1
+   Compiling unicode-canonical-combining-class v1.0.0
+   Compiling unicode-joining-type v1.0.0
    Compiling brotli-decompressor v5.0.3
+   Compiling unicode-general-category v1.1.0
    Compiling ureq v3.4.2
    Compiling hyphenation_commons v0.8.4
    Compiling polling v3.11.0
@@ -968,28 +186,28 @@
    Compiling zcheapstr v1.1.0
    Compiling arg_enum_proc_macro v0.3.4
    Compiling profiling-procmacros v1.0.18
-   Compiling pulp v0.22.3
-   Compiling slotmap v1.1.1
    Compiling no_std_io2 v0.9.4
    Compiling async-task v4.7.1
-   Compiling pocket-resources v0.3.2
-   Compiling deranged v0.5.8
-   Compiling time-core v0.1.9
    Compiling y4m v0.8.0
+   Compiling zstd-safe v7.2.4
    Compiling ucd-trie v0.1.7
    Compiling num-conv v0.2.2
-   Compiling rustc-hash v2.1.3
-   Compiling quick-error v2.0.1
-   Compiling pastey v0.1.1
-   Compiling powerfmt v0.2.0
    Compiling glyph-names v0.2.0
-   Compiling time v0.3.55
+   Compiling quick-error v2.0.1
+   Compiling deranged v0.5.8
+   Compiling rustc-hash v2.1.3
+   Compiling powerfmt v0.2.0
+   Compiling time-core v0.1.9
    Compiling allsorts-azul v0.17.2
    Compiling hyphenation v0.8.4
+   Compiling av-scenechange v0.14.1
+   Compiling time v0.3.55
    Compiling bitstream-io v4.10.0
    Compiling profiling v1.0.18
    Compiling zvariant v5.15.0
+   Compiling async-io v2.6.0
    Compiling idna_adapter v1.2.2
+   Compiling generic-array v0.14.7
    Compiling num-complex v0.4.6
    Compiling av1-grain v0.2.5
    Compiling async-channel v2.5.0
@@ -998,109 +216,110 @@
    Compiling hmac v0.13.0
    Compiling tracing-core v0.1.36
    Compiling itertools v0.14.0
+   Compiling num-derive v0.4.2
+   Compiling tracing-attributes v0.1.31
    Compiling serde_repr v0.1.21
    Compiling miniz_oxide v0.8.9
-   Compiling tracing-attributes v0.1.31
-   Compiling num-derive v0.4.2
    Compiling raw-cpuid v11.6.0
    Compiling mmapio v0.9.1
    Compiling simd_helpers v0.1.0
-   Compiling bumpalo v3.20.3
-   Compiling xmlparser v0.13.6
-   Compiling new_debug_unreachable v1.0.6
-   Compiling vcpkg v0.2.15
-   Compiling libbz2-rs-sys v0.2.5
-   Compiling pulp-wasm-simd-flag v0.1.1
-   Compiling imgref v1.12.3
-   Compiling noop_proc_macro v0.3.0
-   Compiling reborrow v0.5.5
-   Compiling azul-simplecss v0.2.2
-   Compiling zune-core v0.5.3
-   Compiling atomic-waker v1.1.2
    Compiling unicode-bidi v0.3.18
+   Compiling pulp-wasm-simd-flag v0.1.1
+   Compiling libbz2-rs-sys v0.2.5
+   Compiling bumpalo v3.20.3
+   Compiling new_debug_unreachable v1.0.6
+   Compiling reborrow v0.5.5
+   Compiling azul-simplecss v0.2.1
+   Compiling imgref v1.12.2
+   Compiling atomic-waker v1.1.2
+   Compiling zune-core v0.5.3
    Compiling weezl v0.1.12
-   Compiling piper v0.2.5
+   Compiling xmlparser v0.13.6
+   Compiling pulp v0.22.3
    Compiling zune-jpeg v0.5.15
-   Compiling azul-css v0.0.16
+   Compiling piper v0.2.5
+   Compiling rav1e v0.8.1
    Compiling loop9 v0.1.5
-   Compiling bzip2 v0.6.1
-   Compiling libsqlite3-sys v0.38.2
+   Compiling azul-css v0.0.16
    Compiling zopfli v0.8.3
+   Compiling bzip2 v0.6.1
+   Compiling rust-fontconfig v5.0.0
+   Compiling libsqlite3-sys v0.38.2
    Compiling tracing v0.1.44
-   Compiling rust-fontconfig v5.0.1
    Compiling pbkdf2 v0.13.0
    Compiling idna v1.1.0
-   Compiling zstd v0.13.3
-   Compiling zbus_names v4.3.4
    Compiling async-signal v0.2.14
+   Compiling zbus_names v4.3.4
+   Compiling slotmap v1.1.1
+   Compiling zstd v0.13.3
    Compiling lzma-rust2 v0.16.5
    Compiling async-lock v3.4.2
    Compiling avif-serialize v0.8.9
    Compiling form_urlencoded v1.2.2
    Compiling sha1 v0.11.0
-   Compiling chacha20 v0.10.2
+   Compiling chacha20 v0.10.1
    Compiling universal-hash v0.6.1
    Compiling async-trait v0.1.92
-   Compiling fdeflate v0.3.7
    Compiling zune-inflate v0.2.54
-   Compiling constant_time_eq v0.4.2
-   Compiling rgb v0.8.53
+   Compiling fdeflate v0.3.7
    Compiling lebe v0.5.3
-   Compiling fax v0.2.7
-   Compiling bit_field v0.10.3
-   Compiling deflate64 v0.1.12
-   Compiling hex v0.4.3
-   Compiling gl-context-loader v0.1.10
-   Compiling pxfm v0.1.30
-   Compiling color_quant v1.1.0
-   Compiling unicode-segmentation v1.13.3
-   Compiling ppmd-rust v1.5.0
-   Compiling unicode-properties v0.1.4
-   Compiling byteorder v1.5.0
-   Compiling byteorder-lite v0.1.0
    Compiling grid v1.0.1
+   Compiling fax v0.2.7
+   Compiling unicode-segmentation v1.13.3
+   Compiling color_quant v1.1.0
+   Compiling unicode-properties v0.1.4
+   Compiling ppmd-rust v1.4.0
+   Compiling byteorder v1.5.0
    Compiling typed-path v0.12.3
-   Compiling taffy v0.10.1
-   Compiling moxcms v0.8.1
-   Compiling zip v8.6.0
-   Compiling image-webp v0.2.4
-   Compiling stringprep v0.1.5
+   Compiling rgb v0.8.53
+   Compiling byteorder-lite v0.1.0
+   Compiling hex v0.4.3
+   Compiling constant_time_eq v0.4.2
+   Compiling deflate64 v0.1.12
+   Compiling bit_field v0.10.3
+   Compiling pxfm v0.1.30
+   Compiling gl-context-loader v0.1.10
    Compiling azul-core v0.0.16
+   Compiling zip v8.6.0
+   Compiling exr v1.74.2
+   Compiling moxcms v0.8.1
+   Compiling image-webp v0.2.4
+   Compiling ravif v0.13.0
+   Compiling stringprep v0.1.5
    Compiling gif v0.14.2
    Compiling tiff v0.11.3
-   Compiling exr v1.74.2
-   Compiling ravif v0.13.0
+   Compiling taffy v0.10.1
    Compiling png v0.18.1
    Compiling polyval v0.7.3
-   Compiling rand v0.10.3
+   Compiling rand v0.10.2
    Compiling url v2.5.8
    Compiling async-process v2.5.0
    Compiling zbus_macros v5.19.0
    Compiling blocking v1.6.2
-   Compiling crypto-common v0.1.7
    Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
    Compiling async-executor v1.14.0
    Compiling qoi v0.4.1
    Compiling async-broadcast v0.7.2
    Compiling md-5 v0.11.0
    Compiling cbc v0.2.1
-   Compiling ecb v0.2.1
+   Compiling ecb v0.2.0
    Compiling ordered-stream v0.2.0
    Compiling async-recursion v1.1.1
    Compiling uuid v1.26.1
    Compiling roxmltree v0.21.1
-   Compiling base64 v0.22.1
    Compiling regex-lite v0.1.9
+   Compiling iana-time-zone v0.1.65
+   Compiling weezl v0.2.1
+   Compiling lru v0.18.2
    Compiling rangemap v1.8.0
    Compiling debug_unsafe v0.1.4
-   Compiling iana-time-zone v0.1.65
-   Compiling lru v0.18.5
-   Compiling weezl v0.2.1
    Compiling xmlwriter v0.1.0
+   Compiling base64 v0.22.1
    Compiling lopdf v0.44.0
    Compiling azul-layout v0.0.16
-   Compiling chrono v0.4.45
    Compiling atoi_simd v0.18.1
+   Compiling chrono v0.4.45
    Compiling zbus v5.19.0
    Compiling image v0.25.10
    Compiling digest v0.10.7
@@ -1108,50 +327,50 @@
    Compiling blowfish v0.10.0
    Compiling xattr v1.6.1
    Compiling techscript_runtime v2.0.0 (/app/runtime/runtime)
-   Compiling codepage v0.1.3
+   Compiling codepage v0.1.2
    Compiling quick-xml v0.41.0
-   Compiling hashlink v0.12.2
+   Compiling hashlink v0.12.1
    Compiling ctr v0.10.1
    Compiling aead v0.6.1
    Compiling filetime v0.2.29
    Compiling csv-core v0.1.13
-   Compiling cpufeatures v0.2.17
    Compiling fallible-iterator v0.3.0
-   Compiling fast-float2 v0.2.4
-   Compiling ascii v1.1.0
-   Compiling httpdate v1.0.3
-   Compiling chunked_transfer v1.5.0
-   Compiling fallible-streaming-iterator v0.1.9
    Compiling crc-catalog v2.5.0
+   Compiling cpufeatures v0.2.17
+   Compiling ascii v1.1.0
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling chunked_transfer v1.5.0
+   Compiling httpdate v1.0.3
+   Compiling fast-float2 v0.2.4
    Compiling ryu v1.0.23
-   Compiling csv v1.4.0
-   Compiling crc v3.4.0
-   Compiling rusqlite v0.40.2
-   Compiling tiny_http v0.12.0
    Compiling calamine v0.36.1
+   Compiling csv v1.4.0
+   Compiling tiny_http v0.12.0
+   Compiling rusqlite v0.40.2
    Compiling sha-1 v0.10.1
+   Compiling crc v3.4.0
    Compiling tar v0.4.46
    Compiling aes-gcm v0.11.1
-   Compiling qrcode v0.14.1
-   Compiling notify-rust v4.18.1
    Compiling bcrypt v0.19.3
+   Compiling notify-rust v4.18.1
+   Compiling qrcode v0.14.1
    Compiling quick-xml v0.42.0
    Compiling md5 v0.8.1
-   Compiling aho-corasick v1.1.5
-   Compiling regex-syntax v0.8.11
-   Compiling fnv v1.0.7
+   Compiling logos-codegen v0.16.1
    Compiling techscript_module_resolver v2.0.0 (/app/compiler/module_resolver)
    Compiling techscript_parser v2.0.0 (/app/compiler/parser)
    Compiling utf8parse v0.2.2
    Compiling anstyle-parse v1.0.0
-   Compiling colorchoice v1.0.5
-   Compiling anstyle-query v1.1.5
    Compiling is_terminal_polyfill v1.70.2
+   Compiling colorchoice v1.0.5
    Compiling anstyle v1.0.14
-   Compiling regex-automata v0.4.18
+   Compiling anstyle-query v1.1.5
    Compiling anstream v1.0.0
-   Compiling clap_lex v1.1.1
+   Compiling logos-derive v0.16.1
    Compiling strsim v0.11.1
+   Compiling logos v0.16.1
+   Compiling clap_lex v1.1.0
+   Compiling techscript_lexer v2.0.0 (/app/compiler/lexer)
    Compiling clap_builder v4.6.7
    Compiling clap_derive v4.6.7
    Compiling bincode v3.0.0

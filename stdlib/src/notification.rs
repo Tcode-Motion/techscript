@@ -36,16 +36,21 @@ impl StdlibRegistry {
                         use base64::Engine;
                         let b64_title = base64::prelude::BASE64_STANDARD.encode(title.as_bytes());
                         let b64_body = base64::prelude::BASE64_STANDARD.encode(body.as_bytes());
-                        let script = format!(
-                            "[System.Windows.MessageBox]::Show([System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('{}')), [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('{}')))",
+                        let script_text = format!(
+                            "[System.Windows.MessageBox]::Show(\
+                                [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('{}')), \
+                                [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('{}'))\
+                            )",
                             b64_body, b64_title
                         );
+                        let mut script_utf16: Vec<u8> = Vec::with_capacity(script_text.len() * 2);
+                        for c in script_text.encode_utf16() {
+                            script_utf16.push((c & 0xFF) as u8);
+                            script_utf16.push((c >> 8) as u8);
+                        }
+                        let encoded_cmd = base64::prelude::BASE64_STANDARD.encode(&script_utf16);
                         let _ = Command::new("powershell")
-                            .args([
-                                "-NoProfile",
-                                "-Command",
-                                &script
-                            ])
+                            .args(["-NoProfile", "-EncodedCommand", &encoded_cmd])
                             .spawn();
                     }
                     #[cfg(not(target_os = "windows"))]

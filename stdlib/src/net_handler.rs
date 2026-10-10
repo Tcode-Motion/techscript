@@ -35,14 +35,13 @@ pub fn tcp_connect_fn(
 ) -> Result<RuntimeValue, RuntimeError> {
     let ip = args[0].try_into_string()?;
     let port = args[1].try_into_int()?;
-    let stream =
-        std::net::TcpStream::connect(format!("{}:{}", ip, port)).map_err(|e| {
-            RuntimeError::new(
-                RuntimeErrorKind::InvalidOperation(format!("TCP connect error: {}", e)),
-                None,
-                None,
-            )
-        })?;
+    let stream = std::net::TcpStream::connect(format!("{}:{}", ip, port)).map_err(|e| {
+        RuntimeError::new(
+            RuntimeErrorKind::InvalidOperation(format!("TCP connect error: {}", e)),
+            None,
+            None,
+        )
+    })?;
     let handle_id = ctx.resources.borrow_mut().insert(stream);
     let mut stream_map = IndexMap::new();
     stream_map.insert("ip".to_string(), RuntimeValue::Str(ip));

@@ -488,7 +488,12 @@ impl VM {
 
                 Opcode::Call => {
                     if let Some(Operand::Count(arg_count)) = inst_operands.first() {
-                        let mut args = Vec::new();
+                        // ⚡ Bolt Performance Optimization:
+                        // Pre-allocate the argument vector capacity up to the available stack size.
+                        // This avoids dynamic reallocation overhead in the hot VM loop while
+                        // preventing potential OOM panics from malformed bytecode with huge argument counts.
+                        let mut args =
+                            Vec::with_capacity((*arg_count as usize).min(self.stack.len()));
                         for _ in 0..*arg_count {
                             args.push(self.stack.pop()?);
                         }
@@ -693,7 +698,11 @@ impl VM {
 
                 Opcode::MakeList => {
                     if let Some(Operand::Count(n)) = inst_operands.first() {
-                        let mut items = Vec::new();
+                        // ⚡ Bolt Performance Optimization:
+                        // Pre-allocate the list capacity up to the available stack size.
+                        // This avoids dynamic reallocation overhead in the hot VM loop while
+                        // preventing potential OOM panics from malformed bytecode with huge item counts.
+                        let mut items = Vec::with_capacity((*n as usize).min(self.stack.len()));
                         for _ in 0..*n {
                             items.push(self.stack.pop()?);
                         }
@@ -709,7 +718,14 @@ impl VM {
 
                 Opcode::MakeMap => {
                     if let Some(Operand::Count(n)) = inst_operands.first() {
-                        let mut entries = indexmap::IndexMap::new();
+                        // ⚡ Bolt Performance Optimization:
+                        // Pre-allocate the map capacity up to half the available stack size
+                        // (since each entry consumes a key and a value on the stack).
+                        // This avoids dynamic reallocation overhead in the hot VM loop while
+                        // preventing potential OOM panics from malformed bytecode with huge item counts.
+                        let mut entries = indexmap::IndexMap::with_capacity(
+                            (*n as usize).min(self.stack.len() / 2),
+                        );
                         for _ in 0..*n {
                             let val = self.stack.pop()?;
                             let key_val = self.stack.pop()?;

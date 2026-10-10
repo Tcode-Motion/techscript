@@ -1,8 +1,8 @@
+use crate::net_handler::{tcp_connect_fn, tcp_listen_fn, tcp_recv_fn, tcp_send_fn};
 use crate::{StdFunction, StdlibModule, StdlibRegistry};
 use std::collections::HashMap;
 use std::rc::Rc;
 use techscript_runtime::context::Capability;
-use crate::net_handler::{tcp_listen_fn, tcp_connect_fn, tcp_send_fn, tcp_recv_fn};
 
 impl StdlibRegistry {
     pub fn register_net(&mut self) {

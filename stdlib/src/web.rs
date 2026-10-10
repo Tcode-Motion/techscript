@@ -362,7 +362,10 @@ fn dsl_to_html_inner(val: &RuntimeValue, html: &mut String) {
     }
 }
 
-fn web_start(ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<RuntimeValue, RuntimeError> {
+fn web_start(
+    ctx: &mut RuntimeContext,
+    args: Vec<RuntimeValue>,
+) -> Result<RuntimeValue, RuntimeError> {
     if !ctx.config.capabilities.contains(&Capability::Network) {
         return Err(RuntimeError::new(
             techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
@@ -414,17 +417,26 @@ fn web_start(ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<Runtim
             }
         }
     });
-    Ok(RuntimeValue::Str(format!("Server started on port {}", port)))
+    Ok(RuntimeValue::Str(format!(
+        "Server started on port {}",
+        port
+    )))
 }
 
-fn web_page(_ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<RuntimeValue, RuntimeError> {
+fn web_page(
+    _ctx: &mut RuntimeContext,
+    args: Vec<RuntimeValue>,
+) -> Result<RuntimeValue, RuntimeError> {
     let _path = args[0].to_string();
     let content = args[1].to_string();
     *PAGE_CONTENT.lock().unwrap() = content;
     Ok(RuntimeValue::Null)
 }
 
-fn web_serve(ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<RuntimeValue, RuntimeError> {
+fn web_serve(
+    ctx: &mut RuntimeContext,
+    args: Vec<RuntimeValue>,
+) -> Result<RuntimeValue, RuntimeError> {
     if !ctx.config.capabilities.contains(&Capability::Network) {
         return Err(RuntimeError::new(
             techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
@@ -474,21 +486,33 @@ fn web_serve(ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<Runtim
             }
         }
     });
-    Ok(RuntimeValue::Str(format!("Server started on port {}", port)))
+    Ok(RuntimeValue::Str(format!(
+        "Server started on port {}",
+        port
+    )))
 }
 
-fn web_stop(_ctx: &mut RuntimeContext, _args: Vec<RuntimeValue>) -> Result<RuntimeValue, RuntimeError> {
+fn web_stop(
+    _ctx: &mut RuntimeContext,
+    _args: Vec<RuntimeValue>,
+) -> Result<RuntimeValue, RuntimeError> {
     SERVER_RUNNING.store(false, Ordering::SeqCst);
     Ok(RuntimeValue::Null)
 }
 
-fn web_set_content(_ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<RuntimeValue, RuntimeError> {
+fn web_set_content(
+    _ctx: &mut RuntimeContext,
+    args: Vec<RuntimeValue>,
+) -> Result<RuntimeValue, RuntimeError> {
     let new_content = args[0].to_string();
     *PAGE_CONTENT.lock().unwrap() = new_content;
     Ok(RuntimeValue::Str("Content updated".to_string()))
 }
 
-fn web_fetch(ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<RuntimeValue, RuntimeError> {
+fn web_fetch(
+    ctx: &mut RuntimeContext,
+    args: Vec<RuntimeValue>,
+) -> Result<RuntimeValue, RuntimeError> {
     if !ctx.config.capabilities.contains(&Capability::Network) {
         return Err(RuntimeError::new(
             techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
@@ -510,17 +534,13 @@ fn web_fetch(ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<Runtim
         ));
     }
 
-    let agent = ureq::builder()
-        .resolver(SafeResolver)
-        .redirects(0)
-        .build();
-    let body = agent.get(&url)
+    let agent = ureq::builder().resolver(SafeResolver).redirects(0).build();
+    let body = agent
+        .get(&url)
         .call()
         .map_err(|e| {
             RuntimeError::new(
-                techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
-                    e.to_string(),
-                ),
+                techscript_runtime::error::RuntimeErrorKind::InvalidOperation(e.to_string()),
                 None,
                 None,
             )
@@ -528,9 +548,7 @@ fn web_fetch(ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<Runtim
         .into_string()
         .map_err(|e| {
             RuntimeError::new(
-                techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
-                    e.to_string(),
-                ),
+                techscript_runtime::error::RuntimeErrorKind::InvalidOperation(e.to_string()),
                 None,
                 None,
             )
@@ -538,7 +556,10 @@ fn web_fetch(ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<Runtim
     Ok(RuntimeValue::Str(body))
 }
 
-fn web_render_html(ctx: &mut RuntimeContext, _args: Vec<RuntimeValue>) -> Result<RuntimeValue, RuntimeError> {
+fn web_render_html(
+    ctx: &mut RuntimeContext,
+    _args: Vec<RuntimeValue>,
+) -> Result<RuntimeValue, RuntimeError> {
     let env = ctx.global_env.borrow();
     let blocks = match env.lookup("_dsl_blocks") {
         Ok(RuntimeValue::List { items, .. }) => items.borrow().clone(),
@@ -551,7 +572,10 @@ fn web_render_html(ctx: &mut RuntimeContext, _args: Vec<RuntimeValue>) -> Result
     Ok(RuntimeValue::Str(html))
 }
 
-fn web_render_dsl(_ctx: &mut RuntimeContext, args: Vec<RuntimeValue>) -> Result<RuntimeValue, RuntimeError> {
+fn web_render_dsl(
+    _ctx: &mut RuntimeContext,
+    args: Vec<RuntimeValue>,
+) -> Result<RuntimeValue, RuntimeError> {
     let html = dsl_to_html(&args[0]);
     Ok(RuntimeValue::Str(html))
 }

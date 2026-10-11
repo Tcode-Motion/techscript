@@ -66,7 +66,9 @@ impl LivenessAnalysis {
 
         while changed {
             changed = false;
-            for block in &func.blocks {
+            // OPTIMIZATION: Liveness is a backward dataflow analysis. Iterating
+            // through blocks in reverse order speeds up convergence significantly.
+            for block in func.blocks.iter().rev() {
                 let block_id = block.id;
 
                 // LiveOut = union of LiveIn(succs)
@@ -89,14 +91,16 @@ impl LivenessAnalysis {
 
                 if let Some(old_in) = live_in.get_mut(&block_id) {
                     if old_in.len() != new_in.len() {
-                        *old_in = new_in.clone();
+                        // OPTIMIZATION: Reuse existing HashSet capacity to avoid allocations in hot loop.
+                        old_in.clone_from(&new_in);
                         changed = true;
                     }
                 }
 
                 if let Some(old_out) = live_out.get_mut(&block_id) {
                     if old_out.len() != new_out.len() {
-                        *old_out = new_out.clone();
+                        // OPTIMIZATION: Reuse existing HashSet capacity to avoid allocations in hot loop.
+                        old_out.clone_from(&new_out);
                         changed = true;
                     }
                 }

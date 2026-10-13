@@ -135,6 +135,19 @@ fn std_database_query(
         )
     })?;
 
+    // ⚡ Bolt Performance Optimization:
+    // Instead of constructing a new IndexMap for each row, cloning every column string,
+    // and re-hashing all keys, we create a prototype map once containing null values.
+    // For each row, we clone the prototype map (which uses a fast memory copy and avoids string cloning/hashing)
+    // and update the values by index.
+    // We map the database column indices to the deduplicated IndexMap indices.
+    let mut prototype_map = IndexMap::with_capacity(column_names.len());
+    let mut col_idx_to_map_idx = Vec::with_capacity(column_names.len());
+    for name in &column_names {
+        let (map_idx, _) = prototype_map.insert_full(name.clone(), RuntimeValue::Null);
+        col_idx_to_map_idx.push(map_idx);
+    }
+
     let mut result_rows = Vec::new();
 
     while let Some(row) = rows.next().map_err(|e| {
@@ -144,8 +157,8 @@ fn std_database_query(
             None,
         )
     })? {
-        let mut row_map = IndexMap::with_capacity(column_names.len());
-        for (idx, name) in column_names.iter().enumerate() {
+        let mut row_map = prototype_map.clone();
+        for (idx, &map_idx) in col_idx_to_map_idx.iter().enumerate() {
             let value = match row.get_ref(idx).map_err(|e| {
                 RuntimeError::new(
                     RuntimeErrorKind::InvalidOperation(format!("Database column get error: {}", e)),
@@ -165,9 +178,9 @@ fn std_database_query(
                     RuntimeValue::Str(s)
                 }
             };
-            // The clone here is strictly necessary because `IndexMap` requires an owned `String`
-            // key, and each row constructs a fresh map containing these keys.
-            row_map.insert(name.clone(), value);
+            if let Some((_, v)) = row_map.get_index_mut(map_idx) {
+                *v = value;
+            }
         }
         result_rows.push(RuntimeValue::Map {
             entries: Rc::new(RefCell::new(row_map)),

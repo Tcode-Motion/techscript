@@ -59,3 +59,7 @@
 ## 2026-09-28 - IndexMap allocation optimization
 **Learning:** Pre-allocating `IndexMap` with `with_capacity(len)` where the number of elements is known (e.g., in stdlib modules like `system`, `http`, and `url`) prevents unnecessary allocations and re-hashing during insertion, yielding a 10%-45% improvement in map construction performance depending on the size.
 **Action:** Always prefer `IndexMap::with_capacity(expected_len)` over `IndexMap::new()` when constructing maps with a known or highly predictable number of elements.
+
+## 2023-10-24 - Pre-allocate and clone IndexMap in database row iteration
+**Learning:** When fetching rows from a database where each row's values are stored in an `IndexMap` keyed by the column name, constructing a new `IndexMap` for every row involves heavy performance penalties due to repeated string cloning (for the keys) and hashing operations. Creating a single "prototype" map with null values and cloning it for each row provides a fast memory copy that completely bypasses the hashing phase. However, `IndexMap` auto-deduplicates keys during insertion, so the mapping from database column index to `IndexMap` index must be carefully pre-computed to safely update values by index using `get_index_mut`.
+**Action:** In loops over data with a fixed schema (like database rows or CSVs) where the target structure is an `IndexMap`, always pre-allocate a prototype map and clone it per iteration rather than constructing a new map and hashing keys for every single element.

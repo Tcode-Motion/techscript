@@ -34,6 +34,8 @@ impl DominatorAnalysis {
 
         // Iterative algorithm to compute dominators
         let mut changed = true;
+        let mut new_dom = HashSet::new();
+
         while changed {
             changed = false;
             for block in &func.blocks {
@@ -41,24 +43,29 @@ impl DominatorAnalysis {
                     continue;
                 }
 
-                let mut new_dom: Option<HashSet<BlockId>> = None;
+                new_dom.clear();
+                let mut first = true;
+
                 for &pred in &block.predecessors {
                     if let Some(pred_doms) = dominators.get(&pred) {
-                        if let Some(mut current_dom) = new_dom.take() {
-                            current_dom.retain(|x| pred_doms.contains(x));
-                            new_dom = Some(current_dom);
+                        if first {
+                            new_dom.extend(pred_doms.iter().copied());
+                            first = false;
                         } else {
-                            new_dom = Some(pred_doms.clone());
+                            new_dom.retain(|x| pred_doms.contains(x));
                         }
                     }
                 }
 
-                let mut new_dom = new_dom.unwrap_or_else(|| all_blocks.clone());
+                if first {
+                    new_dom.extend(all_blocks.iter().copied());
+                }
                 new_dom.insert(block.id);
 
                 if let Some(old_doms) = dominators.get_mut(&block.id) {
-                    if *old_doms != new_dom {
-                        *old_doms = new_dom;
+                    if old_doms.len() != new_dom.len() {
+                        // OPTIMIZATION: Reuse existing HashSet capacity to avoid allocations in hot loop.
+                        old_doms.clone_from(&new_dom);
                         changed = true;
                     }
                 }

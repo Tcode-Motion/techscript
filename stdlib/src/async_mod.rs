@@ -17,7 +17,8 @@ impl StdlibRegistry {
                 arity: 1,
                 callback: |_ctx, args| {
                     let callback = args[0].clone();
-                    let mut fut_map = IndexMap::new();
+                    // ⚡ Bolt Performance Optimization: Pre-allocated IndexMap capacity to avoid re-hashing during insertion.
+                    let mut fut_map = IndexMap::with_capacity(2);
                     fut_map.insert(
                         "state".to_string(),
                         RuntimeValue::Str("pending".to_string()),
@@ -68,7 +69,8 @@ impl StdlibRegistry {
                 name: "make_future".to_string(),
                 arity: 0,
                 callback: |_ctx, _args| {
-                    let mut fut_map = IndexMap::new();
+                    // ⚡ Bolt Performance Optimization: Pre-allocated IndexMap capacity to avoid re-hashing during insertion.
+                    let mut fut_map = IndexMap::with_capacity(2);
                     fut_map.insert(
                         "state".to_string(),
                         RuntimeValue::Str("pending".to_string()),
@@ -106,7 +108,8 @@ impl StdlibRegistry {
                     let (tx, rx) = std::sync::mpsc::channel::<RuntimeValue>();
                     let tx_id = ctx.resources.borrow_mut().insert(tx);
                     let rx_id = ctx.resources.borrow_mut().insert(rx);
-                    let mut map = IndexMap::new();
+                    // ⚡ Bolt Performance Optimization: Pre-allocated IndexMap capacity to avoid re-hashing during insertion.
+                    let mut map = IndexMap::with_capacity(2);
                     map.insert("_tx_handle".to_string(), RuntimeValue::Int(tx_id as i64));
                     map.insert("_rx_handle".to_string(), RuntimeValue::Int(rx_id as i64));
                     Ok(RuntimeValue::Map {

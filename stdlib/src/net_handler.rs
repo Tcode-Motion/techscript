@@ -20,7 +20,8 @@ pub fn tcp_listen_fn(
         )
     })?;
     let handle_id = ctx.resources.borrow_mut().insert(listener);
-    let mut listener_map = IndexMap::new();
+    // ⚡ Bolt Performance Optimization: Pre-allocated IndexMap capacity to avoid re-hashing during insertion.
+    let mut listener_map = IndexMap::with_capacity(2);
     listener_map.insert("port".to_string(), RuntimeValue::Int(port));
     listener_map.insert("_handle".to_string(), RuntimeValue::Int(handle_id as i64));
     Ok(RuntimeValue::Map {
@@ -43,7 +44,8 @@ pub fn tcp_connect_fn(
         )
     })?;
     let handle_id = ctx.resources.borrow_mut().insert(stream);
-    let mut stream_map = IndexMap::new();
+    // ⚡ Bolt Performance Optimization: Pre-allocated IndexMap capacity to avoid re-hashing during insertion.
+    let mut stream_map = IndexMap::with_capacity(3);
     stream_map.insert("ip".to_string(), RuntimeValue::Str(ip));
     stream_map.insert("port".to_string(), RuntimeValue::Int(port));
     stream_map.insert("_handle".to_string(), RuntimeValue::Int(handle_id as i64));

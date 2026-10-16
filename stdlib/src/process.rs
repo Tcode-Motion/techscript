@@ -62,7 +62,8 @@ fn process_run(
         )
     })?;
 
-    let mut res_map = IndexMap::new();
+    // ⚡ Bolt Performance Optimization: Pre-allocated IndexMap capacity to avoid re-hashing during insertion.
+    let mut res_map = IndexMap::with_capacity(3);
     res_map.insert(
         "stdout".to_string(),
         RuntimeValue::Str(String::from_utf8_lossy(&output.stdout).to_string()),

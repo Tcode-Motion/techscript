@@ -18,9 +18,11 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS%20%7C%20Android-475569?style=flat-square" alt="Platforms">
-  <img src="https://img.shields.io/github/stars/Tcode-Motion/techscript?style=flat-square&logo=github" alt="Stars">
-  <img src="https://img.shields.io/github/forks/Tcode-Motion/techscript?style=flat-square&logo=github" alt="Forks">
-  <img src="https://img.shields.io/github/issues/Tcode-Motion/techscript?style=flat-square" alt="Issues">
+  <a href="https://github.com/Tcode-Motion/techscript/stargazers"><img src="https://img.shields.io/github/stars/Tcode-Motion/techscript?style=flat-square&logo=github" alt="Stars"></a>
+  <a href="https://github.com/Tcode-Motion/techscript/network/members"><img src="https://img.shields.io/github/forks/Tcode-Motion/techscript?style=flat-square&logo=github" alt="Forks"></a>
+  <a href="https://github.com/Tcode-Motion/techscript/issues"><img src="https://img.shields.io/github/issues/Tcode-Motion/techscript?style=flat-square" alt="Issues"></a>
+  <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square" alt="PRs Welcome"></a>
+  <img src="https://img.shields.io/github/languages/code-size/Tcode-Motion/techscript?style=flat-square" alt="Code Size">
 </p>
 
 ---
@@ -32,6 +34,7 @@
 - [Standalone Architecture](#standalone-architecture--zero-rustcargo-dependency)
 - [WebForge Framework Deep-Dive](#webforge-framework-deep-dive)
   - [Framework Architecture](#framework-architecture)
+  - [Reactive Data & Navigation Flow](#reactive-data--navigation-flow)
   - [Scaffolding a Website](#scaffolding-a-website)
   - [Declarative UI Components](#declarative-ui-components)
   - [SQLite Database & Reactive State](#sqlite-database--reactive-state)
@@ -108,29 +111,46 @@ WebForge is the official full-stack web framework built directly into TechScript
 ### Framework Architecture
 
 ```mermaid
-flowchart TB
-    subgraph CLIENT ["Web Browser Client"]
-        DOM["DOM & Page Views (.webforge-page-view)"]
+flowchart TD
+    subgraph Client ["Client Browser Runtime"]
+        DOM["DOM Page Views (.webforge-page-view)"]
         Router["Virtual SPA Router (webforgeRouter)"]
         Theme["Theme Controller (Light & Dark)"]
         Canvas3D["WebGL 3D Engine (Procedural Shaders)"]
+        
         DOM <--> Router
         DOM <--> Theme
         DOM <--> Canvas3D
     end
 
-    subgraph ENGINE ["WebForge Engine (tsc dev & build)"]
-        DSLParser["WebForge DSL Compiler"]
+    subgraph Toolchain ["WebForge Toolchain (tsc dev & build)"]
+        DSLCompiler["WebForge DSL Compiler"]
         Server["Live HTTP Server (Port 3000..3020)"]
         SQLite["SQLite Embedded Persistence (webforge.db)"]
         Packager["Static Bundle Exporter (dist/)"]
-        DSLParser --> Server
-        DSLParser --> Packager
+        
+        DSLCompiler --> Server
+        DSLCompiler --> Packager
         Server <--> SQLite
     end
 
-    CLIENT <--> |"HTTP, REST & Assets"| ENGINE
+    Server <-->|"HTTP, REST & Hot-Reload"| Router
+    Packager -.->|"Compiles Static Bundle"| DOM
 ```
+
+#### Reactive Data & Navigation Flow
+
+```mermaid
+flowchart LR
+    Event["User Click / Navigation"] --> Router["SPA Virtual Router"]
+    Router --> View["Render Page View (.txs)"]
+    Router --> Action["Execute Backend Action"]
+    Action --> DB[("SQLite Database")]
+    DB --> State["Reactive State Propagation"]
+    State --> View
+    View --> Theme["Apply Theme Tokens (Light / Dark)"]
+```
+
 
 ### Scaffolding a Website
 

@@ -49,7 +49,7 @@ jobs:
       - name: Build WebForge Website
         run: |
           cd website
-          ../target/release/webforge build src/main.txs
+          ../target/release/webforge build --target web src/main.txs
           ls -la dist/
 
       - name: Verify WebForge Static Output

@@ -700,7 +700,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "commands_build",
-      "community": 213,
+      "community": 86,
       "norm_label": "build.rs"
     },
     {
@@ -710,7 +710,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "commands_build_execute",
-      "community": 213,
+      "community": 86,
       "norm_label": "execute()"
     },
     {
@@ -720,7 +720,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "cli_src_commands_build_rs_option",
-      "community": 213,
+      "community": 86,
       "norm_label": "option"
     },
     {
@@ -730,57 +730,57 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "cli_src_commands_build_rs_exitcode",
-      "community": 213,
+      "community": 86,
       "norm_label": "exitcode"
     },
     {
       "label": "invoke_linker()",
       "file_type": "code",
       "source_file": "cli/src/commands/build.rs",
-      "source_location": "L245",
+      "source_location": "L261",
       "_origin": "ast",
       "id": "commands_build_invoke_linker",
-      "community": 213,
+      "community": 86,
       "norm_label": "invoke_linker()"
     },
     {
       "label": "Path",
       "file_type": "code",
       "source_file": "cli/src/commands/build.rs",
-      "source_location": "L245",
+      "source_location": "L261",
       "_origin": "ast",
       "id": "cli_src_commands_build_rs_path",
-      "community": 213,
+      "community": 86,
       "norm_label": "path"
     },
     {
       "label": "Result",
       "file_type": "code",
       "source_file": "cli/src/commands/build.rs",
-      "source_location": "L245",
+      "source_location": "L261",
       "_origin": "ast",
       "id": "cli_src_commands_build_rs_result",
-      "community": 213,
+      "community": 86,
       "norm_label": "result"
     },
     {
       "label": "Error",
       "file_type": "code",
       "source_file": "cli/src/commands/build.rs",
-      "source_location": "L245",
+      "source_location": "L261",
       "_origin": "ast",
       "id": "cli_src_commands_build_rs_error",
-      "community": 213,
+      "community": 86,
       "norm_label": "error"
     },
     {
       "label": "build_web()",
       "file_type": "code",
       "source_file": "cli/src/commands/build.rs",
-      "source_location": "L350",
+      "source_location": "L366",
       "_origin": "ast",
       "id": "commands_build_build_web",
-      "community": 213,
+      "community": 86,
       "norm_label": "build_web()"
     },
     {
@@ -940,7 +940,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "commands_deploy",
-      "community": 279,
+      "community": 94,
       "norm_label": "deploy.rs"
     },
     {
@@ -950,7 +950,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "commands_deploy_execute",
-      "community": 279,
+      "community": 94,
       "norm_label": "execute()"
     },
     {
@@ -960,7 +960,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "cli_src_commands_deploy_rs_option",
-      "community": 279,
+      "community": 94,
       "norm_label": "option"
     },
     {
@@ -970,7 +970,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "cli_src_commands_deploy_rs_exitcode",
-      "community": 279,
+      "community": 94,
       "norm_label": "exitcode"
     },
     {
@@ -980,7 +980,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "commands_dev",
-      "community": 94,
+      "community": 279,
       "norm_label": "dev.rs"
     },
     {
@@ -990,7 +990,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "commands_dev_execute",
-      "community": 94,
+      "community": 279,
       "norm_label": "execute()"
     },
     {
@@ -1000,7 +1000,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "cli_src_commands_dev_rs_option",
-      "community": 94,
+      "community": 279,
       "norm_label": "option"
     },
     {
@@ -1010,7 +1010,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "cli_src_commands_dev_rs_exitcode",
-      "community": 94,
+      "community": 279,
       "norm_label": "exitcode"
     },
     {
@@ -2290,7 +2290,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "commands_test",
-      "community": 86,
+      "community": 213,
       "norm_label": "test.rs"
     },
     {
@@ -2300,7 +2300,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "commands_test_execute",
-      "community": 86,
+      "community": 213,
       "norm_label": "execute()"
     },
     {
@@ -2310,7 +2310,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "cli_src_commands_test_rs_option",
-      "community": 86,
+      "community": 213,
       "norm_label": "option"
     },
     {
@@ -2320,7 +2320,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "cli_src_commands_test_rs_exitcode",
-      "community": 86,
+      "community": 213,
       "norm_label": "exitcode"
     },
     {
@@ -2330,7 +2330,7 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "commands_test_find_test_files",
-      "community": 86,
+      "community": 213,
       "norm_label": "find_test_files()"
     },
     {
@@ -2340,7 +2340,7 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "cli_src_commands_test_rs_path",
-      "community": 86,
+      "community": 213,
       "norm_label": "path"
     },
     {
@@ -2350,7 +2350,7 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "cli_src_commands_test_rs_vec",
-      "community": 86,
+      "community": 213,
       "norm_label": "vec"
     },
     {
@@ -2360,7 +2360,7 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "cli_src_commands_test_rs_pathbuf",
-      "community": 86,
+      "community": 213,
       "norm_label": "pathbuf"
     },
     {
@@ -5300,7 +5300,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_cli_tests",
-      "community": 124,
+      "community": 470,
       "norm_label": "cli_tests.rs"
     },
     {
@@ -5310,7 +5310,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "tests_cli_tests_test_cli_parsing",
-      "community": 124,
+      "community": 470,
       "norm_label": "test_cli_parsing()"
     },
     {
@@ -5320,7 +5320,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "tests_cli_tests_test_cli_native_options",
-      "community": 124,
+      "community": 470,
       "norm_label": "test_cli_native_options()"
     },
     {
@@ -5330,7 +5330,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "tests_cli_tests_test_cli_emit_commands",
-      "community": 124,
+      "community": 470,
       "norm_label": "test_cli_emit_commands()"
     },
     {
@@ -44954,7 +44954,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "engineering_07_parser_design",
-      "community": 164,
+      "community": 159,
       "norm_label": "07_parser_design.md"
     },
     {
@@ -52691,7 +52691,7 @@
     },
     {
       "label": "techscript_cli",
-      "community": 124,
+      "community": 470,
       "community_name": "OptimizationContext",
       "external": true,
       "file_type": "concept",
@@ -54681,9 +54681,9 @@
       "source_file": "cli/src/bin/benchmark.rs",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "bin_benchmark",
-      "target": "bin_benchmark_main",
-      "confidence_score": 1.0
+      "target": "bin_benchmark_main"
     },
     {
       "relation": "imports_from",
@@ -54692,9 +54692,9 @@
       "source_location": "L2",
       "weight": 1.0,
       "context": "import",
+      "confidence_score": 1.0,
       "source": "bin_benchmark",
-      "target": "fs",
-      "confidence_score": 1.0
+      "target": "fs"
     },
     {
       "relation": "imports_from",
@@ -54703,9 +54703,9 @@
       "source_location": "L4",
       "weight": 1.0,
       "context": "import",
+      "confidence_score": 1.0,
       "source": "bin_benchmark",
-      "target": "instant",
-      "confidence_score": 1.0
+      "target": "instant"
     },
     {
       "relation": "imports_from",
@@ -54714,9 +54714,9 @@
       "source_location": "L3",
       "weight": 1.0,
       "context": "import",
+      "confidence_score": 1.0,
       "source": "bin_benchmark",
-      "target": "path",
-      "confidence_score": 1.0
+      "target": "path"
     },
     {
       "relation": "references",
@@ -54725,9 +54725,9 @@
       "source_location": "L6",
       "weight": 1.0,
       "context": "generic_arg",
+      "confidence_score": 1.0,
       "source": "bin_benchmark_main",
-      "target": "cli_src_bin_benchmark_rs_box",
-      "confidence_score": 1.0
+      "target": "cli_src_bin_benchmark_rs_box"
     },
     {
       "relation": "references",
@@ -54736,9 +54736,9 @@
       "source_location": "L6",
       "weight": 1.0,
       "context": "generic_arg",
+      "confidence_score": 1.0,
       "source": "bin_benchmark_main",
-      "target": "cli_src_bin_benchmark_rs_error",
-      "confidence_score": 1.0
+      "target": "cli_src_bin_benchmark_rs_error"
     },
     {
       "relation": "references",
@@ -54747,9 +54747,9 @@
       "source_location": "L6",
       "weight": 1.0,
       "context": "return_type",
+      "confidence_score": 1.0,
       "source": "bin_benchmark_main",
-      "target": "cli_src_bin_benchmark_rs_result",
-      "confidence_score": 1.0
+      "target": "cli_src_bin_benchmark_rs_result"
     },
     {
       "relation": "contains",
@@ -54757,9 +54757,9 @@
       "source_file": "cli/src/bin/tech.rs",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "bin_tech",
-      "target": "bin_tech_main",
-      "confidence_score": 1.0
+      "target": "bin_tech_main"
     },
     {
       "relation": "contains",
@@ -54767,9 +54767,9 @@
       "source_file": "cli/src/bin/techscript.rs",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "bin_techscript",
-      "target": "bin_techscript_main",
-      "confidence_score": 1.0
+      "target": "bin_techscript_main"
     },
     {
       "relation": "contains",
@@ -54777,9 +54777,9 @@
       "source_file": "cli/src/bin/tsc.rs",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "bin_tsc",
-      "target": "bin_tsc_main",
-      "confidence_score": 1.0
+      "target": "bin_tsc_main"
     },
     {
       "relation": "contains",
@@ -54787,9 +54787,9 @@
       "source_file": "cli/src/bin/webforge.rs",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "bin_webforge",
-      "target": "bin_webforge_main",
-      "confidence_score": 1.0
+      "target": "bin_webforge_main"
     },
     {
       "relation": "imports_from",
@@ -151564,5 +151564,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "6a9e48f6ae158e227abef393870dcac6d057005e"
+  "built_at_commit": "9b831aab6971ee71cd2e09c4628b070c351cc275"
 }

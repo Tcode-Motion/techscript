@@ -1,16 +1,16 @@
 # Graph Report - techscript  (2026-10-21)
 
 ## Corpus Check
-- 507 files · ~334,246 words
+- 507 files · ~334,466 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 5405 nodes · 9008 edges · 470 communities (357 shown, 113 thin omitted)
+- 5405 nodes · 9008 edges · 471 communities (357 shown, 114 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 34 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `6a9e48f6`
+- Built from commit: `9b831aab`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -460,6 +460,7 @@
 - [[_COMMUNITY_Community 467|Community 467]]
 - [[_COMMUNITY_Community 468|Community 468]]
 - [[_COMMUNITY_Community 469|Community 469]]
+- [[_COMMUNITY_Community 470|Community 470]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `Span` - 86 edges
@@ -507,7 +508,7 @@
 - 1-file cycle: `cli/src/commands/examples.rs -> cli/src/commands/examples.rs`
 - 1-file cycle: `cli/src/commands/fmt.rs -> cli/src/commands/fmt.rs`
 
-## Communities (470 total, 113 thin omitted)
+## Communities (471 total, 114 thin omitted)
 
 ### Community 0 - "LoweringContext"
 Cohesion: 0.05
@@ -818,8 +819,8 @@ Cohesion: 0.12
 Nodes (15): Arc, Display, Formatter, Option, Path, PathBuf, Result, Self (+7 more)
 
 ### Community 86 - "commands/build.rs"
-Cohesion: 0.14
-Nodes (15): main(), Box, Error, Result, ExitCode, ExitCode, Option, Path (+7 more)
+Cohesion: 0.16
+Nodes (16): main(), Box, Error, Result, ExitCode, Error, ExitCode, Option (+8 more)
 
 ### Community 87 - "LiteralVal"
 Cohesion: 0.18
@@ -966,8 +967,8 @@ Cohesion: 0.11
 Nodes (17): 10. AI Rules, 11. Current Progress, 12. Remaining Work, 13. Important Files, 14. AI Workflow, 15. Session Memory, 16. Quick Context (One Minute Read), 1. Project Overview (+9 more)
 
 ### Community 124 - "OptimizationContext"
-Cohesion: 0.10
-Nodes (6): parser, Precedence, next_lower_precedence(), techscript_cli, techscript_common, techscript_errors
+Cohesion: 0.13
+Nodes (5): parser, Precedence, next_lower_precedence(), techscript_common, techscript_errors
 
 ### Community 125 - "VMError"
 Cohesion: 0.27
@@ -1086,7 +1087,7 @@ Cohesion: 0.50
 Nodes (3): IRType, TypeInfo, Value
 
 ### Community 159 - ".register_encoding"
-Cohesion: 0.15
+Cohesion: 0.14
 Nodes (13): 07 — TechScript 2.0 Parser Design, 1.1 Decision: Recursive Descent + Pratt Parser, 1. Parsing Strategy, 2. Parser State, 3. Statement & Method Parsing, 4.1 Binding Power Table, 4. Expression Parsing — Pratt Parser, 5. Error Recovery (+5 more)
 
 ### Community 160 - ".register_excel"
@@ -1286,8 +1287,8 @@ Cohesion: 0.25
 Nodes (4): Display, Formatter, Result, ExitCode
 
 ### Community 213 - ".fmt"
-Cohesion: 0.42
-Nodes (8): Error, ExitCode, Option, Path, Result, build_web(), execute(), invoke_linker()
+Cohesion: 0.36
+Nodes (7): ExitCode, Option, Path, PathBuf, Vec, execute(), find_test_files()
 
 ### Community 214 - "gc_tests.rs"
 Cohesion: 0.31
@@ -1840,7 +1841,7 @@ Nodes (4): ExitCode, Option, default_toml_config(), execute()
 ## Knowledge Gaps
 - **1850 isolated node(s):** `Vec`, `Self`, `DebugSymbols`, `SourceMap`, `Result` (+1845 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **113 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **114 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_

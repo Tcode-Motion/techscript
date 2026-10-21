@@ -122,40 +122,16 @@ pub fn start_webforge_server(port: u16) -> Result<RuntimeValue, RuntimeError> {
     if SERVER_RUNNING.load(Ordering::SeqCst) {
         return Ok(RuntimeValue::Str("Server already running".to_string()));
     }
+    SERVER_RUNNING.store(true, Ordering::SeqCst);
 
-    let mut actual_port = port;
-    let mut chosen_server = None;
-
-    // Gracefully handle port in use: search from port up to port + 20
-    for try_port in port..port.saturating_add(20) {
-        match tiny_http::Server::http(format!("0.0.0.0:{}", try_port)) {
-            Ok(s) => {
-                actual_port = try_port;
-                chosen_server = Some(Mutex::new(s));
-                if try_port != port {
-                    println!(
-                        "ℹ️ Port {} was in use; automatically switched to port {}",
-                        port, try_port
-                    );
-                }
-                break;
-            }
-            Err(_) => continue,
-        }
-    }
-
-    let server = match chosen_server {
-        Some(s) => {
-            SERVER_RUNNING.store(true, Ordering::SeqCst);
-            s
-        }
-        None => {
+    let server = match tiny_http::Server::http(format!("0.0.0.0:{}", port)) {
+        Ok(s) => Mutex::new(s),
+        Err(e) => {
             SERVER_RUNNING.store(false, Ordering::SeqCst);
             return Err(RuntimeError::new(
                 techscript_runtime::error::RuntimeErrorKind::InvalidOperation(format!(
-                    "Failed to start server: ports {} through {} are all in use.",
-                    port,
-                    port.saturating_add(20)
+                    "Failed to start server: {}",
+                    e
                 )),
                 None,
                 None,
@@ -165,7 +141,7 @@ pub fn start_webforge_server(port: u16) -> Result<RuntimeValue, RuntimeError> {
 
     println!(
         "🚀 TechScript WebForge running on http://localhost:{}",
-        actual_port
+        port
     );
 
     thread::spawn(move || {
@@ -418,6 +394,6 @@ pub fn start_webforge_server(port: u16) -> Result<RuntimeValue, RuntimeError> {
 
     Ok(RuntimeValue::Str(format!(
         "Server started on port {}",
-        actual_port
+        port
     )))
 }

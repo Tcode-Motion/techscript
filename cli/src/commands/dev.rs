@@ -81,7 +81,22 @@ pub fn execute(file_opt: Option<&str>, port_opt: Option<u16>) -> ExitCode {
         }
     }
 
-    let port = port_opt.unwrap_or(3000);
+    let requested_port = port_opt.unwrap_or(3000);
+    let mut port = requested_port;
+    if port_opt.is_none() {
+        for try_port in requested_port..requested_port.saturating_add(20) {
+            if std::net::TcpListener::bind(("0.0.0.0", try_port)).is_ok() {
+                if try_port != requested_port {
+                    println!(
+                        "ℹ️ Port {} was in use; automatically selected port {}",
+                        requested_port, try_port
+                    );
+                }
+                port = try_port;
+                break;
+            }
+        }
+    }
     println!(
         "{}",
         "========================================================="

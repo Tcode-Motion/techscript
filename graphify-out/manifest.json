@@ -700,8 +700,8 @@
     "semantic_hash": "f9bfb72a9ae883808f1cd657b7a6efed"
   },
   "cli/src/commands/build.rs": {
-    "mtime": 1792593387.1898506,
-    "ast_hash": "388c86329c8f113c437619d2af5f903f",
+    "mtime": 1792594961.3703532,
+    "ast_hash": "9614e44e7e0dfc3cad73e35dcab0cf1e",
     "semantic_hash": ""
   },
   "cli/src/commands/check.rs": {
@@ -1473,8 +1473,8 @@
     "semantic_hash": ""
   },
   "cli/src/commands/dev.rs": {
-    "mtime": 1792593387.2013943,
-    "ast_hash": "1bfb7b6c7245e9ea6b6305cfe5757018",
+    "mtime": 1792594911.107235,
+    "ast_hash": "5665a775e3b59879dd231f9c2ab136ab",
     "semantic_hash": ""
   },
   "cli/src/commands/routes.rs": {
@@ -2783,8 +2783,8 @@
     "semantic_hash": ""
   },
   "stdlib/src/web/server.rs": {
-    "mtime": 1792593988.3958912,
-    "ast_hash": "df5036c5206a6bb12329e1bcc59852d0",
+    "mtime": 1792594897.3239584,
+    "ast_hash": "586632db8016831f3ac9d21f72520760",
     "semantic_hash": ""
   },
   "stdlib/src/web/styles.rs": {

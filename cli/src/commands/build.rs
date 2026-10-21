@@ -36,9 +36,25 @@ pub fn execute(
         _ => BuildProfile::Debug,
     };
 
+    let exe_name = std::env::current_exe()
+        .ok()
+        .and_then(|p| p.file_stem().map(|s| s.to_string_lossy().to_lowercase()))
+        .unwrap_or_default();
+
     let is_web = target_str.to_lowercase() == "web"
         || file_path
             .map(|f| f.to_lowercase() == "web")
+            .unwrap_or(false)
+        || exe_name.contains("webforge")
+        || current_dir.join("webforge.toml").exists()
+        || file_path
+            .map(|f| {
+                let p = Path::new(f);
+                p.extension().and_then(|e| e.to_str()) == Some("wtxs")
+                    || std::fs::read_to_string(p)
+                        .map(|s| s.contains("make a website") || s.contains("site \""))
+                        .unwrap_or(false)
+            })
             .unwrap_or(false);
 
     if is_web {

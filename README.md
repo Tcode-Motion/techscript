@@ -108,28 +108,28 @@ WebForge is the official full-stack web framework built directly into TechScript
 ### Framework Architecture
 
 ```mermaid
-flowchart TD
-    subgraph CLIENT[Web Browser Client]
-        DOM["DOM & Page Views<br/>(.webforge-page-view)"]
-        Router["Virtual SPA Router<br/>(webforgeRouter)"]
-        Theme["Theme Controller<br/>(Light / Dark Toggle)"]
-        Canvas3D["WebGL 3D Engine<br/>(Procedural Shaders & Meshes)"]
+flowchart TB
+    subgraph CLIENT ["Web Browser Client"]
+        DOM["DOM & Page Views (.webforge-page-view)"]
+        Router["Virtual SPA Router (webforgeRouter)"]
+        Theme["Theme Controller (Light & Dark)"]
+        Canvas3D["WebGL 3D Engine (Procedural Shaders)"]
         DOM <--> Router
         DOM <--> Theme
         DOM <--> Canvas3D
     end
 
-    subgraph ENGINE[WebForge Full-Stack Engine (tsc dev / build)]
-        DSLParser["WebForge DSL Compiler<br/>(make website, page, hero, card)"]
-        Server["Embedded HTTP Server<br/>(Port 3000..3020 Auto-Discovery)"]
-        SQLite["SQLite Embedded Persistence<br/>(webforge.db)"]
-        Packager["Static Bundle Exporter<br/>(dist/index.html, styles.css, app.js)"]
+    subgraph ENGINE ["WebForge Engine (tsc dev & build)"]
+        DSLParser["WebForge DSL Compiler"]
+        Server["Live HTTP Server (Port 3000..3020)"]
+        SQLite["SQLite Embedded Persistence (webforge.db)"]
+        Packager["Static Bundle Exporter (dist/)"]
         DSLParser --> Server
         DSLParser --> Packager
         Server <--> SQLite
     end
 
-    CLIENT <== HTTP / REST / Assets ==> ENGINE
+    CLIENT <--> |"HTTP, REST & Assets"| ENGINE
 ```
 
 ### Scaffolding a Website
@@ -425,17 +425,17 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    subgraph FRONTEND[Language Interface]
+    subgraph FRONTEND ["Language Interface"]
         CLI["tsc CLI Driver"]
         LSP["Language Server (LSP)"]
         FMT["Code Formatter (tsfmt)"]
         LINT["Linter (tslint)"]
     end
 
-    subgraph ENGINE[Execution Targets]
-        VM["Bytecode Virtual Machine<br/>(Fast iteration, REPL, dev server)"]
-        WebForge["WebForge Full-Stack Packager<br/>(Static web, SPA bundles, SQLite)"]
-        Native["LLVM Native Compiler<br/>(AOT compilation, zero-overhead binary)"]
+    subgraph TARGETS ["Execution Targets"]
+        VM["Bytecode Virtual Machine (Fast REPL & Dev Server)"]
+        WebForge["WebForge Full-Stack Packager (Static Web & SQLite)"]
+        Native["LLVM Native Compiler (AOT Native Binary)"]
     end
 
     CLI --> VM

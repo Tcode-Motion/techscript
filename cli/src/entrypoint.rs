@@ -84,6 +84,7 @@ pub fn run() {
             "remove",
             "rm",
             "help",
+            "version",
         ];
         if !subcommands.contains(&first_arg.as_str()) && !first_arg.starts_with('-') {
             let path = std::path::Path::new(first_arg);
@@ -101,6 +102,12 @@ pub fn run() {
         }
     }
 
+    // Direct check for version flags
+    if args.iter().any(|arg| arg == "--version" || arg == "-V") {
+        println!("TechScript v{}", techscript_common::TECHSCRIPT_VERSION);
+        std::process::exit(0);
+    }
+
     // 2. Parse arguments with try_parse to support custom help, interactive welcomes, and fuzzy matching
     let cli = match Cli::try_parse_from(&parsed_args) {
         Ok(parsed) => parsed,
@@ -108,6 +115,13 @@ pub fn run() {
             // Check if arguments list is empty (only tsc is run)
             if args.len() <= 1 {
                 show_welcome_screen();
+                #[cfg(windows)]
+                if is_launched_from_explorer() {
+                    println!("\n[Launched from Windows File Explorer]");
+                    println!("Press Enter to exit...");
+                    let mut buffer = String::new();
+                    let _ = std::io::stdin().read_line(&mut buffer);
+                }
                 std::process::exit(0);
             }
 
@@ -509,4 +523,19 @@ fn show_custom_help() {
             .cyan()
             .bold()
     );
+}
+
+#[cfg(windows)]
+fn is_launched_from_explorer() -> bool {
+    extern "system" {
+        fn GetConsoleProcessList(process_list: *mut u32, count: u32) -> u32;
+    }
+    let mut process_list = [0u32; 2];
+    let count = unsafe { GetConsoleProcessList(process_list.as_mut_ptr(), 2) };
+    count <= 1
+}
+
+#[cfg(not(windows))]
+fn is_launched_from_explorer() -> bool {
+    false
 }

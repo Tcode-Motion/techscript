@@ -246,18 +246,23 @@ impl ProjectTemplate {
                 created_paths.push(test_path);
             }
             Self::Website => {
+                let clean_name = Path::new(name)
+                    .file_name()
+                    .and_then(|s| s.to_str())
+                    .unwrap_or(name);
+
                 let toml_path = dir.join("webforge.toml");
                 let toml_content = format!(
                     "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nentry = \"app.txs\"\ncapabilities = [\"Network\", \"FileSystem\"]\n",
-                    name
+                    clean_name
                 );
                 std::fs::write(&toml_path, toml_content)?;
                 created_paths.push(toml_path);
 
                 let app_path = dir.join("app.txs");
                 let app_content = format!(
-                    "make a website called {}\n\nheader:\n    title is \"{}\"\n    nav:\n        link:\n            label is \"Home\"\n            url is \"/\"\n        link:\n            label is \"About\"\n            url is \"/about\"\n        link:\n            label is \"Docs\"\n            url is \"https://is-a.dev/techscript/\"\n\nfooter:\n    section:\n        title is \"{}\"\n        link:\n            label is \"Home\"\n            url is \"/\"\n        link:\n            label is \"About\"\n            url is \"/about\"\n    section:\n        title is \"TechScript\"\n        link:\n            label is \"Documentation\"\n            url is \"https://is-a.dev/techscript/\"\n        link:\n            label is \"GitHub Repository\"\n            url is \"https://github.com/Tcode-Motion/techscript\"\n\nstart website\n",
-                    name, name, name
+                    "make a website called \"{}\"\n\nheader:\n    title is \"{}\"\n    nav:\n        link:\n            label is \"Home\"\n            url is \"/\"\n        link:\n            label is \"About\"\n            url is \"/about\"\n        link:\n            label is \"Docs\"\n            url is \"https://is-a.dev/techscript/\"\n        link:\n            label is \"GitHub\"\n            url is \"https://github.com/Tcode-Motion/techscript\"\n\nfooter:\n    section:\n        title is \"{}\"\n        link:\n            label is \"Home\"\n            url is \"/\"\n        link:\n            label is \"About\"\n            url is \"/about\"\n    section:\n        title is \"TechScript\"\n        link:\n            label is \"Documentation\"\n            url is \"https://is-a.dev/techscript/\"\n        link:\n            label is \"GitHub Repository\"\n            url is \"https://github.com/Tcode-Motion/techscript\"\n\nstart website\n",
+                    clean_name, clean_name, clean_name
                 );
                 std::fs::write(&app_path, app_content)?;
                 created_paths.push(app_path);
@@ -267,28 +272,34 @@ impl ProjectTemplate {
 
                 let home_path = pages_dir.join("home.txs");
                 let home_content = format!(
-                    "page Home \"/\":\n    title \"Welcome to {}\"\n    text \"A clean, modern website built with TechScript & WebForge.\"\n    text \"Edit pages/home.txs or app.txs to start customizing your application.\"\n    button \"Explore Documentation\" -> open \"https://is-a.dev/techscript/\"\n    button \"About This Site\" -> open About\n",
-                    name
+                    "page Home \"/\":\n    hero:\n        title is \"Welcome to {}\"\n        subtitle is \"A clean, responsive, full-stack website powered by TechScript 2.0 and the WebForge framework.\"\n        button \"Explore Documentation\" -> open \"https://is-a.dev/techscript/\"\n        button \"About Project\" -> open \"/about\"\n\n    section:\n        title is \"Platform Features\"\n        card:\n            title is \"Pure Declarative DSL\"\n            badge is \"Clean Syntax\"\n            text is \"Write expressive, readable website layouts, headers, and views with zero boilerplate.\"\n        card:\n            title is \"Zero-Config Dev Server\"\n            badge is \"Instant Dev\"\n            text is \"Run live development with automatic port discovery, route resolution, and hot reload.\"\n        card:\n            title is \"Light & Dark Design System\"\n            badge is \"Adaptive Theme\"\n            text is \"Crafted with modern responsive design tokens, glassmorphism, and instant theme toggling.\"\n",
+                    clean_name
                 );
                 std::fs::write(&home_path, home_content)?;
                 created_paths.push(home_path);
 
                 let about_path = pages_dir.join("about.txs");
                 let about_content = format!(
-                    "page About \"/about\":\n    title \"About {}\"\n    text \"This project is powered by TechScript 2.0 and WebForge.\"\n    text \"TechScript provides a readable, full-stack programming experience with native compilation and zero-config servers.\"\n    button \"Back to Home\" -> open Home\n",
-                    name
+                    "page About \"/about\":\n    hero:\n        title is \"About {}\"\n        subtitle is \"Built with the modern declarative TechScript programming language and the WebForge toolchain.\"\n        button \"Back to Home\" -> open \"/\"\n        button \"View on GitHub\" -> open \"https://github.com/Tcode-Motion/techscript\"\n\n    section:\n        title is \"Ecosystem & Tooling\"\n        card:\n            title is \"TechScript 2.0\"\n            badge is \"Modern Language\"\n            text is \"Combines the clarity of high-level scripting with native machine speed, strict safety, and rich standard libraries.\"\n        card:\n            title is \"WebForge Toolchain\"\n            badge is \"Full-Stack Engine\"\n            text is \"Unified server, client routing, WebGL 3D scenes, and SQLite database persistence in one seamless binary.\"\n",
+                    clean_name
                 );
                 std::fs::write(&about_path, about_content)?;
                 created_paths.push(about_path);
 
                 let assets_dir = dir.join("assets");
+                std::fs::create_dir_all(&assets_dir)?;
                 std::fs::create_dir_all(assets_dir.join("images"))?;
                 std::fs::create_dir_all(assets_dir.join("models"))?;
 
+                let logo_bytes = include_bytes!("../../assets/techscript-logo.png");
+                let logo_path = assets_dir.join("logo.png");
+                let _ = std::fs::write(&logo_path, logo_bytes);
+                created_paths.push(logo_path);
+
                 let readme_path = dir.join("README.md");
                 let readme_content = format!(
-                    "# {}\n\nA clean, modern website built with **TechScript & WebForge**.\n\n## Project Structure\n```text\n├── webforge.toml       # Project configuration\n├── app.txs             # Application entry (header, navigation bar, footer)\n├── pages/\n│   ├── home.txs        # Welcome / home page\n│   └── about.txs       # About page\n├── assets/\n│   ├── images/         # Images\n│   └── models/         # 3D models\n└── README.md\n```\n\n## Getting Started\n\nStart live development server:\n```bash\ntsc dev\n```\nVisit `http://localhost:3000` in your browser.\n\n## Production Build\n```bash\ntsc build --target web\n```\n",
-                    name
+                    "# {}\n\nA clean, modern website built with **TechScript & WebForge**.\n\n## Project Structure\n```text\n├── webforge.toml       # Project configuration\n├── app.txs             # Application entry (header, navigation bar, footer)\n├── pages/\n│   ├── home.txs        # Welcome / home page\n│   └── about.txs       # About page\n├── assets/\n│   ├── logo.png        # Brand logo\n│   ├── images/         # Images\n│   └── models/         # 3D models\n└── README.md\n```\n\n## Getting Started\n\nStart live development server:\n```bash\ntsc dev\n```\nVisit `http://localhost:3000` in your browser.\n\n## Production Build\n```bash\ntsc build --target web\n```\n",
+                    clean_name
                 );
                 std::fs::write(&readme_path, readme_content)?;
                 created_paths.push(readme_path);

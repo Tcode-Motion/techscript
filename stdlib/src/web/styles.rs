@@ -8,6 +8,34 @@ pub fn get_webforge_stylesheet() -> &'static str {
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
+    --bg-color: #F8FAFC;
+    --surface: #FFFFFF;
+    --surface-elevated: #F1F5F9;
+    --surface-glass: rgba(255, 255, 255, 0.90);
+    --border: #E2E8F0;
+    --border-hover: rgba(2, 132, 199, 0.45);
+    --primary: #0284C7;
+    --primary-light: #0EA5E9;
+    --primary-dark: #0369A1;
+    --cyan: #0284C7;
+    --cyan-light: #38BDF8;
+    --teal: #0D9488;
+    --teal-light: #14B8A6;
+    --silver: #475569;
+    --text-main: #0F172A;
+    --text-muted: #64748B;
+    --glow: 0 4px 20px rgba(2, 132, 199, 0.12);
+    --glow-teal: 0 4px 20px rgba(13, 148, 136, 0.12);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --font-display: 'Outfit', sans-serif;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+[data-theme="dark"], body.dark-theme {
     --bg-color: #08090E;
     --surface: #10141D;
     --surface-elevated: #161B26;
@@ -26,13 +54,6 @@ pub fn get_webforge_stylesheet() -> &'static str {
     --text-muted: #94A3B8;
     --glow: 0 0 24px rgba(6, 182, 212, 0.25);
     --glow-teal: 0 0 24px rgba(20, 184, 166, 0.25);
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-xl: 24px;
-    --font-display: 'Outfit', sans-serif;
-    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
 * {
@@ -50,6 +71,7 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* Header & Navigation Bar */
@@ -58,7 +80,7 @@ header.webforge-header, .webforge-header {
     justify-content: space-between;
     align-items: center;
     padding: 0.85rem 2.5rem;
-    background: rgba(8, 9, 14, 0.88);
+    background: var(--surface-glass);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
@@ -104,6 +126,10 @@ header.webforge-header, .webforge-header {
     font-size: 1.25rem;
     font-weight: 800;
     letter-spacing: -0.02em;
+    color: var(--text-main);
+}
+
+[data-theme="dark"] .brand-logo-text, body.dark-theme .brand-logo-text {
     background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -113,9 +139,9 @@ header.webforge-header, .webforge-header {
     font-family: var(--font-mono);
     font-size: 0.7rem;
     font-weight: 700;
-    background: rgba(6, 182, 212, 0.12);
+    background: rgba(2, 132, 199, 0.12);
     color: var(--cyan);
-    border: 1px solid rgba(6, 182, 212, 0.3);
+    border: 1px solid rgba(2, 132, 199, 0.3);
     padding: 0.2rem 0.55rem;
     border-radius: 9999px;
     letter-spacing: 0.04em;
@@ -142,16 +168,27 @@ nav.webforge-nav a, .webforge-nav a {
     letter-spacing: -0.01em;
 }
 
-nav.webforge-nav a:hover, nav.webforge-nav a.active, .webforge-nav a:hover, .webforge-nav a.active {
+nav.webforge-nav a:hover, .webforge-nav a:hover {
+    color: var(--primary);
+    background: rgba(2, 132, 199, 0.08);
+}
+[data-theme="dark"] nav.webforge-nav a:hover, [data-theme="dark"] .webforge-nav a:hover,
+body.dark-theme nav.webforge-nav a:hover, body.dark-theme .webforge-nav a:hover {
     color: #fff;
     background: rgba(255, 255, 255, 0.06);
 }
 
 nav.webforge-nav a.active, .webforge-nav a.active {
+    color: var(--primary);
+    background: rgba(2, 132, 199, 0.12);
+    border: 1px solid rgba(2, 132, 199, 0.3);
+    font-weight: 600;
+}
+[data-theme="dark"] nav.webforge-nav a.active, [data-theme="dark"] .webforge-nav a.active,
+body.dark-theme nav.webforge-nav a.active, body.dark-theme .webforge-nav a.active {
     color: var(--cyan-light);
     background: rgba(6, 182, 212, 0.12);
     border: 1px solid rgba(6, 182, 212, 0.3);
-    font-weight: 600;
 }
 
 .header-actions {
@@ -171,6 +208,10 @@ nav.webforge-nav a.active, .webforge-nav a.active {
     transition: all 0.2s;
 }
 .header-action-link:hover {
+    color: var(--primary);
+    background: rgba(2, 132, 199, 0.08);
+}
+[data-theme="dark"] .header-action-link:hover, body.dark-theme .header-action-link:hover {
     color: #fff;
     background: rgba(255, 255, 255, 0.06);
 }
@@ -182,18 +223,45 @@ nav.webforge-nav a.active, .webforge-nav a.active {
     padding: 0.45rem 0.85rem;
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    background: rgba(255, 255, 255, 0.03);
-    color: #fff;
+    background: var(--surface-elevated);
+    color: var(--text-main);
     font-size: 0.85rem;
     font-weight: 600;
     text-decoration: none;
     transition: all 0.2s;
 }
 .header-action-github:hover {
-    border-color: rgba(6, 182, 212, 0.5);
-    background: rgba(6, 182, 212, 0.08);
-    box-shadow: 0 0 12px rgba(6, 182, 212, 0.2);
+    border-color: var(--primary);
+    color: var(--primary);
+    box-shadow: var(--glow);
 }
+
+/* Theme toggle button */
+.theme-toggle-btn {
+    background: var(--surface-elevated) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--text-main) !important;
+    padding: 0.45rem !important;
+    border-radius: var(--radius-sm) !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 36px !important;
+    height: 36px !important;
+    box-shadow: none !important;
+    transform: none !important;
+    transition: all 0.2s !important;
+}
+.theme-toggle-btn:hover {
+    border-color: var(--primary) !important;
+    background: rgba(2, 132, 199, 0.08) !important;
+    transform: none !important;
+}
+[data-theme="dark"] .theme-icon-moon, body.dark-theme .theme-icon-moon { display: none; }
+[data-theme="dark"] .theme-icon-sun, body.dark-theme .theme-icon-sun { display: block; }
+:root:not([data-theme="dark"]) .theme-icon-sun { display: none; }
+:root:not([data-theme="dark"]) .theme-icon-moon { display: block; }
 
 .mobile-toggle {
     display: none;
@@ -315,16 +383,21 @@ main.webforge-main, .webforge-main {
     font-weight: 800;
     letter-spacing: -0.03em;
     margin-bottom: 1rem;
+    color: var(--text-main);
+    line-height: 1.1;
+}
+
+[data-theme="dark"] .webforge-heading, [data-theme="dark"] h1,
+body.dark-theme .webforge-heading, body.dark-theme h1 {
     background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 40%, var(--primary) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    line-height: 1.1;
 }
 
 .webforge-subheading, h2 {
     font-size: 1.75rem;
     font-weight: 700;
-    color: #f1f5f9;
+    color: var(--text-main);
     margin-bottom: 0.75rem;
 }
 
@@ -342,14 +415,24 @@ main.webforge-main, .webforge-main {
     margin-bottom: 3.5rem;
     border-radius: var(--radius-xl);
     background:
+        radial-gradient(ellipse at 30% -20%, rgba(2, 132, 199, 0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 120%, rgba(13, 148, 136, 0.08) 0%, transparent 60%),
+        linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .hero, body.dark-theme .hero {
+    background:
         radial-gradient(ellipse at 30% -20%, rgba(6, 182, 212, 0.18) 0%, transparent 60%),
         radial-gradient(ellipse at 70% 120%, rgba(20, 184, 166, 0.12) 0%, transparent 60%),
         linear-gradient(180deg, rgba(18, 22, 31, 0.9) 0%, rgba(9, 10, 15, 0.95) 100%);
     border: 1px solid rgba(6, 182, 212, 0.15);
-    position: relative;
-    overflow: hidden;
     box-shadow: 0 0 80px rgba(6, 182, 212, 0.06), inset 0 1px 0 rgba(255,255,255,0.05);
 }
+
 .hero::before {
     content: '';
     position: absolute;
@@ -363,8 +446,12 @@ main.webforge-main, .webforge-main {
     max-width: 720px;
     margin: 0 auto 2rem auto;
     font-size: 1.15rem;
-    color: #cbd5e1;
+    color: var(--text-muted);
     line-height: 1.7;
+}
+
+[data-theme="dark"] .hero .subtitle, body.dark-theme .hero .subtitle {
+    color: #cbd5e1;
 }
 
 .hero-brand-pill {
@@ -571,6 +658,7 @@ main.webforge-main, .webforge-main {
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
 }
 
 .card:hover {
@@ -582,7 +670,7 @@ main.webforge-main, .webforge-main {
 .card h3 {
     font-size: 1.25rem;
     font-weight: 700;
-    color: #fff;
+    color: var(--text-main);
     margin-bottom: 0.75rem;
 }
 
@@ -882,15 +970,16 @@ main.webforge-main, .webforge-main {
 }
 
 .webforge-btn.btn-secondary {
-    background: rgba(255, 255, 255, 0.05);
-    color: #fff;
+    background: var(--surface-elevated);
+    color: var(--text-main);
     border: 1px solid var(--border);
     box-shadow: none;
 }
 
 .webforge-btn.btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
+    background: var(--surface);
+    border-color: var(--primary);
+    color: var(--primary);
 }
 
 .webforge-link {
@@ -1189,13 +1278,19 @@ main.webforge-main, .webforge-main {
 
 /* Footer */
 footer.webforge-footer, .webforge-footer {
-    background: #020305;
-    border-top: 1px solid rgba(255,255,255,0.06);
+    background: var(--surface-elevated);
+    border-top: 1px solid var(--border);
     padding: 0;
     color: var(--text-muted);
     font-size: 0.9rem;
     margin-top: auto;
 }
+[data-theme="dark"] footer.webforge-footer, [data-theme="dark"] .webforge-footer,
+body.dark-theme footer.webforge-footer, body.dark-theme .webforge-footer {
+    background: #020305;
+    border-top: 1px solid rgba(255,255,255,0.06);
+}
+
 .footer-inner {
     max-width: 1360px;
     margin: 0 auto;
@@ -1214,9 +1309,10 @@ footer.webforge-footer, .webforge-footer {
     padding: 0.3rem 0;
     transition: color 0.2s;
 }
-.footer-col a:hover { color: #fff; }
+.footer-col a:hover { color: var(--primary); }
+[data-theme="dark"] .footer-col a:hover, body.dark-theme .footer-col a:hover { color: #fff; }
 .footer-bottom {
-    border-top: 1px solid rgba(255,255,255,0.05);
+    border-top: 1px solid var(--border);
     padding: 1.5rem 2rem;
     max-width: 1280px;
     margin: 0 auto;

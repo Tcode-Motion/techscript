@@ -46,6 +46,29 @@ function webforgeCopyCode(btn) {
     });
 }
 
+function webforgeInitTheme() {
+    const saved = localStorage.getItem('webforge-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+    if (document.body) {
+        document.body.classList.toggle('dark-theme', saved === 'dark');
+        document.body.classList.toggle('light-theme', saved === 'light');
+    }
+}
+
+function webforgeToggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    if (document.body) {
+        document.body.classList.toggle('dark-theme', next === 'dark');
+        document.body.classList.toggle('light-theme', next === 'light');
+    }
+    localStorage.setItem('webforge-theme', next);
+    webforgeToast(next === 'dark' ? 'Dark Theme' : 'Light Theme');
+}
+
+try { webforgeInitTheme(); } catch (_) {}
+
 const webforgeRouter = {
     currentRoute: '/',
     getBasePath() {

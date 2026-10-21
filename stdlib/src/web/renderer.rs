@@ -478,7 +478,7 @@ pub fn render_button(html: &mut String, dsl: &DslBlockValue) {
                 if let Some(ref v) = p.value {
                     let act = v.to_string();
                     if let Some(target) = act.strip_prefix("open ") {
-                        let clean = target.trim();
+                        let clean = target.trim().trim_matches('"').trim_matches('\'');
                         if clean.starts_with("http://")
                             || clean.starts_with("https://")
                             || clean.starts_with("mailto:")
@@ -1585,9 +1585,15 @@ pub fn render_header_block(html: &mut String, dsl: &DslBlockValue) {
     html.push_str("</nav>");
 
     html.push_str("<div class=\"header-actions\">");
-    html.push_str("<a href=\"/playground\" class=\"header-action-link\" onclick=\"event.preventDefault();webforgeRouter.navigate('/playground')\" title=\"Interactive Sandbox\"><span>Playground</span></a>");
-    html.push_str("<a href=\"https://github.com/Tcode-Motion/techscript\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"header-action-github\" title=\"GitHub Repository\">⭐ GitHub</a>");
-    html.push_str("<a href=\"/docs/getting-started\" class=\"webforge-btn\" style=\"padding:0.45rem 1.1rem;font-size:0.85rem;text-decoration:none;\">Get Started</a>");
+    html.push_str("<button type=\"button\" class=\"theme-toggle-btn\" onclick=\"webforgeToggleTheme()\" title=\"Toggle Light/Dark Theme\" aria-label=\"Toggle Theme\"><svg class=\"theme-icon-sun\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"12\" cy=\"12\" r=\"5\"></circle><line x1=\"12\" y1=\"1\" x2=\"12\" y2=\"3\"></line><line x1=\"12\" y1=\"21\" x2=\"12\" y2=\"23\"></line><line x1=\"4.22\" y1=\"4.22\" x2=\"5.64\" y2=\"5.64\"></line><line x1=\"18.36\" y1=\"18.36\" x2=\"19.78\" y2=\"19.78\"></line><line x1=\"1\" y1=\"12\" x2=\"3\" y2=\"12\"></line><line x1=\"21\" y1=\"12\" x2=\"23\" y2=\"12\"></line><line x1=\"4.22\" y1=\"19.78\" x2=\"5.64\" y2=\"18.36\"></line><line x1=\"18.36\" y1=\"5.64\" x2=\"19.78\" y2=\"4.22\"></line></svg><svg class=\"theme-icon-moon\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z\"></path></svg></button>");
+    if declared_links.is_empty() {
+        html.push_str("<a href=\"/playground\" class=\"header-action-link\" onclick=\"event.preventDefault();webforgeRouter.navigate('/playground')\" title=\"Interactive Sandbox\"><span>Playground</span></a>");
+        html.push_str("<a href=\"https://github.com/Tcode-Motion/techscript\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"header-action-github\" title=\"GitHub Repository\">⭐ GitHub</a>");
+        html.push_str("<a href=\"/docs/getting-started\" class=\"webforge-btn\" style=\"padding:0.45rem 1.1rem;font-size:0.85rem;text-decoration:none;\">Get Started</a>");
+    } else {
+        html.push_str("<a href=\"https://is-a.dev/techscript/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"header-action-link\" title=\"TechScript Documentation\"><span>Docs</span></a>");
+        html.push_str("<a href=\"https://github.com/Tcode-Motion/techscript\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"header-action-github\" title=\"GitHub Repository\">⭐ GitHub</a>");
+    }
     html.push_str("<button class=\"mobile-toggle\" onclick=\"document.getElementById('mobile-drawer').classList.toggle('open')\">☰</button>");
     html.push_str("</div>");
     html.push_str("</header>");
@@ -1595,29 +1601,47 @@ pub fn render_header_block(html: &mut String, dsl: &DslBlockValue) {
     // Mobile drawer
     html.push_str("<div id=\"mobile-drawer\" style=\"display:none;flex-direction:column;gap:0.5rem;padding:1.5rem;background:var(--surface);border-bottom:1px solid var(--border);\">");
 
-    let all_mobile: &[(&str, &str)] = &[
-        ("Home", "/"),
-        ("Language", "/language"),
-        ("Framework", "/framework"),
-        ("Features", "/features"),
-        ("Components", "/components"),
-        ("3D Lab", "/showcase/3d"),
-        ("Docs", "/docs"),
-        ("Examples", "/examples"),
-        ("Showcase", "/showcase"),
-        ("Packages", "/packages"),
-        ("Roadmap", "/roadmap"),
-        ("Community", "/community"),
-        ("Download", "/download"),
-        ("Playground", "/playground"),
-        ("CLI", "/cli"),
-    ];
-    for (label, url) in all_mobile {
-        let _ = write!(
-            html,
-            "<a href=\"{}\" onclick=\"event.preventDefault();webforgeRouter.navigate('{}');document.getElementById('mobile-drawer').classList.remove('open')\" style=\"color:#fff;text-decoration:none;padding:0.5rem 0;border-bottom:1px solid rgba(255,255,255,0.05);\">{}</a>",
-            url, url, label
-        );
+    if declared_links.is_empty() {
+        let all_mobile: &[(&str, &str)] = &[
+            ("Home", "/"),
+            ("Language", "/language"),
+            ("Framework", "/framework"),
+            ("Features", "/features"),
+            ("Components", "/components"),
+            ("3D Lab", "/showcase/3d"),
+            ("Docs", "/docs"),
+            ("Examples", "/examples"),
+            ("Showcase", "/showcase"),
+            ("Packages", "/packages"),
+            ("Roadmap", "/roadmap"),
+            ("Community", "/community"),
+            ("Download", "/download"),
+            ("Playground", "/playground"),
+            ("CLI", "/cli"),
+        ];
+        for (label, url) in all_mobile {
+            let _ = write!(
+                html,
+                "<a href=\"{}\" onclick=\"event.preventDefault();webforgeRouter.navigate('{}');document.getElementById('mobile-drawer').classList.remove('open')\" style=\"color:var(--text-main);text-decoration:none;padding:0.5rem 0;border-bottom:1px solid var(--border);\">{}</a>",
+                url, url, label
+            );
+        }
+    } else {
+        for (label, url) in &declared_links {
+            if url.starts_with('/') {
+                let _ = write!(
+                    html,
+                    "<a href=\"{}\" onclick=\"event.preventDefault();webforgeRouter.navigate('{}');document.getElementById('mobile-drawer').classList.remove('open')\" style=\"color:var(--text-main);text-decoration:none;padding:0.5rem 0;border-bottom:1px solid var(--border);\">{}</a>",
+                    url, url, label
+                );
+            } else {
+                let _ = write!(
+                    html,
+                    "<a href=\"{}\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color:var(--text-main);text-decoration:none;padding:0.5rem 0;border-bottom:1px solid var(--border);\">{} ↗</a>",
+                    url, label
+                );
+            }
+        }
     }
     html.push_str("<a href=\"https://github.com/Tcode-Motion/techscript\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color:var(--primary);text-decoration:none;padding:0.5rem 0;\">⭐ GitHub ↗</a>");
     html.push_str("</div>");
@@ -1636,7 +1660,7 @@ pub fn render_footer_block(html: &mut String, dsl: &DslBlockValue) {
     <p>The modern declarative programming ecosystem for human clarity and native performance. Write pure <code style=\"background:rgba(6,182,212,0.1);color:#22d3ee;padding:0.1rem 0.35rem;border-radius:4px;font-size:0.85rem;\">.txs</code> files that compile to high-performance applications with embedded SQLite and zero-dependency WebGL 3D.</p>\
     <div style=\"display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:1rem;\">\
         <a href=\"https://github.com/Tcode-Motion/techscript\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"display:inline-flex;align-items:center;gap:0.4rem;color:var(--text-muted);text-decoration:none;font-size:0.85rem;padding:0.4rem 0.85rem;border:1px solid var(--border);border-radius:8px;transition:all 0.2s;\">⭐ GitHub</a>\
-        <a href=\"/download\" onclick=\"event.preventDefault();webforgeRouter.navigate('/download')\" style=\"display:inline-flex;align-items:center;gap:0.4rem;color:var(--primary);text-decoration:none;font-size:0.85rem;padding:0.4rem 0.85rem;border:1px solid rgba(6,182,212,0.3);border-radius:8px;background:rgba(6,182,212,0.08);transition:all 0.2s;\">⬇ Download</a>\
+        <a href=\"https://is-a.dev/techscript/\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"display:inline-flex;align-items:center;gap:0.4rem;color:var(--primary);text-decoration:none;font-size:0.85rem;padding:0.4rem 0.85rem;border:1px solid rgba(2,132,199,0.3);border-radius:8px;background:rgba(2,132,199,0.08);transition:all 0.2s;\">📖 Docs</a>\
     </div>\
 </div>");
 
@@ -1730,8 +1754,8 @@ pub fn render_footer_block(html: &mut String, dsl: &DslBlockValue) {
     html.push_str("\
 <div class=\"footer-bottom\">\
     <div style=\"display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap;\">\
-        <span>© 2026 TechScript Ecosystem. Open source under MIT License.</span>\
-        <a href=\"/roadmap\" onclick=\"event.preventDefault();webforgeRouter.navigate('/roadmap')\">Roadmap</a>\
+        <span>© 2026 TechScript Ecosystem. Open source under Apache-2.0 License.</span>\
+        <a href=\"https://is-a.dev/techscript/\" target=\"_blank\" rel=\"noopener noreferrer\">Docs</a>\
         <a href=\"https://github.com/Tcode-Motion/techscript\" target=\"_blank\" rel=\"noopener noreferrer\">GitHub Repo</a>\
         <a href=\"https://github.com/Tcode-Motion/techscript/blob/main/LICENSE\" target=\"_blank\" rel=\"noopener noreferrer\">License</a>\
     </div>\

@@ -1,0 +1,29 @@
+page ThreeDGuide "/docs/3d":
+    show heading "Custom 3D Modeling & CAD with WebForge"
+    show text "Hardware-accelerated 3D graphics, genuine procedural modeling, CSG boolean operations, and universal CAD exports — declared simply with human-readable TechScript syntax or visually in the Playground."
+
+    show section:
+        title is "Procedural Custom 3D Syntax"
+        show card "Custom 2D Outline & SVG Extrusion":
+            badge is "Logo & Path Extrusion"
+            text is "Declare custom paths and SVG outlines, then extrude with custom beveling and PBR materials:"
+            code is "make 3D \"MyLogo\":\n    outline from \"logo.svg\"\n    extrude by 0.45\n    bevel by 0.06\n    material is metal\n    color is \"#9AEA39\"\nend"
+        show card "Modular Architecture & Multi-Part Models":
+            badge is "Architecture"
+            text is "Assemble buildings, machines, and products from independently editable walls, roof, doors, and windows:"
+            code is "make 3D \"MyHouse\":\n    add box \"Foundation\" at (0, 0, 0) size (12, 0.4, 10) color \"#334155\" material \"stone\"\n    add wall \"FrontWall\" at (0, 2, 4.8) size (12, 4, 0.3) color \"#f1f5f9\" material \"stone\"\n    add roof \"GableRoof\" at (0, 4.8, 0) size (13, 2.8, 11) color \"#b91c1c\" material \"wood\"\n    add door \"MainDoor\" at (0, 1.2, 5.0) size (1.6, 2.4, 0.2) color \"#78350f\" material \"wood\"\n    add window \"WindowLeft\" at (-3, 2.2, 5.0) size (1.8, 1.5, 0.15) color \"#38bdf8\" material \"glass\"\nend"
+        show card "Real Constructive Solid Geometry (CSG)":
+            badge is "Boolean Cuts"
+            text is "Physically cut holes, hollow out chambers, and merge parts into unified manifold meshes:"
+            code is "make 3D \"MachinedBlock\":\n    add box \"Chassis\" at (0, 2, 0) size (4, 4, 4)\n    cut cylinder \"Bore\" at (0, 2, 0) size (1.4, 6, 1.4)\nend"
+
+    show section:
+        title is "Creative 3D Studio & Playground"
+        show card "Two-Way Visual & Code Synchronization":
+            badge is "Live Viewport"
+            text is "Every visual manipulation in the 3D viewport (adding parts, moving, scaling, rotating, recoloring, cutting) generates clean TechScript code in real time. Editing the code immediately recompiles and updates the Three.js viewport."
+            button "Launch Custom 3D Studio":
+                action is "open /playground"
+        show card "Universal 3D Export Pipelines":
+            badge is "Interoperability"
+            text is "Export finished creations directly to web-ready GLTF/GLB, Wavefront OBJ, STL for 3D printing, or pure TechScript (.txs) source code."

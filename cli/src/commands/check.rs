@@ -27,14 +27,41 @@ pub fn execute(file_path: Option<&str>, watch: bool) -> ExitCode {
                 let manifest: techscript_package_manager::Manifest = toml::from_str(&content)?;
                 current_dir.join(&manifest.package.entry)
             } else {
-                return Err(anyhow::anyhow!(
-                    "No input file specified and no tech.toml found in current directory."
-                ));
+                let candidate_files = [
+                    "src/main.txs",
+                    "main.txs",
+                    "src/main.wtxs",
+                    "main.wtxs",
+                    "src/main.stxs",
+                    "main.stxs",
+                    "src/main.tech",
+                    "main.tech",
+                ];
+                let mut found = None;
+                for cand in candidate_files {
+                    let p = current_dir.join(cand);
+                    if p.exists() {
+                        found = Some(p);
+                        break;
+                    }
+                }
+                match found {
+                    Some(p) => p,
+                    None => {
+                        return Err(anyhow::anyhow!(
+                            "No input file specified and no TechScript project found in current directory."
+                        ));
+                    }
+                }
             }
         };
 
         if !path.exists() {
             return Err(anyhow::anyhow!("File not found: {:?}", path));
+        }
+
+        if let Err(e) = techscript_common::validate_source_file(&path) {
+            return Err(anyhow::anyhow!("{}", e));
         }
 
         let cli_cfg = CliConfig::default();

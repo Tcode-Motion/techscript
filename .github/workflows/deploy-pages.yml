@@ -1,0 +1,87 @@
+name: Deploy WebForge Website to is-a.dev
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'website/**'
+      - 'stdlib/src/web/**'
+      - '.github/workflows/deploy-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    name: Build & Deploy Website
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo Dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-pages-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-pages-
+
+      - name: Build WebForge CLI
+        run: cargo build --release -p techscript_cli --bin webforge
+
+      - name: Build WebForge Website
+        run: |
+          cd website
+          ../target/release/webforge build src/main.txs
+          ls -la dist/
+
+      - name: Verify WebForge Static Output
+        run: |
+          # Verify index.html and 404.html exist
+          test -f website/dist/index.html || { echo "index.html missing"; exit 1; }
+          test -f website/dist/404.html || { echo "404.html missing"; exit 1; }
+          
+          # Verify static route entries exist for direct refresh safety
+          test -f website/dist/docs/index.html || { echo "docs route missing"; exit 1; }
+          test -f website/dist/playground/index.html || { echo "playground route missing"; exit 1; }
+          test -f website/dist/features/index.html || { echo "features route missing"; exit 1; }
+          test -f website/dist/showcase/index.html || { echo "showcase route missing"; exit 1; }
+          
+          # Verify mock API endpoints exist
+          test -f website/dist/api/health || { echo "api health endpoint missing"; exit 1; }
+          
+          echo "WebForge static output successfully validated."
+
+      - name: Prepare GitHub Pages Subpath
+        run: |
+          # If deployed at root or subpath, ensure .nojekyll is present
+          touch website/dist/.nojekyll
+          
+          # Create CNAME for custom domain if desired
+          # echo "techscript.is-a.dev" > website/dist/CNAME
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: website/dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

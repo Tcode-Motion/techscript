@@ -1,4 +1,4 @@
-//! # TechScript Compiler Driver Entry Point (tsc)
+//! # TechScript Compiler Driver Entry Point (tsc / techscript / tech)
 //!
 //! Entry point orchestrating project loadings, subcommand dispatches,
 //! crash recovery setups, and logging formats.
@@ -6,13 +6,13 @@
 use clap::Parser;
 use colored::Colorize;
 use std::path::PathBuf;
-use techscript_cli::{Cli, Commands};
+use crate::{Cli, Commands};
 
-fn main() {
+pub fn run() {
     // 1. Setup crash recovery build/ folder path
     let current_dir = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
     let build_dir = current_dir.join("build");
-    techscript_cli::crash::install_panic_hook(build_dir);
+    crate::crash::install_panic_hook(build_dir);
 
     // 1.5. First-run onboarding check
     perform_first_run_check();
@@ -74,12 +74,21 @@ fn main() {
             "docs",
             "config",
             "self",
+            "dev",
+            "routes",
+            "deploy",
+            "add",
+            "list",
+            "ls",
+            "search",
+            "remove",
+            "rm",
             "help",
         ];
         if !subcommands.contains(&first_arg.as_str()) && !first_arg.starts_with('-') {
             let path = std::path::Path::new(first_arg);
             let ext = path.extension().and_then(|e| e.to_str()).unwrap_or("");
-            let is_script_ext = ext == "txs" || ext == "tsx" || ext == "tech" || ext == "tspkg";
+            let is_script_ext = ext == "txs" || ext == "tsx" || ext == "tech" || ext == "tspkg" || ext == "wtxs" || ext == "stxs" || ext == "3txs";
             if is_script_ext || path.exists() {
                 parsed_args.insert(1, "run".to_string());
             }
@@ -103,13 +112,12 @@ fn main() {
             }
 
             // Unknown subcommand fuzzy suggestion
-            if e.kind() == clap::error::ErrorKind::InvalidSubcommand
-                || e.kind() == clap::error::ErrorKind::UnknownArgument
-            {
-                let unknown_cmd = &args[1];
-                if !unknown_cmd.starts_with('-') {
-                    suggest_subcommand(unknown_cmd);
-                    std::process::exit(1);
+            if e.kind() == clap::error::ErrorKind::InvalidSubcommand {
+                if let Some(unknown_cmd) = args.get(1) {
+                    if !unknown_cmd.starts_with('-') {
+                        suggest_subcommand(unknown_cmd);
+                        std::process::exit(1);
+                    }
                 }
             }
 
@@ -122,6 +130,7 @@ fn main() {
     let exit_code = match &cli.command {
         Commands::Run {
             file,
+            release,
             profile,
             backend,
             watch,
@@ -131,41 +140,59 @@ fn main() {
             show_return,
             debug,
             double_click,
-        } => crate::commands::run::execute(
-            file,
-            profile.as_deref(),
-            backend.as_deref(),
-            *watch,
-            *time,
-            *verbose || cli.verbose,
-            *native,
-            *show_return,
-            *debug,
-            *double_click,
-        ),
+        } => {
+            let prof = if *release { Some("release") } else { profile.as_deref() };
+            crate::commands::run::execute(
+                file,
+                prof,
+                backend.as_deref(),
+                *watch,
+                *time,
+                *verbose || cli.verbose,
+                *native,
+                *show_return,
+                *debug,
+                *double_click,
+            )
+        }
         Commands::Build {
             file,
+            release,
             profile,
             watch,
             time,
             target,
-        } => crate::commands::build::execute(
-            file.as_deref(),
-            profile.as_deref(),
-            *watch,
-            *time,
-            target,
-            cli.verbose,
-        ),
+        } => {
+            let prof = if *release { Some("release") } else { profile.as_deref() };
+            crate::commands::build::execute(
+                file.as_deref(),
+                prof,
+                *watch,
+                *time,
+                target,
+                cli.verbose,
+            )
+        }
         Commands::Check { file, watch } => crate::commands::check::execute(file.as_deref(), *watch),
         Commands::Fmt { path } => crate::commands::fmt::execute(path.as_deref()),
         Commands::Lint { path, fix } => crate::commands::lint::execute(path.as_deref(), *fix),
         Commands::Migrate { path } => crate::commands::migrate::execute(path.as_deref()),
         Commands::Clean { all } => crate::commands::clean::execute(*all),
         Commands::Init { template } => crate::commands::init::execute(template.as_deref()),
-        Commands::New { name, template } => {
-            crate::commands::new_cmd::execute(name.as_deref(), template.as_deref())
+        Commands::New {
+            name,
+            second_name,
+            template,
+        } => crate::commands::new_cmd::execute(
+            name.as_deref(),
+            template.as_deref(),
+            second_name.as_deref(),
+        ),
+        Commands::Dev { file, port } => {
+            crate::commands::dev::execute(file.as_deref(), *port)
         }
+        Commands::Routes { file } => crate::commands::routes::execute(file.as_deref()),
+        Commands::Deploy { target } => crate::commands::deploy::execute(target.as_deref()),
         Commands::Doc { path } => crate::commands::doc::execute(path.as_deref()),
         Commands::Test {
             dir,
@@ -177,6 +204,8 @@ fn main() {
         Commands::Publish => crate::commands::publish::execute(),
         Commands::Install { package } => crate::commands::install::execute(package),
         Commands::Uninstall { package } => crate::commands::uninstall::execute(package),
+        Commands::List => crate::commands::list::execute(),
+        Commands::Search { query } => crate::commands::search::execute(query),
         Commands::Update => crate::commands::update::execute(),
         Commands::Doctor { fix } => crate::commands::doctor::execute(*fix),
         Commands::Version => crate::commands::version::execute(),
@@ -256,7 +285,7 @@ capabilities = ["FileSystem", "Environment", "Process", "Network"]
                 "✓ Default settings written to: {}",
                 config_file.display().to_string().cyan()
             );
-            println!("\nRun 'tsc' or 'tsc --help' to get started.");
+            println!("\nRun 'tsc' or 'techscript' or 'tsc --help' to get started.");
             println!(
                 "{}",
                 "========================================================\n"
@@ -270,7 +299,6 @@ capabilities = ["FileSystem", "Environment", "Process", "Network"]
 fn levenshtein(a: &str, b: &str, cache: &mut [usize]) -> usize {
     let b_len = b.len();
 
-    // We only need bytes since commands are ascii
     let a_bytes = a.as_bytes();
     let b_bytes = b.as_bytes();
 
@@ -310,6 +338,8 @@ fn suggest_subcommand(unknown: &str) {
         "publish",
         "install",
         "uninstall",
+        "list",
+        "search",
         "update",
         "doctor",
         "version",
@@ -326,6 +356,9 @@ fn suggest_subcommand(unknown: &str) {
         "docs",
         "config",
         "self",
+        "dev",
+        "routes",
+        "deploy",
     ];
 
     let mut cache = [0; 32];
@@ -344,7 +377,7 @@ fn suggest_subcommand(unknown: &str) {
             eprintln!("  {}", sugg.cyan().bold());
         }
     }
-    eprintln!("\nTry: {}", "tsc --help".green());
+    eprintln!("\nTry: {}", "techscript --help".green());
 }
 
 fn show_welcome_screen() {
@@ -362,7 +395,7 @@ fn show_welcome_screen() {
     );
     println!(
         "{}",
-        "   Modern Programming Language & Toolchain              "
+        "   Modern Programming Language & WebForge Toolchain      "
             .cyan()
             .bold()
     );
@@ -374,28 +407,21 @@ fn show_welcome_screen() {
     );
     println!("Version: v{}", techscript_common::TECHSCRIPT_VERSION);
     println!("\nUsage:");
+    println!("  webforge <command> [options]");
+    println!("  techscript <command> [options]");
     println!("  tsc <command> [options]");
     println!("\nQuick Start:");
-    println!("  tsc new hello_world       Create a new project");
-    println!("  cd hello_world");
-    println!("  tsc run                   Compile and run the project");
+    println!("  webforge new my-site               Create a new WebForge project");
+    println!("  cd my-site");
+    println!("  webforge dev                       Start live development server");
     println!("\nPopular Commands:");
-    println!("  new                       Scaffold a new project");
-    println!("  run                       Run a TechScript file or project");
-    println!("  build                     Compile project sources to tsb");
-    println!("  repl                      Start interactive REPL console");
+    println!("  new                       Scaffold a new project or template");
+    println!("  dev                       Start live development server");
+    println!("  build                     Compile project (web/server/vm)");
+    println!("  test                      Run project test suites");
+    println!("  add                       Add package dependency");
     println!("  doctor                    Evaluate environment health");
-    println!("\nProject Creation:");
-    println!("  tsc new                   Launch project creation wizard");
-    println!("\nDocumentation & Examples:");
-    println!("  tsc examples              List all bundled code examples");
-    println!("  tsc docs                  Open offline guides in browser");
-    println!("\nRecent Features:");
-    println!("  • Self-contained toolchain packaging");
-    println!("  • Automatic top-level statements wrapping");
-    println!("  • Interactive project scaffolding wizards");
-    println!("  • Dynamic terminal themes auto-detection");
-    println!("\nFor a complete list of commands, try: tsc --help");
+    println!("\nFor a complete list of commands, try: webforge --help");
     println!(
         "{}",
         "========================================================"
@@ -419,7 +445,7 @@ fn show_custom_help() {
     );
     println!(
         "{}",
-        "   Modern Programming Language & Toolchain              "
+        "   Modern Programming Language & WebForge Toolchain      "
             .cyan()
             .bold()
     );
@@ -431,56 +457,38 @@ fn show_custom_help() {
     );
     println!("Version: v{}", techscript_common::TECHSCRIPT_VERSION);
     println!("\nUsage:");
+    println!("  webforge <command> [options]");
+    println!("  techscript <command> [options]");
     println!("  tsc <command> [options]");
     println!("\nQuick Start:");
-    println!("  tsc new hello");
-    println!("  cd hello");
-    println!("  tsc run");
+    println!("  webforge new my-site");
+    println!("  cd my-site");
+    println!("  webforge dev");
     println!("\nCommon Commands:");
-    println!("  {}", "Project".bold().yellow());
+    println!("  {}", "Project & Framework".bold().yellow());
     println!("    new                     Scaffold a new project directory");
     println!("    init                    Initialize a project in current folder");
+    println!("    dev                     Start live development server with hot-reload");
+    println!("    routes                  Inspect registered server & web routes");
+    println!("    deploy                  Prepare and deploy project to target host");
     println!("    clean                   Clean build outputs and caches");
     println!("\n  {}", "Development".bold().yellow());
     println!("    run                     Run a TechScript file or project");
-    println!("    build                   Compile project sources to tsb");
+    println!("    build                   Compile project (web / server / vm)");
     println!("    check                   Run semantic check without compiling");
     println!("    test                    Run test suites (*_test.txs)");
     println!("    repl                    Start interactive REPL console");
-    println!("\n  {}", "Documentation".bold().yellow());
-    println!("    doc                     Generate docs from code comments");
-    println!("    docs                    Open offline guides in browser");
-    println!("\n  {}", "Formatting".bold().yellow());
-    println!("    fmt                     Format .txs source files");
-    println!("    lint                    Lint code and fix deprecations");
-    println!("\n  {}", "Debugging".bold().yellow());
-    println!("    dump-ast                Parse file and dump AST representation");
-    println!("    dump-ir                 Parse file and dump lowered IR");
-    println!("    dump-bytecode           Compile file and dump disassembled VM bytecode");
-    println!("\n  {}", "Native".bold().yellow());
-    println!("    emit-ir                 Emit textual TechScript IR");
-    println!("    emit-llvm               Emit LLVM IR representation");
-    println!("    emit-asm                Emit native assembler file");
-    println!("    emit-obj                Emit native object file (.obj)");
-    println!("\n  {}", "Packages".bold().yellow());
-    println!("    install                 Install package from registry");
-    println!("    uninstall               Uninstall package and update manifest");
-    println!("    publish                 Publish package to registry");
+    println!("\n  {}", "Packages & Ecosystem".bold().yellow());
+    println!("    install, add            Install package or all dependencies from webforge.toml");
+    println!("    uninstall, remove       Uninstall package and update manifest");
+    println!("    list, ls                List declared and resolved dependencies");
+    println!("    search                  Search official package registry");
     println!("    update                  Update declared dependencies");
-    println!("\n  {}", "Utilities".bold().yellow());
+    println!("    publish                 Publish package to registry");
+    println!("\n  {}", "Formatting & Tooling".bold().yellow());
+    println!("    fmt                     Format .txs / .wtxs / .stxs / .3txs files");
+    println!("    lint                    Lint code and fix deprecations");
     println!("    doctor                  Evaluate toolchain installation health");
-    println!("    benchmark               Run Fibonacci backend benchmarking suite");
-    println!("    version                 Print detailed component versions");
-    println!("    examples                List all installed language examples");
-    println!("    completion              Generate shell autocompletions");
-    println!("    config                  Display or edit global user settings");
-    println!("    self                    Perform toolchain updates or repairs");
-    println!("\nExamples:");
-    println!("  tsc new calculator        Create calculator project");
-    println!("  tsc run src/main.txs      Execute main file");
-    println!("  tsc build --release       Compile in release mode");
-    println!("  tsc fmt .                 Format current directory files");
-    println!("  tsc doctor                Check environment health");
     println!("\nDocumentation: https://github.com/Tcode-Motion/techscript/tree/main/docs");
     println!("GitHub:        https://github.com/Tcode-Motion/techscript");
     println!(
@@ -490,5 +498,3 @@ fn show_custom_help() {
             .bold()
     );
 }
-
-use techscript_cli::commands;

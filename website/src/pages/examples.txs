@@ -1,0 +1,36 @@
+page Examples "/examples":
+    show heading "TechScript WebForge Examples"
+    show text "Explore real, working example architectures demonstrating full-stack development, 3D graphics, and database persistence."
+
+    show section:
+        title is "Featured Working Demonstrations"
+        show card "Full-Stack SQLite Application":
+            badge is "Live Demo"
+            text is "A complete end-to-end full-stack app featuring client inputs, server API routes, and SQLite database persistence."
+            button "Open Fullstack Demo":
+                action is "open /examples/fullstack"
+        show card "Hardware-Accelerated 3D Laboratory":
+            badge is "3D Engine"
+            text is "Five interactive 3D scenes with real-time PBR material controls, wireframe toggles, and live .txs code updates."
+            button "Open 3D Lab":
+                action is "open /showcase/3d"
+        show card "Interactive In-Browser Playground":
+            badge is "Code Editor"
+            text is "Type TechScript code and see the WebForge component tree render live in the browser."
+            button "Launch Playground":
+                action is "open /playground"
+
+    show section:
+        title is "Scaffolding Templates"
+        show card "Fullstack App Template":
+            badge is "webforge new fullstack"
+            text is "Scaffolds a complete project with pages, server API, SQLite database, and 3D scenes."
+            code is "$ webforge new fullstack my-app"
+        show card "REST API Service":
+            badge is "webforge new api"
+            text is "Headless JSON REST backend with SQLite persistence and automated CORS handling."
+            code is "$ webforge new api my-backend"
+        show card "3D Interactive Showcase":
+            badge is "webforge new 3d"
+            text is "Three.js WebGL graphics template with orbit controls and custom PBR shaders."
+            code is "$ webforge new 3d my-scene"

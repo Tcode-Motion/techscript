@@ -194,7 +194,10 @@ pub struct Lexer<'a> {
 
 impl<'a> Lexer<'a> {
     /// Create a new Lexer for the given source code.
-    pub fn new(source: &'a str) -> Self {
+    pub fn new(mut source: &'a str) -> Self {
+        if source.starts_with('\u{feff}') {
+            source = &source['\u{feff}'.len_utf8()..];
+        }
         Self {
             source,
             pos: 0,
@@ -216,11 +219,11 @@ impl<'a> Lexer<'a> {
                 continue;
             }
 
-            // Skip spaces, tabs, and carriage returns (matching logos skip rule)
+            // Skip spaces, tabs, carriage returns, and BOM
             let remaining = &self.source[self.pos..];
             let ws_len = remaining
                 .chars()
-                .take_while(|c| *c == ' ' || *c == '\t' || *c == '\r')
+                .take_while(|c| *c == ' ' || *c == '\t' || *c == '\r' || *c == '\u{feff}')
                 .map(|c| c.len_utf8())
                 .sum::<usize>();
 

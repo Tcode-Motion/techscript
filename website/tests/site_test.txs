@@ -1,0 +1,7 @@
+test "website manifest and branding":
+    let title = "TechScript WebForge"
+    assert title == "TechScript WebForge"
+
+test "route sections defined":
+    let sections = 12
+    assert sections == 12

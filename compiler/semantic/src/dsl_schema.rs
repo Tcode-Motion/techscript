@@ -43,13 +43,18 @@ fn register_web_schemas(reg: &mut HashMap<String, DSLSchema>) {
                 "description".into(),
                 "lang".into(),
                 "base_url".into(),
+                "id".into(),
+                "name".into(),
             ],
-            vec!["title".into()],
+            vec![],
             vec![
                 "page".into(),
                 "header".into(),
                 "footer".into(),
                 "nav".into(),
+                "database".into(),
+                "section".into(),
+                "hero".into(),
             ],
         ),
     );
@@ -62,8 +67,10 @@ fn register_web_schemas(reg: &mut HashMap<String, DSLSchema>) {
                 "description".into(),
                 "icon".into(),
                 "theme".into(),
+                "id".into(),
+                "name".into(),
             ],
-            vec!["title".into()],
+            vec![],
             vec![
                 "hero".into(),
                 "section".into(),
@@ -74,7 +81,136 @@ fn register_web_schemas(reg: &mut HashMap<String, DSLSchema>) {
                 "aside".into(),
                 "form".into(),
                 "start".into(),
+                "heading".into(),
+                "text".into(),
+                "button".into(),
+                "input".into(),
+                "scene".into(),
+                "scene3d".into(),
+                "cube".into(),
+                "database".into(),
+                "table".into(),
+                "timeline".into(),
+                "accordion".into(),
+                "tabs".into(),
+                "stats".into(),
+                "alert".into(),
             ],
+        ),
+    );
+
+    reg.insert(
+        "heading".to_string(),
+        DSLSchema::new(
+            vec!["text".into(), "id".into(), "size".into(), "color".into()],
+            vec![],
+            vec![],
+        ),
+    );
+
+    reg.insert(
+        "text".to_string(),
+        DSLSchema::new(
+            vec!["text".into(), "content".into(), "id".into(), "color".into(), "size".into()],
+            vec![],
+            vec![],
+        ),
+    );
+
+    let mesh_types = vec![
+        "cube".into(), "scifi".into(), "mech".into(), "knot".into(), "torus".into(),
+        "sphere".into(), "cylinder".into(), "mesh".into(), "light".into(), "camera".into(),
+        "gyroscope".into(), "tesseract".into(), "dna".into(), "satellite".into(),
+        "star".into(), "crystal".into(), "product".into(), "geodesic".into(),
+        "ring".into(), "octahedron".into(),
+        "quantum_chip".into(), "black_hole".into(), "mobius".into(), "dyson_swarm".into(),
+        // Custom 3D modeling primitives & operations
+        "box".into(), "cylinder".into(), "sphere".into(), "cone".into(), "roof".into(),
+        "wall".into(), "window".into(), "door".into(), "chimney".into(), "torus".into(),
+        "wedge".into(), "part".into(), "cut".into(), "boolean".into(), "animate".into(),
+        "outline".into(), "extrude".into(), "bevel".into(),
+    ];
+
+    let custom_3d_props = vec![
+        "id".into(), "name".into(), "width".into(), "height".into(),
+        "background".into(), "enable".into(), "controls".into(), "mouse_controls".into(),
+        "color".into(), "speed".into(), "rotation".into(), "rotation speed".into(), "rotation_speed".into(),
+        "shading".into(), "wireframe".into(), "geo".into(), "model".into(), "mesh".into(),
+        "outline".into(), "extrude".into(), "bevel".into(), "material".into(), "roughness".into(), "metalness".into(),
+        "points".into(), "faces".into(), "vertices".into(), "base".into(), "action".into(), "title".into(),
+        "mode".into(), "format".into(),
+    ];
+
+    reg.insert(
+        "scene3d".to_string(),
+        DSLSchema::new(
+            custom_3d_props.clone(),
+            vec![],
+            mesh_types.clone(),
+        ),
+    );
+
+    reg.insert(
+        "scene".to_string(),
+        DSLSchema::new(
+            custom_3d_props.clone(),
+            vec![],
+            mesh_types.clone(),
+        ),
+    );
+
+    reg.insert(
+        "model3d".to_string(),
+        DSLSchema::new(
+            custom_3d_props.clone(),
+            vec![],
+            mesh_types.clone(),
+        ),
+    );
+
+    reg.insert(
+        "model3D".to_string(),
+        DSLSchema::new(
+            custom_3d_props.clone(),
+            vec![],
+            mesh_types.clone(),
+        ),
+    );
+
+    let part_props = vec![
+        "name".into(), "id".into(), "at".into(), "size".into(), "color".into(),
+        "material".into(), "roughness".into(), "metalness".into(), "style".into(),
+        "target".into(), "tool".into(), "from".into(), "by".into(), "to".into(),
+        "over".into(), "loop".into(), "rotation".into(), "position".into(), "scale".into(),
+        "axis".into(), "wireframe".into(), "shading".into(), "speed".into(), "rotation_speed".into(),
+    ];
+
+    for m in &["cube", "scifi", "mech", "knot", "torus", "sphere", "cylinder", "mesh", "gyroscope", "tesseract", "dna", "satellite", "star", "crystal", "product", "geodesic", "ring", "octahedron", "quantum_chip", "black_hole", "mobius", "dyson_swarm", "box", "cone", "roof", "wall", "window", "door", "chimney", "wedge", "part", "cut", "boolean", "animate"] {
+        reg.insert(
+            m.to_string(),
+            DSLSchema::new(
+                part_props.clone(),
+                vec![],
+                vec![],
+            ),
+        );
+    }
+
+    reg.insert(
+        "database".to_string(),
+        DSLSchema::new(
+            vec!["name".into(), "path".into()],
+            vec![],
+            vec!["table".into()],
+        ),
+    );
+
+    reg.insert(
+        "table".to_string(),
+        DSLSchema::new(
+            vec!["name".into(), "title".into(), "content".into()],
+            vec![],
+            vec![],
         ),
     );
 
@@ -123,6 +259,18 @@ fn register_web_schemas(reg: &mut HashMap<String, DSLSchema>) {
                 "form".into(),
                 "hero".into(),
                 "section".into(),
+                "scene".into(),
+                "scene3d".into(),
+                "model3d".into(),
+                "timeline".into(),
+                "accordion".into(),
+                "tabs".into(),
+                "stats".into(),
+                "alert".into(),
+                "step".into(),
+                "item".into(),
+                "tab".into(),
+                "stat".into(),
             ],
         ),
     );
@@ -134,6 +282,10 @@ fn register_web_schemas(reg: &mut HashMap<String, DSLSchema>) {
                 "title".into(),
                 "subtitle".into(),
                 "text".into(),
+                "badge".into(),
+                "code".into(),
+                "action".into(),
+                "url".into(),
                 "icon".into(),
                 "image".into(),
                 "color".into(),
@@ -145,7 +297,7 @@ fn register_web_schemas(reg: &mut HashMap<String, DSLSchema>) {
                 "border".into(),
             ],
             vec![],
-            vec!["button".into(), "link".into(), "input".into()],
+            vec!["button".into(), "link".into(), "input".into(), "card".into(), "code".into(), "scene".into(), "scene3d".into(), "model3d".into(), "timeline".into(), "accordion".into(), "tabs".into(), "stats".into(), "alert".into()],
         ),
     );
 
@@ -169,6 +321,7 @@ fn register_web_schemas(reg: &mut HashMap<String, DSLSchema>) {
         DSLSchema::new(
             vec![
                 "label".into(),
+                "id".into(),
                 "color".into(),
                 "background".into(),
                 "size".into(),
@@ -177,9 +330,105 @@ fn register_web_schemas(reg: &mut HashMap<String, DSLSchema>) {
                 "icon".into(),
                 "width".into(),
                 "action".into(),
+                "variant".into(),
+                "animation".into(),
+                "animated".into(),
+                "glow".into(),
+                "class".into(),
             ],
             vec!["label".into()],
             vec![],
+        ),
+    );
+
+    // Rich Web Components ───────────────────────────────────────────
+    reg.insert(
+        "timeline".to_string(),
+        DSLSchema::new(
+            vec!["id".into(), "title".into(), "align".into()],
+            vec![],
+            vec!["step".into(), "milestone".into(), "event".into(), "item".into(), "card".into()],
+        ),
+    );
+
+    reg.insert(
+        "step".to_string(),
+        DSLSchema::new(
+            vec!["title".into(), "date".into(), "badge".into(), "status".into(), "text".into(), "icon".into(), "id".into()],
+            vec![],
+            vec!["button".into(), "link".into(), "card".into(), "text".into()],
+        ),
+    );
+
+    reg.insert(
+        "milestone".to_string(),
+        DSLSchema::new(
+            vec!["title".into(), "date".into(), "badge".into(), "status".into(), "text".into(), "icon".into(), "id".into()],
+            vec![],
+            vec!["button".into(), "link".into(), "card".into(), "text".into()],
+        ),
+    );
+
+    reg.insert(
+        "accordion".to_string(),
+        DSLSchema::new(
+            vec!["title".into(), "id".into(), "allow_multiple".into()],
+            vec![],
+            vec!["item".into(), "panel".into(), "card".into()],
+        ),
+    );
+
+    reg.insert(
+        "item".to_string(),
+        DSLSchema::new(
+            vec!["title".into(), "text".into(), "id".into(), "open".into(), "badge".into(), "icon".into()],
+            vec![],
+            vec!["text".into(), "button".into(), "link".into(), "card".into(), "code".into()],
+        ),
+    );
+
+    reg.insert(
+        "tabs".to_string(),
+        DSLSchema::new(
+            vec!["title".into(), "id".into(), "active".into()],
+            vec![],
+            vec!["tab".into()],
+        ),
+    );
+
+    reg.insert(
+        "tab".to_string(),
+        DSLSchema::new(
+            vec!["title".into(), "label".into(), "id".into(), "icon".into(), "active".into(), "text".into(), "content".into()],
+            vec![],
+            vec!["card".into(), "text".into(), "button".into(), "heading".into(), "section".into(), "timeline".into(), "code".into(), "scene3d".into(), "scene".into(), "model3d".into()],
+        ),
+    );
+
+    reg.insert(
+        "stats".to_string(),
+        DSLSchema::new(
+            vec!["title".into(), "id".into()],
+            vec![],
+            vec!["stat".into(), "card".into()],
+        ),
+    );
+
+    reg.insert(
+        "stat".to_string(),
+        DSLSchema::new(
+            vec!["value".into(), "val".into(), "label".into(), "title".into(), "badge".into(), "icon".into(), "id".into(), "trend".into(), "text".into()],
+            vec![],
+            vec![],
+        ),
+    );
+
+    reg.insert(
+        "alert".to_string(),
+        DSLSchema::new(
+            vec!["title".into(), "text".into(), "content".into(), "variant".into(), "type".into(), "icon".into(), "id".into(), "dismissible".into()],
+            vec![],
+            vec!["button".into(), "link".into()],
         ),
     );
 
@@ -193,6 +442,7 @@ fn register_web_schemas(reg: &mut HashMap<String, DSLSchema>) {
                 "size".into(),
                 "icon".into(),
                 "target".into(),
+                "id".into(),
             ],
             vec!["label".into()],
             vec![],
@@ -209,6 +459,7 @@ fn register_web_schemas(reg: &mut HashMap<String, DSLSchema>) {
                 "value".into(),
                 "required".into(),
                 "name".into(),
+                "id".into(),
             ],
             vec![],
             vec![],

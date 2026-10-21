@@ -1,0 +1,21 @@
+page Playground "/playground":
+    show heading "WebForge 3D Studio & Creative CAD Playground"
+    show text "Build custom 3D models with declarative TechScript code or interactive visual tools. Two-way synchronization between source code and Three.js geometry, real CSG boolean operations, SVG extrusion, and universal 3D exports (GLTF, OBJ, STL, .txs)."
+
+    make 3D "Custom3DStudio":
+        mode is "custom"
+        color is "#06B6D4"
+        material is "stone"
+    end
+
+    show section:
+        title is "3D Workflow Architecture & Synchronization"
+        show card "Two-Way Synchronization":
+            badge is "Live Compiler"
+            text is "Edits made visually in the 3D viewport immediately update the TechScript source code. Typing or editing .txs declarations compiles in real-time and renders updated Three.js geometry."
+        show card "Real CSG Boolean Engine":
+            badge is "Geometry Engine"
+            text is "Constructive Solid Geometry modifies the underlying mesh buffers via binary space partitioning (BSP), splitting faces and capping cut interiors for real machining and hollowing."
+        show card "Universal 3D Interoperability":
+            badge is "Formats"
+            text is "Export your custom models directly to GLTF/GLB for web deployment, Wavefront OBJ for 3D modeling pipelines, STL for 3D printing, or pure .txs for TechScript codebases."

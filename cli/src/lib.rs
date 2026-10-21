@@ -23,6 +23,7 @@ pub mod scheduler;
 pub mod templates;
 pub mod theme;
 pub mod watch;
+pub mod entrypoint;
 
 use clap::{Parser as ClapParser, Subcommand};
 
@@ -61,6 +62,10 @@ pub enum Commands {
     Run {
         /// Source file path ending in .txs or .ts
         file: String,
+
+        /// Run in release mode
+        #[arg(long)]
+        release: bool,
 
         /// Profile to use: debug, release, release-fast, release-small
         #[arg(short, long)]
@@ -108,6 +113,10 @@ pub enum Commands {
         /// Profile to use: debug, release, release-fast, release-small
         #[arg(short, long)]
         profile: Option<String>,
+
+        /// Build in release mode
+        #[arg(long)]
+        release: bool,
 
         /// Run in watch mode, rebuilding on change
         #[arg(short, long)]
@@ -171,12 +180,38 @@ pub enum Commands {
 
     /// Scaffolds a new project structure in a new directory
     New {
-        /// Name of the new project directory
+        /// Name of the new project directory or template name
         name: Option<String>,
 
-        /// Project template: console, library, package, workspace, empty
+        /// Optional project name when first argument is template type (e.g. 'tsc new website MyWebsite')
+        second_name: Option<String>,
+
+        /// Project template: console, library, package, workspace, website, empty
         #[arg(short, long)]
         template: Option<String>,
+    },
+
+    /// Starts the WebForge development server with live reload
+    Dev {
+        /// Source file path (defaults to project entry file)
+        file: Option<String>,
+
+        /// Port to bind the server to (defaults to 3000)
+        #[arg(short, long)]
+        port: Option<u16>,
+    },
+
+    /// Lists registered WebForge routes, REST endpoints, and client actions
+    Routes {
+        /// Source file path (defaults to project entry file)
+        file: Option<String>,
+    },
+
+    /// Deploys a WebForge application or guides production deployment
+    Deploy {
+        /// Target provider: static, vercel, netlify, docker, server
+        #[arg(short, long)]
+        target: Option<String>,
     },
 
     /// Generates documentation from triple-slash (///) comments
@@ -210,17 +245,29 @@ pub enum Commands {
     /// Packages and publishes package to the registry
     Publish,
 
-    /// Installs a package from the registry
-    #[command(alias = "i")]
+    /// Installs packages or registers a new package
+    #[command(alias = "i", alias = "add")]
     Install {
-        /// Package name to install
+        /// Package name to install (leave empty to install all manifest dependencies)
+        #[arg(default_value = "")]
         package: String,
     },
 
     /// Uninstalls a package and updates manifest
+    #[command(alias = "remove", alias = "rm")]
     Uninstall {
         /// Package name to uninstall
         package: String,
+    },
+
+    /// Lists all declared dependencies in the project manifest
+    #[command(alias = "ls")]
+    List,
+
+    /// Searches packages in the official TechScript registry
+    Search {
+        /// Query term to search
+        query: String,
     },
 
     /// Updates declared dependencies in manifest

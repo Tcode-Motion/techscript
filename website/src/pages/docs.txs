@@ -1,0 +1,36 @@
+page Documentation "/docs":
+    show heading "WebForge Documentation"
+    show text "Master the entire TechScript WebForge full-stack ecosystem through in-depth architectural guides and tutorials."
+
+    show section:
+        title is "Quick Links to Core Guides"
+        show card "Getting Started":
+            badge is "Tutorial"
+            text is "Step-by-step installation, your first 'Hello WebForge' project, and dev-server workflow."
+            button "Read Getting Started":
+                action is "open /docs/getting-started"
+        show card "Language Syntax Reference":
+            badge is "Language Specification"
+            text is "Detailed grammar of TechScript: keywords, variables, types, loops, conditionals, and functions."
+            button "Read Syntax Guide":
+                action is "open /docs/syntax"
+        show card "Routing & Navigation":
+            badge is "Web Framework"
+            text is "Deep dive into SPA routing, history pushState, deep linking, dynamic paths, and breadcrumbs."
+            button "Read Routing Guide":
+                action is "open /docs/routing"
+        show card "Backend & REST API Guide":
+            badge is "Server & Database"
+            text is "Declarative REST endpoints, parameterized SQLite storage, JSON responses, and security headers."
+            button "Read API Guide":
+                action is "open /docs/api"
+        show card "3D Graphics & WebGL":
+            badge is "Three.js Acceleration"
+            text is "How to declare Three.js scenes, cameras, lighting rigs, materials, and models from pure .txs code."
+            button "Read 3D Guide":
+                action is "open /docs/3d"
+        show card "Security & Architecture":
+            badge is "Enterprise Ready"
+            text is "Hardening mechanisms: SSRF prevention, XSS mitigation, input sanitization, and isolated execution."
+            button "View Architecture":
+                action is "open /framework"

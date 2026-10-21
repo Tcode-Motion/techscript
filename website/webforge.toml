@@ -1,0 +1,13 @@
+[package]
+name = "techscript-official-website"
+version = "2.0.0"
+entry = "src/main.txs"
+authors = ["TechScript Core Team <core@techscript.dev>"]
+edition = "2024"
+license = "Apache-2.0"
+description = "The official website for the TechScript programming language and WebForge framework"
+capabilities = ["Network", "FileSystem"]
+
+[dependencies]
+
+[dev-dependencies]

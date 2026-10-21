@@ -1,0 +1,93 @@
+page Components "/components":
+    show heading "Modern WebForge UI Components"
+    show text "Build rich, kinetic web interfaces declaratively. WebForge provides built-in tokens and zero-config components for animated buttons, timelines, accordions, tabs, stat cards, and alerts."
+
+    show section:
+        title is "Key Performance Metrics"
+        show stats:
+            show stat "99.98%":
+                label is "Uptime SLA"
+                trend is "+0.04%"
+                icon is "⚡"
+            show stat "12.4M":
+                label is "Requests / Sec"
+                trend is "+18.2%"
+                icon is "🚀"
+            show stat "< 1.2ms":
+                label is "P99 Latency"
+                trend is "-24%"
+                icon is "⏱️"
+            show stat "0 KB":
+                label is "Node Dependencies"
+                trend is "Zero Bloat"
+                icon is "📦"
+
+    show section:
+        title is "Animated & Cyber Buttons"
+        show card "Interactive Button Styles":
+            badge is "Micro-Interactions"
+            text is "Choose from sleek gradients, kinetic shimmers, cyber borders, and float/pulse animations:"
+            button "✨ Neon Glow" variant "glow" animation "pulse"
+            button "⚡ Shimmer Beam" variant "shimmer"
+            button "👾 Cyber Matrix" variant "cyber"
+            button "🎈 Bouncing Pill" variant "pill" animation "bounce"
+            button "🔮 Glassmorphism" variant "glass"
+            button "📐 Cyber Outline" variant "outline"
+
+    show section:
+        title is "Interactive Project Timeline"
+        show timeline "ReleaseRoadmap":
+            show step "v1.0 Core Engine":
+                date is "Q1 2026"
+                badge is "Delivered"
+                status is "completed"
+                icon is "✓"
+                text is "Native Rust compiler, parser, AST semantic analyzer, and embedded bytecode virtual machine."
+            show step "v2.0 WebForge Framework":
+                date is "Q2 2026"
+                badge is "Live Now"
+                status is "active"
+                icon is "⚡"
+                text is "Single-page application client router, SQLite dynamic REST API, and hardware-accelerated 3D."
+            show step "v2.5 Custom 3D CAD Studio":
+                date is "Q3 2026"
+                badge is "Current Sprint"
+                status is "active"
+                icon is "🛸"
+                text is "Procedural modeling, real CSG boolean operations, SVG extrusion, and universal exports."
+            show step "v3.0 Distributed Cloud Mesh":
+                date is "Q4 2026"
+                badge is "Planned"
+                status is "upcoming"
+                icon is "🌐"
+                text is "Multi-region cluster state replication, automatic edge bundling, and WASM runtime targets."
+
+    show section:
+        title is "Accordion & Tabbed Panels"
+        show accordion "FaqAccordion":
+            show item "How does TechScript achieve zero-config fullstack deployment?":
+                text is "The TechScript compiler parses a unified .txs codebase containing data schemas, API routes, and UI components into native bytecode and highly optimized client bundles with zero runtime external dependencies."
+            show item "Can I use real CSG boolean operations in the 3D Studio?":
+                text is "Yes! TechScript embeds a genuine Binary Space Partitioning (BSP) CSG engine that physically splits faces and calculates cut interior surfaces for machining and architectural modeling."
+            show item "What formats can I export my 3D models into?":
+                text is "You can export models to GLTF/GLB for WebGL applications, Wavefront OBJ for CAD/3D software, STL for 3D printing, and native TechScript (.txs) source code."
+
+        show tabs "FrameworkTabs":
+            show tab "Compiler":
+                text is "Written in Rust with zero runtime dependencies. Lexing, parsing, and type-checking happen in microseconds with zero GC pauses."
+            show tab "WebForge Fullstack":
+                text is "Combines reactive UI rendering, single-page client routing, and embedded SQLite database engine into a cohesive ecosystem."
+            show tab "Hardware 3D Engine":
+                text is "Integrated Three.js and custom shader pipelines with procedural mesh generation, CSG booleans, and 60 FPS hardware acceleration."
+
+    show section:
+        title is "Notification & Diagnostic Banners"
+        show alert "TechScript v2.0 is fully installed and operating normally.":
+            title is "System Operational"
+            variant is "success"
+        show alert "Constructive Solid Geometry modifies vertex buffers directly. Verify that meshes are manifold before complex cuts.":
+            title is "Geometry Engine Notice"
+            variant is "tip"
+        show alert "Ensure exported STL files are scaled appropriately before sending to a 3D slicer.":
+            title is "Export Consideration"
+            variant is "warning"

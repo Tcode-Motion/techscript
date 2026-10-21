@@ -1,0 +1,25 @@
+page LanguageSyntax "/docs/syntax":
+    show heading "TechScript Syntax Guide"
+    show text "Learn the concise, readable grammar of TechScript and how it empowers WebForge web applications."
+
+    show section:
+        title is "Variables & Strong Types"
+        show card "Variable Declarations":
+            badge is "Language Basics"
+            text is "TechScript uses 'let' for immutable bindings and 'var' for mutable variables with optional type annotations."
+            code is "let siteName: String = \"TechScript WebForge\"\nvar visitorCount: Int = 100\nvisitorCount = visitorCount + 1"
+        show card "Control Flow & Conditionals":
+            badge is "Control Flow"
+            text is "Clean, indentation-based syntax without parentheses or semicolons."
+            code is "if visitorCount > 50:\n    print \"High traffic detected\"\nelse:\n    print \"Normal traffic\""
+
+    show section:
+        title is "WebForge DSL Declarations"
+        show card "Pages & Routing":
+            badge is "Declarative UI"
+            text is "Declare pages with canonical paths, navigation actions, and nested visual components."
+            code is "page Showcase \"/showcase\":\n    show heading \"Project Showcase\"\n    button \"Launch 3D Lab\" -> open \"/showcase/3d\""
+        show card "Cards & Media Blocks":
+            badge is "Components"
+            text is "Cards accept titles, text, badges, code snippets, and action buttons."
+            code is "show card \"Product Card\":\n    badge is \"Featured\"\n    text is \"High performance PBR renderer\"\n    button \"Inspect\" -> open \"/docs/3d\""

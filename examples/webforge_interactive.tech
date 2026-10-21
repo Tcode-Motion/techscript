@@ -1,0 +1,11 @@
+make a website called MyWebsite
+
+page Home:
+    show heading "Welcome!"
+    show text "Built with TechScript WebForge"
+    show button "Click Me" called GreetingButton
+
+when GreetingButton is clicked:
+    show message "Hello, World!"
+
+start website

@@ -9,9 +9,17 @@ use colored::Colorize;
 use std::io::{self, Write};
 use std::path::PathBuf;
 
-pub fn execute(name_opt: Option<&str>, template_str: Option<&str>) -> ExitCode {
+pub fn execute(name_opt: Option<&str>, template_str: Option<&str>, second_opt: Option<&str>) -> ExitCode {
     let mut resolved_name = name_opt.map(|s| s.to_string());
     let mut resolved_template = template_str.map(|s| s.to_string());
+
+    // Support: techscript new <template> <ProjectName> (e.g. website, fullstack, api, 3d)
+    if let Some(n) = name_opt {
+        if ProjectTemplate::parse(n).is_some() && second_opt.is_some() {
+            resolved_name = second_opt.map(|s| s.to_string());
+            resolved_template = Some(n.to_string());
+        }
+    }
 
     // 1. Run interactive wizard if name is not provided
     if resolved_name.is_none() {
@@ -46,6 +54,10 @@ pub fn execute(name_opt: Option<&str>, template_str: Option<&str>) -> ExitCode {
         println!("  3) Package   (Publishable standard package structure)");
         println!("  4) Workspace (Multi-project cargo/ts workspaces)");
         println!("  5) Empty     (Minimal empty code skeleton)");
+        println!("  6) Website   (Basic WebForge website)");
+        println!("  7) FullStack (Modular WebForge app with pages, server, scenes)");
+        println!("  8) API       (WebForge REST API service with SQLite)");
+        println!("  9) 3D        (Three.js 3D WebGL website)");
         print!("Select template [1]: ");
         io::stdout().flush().ok();
         let mut input_tmpl = String::new();
@@ -56,6 +68,10 @@ pub fn execute(name_opt: Option<&str>, template_str: Option<&str>) -> ExitCode {
             "3" | "package" => "package".to_string(),
             "4" | "workspace" => "workspace".to_string(),
             "5" | "empty" => "empty".to_string(),
+            "6" | "website" => "website".to_string(),
+            "7" | "fullstack" => "fullstack".to_string(),
+            "8" | "api" => "api".to_string(),
+            "9" | "3d" => "3d".to_string(),
             _ => "console".to_string(),
         });
         println!(

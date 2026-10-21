@@ -1,0 +1,16 @@
+page Loading "/loading":
+    show heading "System Initializing"
+    show text "Demonstration of WebForge's built-in skeleton loading and async state management."
+
+    show section:
+        title is "Async State Management"
+        show card "Skeleton Placeholder Simulation":
+            badge is "Async Loading"
+            text is "WebForge provides built-in CSS skeleton animations to render polished placeholder states while background data is being fetched."
+            button "Return to Home":
+                action is "open /"
+        show card "Data Ingestion Pipeline":
+            badge is "Network Status"
+            text is "Dynamic status tracking for API requests, background workers, and embedded database queries."
+            button "Explore Architecture":
+                action is "open /framework"

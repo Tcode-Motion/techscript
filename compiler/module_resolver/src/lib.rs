@@ -1,18 +1,21 @@
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
+use techscript_common::resolve_source_module;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ModuleSource {
     Stdlib(String),    // e.g. "std.math"
-    UserPath(PathBuf), // e.g. "user/library.ts"
+    UserPath(PathBuf), // e.g. "user/library.txs"
 }
 
 pub trait ModuleResolver {
     fn resolve(&self, path: &[String]) -> Result<ModuleSource, String>;
 }
 
-/// A default resolver implementation that matches the standard library modules.
+/// A default resolver implementation that matches the standard library modules
+/// and resolves user imports to .txs (default) and specialized TechScript files.
 pub struct DefaultModuleResolver {
     stdlib_modules: std::collections::HashSet<String>,
+    base_dir: PathBuf,
 }
 
 impl Default for DefaultModuleResolver {
@@ -23,6 +26,10 @@ impl Default for DefaultModuleResolver {
 
 impl DefaultModuleResolver {
     pub fn new() -> Self {
+        Self::with_base_dir(PathBuf::from("."))
+    }
+
+    pub fn with_base_dir<P: AsRef<Path>>(base_dir: P) -> Self {
         let mut stdlib_modules = std::collections::HashSet::new();
         let modules = [
             "std/io",
@@ -65,7 +72,10 @@ impl DefaultModuleResolver {
         for m in &modules {
             stdlib_modules.insert(m.to_string());
         }
-        Self { stdlib_modules }
+        Self {
+            stdlib_modules,
+            base_dir: base_dir.as_ref().to_path_buf(),
+        }
     }
 }
 
@@ -78,9 +88,24 @@ impl ModuleResolver for DefaultModuleResolver {
         if self.stdlib_modules.contains(&joined) {
             Ok(ModuleSource::Stdlib(path.join(".")))
         } else {
-            // Assume it's a relative/absolute user file import path
-            let file_path = PathBuf::from(format!("{}.ts", joined));
-            Ok(ModuleSource::UserPath(file_path))
+            // Attempt deterministic resolution via TechScript source registry
+            match resolve_source_module(&self.base_dir, &joined) {
+                Ok(path) => Ok(ModuleSource::UserPath(path)),
+                Err(techscript_common::SourceResolutionError::AmbiguousImport { module, candidates }) => {
+                    Err(format!(
+                        "Ambiguous import for '{}': found multiple matching files with different extensions: {:?}",
+                        module, candidates
+                    ))
+                }
+                Err(techscript_common::SourceResolutionError::PathTraversalDetected { path }) => {
+                    Err(format!("Security error: path traversal forbidden: '{}'", path))
+                }
+                Err(_) => {
+                    // Default to canonical .txs path when file does not exist on disk yet
+                    let file_path = self.base_dir.join(format!("{}.txs", joined));
+                    Ok(ModuleSource::UserPath(file_path))
+                }
+            }
         }
     }
 }

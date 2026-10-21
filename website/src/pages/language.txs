@@ -1,0 +1,24 @@
+page Language "/language":
+    show heading "TechScript Language Overview"
+    show text "TechScript provides a predictable, human-readable vocabulary with strict grammatical structure, strong typing, and zero punctuation clutter."
+
+    show section:
+        title is "Canonical File Extension (.txs)"
+        show card ".txs — The Official Standard":
+            badge is "Default & Preferred (99%+)"
+            text is ".txs is the universal source extension for TechScript programs, web pages, server handlers, 3D scenes, and test suites."
+            code is "// main.txs\nmake a website called TechScriptWebForge\n\npage Home \"/\":\n    show heading \"Welcome to TechScript\"\n    button \"Learn More\" -> open \"/docs\""
+        show card "Specialized Extensions (Optional)":
+            badge is "Modular Workflows"
+            text is "For large projects desiring explicit filesystem segregation, optional specialized extensions are supported:\n• .wtxs — Web UI views\n• .stxs — Server APIs and background jobs\n• .3txs — 3D graphics scenes"
+
+    show section:
+        title is "Key Language Features"
+        show card "Readable English Keywords":
+            badge is "Human-First"
+            text is "Natural keywords like 'make a website', 'show heading', 'button', 'database', 'when clicked' replace complex boilerplate."
+        show card "High-Performance Rust Backend":
+            badge is "Native Performance"
+            text is "TechScript compiles through a Rust lexer, parser, and semantic analyzer, emitting optimized bytecode or native web bundles."
+            button "Explore Syntax Guide":
+                action is "open /docs/syntax"

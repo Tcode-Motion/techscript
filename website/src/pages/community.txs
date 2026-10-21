@@ -1,0 +1,61 @@
+page Community "/community":
+    show heading "TechScript Community & Ecosystem"
+    show text "TechScript and WebForge are open-source projects built with an active, welcoming developer community. Connect, contribute, and help shape the future of human-readable programming."
+
+    show section:
+        title is "Official Repositories & Resources"
+        show card "GitHub Repository":
+            badge is "Open Source (Apache-2.0)"
+            text is "Star the repo, explore compiler and framework source code, track commits, and submit pull requests."
+            link:
+                label is "Visit github.com/Tcode-Motion/techscript"
+                url is "https://github.com/Tcode-Motion/techscript"
+        show card "Issue Tracker & Bug Reports":
+            badge is "Issue Tracker"
+            text is "File bug reports, submit feature requests, and review compiler diagnostic improvements."
+            link:
+                label is "Browse GitHub Issues"
+                url is "https://github.com/Tcode-Motion/techscript/issues"
+        show card "Discussions & Q&A":
+            badge is "Community Forum"
+            text is "Ask questions, share projects built with WebForge, and discuss syntax RFCs with language architects."
+            link:
+                label is "Join GitHub Discussions"
+                url is "https://github.com/Tcode-Motion/techscript/discussions"
+        show card "Official Releases":
+            badge is "Binary Distributions"
+            text is "Download precompiled release binaries for Windows (x64), Linux, and macOS."
+            link:
+                label is "View Releases & Changelogs"
+                url is "https://github.com/Tcode-Motion/techscript/releases"
+        show card "Official Project Website":
+            badge is "is-a.dev/techscript"
+            text is "Visit the official canonical portal for the TechScript programming language and tooling ecosystem."
+            link:
+                label is "Visit is-a.dev/techscript"
+                url is "https://is-a.dev/techscript/"
+        show card "PyPI Toolchain Package":
+            badge is "Python Distribution"
+            text is "Install and manage TechScript toolchains via pip or python launcher across all platforms."
+            link:
+                label is "View Package on PyPI"
+                url is "https://pypi.org/project/techscript/"
+
+    show section:
+        title is "Contributing & Governance"
+        show card "How to Contribute":
+            badge is "Developer Guide"
+            text is "We welcome contributions across the entire stack: compiler frontend, WebForge framework, stdlib, documentation, and VS Code extensions."
+            code is "$ git clone https://github.com/Tcode-Motion/techscript.git\n$ cd techscript\n$ cargo test --all"
+        show card "Language Designer & Maintainer":
+            badge is "Creator"
+            text is "TechScript was created and is actively developed by Tanmoy Majumder (@Tcode-Motion). Reach out for partnerships and core roadmap discussions."
+            link:
+                label is "Visit @Tcode-Motion on GitHub"
+                url is "https://github.com/Tcode-Motion"
+        show card "Code of Conduct & Governance":
+            badge is "Inclusive & Open"
+            text is "TechScript is committed to providing a friendly, harassment-free experience for everyone, following the Contributor Covenant Code of Conduct."
+            link:
+                label is "Email Support Team"
+                url is "mailto:support@techscript.is-a.dev"

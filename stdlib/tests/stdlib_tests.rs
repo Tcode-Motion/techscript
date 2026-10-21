@@ -519,6 +519,8 @@ fn test_http_module() {
                 if stream.read(&mut buf).is_ok() {
                     let response = "HTTP/1.1 200 OK\r\nContent-Length: 13\r\nContent-Type: text/plain\r\n\r\nHello Server!";
                     stream.write_all(response.as_bytes()).ok();
+                    let _ = stream.flush();
+                    let _ = stream.shutdown(std::net::Shutdown::Write);
                 }
             }
         }

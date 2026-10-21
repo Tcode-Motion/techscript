@@ -468,3 +468,37 @@ impl DocExtractor {
         items
     }
 }
+
+// =========================================================================
+// 8. Manifest File Constants & Dual Resolution Helpers
+// =========================================================================
+
+pub const WEBFORGE_MANIFEST_FILE: &str = "webforge.toml";
+pub const PRIMARY_MANIFEST_FILE: &str = "techscript.toml";
+pub const LEGACY_MANIFEST_FILE: &str = "tech.toml";
+pub const WEBFORGE_LOCKFILE_NAME: &str = "webforge.lock";
+pub const LOCKFILE_NAME: &str = "techscript.lock";
+pub const LEGACY_LOCKFILE_NAME: &str = "tech.lock";
+
+/// Resolves the manifest path in a given directory, prioritizing `webforge.toml`, then `techscript.toml`, with fallback to `tech.toml`.
+pub fn find_manifest_in(dir: &std::path::Path) -> Option<std::path::PathBuf> {
+    let webforge = dir.join(WEBFORGE_MANIFEST_FILE);
+    if webforge.exists() {
+        return Some(webforge);
+    }
+    let primary = dir.join(PRIMARY_MANIFEST_FILE);
+    if primary.exists() {
+        return Some(primary);
+    }
+    let legacy = dir.join(LEGACY_MANIFEST_FILE);
+    if legacy.exists() {
+        return Some(legacy);
+    }
+    None
+}
+
+/// Resolves or returns the default manifest path in a given directory (`webforge.toml` if none exists).
+pub fn manifest_path_in(dir: &std::path::Path) -> std::path::PathBuf {
+    find_manifest_in(dir).unwrap_or_else(|| dir.join(WEBFORGE_MANIFEST_FILE))
+}
+

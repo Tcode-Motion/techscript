@@ -359,7 +359,7 @@ mod tests {
         let mut archive = zip::ZipArchive::new(file).unwrap();
 
         let mut files_in_zip: Vec<String> = (0..archive.len())
-            .map(|i| archive.by_index(i).unwrap().name().to_string())
+            .map(|i| archive.by_index(i).unwrap().name().unwrap().to_string())
             .collect();
         files_in_zip.sort();
 

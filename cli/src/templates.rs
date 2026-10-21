@@ -17,17 +17,24 @@ pub enum ProjectTemplate {
     Package,        // Complete package layout with tech.toml + src/ + tests/
     Minimal,        // Bare minimum setup
     TestingProject, // Standard testing suite project
+    Website,        // Basic WebForge website
+    FullStack,      // Full-stack WebForge application with pages, server, scenes
+    Api,            // WebForge REST API service
+    Scene3D,        // WebForge 3D WebGL website
 }
 
 impl ProjectTemplate {
     pub fn parse(s: &str) -> Option<Self> {
         match s.to_lowercase().as_str() {
+            "website" | "webforge" | "site" | "web" => Some(Self::Website),
+            "fullstack" | "full-stack" | "app" => Some(Self::FullStack),
+            "api" | "rest_api" | "rest-api" | "restapi" => Some(Self::Api),
+            "3d" | "scene3d" | "scene-3d" | "webgl" => Some(Self::Scene3D),
             "console" => Some(Self::Console),
             "cli" => Some(Self::Cli),
             "library" | "lib" => Some(Self::Library),
             "workspace" | "ws" => Some(Self::Workspace),
-            "http_server" | "http-server" | "httpserver" | "web" => Some(Self::HttpServer),
-            "rest_api" | "rest-api" | "restapi" => Some(Self::RestApi),
+            "http_server" | "http-server" | "httpserver" => Some(Self::HttpServer),
             "desktop_app" | "desktop-app" | "desktop" | "gui" => Some(Self::DesktopApp),
             "game" => Some(Self::Game),
             "package" | "pkg" => Some(Self::Package),
@@ -44,7 +51,7 @@ impl ProjectTemplate {
 
         match self {
             Self::Console => {
-                let toml_path = dir.join("tech.toml");
+                let toml_path = dir.join("techscript.toml");
                 let toml_content = format!(
                     "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nentry = \"src/main.txs\"\n",
                     name
@@ -60,7 +67,7 @@ impl ProjectTemplate {
                 created_paths.push(main_path);
             }
             Self::Cli => {
-                let toml_path = dir.join("tech.toml");
+                let toml_path = dir.join("techscript.toml");
                 let toml_content = format!(
                     "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nentry = \"src/main.txs\"\ncapabilities = [\"Environment\", \"Process\"]\n",
                     name
@@ -76,7 +83,7 @@ impl ProjectTemplate {
                 created_paths.push(main_path);
             }
             Self::Library => {
-                let toml_path = dir.join("tech.toml");
+                let toml_path = dir.join("techscript.toml");
                 let toml_content = format!(
                     "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nentry = \"src/lib.txs\"\n",
                     name
@@ -92,7 +99,7 @@ impl ProjectTemplate {
                 created_paths.push(lib_path);
             }
             Self::Workspace => {
-                let toml_path = dir.join("tech.toml");
+                let toml_path = dir.join("techscript.toml");
                 let toml_content =
                     "[workspace]\nmembers = [\n    \"packages/core\",\n    \"packages/app\"\n]\n";
                 std::fs::write(&toml_path, toml_content)?;
@@ -117,7 +124,7 @@ impl ProjectTemplate {
                 created_paths.push(app_toml);
             }
             Self::HttpServer => {
-                let toml_path = dir.join("tech.toml");
+                let toml_path = dir.join("techscript.toml");
                 let toml_content = format!(
                     "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nentry = \"src/main.txs\"\ncapabilities = [\"Network\"]\n",
                     name
@@ -133,7 +140,7 @@ impl ProjectTemplate {
                 created_paths.push(main_path);
             }
             Self::RestApi => {
-                let toml_path = dir.join("tech.toml");
+                let toml_path = dir.join("techscript.toml");
                 let toml_content = format!(
                     "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nentry = \"src/main.txs\"\ncapabilities = [\"Network\"]\n",
                     name
@@ -149,7 +156,7 @@ impl ProjectTemplate {
                 created_paths.push(main_path);
             }
             Self::DesktopApp => {
-                let toml_path = dir.join("tech.toml");
+                let toml_path = dir.join("techscript.toml");
                 let toml_content = format!(
                     "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nentry = \"src/main.txs\"\ncapabilities = [\"FileSystem\"]\n",
                     name
@@ -165,7 +172,7 @@ impl ProjectTemplate {
                 created_paths.push(main_path);
             }
             Self::Game => {
-                let toml_path = dir.join("tech.toml");
+                let toml_path = dir.join("techscript.toml");
                 let toml_content = format!(
                     "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nentry = \"src/main.txs\"\n",
                     name
@@ -181,7 +188,7 @@ impl ProjectTemplate {
                 created_paths.push(main_path);
             }
             Self::Package => {
-                let toml_path = dir.join("tech.toml");
+                let toml_path = dir.join("techscript.toml");
                 let toml_content = format!(
                     "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nentry = \"src/main.txs\"\n\n[dependencies]\n",
                     name
@@ -204,7 +211,7 @@ impl ProjectTemplate {
                 created_paths.push(test_path);
             }
             Self::Minimal => {
-                let toml_path = dir.join("tech.toml");
+                let toml_path = dir.join("techscript.toml");
                 let toml_content = format!(
                     "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nentry = \"main.txs\"\n",
                     name
@@ -217,7 +224,7 @@ impl ProjectTemplate {
                 created_paths.push(main_path);
             }
             Self::TestingProject => {
-                let toml_path = dir.join("tech.toml");
+                let toml_path = dir.join("techscript.toml");
                 let toml_content = format!(
                     "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nentry = \"src/main.txs\"\n",
                     name
@@ -237,6 +244,167 @@ impl ProjectTemplate {
                 let test_content = "import std.testing;\n\nfunction test_assertions() {\n    std.testing.assert_eq(1 + 1, 2, \"1+1 equals 2\");\n}\n\ntest_assertions();\n";
                 std::fs::write(&test_path, test_content)?;
                 created_paths.push(test_path);
+            }
+            Self::Website => {
+                let toml_path = dir.join("webforge.toml");
+                let toml_content = format!(
+                    "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nentry = \"app.txs\"\ncapabilities = [\"Network\", \"FileSystem\"]\n",
+                    name
+                );
+                std::fs::write(&toml_path, toml_content)?;
+                created_paths.push(toml_path);
+
+                let app_path = dir.join("app.txs");
+                let app_content = format!(
+                    "site \"{}\"\n",
+                    name
+                );
+                std::fs::write(&app_path, app_content)?;
+                created_paths.push(app_path);
+
+                let pages_dir = dir.join("pages");
+                std::fs::create_dir_all(&pages_dir)?;
+
+                let home_path = pages_dir.join("home.txs");
+                let home_content = format!(
+                    "page Home \"/\":\n    title \"Welcome to {}\"\n    text \"Crafted with TechScript and WebForge.\"\n    button \"Get Started\" -> open About\n",
+                    name
+                );
+                std::fs::write(&home_path, home_content)?;
+                created_paths.push(home_path);
+
+                let about_path = pages_dir.join("about.txs");
+                let about_content = "page About \"/about\":\n    title \"About This Site\"\n    text \"TechScript + WebForge delivers beginner-friendly, concise web development.\"\n    button \"Back to Home\" -> open Home\n";
+                std::fs::write(&about_path, about_content)?;
+                created_paths.push(about_path);
+
+                let assets_dir = dir.join("assets");
+                std::fs::create_dir_all(assets_dir.join("images"))?;
+                std::fs::create_dir_all(assets_dir.join("models"))?;
+
+                let readme_path = dir.join("README.md");
+                let readme_content = format!(
+                    "# {}\n\nWebsite built with **TechScript + WebForge**.\n\n## Project Structure\n```text\n├── webforge.toml       # Project configuration\n├── app.txs             # Application entry\n├── pages/\n│   ├── home.txs        # Home page\n│   └── about.txs       # About page\n├── assets/\n│   ├── images/         # Images\n│   └── models/         # 3D models\n└── README.md\n```\n\n## Getting Started\n\nStart development server:\n```bash\nwebforge dev\n```\nVisit `http://localhost:3000` in your browser.\n\n## Production Build\n```bash\nwebforge build web --release\n```\n",
+                    name
+                );
+                std::fs::write(&readme_path, readme_content)?;
+                created_paths.push(readme_path);
+            }
+            Self::FullStack => {
+                let toml_path = dir.join("webforge.toml");
+                let toml_content = format!(
+                    "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nentry = \"app.txs\"\ncapabilities = [\"Network\", \"FileSystem\"]\n",
+                    name
+                );
+                std::fs::write(&toml_path, toml_content)?;
+                created_paths.push(toml_path);
+
+                let app_path = dir.join("app.txs");
+                let app_content = format!(
+                    "site \"{}\"\n",
+                    name
+                );
+                std::fs::write(&app_path, app_content)?;
+                created_paths.push(app_path);
+
+                let pages_dir = dir.join("pages");
+                let server_dir = dir.join("server");
+                let scenes_dir = dir.join("scenes");
+                let assets_dir = dir.join("assets");
+                let tests_dir = dir.join("tests");
+
+                std::fs::create_dir_all(&pages_dir)?;
+                std::fs::create_dir_all(&server_dir)?;
+                std::fs::create_dir_all(&scenes_dir)?;
+                std::fs::create_dir_all(assets_dir.join("images"))?;
+                std::fs::create_dir_all(assets_dir.join("models"))?;
+                std::fs::create_dir_all(&tests_dir)?;
+
+                // 1. Home Page (.txs)
+                let page_path = pages_dir.join("home.txs");
+                let page_content = format!(
+                    "page Home \"/\":\n    title \"Welcome to {}\"\n    text \"Modular full-stack architecture built with TechScript + WebForge\"\n    input \"Add an item\" called ItemInput\n    button \"Save Item\" called SaveBtn\n\nwhen SaveBtn is clicked:\n    send ItemInput to /api/items\n    show message \"Item successfully added!\"\n",
+                    name
+                );
+                std::fs::write(&page_path, page_content)?;
+                created_paths.push(page_path);
+
+                // 2. Server Endpoints & Database (.txs)
+                let srv_path = server_dir.join("api.txs");
+                let srv_content = "data AppData:\n    table items:\n        title is text\n        content is text\n";
+                std::fs::write(&srv_path, srv_content)?;
+                created_paths.push(srv_path);
+
+                // 3. 3D Scene Viewport (.txs)
+                let scene_path = scenes_dir.join("world.txs");
+                let scene_content = "scene World:\n    camera\n    light\n    cube Box:\n        color \"#6366F1\"\n        position (0, 0, 0)\n        size 2\n        rotate auto\n";
+                std::fs::write(&scene_path, scene_content)?;
+                created_paths.push(scene_path);
+
+                // 4. Test suite (.txs)
+                let test_path = tests_dir.join("app_test.txs");
+                let test_content = "import std.testing;\n\nfunction test_app_loads() {\n    std.testing.assert_eq(1 + 1, 2, \"app test initializes\");\n}\n\ntest_app_loads();\n";
+                std::fs::write(&test_path, test_content)?;
+                created_paths.push(test_path);
+
+                // 5. README
+                let readme_path = dir.join("README.md");
+                let readme_content = format!(
+                    "# {}\n\nFull-stack application built with **TechScript + WebForge**.\n\n## Project Structure\n```text\n├── webforge.toml       # Canonical WebForge configuration\n├── app.txs             # Application entry\n├── pages/\n│   └── home.txs        # Interactive UI pages\n├── server/\n│   └── api.txs         # Backend APIs & SQLite tables\n├── scenes/\n│   └── world.txs       # Three.js 3D WebGL viewport\n├── assets/             # Static assets and 3D models\n└── tests/\n    └── app_test.txs    # Integration tests\n```\n\n## Getting Started\n\n```bash\n# Start development server\nwebforge dev\n\n# Inspect application routes\nwebforge routes\n\n# Compile production bundle into dist/\nwebforge build web --release\n```\n",
+                    name
+                );
+                std::fs::write(&readme_path, readme_content)?;
+                created_paths.push(readme_path);
+            }
+            Self::Api => {
+                let toml_path = dir.join("webforge.toml");
+                let toml_content = format!(
+                    "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nentry = \"app.txs\"\ncapabilities = [\"Network\", \"FileSystem\"]\n",
+                    name
+                );
+                std::fs::write(&toml_path, toml_content)?;
+                created_paths.push(toml_path);
+
+                let app_path = dir.join("app.txs");
+                let app_content = format!(
+                    "site \"{}\"\n\ndata Records:\n    table items:\n        title is text\n        content is text\n",
+                    name
+                );
+                std::fs::write(&app_path, app_content)?;
+                created_paths.push(app_path);
+
+                let readme_path = dir.join("README.md");
+                let readme_content = format!(
+                    "# {}\n\nREST API service built with **TechScript + WebForge**.\n\n## Getting Started\n\nRun server:\n```bash\nwebforge dev\n```\n\n## Endpoints\n- `GET  /api/items` - Fetch rows from SQLite\n- `POST /api/items` - Insert row into SQLite\n",
+                    name
+                );
+                std::fs::write(&readme_path, readme_content)?;
+                created_paths.push(readme_path);
+            }
+            Self::Scene3D => {
+                let toml_path = dir.join("webforge.toml");
+                let toml_content = format!(
+                    "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nentry = \"app.txs\"\ncapabilities = [\"Network\"]\n",
+                    name
+                );
+                std::fs::write(&toml_path, toml_content)?;
+                created_paths.push(toml_path);
+
+                let app_path = dir.join("app.txs");
+                let app_content = format!(
+                    "site \"{}\"\n\npage Home \"/\":\n    title \"Interactive 3D Experience\"\n    text \"Powered by TechScript + WebForge & Three.js WebGL Engine\"\n\nscene Showcase:\n    camera\n    light\n    cube Box:\n        color \"#06B6D4\"\n        rotate auto\n",
+                    name
+                );
+                std::fs::write(&app_path, app_content)?;
+                created_paths.push(app_path);
+
+                let readme_path = dir.join("README.md");
+                let readme_content = format!(
+                    "# {}\n\n3D WebGL website built with **TechScript + WebForge**.\n\n## Getting Started\n\nRun development server:\n```bash\nwebforge dev\n```\nVisit `http://localhost:3000` to interact with the 3D scene canvas.\n",
+                    name
+                );
+                std::fs::write(&readme_path, readme_content)?;
+                created_paths.push(readme_path);
             }
         }
 

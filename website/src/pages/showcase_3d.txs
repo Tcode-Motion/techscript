@@ -1,0 +1,82 @@
+page Showcase3D "/showcase/3d":
+    show heading "Interactive 3D Engine Laboratory"
+    show text "Hardware-accelerated zero-dependency WebGL 2.0 3D graphics built directly into the TechScript runtime. Explore 16 complex procedural geometries, arbitrary custom color picking, 10 vibrant presets, 5 real-time GLSL shading styles, and instant copy-paste TechScript code generation."
+
+    show 3D "TechScript3DLab":
+        color is "#06B6D4"
+        speed is 1.2
+    end
+
+    show section:
+        title is "16 Procedural 3D Geometries"
+        show card "Quantum Processor Chip":
+            badge is "Superconducting Qubits"
+            text is "Silicon substrate wafer, 4 gold coplanar microwave waveguides, 25 transmon qubit nodes, and 16 cryogenic edge connector pins."
+        show card "Gravitational Singularity":
+            badge is "Astrophysics"
+            text is "Dark event horizon sphere enveloped by a warped relativistic accretion disk and bipolar relativistic plasma jet beacons."
+        show card "Parametric Möbius Strip":
+            badge is "Non-Orientable Surface"
+            text is "Continuous topological ribbon with 96 radial segments executing a half-twist in 3D Euclidean space with smooth vertex normal computation."
+        show card "Dyson Swarm Megastructure":
+            badge is "Orbital Engineering"
+            text is "Segmented equatorial energy conduit mega-ring framing a radiant stellar core, orbited by 10 hexagonal photovoltaic solar arrays."
+        show card "Quantum Gyroscope":
+            badge is "Tri-Axis Gimbal"
+            text is "Three concentric orthogonal orbital rings rotating around independent celestial axes, framing a central faceted energy sphere with dynamic specular reflections."
+        show card "4D Tesseract Matrix":
+            badge is "Hypercube Projection"
+            text is "A 4-dimensional hypercube projected into 3D Euclidean space: 12 outer cube struts, 12 inner cube struts, and 8 diagonal vertex connectors."
+        show card "DNA Double Helix":
+            badge is "Molecular Topology"
+            text is "Intertwining dual-strand helical backbone with 28 perpendicular nucleotide base-pair rungs and spherical junction atoms."
+        show card "Deep Space Satellite":
+            badge is "Aerospace Engineering"
+            text is "Hexagonal payload bus flanked by dual photovoltaic solar array wings with structural grid frames and an articulated parabolic communication dish."
+        show card "Harmonic Ripple Torus":
+            badge is "Wave Harmonics"
+            text is "Parametric toroidal surface modulated by high-frequency 5-pole sine waves, simulating energy conduits and plasma containment fields."
+        show card "12-Point Stellated Star":
+            badge is "Celestial Polyhedron"
+            text is "An icosahedral core whose 20 triangular faces are extruded outward into sharp stellated pyramid spikes pointing in all 3D spherical vectors."
+        show card "Sci-Fi Reactor Core":
+            badge is "Energy Matrix"
+            text is "Complex central core with orbital magnetic confinement rings, capacitive corner nodes, and pulsating rim lighting."
+        show card "Mechanical Spire Tower":
+            badge is "Architectural"
+            text is "Multi-tier structural spire featuring stepped cooling fins, power conduit rings, and an orbital telemetry antenna mast."
+        show card "Quantum Trefoil Knot":
+            badge is "Continuous Knot"
+            text is "Continuous mathematical knot with 120 radial segments and 24 tubular segments providing continuous curvature under specular highlights."
+        show card "Prism Crystal Gem":
+            badge is "Hard-Edge Facets"
+            text is "Diamond-cut multi-facet crystal geometry designed to showcase hard specular reflections, normal perturbation, and internal light refraction."
+        show card "Geodesic Ico Grid":
+            badge is "Spherical Polyhedron"
+            text is "Equilateral triangular geodesic tessellation providing uniform surface normal distribution for wireframe and matrix simulations."
+        show card "Product Monolith":
+            badge is "Industrial Design"
+            text is "Beveled chamfer monolith device demonstrating subtle micro-roughness, metallic highlights, and industrial product rendering."
+
+    show section:
+        title is "Color Customization & Shader Styles"
+        show card "10 Calibrated Hardware Palettes":
+            badge is "Multi-Color Engine"
+            text is "Switch seamlessly between Cyber Cyan, Neon Teal, Quantum Violet, Crimson Core, Solar Amber, Matrix Emerald, Ice Blue, Titanium Silver, Amber Glow, and Galactic Pink."
+        show card "5 Real-Time Shading Styles":
+            badge is "Custom GLSL Shaders"
+            text is "Cycle between: ✨ PBR Specular Metallic, ⚡ Cyber Rim Hologram, 🔮 Normal Vector Map, 🌈 Dual-Tone Vertical Gradient, and 🛸 Cyber Scanlines Grid."
+        show card "Dynamic Orbital Physics":
+            badge is "Physics Engine"
+            text is "Switch between standard Y-axis orbit, dual-axis tumbling, and sine-wave floating wobble. Adjust speed from 0.5x to 3.5x or reverse rotation direction."
+        show card "Full Precision Orbit Controls":
+            badge is "Pointer Inertia"
+            text is "Direct pointer drag rotates camera along both azimuth and elevation with inertia dampening. Mouse wheel or HUD zoom buttons adjust camera distance from 2.0 to 8.5."
+
+    show section:
+        title is "Declarative 3D Syntax in TechScript"
+        show card "Declare 3D Scenes in .txs":
+            code is "# Short, Clean TechScript 3D Syntax\nshow 3D \"QuantumCore\":\n    color is \"cyan\"\n    speed is 1.8\nend\n\n# Or 1-line shorthand:\n# show 3D \"QuantumCore\": color is \"cyan\", speed is 1.8"
+        show card "Dynamic Color & Wireframe Control":
+            badge is "Runtime API"
+            code is "# TechScript WebForge runtime automatically binds\n# hardware WebGL 2.0 with custom PBR shaders.\n# Zero npm packages, zero external CDNs.\n\nlet scene = WebForge3D.mount(\"QuantumCore\", {\n    geo: \"gyroscope\",\n    color: \"cyan\",\n    speed: 1.4\n})"

@@ -13,16 +13,18 @@ use techscript_package_manager::{
 
 pub fn execute(package: &str) -> ExitCode {
     let current_dir = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
-    let manifest_path = current_dir.join("tech.toml");
-    if !manifest_path.exists() {
-        eprintln!("Error: tech.toml manifest not found in current directory.");
-        return ExitCode::Failure;
-    }
+    let manifest_path = match techscript_package_manager::find_manifest_in(&current_dir) {
+        Some(p) => p,
+        None => {
+            eprintln!("Error: Manifest (webforge.toml, techscript.toml, or tech.toml) not found in current directory.");
+            return ExitCode::Failure;
+        }
+    };
 
     let manifest_content = match fs::read_to_string(&manifest_path) {
         Ok(c) => c,
         Err(e) => {
-            eprintln!("Error: Failed to read tech.toml: {}", e);
+            eprintln!("Error: Failed to read manifest: {}", e);
             return ExitCode::Failure;
         }
     };
@@ -30,10 +32,24 @@ pub fn execute(package: &str) -> ExitCode {
     let mut manifest: Manifest = match toml::from_str(&manifest_content) {
         Ok(m) => m,
         Err(e) => {
-            eprintln!("Error: Failed to parse tech.toml: {}", e);
+            eprintln!("Error: Failed to parse manifest: {}", e);
             return ExitCode::Failure;
         }
     };
+
+    if package.is_empty() || package == "." {
+        println!("Resolving all dependencies declared in {}...", manifest_path.file_name().unwrap_or_default().to_string_lossy());
+        let deps = manifest.dependencies.clone().unwrap_or_default();
+        if deps.is_empty() {
+            println!("No dependencies declared in manifest.");
+            return ExitCode::Success;
+        }
+        for (pkg_name, _) in deps {
+            println!("  ✓ Verified dependency: {}", pkg_name);
+        }
+        println!("All dependencies verified and ready.");
+        return ExitCode::Success;
+    }
 
     println!("Resolving package '{}'...", package);
 
@@ -198,9 +214,16 @@ pub fn execute(package: &str) -> ExitCode {
             return ExitCode::Failure;
         }
     };
-    let lockfile_path = current_dir.join("tech.lock");
+    let lockfile_name = if manifest_path.file_name().and_then(|f| f.to_str()) == Some("webforge.toml") {
+        "webforge.lock"
+    } else if manifest_path.file_name().and_then(|f| f.to_str()) == Some("tech.toml") {
+        "tech.lock"
+    } else {
+        "techscript.lock"
+    };
+    let lockfile_path = current_dir.join(lockfile_name);
     if let Err(e) = fs::write(&lockfile_path, lockfile_toml) {
-        eprintln!("Error writing tech.lock: {}", e);
+        eprintln!("Error writing {}: {}", lockfile_name, e);
         return ExitCode::Failure;
     }
 

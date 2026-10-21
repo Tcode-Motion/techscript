@@ -1,0 +1,25 @@
+page RoutingGuide "/docs/routing":
+    show heading "WebForge Routing & Navigation"
+    show text "Learn how WebForge provides seamless single-page application (SPA) routing with real browser URLs and static export."
+
+    show section:
+        title is "Canonical URL Architecture"
+        show card "Direct Route Navigation":
+            badge is "History API"
+            text is "WebForge uses HTML5 window.history.pushState to provide clean URLs like /framework, /showcase/3d, and /docs/syntax without hashbangs."
+            code is "page Framework \"/framework\":\n    title is \"WebForge Framework Architecture\""
+        show card "Static Route Export":
+            badge is "Static Hosting"
+            text is "During 'webforge build web --release', WebForge generates dedicated index.html files inside each route directory (e.g. dist/framework/index.html) so deep links and refreshes work on GitHub Pages, Cloudflare, S3, or Nginx."
+            code is "$ webforge build web\nEmitting static routes:\n  dist/index.html\n  dist/language/index.html\n  dist/framework/index.html\n  dist/showcase/3d/index.html\n  dist/404.html"
+
+    show section:
+        title is "Breadcrumbs & Navigation Helpers"
+        show card "Automatic Breadcrumbs":
+            badge is "Deep Links"
+            text is "Nested routes automatically display breadcrumb navigation (e.g., Home / Docs / Syntax) with clickable history links."
+            code is "// Nested route automatically renders breadcrumb navigation\npage ApiGuide \"/docs/api\":\n    show heading \"Backend API Reference\""
+        show card "Button Route Triggers":
+            badge is "Actions"
+            text is "Buttons can trigger declarative route transitions using the 'open <route>' action keyword."
+            code is "button \"Go to 3D Lab\":\n    action is \"open /showcase/3d\""

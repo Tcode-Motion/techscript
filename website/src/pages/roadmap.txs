@@ -1,0 +1,29 @@
+page Roadmap "/roadmap":
+    show heading "Product Roadmap & Ecosystem Status"
+    show text "Transparent tracking of completed capabilities, active developments, and future framework milestones."
+
+    show timeline "TechScriptMilestones":
+        show step "Compiler & Language Pipeline":
+            date is "v2.0 • Shipped"
+            badge is "Completed"
+            status is "completed"
+            icon is "✓"
+            text is "Lexer, recursive-descent parser, AST lowering, canonical .txs extension, and static typing with type inference."
+        show step "WebForge Fullstack & 3D Studio":
+            date is "v2.2 • Live Now"
+            badge is "Active"
+            status is "active"
+            icon is "⚡"
+            text is "Multi-page client SPA router, embedded SQLite database, procedural 3D modeling, CSG boolean engine, and live code synchronization."
+        show step "Language Server Protocol (LSP)":
+            date is "v2.5 • Development"
+            badge is "In Progress"
+            status is "active"
+            icon is "⚙️"
+            text is "Full LSP implementation with autocompletion, hover docs, go-to-definition, and inline diagnostics for IDEs."
+        show step "WebAssembly Native Target & Cloud Registry":
+            date is "v3.0 • Future"
+            badge is "Planned"
+            status is "upcoming"
+            icon is "🌐"
+            text is "Compile TechScript directly to Wasm bytecode, one-click edge deployment adapters, and official package registry."

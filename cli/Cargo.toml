@@ -4,10 +4,23 @@ version = "2.0.0"
 license = "Apache-2.0"
 edition = "2021"
 description = "TechScript 2.0 compiler driver — the official tsc executable"
+default-run = "webforge"
+
+[[bin]]
+name = "webforge"
+path = "src/bin/webforge.rs"
+
+[[bin]]
+name = "techscript"
+path = "src/bin/techscript.rs"
 
 [[bin]]
 name = "tsc"
-path = "src/main.rs"
+path = "src/bin/tsc.rs"
+
+[[bin]]
+name = "tech"
+path = "src/bin/tech.rs"
 
 [dependencies]
 techscript_common = { path = "../compiler/common" }
@@ -38,11 +51,12 @@ anyhow = { workspace = true }
 rustyline = { workspace = true }
 toml = { workspace = true }
 indexmap = { workspace = true }
-bincode = "3.0.0"
+bincode = "1.3.3"
 dirs = "7.0"
 num_cpus = "1.15"
-ureq = "3.4"
+ureq = "2.10"
 rayon = "1.12.0"
+rusqlite = { version = "0.40", features = ["bundled"] }
 
 [build-dependencies]
 winres = "0.1.12"

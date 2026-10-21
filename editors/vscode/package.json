@@ -275,7 +275,7 @@
     "snippets"
   ],
   "license": "Apache-2.0",
-  "homepage": "https://techscript.is-a.dev",
+  "homepage": "https://is-a.dev/techscript/",
   "repository": {
     "type": "git",
     "url": "https://github.com/Tcode-Motion/techscript"
@@ -287,7 +287,7 @@
   "main": "./extension.js",
   "name": "techscript",
   "publisher": "Tcode-Motion",
-  "version": "2.0.3",
+  "version": "2.0.0",
   "activationEvents": [
     "onLanguage:techscript"
   ],

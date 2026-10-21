@@ -9,16 +9,18 @@ use techscript_package_manager::{Lockfile, Manifest};
 
 pub fn execute(package: &str) -> ExitCode {
     let current_dir = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
-    let manifest_path = current_dir.join("tech.toml");
-    if !manifest_path.exists() {
-        eprintln!("Error: tech.toml manifest not found in current directory.");
-        return ExitCode::Failure;
-    }
+    let manifest_path = match techscript_package_manager::find_manifest_in(&current_dir) {
+        Some(p) => p,
+        None => {
+            eprintln!("Error: Manifest (webforge.toml, techscript.toml, or tech.toml) not found in current directory.");
+            return ExitCode::Failure;
+        }
+    };
 
     let manifest_content = match fs::read_to_string(&manifest_path) {
         Ok(c) => c,
         Err(e) => {
-            eprintln!("Error: Failed to read tech.toml: {}", e);
+            eprintln!("Error: Failed to read manifest: {}", e);
             return ExitCode::Failure;
         }
     };
@@ -26,7 +28,7 @@ pub fn execute(package: &str) -> ExitCode {
     let mut manifest: Manifest = match toml::from_str(&manifest_content) {
         Ok(m) => m,
         Err(e) => {
-            eprintln!("Error: Failed to parse tech.toml: {}", e);
+            eprintln!("Error: Failed to parse manifest: {}", e);
             return ExitCode::Failure;
         }
     };
@@ -42,7 +44,7 @@ pub fn execute(package: &str) -> ExitCode {
     }
     manifest.dependencies = Some(deps);
 
-    // Save updated tech.toml
+    // Save updated manifest
     let updated_toml = match toml::to_string(&manifest) {
         Ok(s) => s,
         Err(e) => {
@@ -51,7 +53,7 @@ pub fn execute(package: &str) -> ExitCode {
         }
     };
     if let Err(e) = fs::write(&manifest_path, updated_toml) {
-        eprintln!("Error writing tech.toml: {}", e);
+        eprintln!("Error writing manifest: {}", e);
         return ExitCode::Failure;
     }
 
@@ -61,8 +63,15 @@ pub fn execute(package: &str) -> ExitCode {
         fs::remove_dir_all(package_dir).ok();
     }
 
-    // Update tech.lock
-    let lockfile_path = current_dir.join("tech.lock");
+    // Update lockfile
+    let lockfile_name = if manifest_path.file_name().and_then(|f| f.to_str()) == Some("webforge.toml") {
+        "webforge.lock"
+    } else if manifest_path.file_name().and_then(|f| f.to_str()) == Some("tech.toml") {
+        "tech.lock"
+    } else {
+        "techscript.lock"
+    };
+    let lockfile_path = current_dir.join(lockfile_name);
     if lockfile_path.exists() {
         if let Ok(lockfile_content) = fs::read_to_string(&lockfile_path) {
             if let Ok(mut lockfile) = toml::from_str::<Lockfile>(&lockfile_content) {

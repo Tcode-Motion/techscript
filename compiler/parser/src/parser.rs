@@ -50,6 +50,48 @@ impl<'a> Parser<'a> {
         s.insert("main".to_string());
         s.insert("aside".to_string());
         s.insert("start".to_string());
+        // WebForge additions
+        s.insert("heading".to_string());
+        s.insert("text".to_string());
+        s.insert("scene".to_string());
+        s.insert("scene3d".to_string());
+        s.insert("model3d".to_string());
+        s.insert("model3D".to_string());
+        s.insert("show".to_string());
+        s.insert("make".to_string());
+        s.insert("model".to_string());
+        s.insert("part".to_string());
+        s.insert("box".to_string());
+        s.insert("cylinder".to_string());
+        s.insert("sphere".to_string());
+        s.insert("cone".to_string());
+        s.insert("roof".to_string());
+        s.insert("wall".to_string());
+        s.insert("door".to_string());
+        s.insert("chimney".to_string());
+        s.insert("cut".to_string());
+        s.insert("boolean".to_string());
+        s.insert("outline".to_string());
+        s.insert("extrude".to_string());
+        s.insert("bevel".to_string());
+        s.insert("cube".to_string());
+        s.insert("database".to_string());
+        s.insert("table".to_string());
+        s.insert("site".to_string());
+        s.insert("component".to_string());
+        s.insert("data".to_string());
+        s.insert("api".to_string());
+        s.insert("edit".to_string());
+        // Rich Web Components
+        s.insert("timeline".to_string());
+        s.insert("step".to_string());
+        s.insert("milestone".to_string());
+        s.insert("accordion".to_string());
+        s.insert("tabs".to_string());
+        s.insert("tab".to_string());
+        s.insert("stats".to_string());
+        s.insert("stat".to_string());
+        s.insert("alert".to_string());
         // Canvas module blocks
         s.insert("logo".to_string());
         s.insert("rings".to_string());
@@ -75,6 +117,11 @@ impl<'a> Parser<'a> {
     fn init_dsl_sub_blocks() -> HashSet<String> {
         let mut s = HashSet::new();
         s.insert("website".to_string());
+        s.insert("site".to_string());
+        s.insert("component".to_string());
+        s.insert("data".to_string());
+        s.insert("api".to_string());
+        s.insert("edit".to_string());
         s.insert("page".to_string());
         s.insert("hero".to_string());
         s.insert("section".to_string());
@@ -88,9 +135,39 @@ impl<'a> Parser<'a> {
         s.insert("header".to_string());
         s.insert("main".to_string());
         s.insert("aside".to_string());
+        s.insert("scene".to_string());
+        s.insert("scene3d".to_string());
+        s.insert("model3d".to_string());
+        s.insert("model3D".to_string());
+        s.insert("cube".to_string());
+        s.insert("database".to_string());
+        s.insert("table".to_string());
         s.insert("window".to_string());
         s.insert("dialog".to_string());
         s.insert("menu".to_string());
+        // Rich Web Components sub-blocks
+        s.insert("timeline".to_string());
+        s.insert("step".to_string());
+        s.insert("milestone".to_string());
+        s.insert("accordion".to_string());
+        s.insert("tabs".to_string());
+        s.insert("tab".to_string());
+        s.insert("stats".to_string());
+        s.insert("stat".to_string());
+        s.insert("alert".to_string());
+        // Custom 3D modeling sub-blocks
+        s.insert("make".to_string());
+        s.insert("part".to_string());
+        s.insert("box".to_string());
+        s.insert("cylinder".to_string());
+        s.insert("sphere".to_string());
+        s.insert("cone".to_string());
+        s.insert("roof".to_string());
+        s.insert("wall".to_string());
+        s.insert("door".to_string());
+        s.insert("chimney".to_string());
+        s.insert("cut".to_string());
+        s.insert("boolean".to_string());
         s
     }
 

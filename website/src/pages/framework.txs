@@ -1,0 +1,42 @@
+page Framework "/framework":
+    show heading "WebForge Framework Architecture"
+    show text "A cohesive full-stack web framework engineered for maximum developer clarity, native performance, and built-in security."
+
+    show section:
+        title is "The 10 Architectural Pillars"
+        show card "1. Core Engine":
+            badge is "Rust 2021"
+            text is "Unified application lifecycle, strict capability sandbox, memory safety, and high-performance AST lowering."
+        show card "2. Declarative UI":
+            badge is "Zero-JS Virtual DOM"
+            text is "Semantic HTML5, accessible ARIA controls, dark-first color tokens, and smooth hardware transitions."
+        show card "3. Universal Router":
+            badge is "Client & Server"
+            text is "Browser history pushState, deep link preservation, and static multi-directory index.html emission."
+        show card "4. HTTP Server Engine":
+            badge is "Tiny-HTTP"
+            text is "Embedded, multi-threaded HTTP server handling static asset streaming, CORS preflights, and security headers."
+        show card "5. REST API Layer":
+            badge is "JSON Protocol"
+            text is "Declarative REST endpoints with automated input validation, structured errors, and health metadata."
+            button "Inspect Health API":
+                action is "open /api/health"
+        show card "6. Embedded SQLite":
+            badge is "Zero-Config DB"
+            text is "Embedded SQLite database (webforge.db) with parameterized queries, WAL mode, and automated migrations."
+            button "Try SQLite Demo":
+                action is "open /examples/fullstack"
+        show card "7. 3D WebGL Canvas":
+            badge is "Three.js Acceleration"
+            text is "Declarative 3D scene graphs, OrbitControls, PBR materials, and real-time shader parameters."
+            button "Launch 3D Lab":
+                action is "open /showcase/3d"
+        show card "8. Production Compiler":
+            badge is "Optimized Output"
+            text is "Compiles TechScript source into minified standalone dist/ artifacts ready for any CDN or web server."
+        show card "9. CLI Developer Tooling":
+            badge is "webforge CLI"
+            text is "Comprehensive command-line toolchain for scaffolding, live development servers, testing, and audits."
+        show card "10. Package Ecosystem":
+            badge is "SHA-256 Verified"
+            text is "Deterministic dependency resolution, lockfile checksum verification, and clean package manifests."

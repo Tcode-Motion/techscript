@@ -1,0 +1,41 @@
+page Download "/download":
+    show heading "Download & Install TechScript"
+    show text "Install the official TechScript compiler and WebForge web framework on Windows, macOS, or Linux."
+
+    show section:
+        title is "Quick Installation"
+        show card "Build from Source via Cargo":
+            badge is "Recommended"
+            text is "Install the latest version of the tech, tsc, and webforge CLIs directly with Cargo:"
+            code is "$ git clone https://github.com/Tcode-Motion/techscript.git\n$ cd techscript\n$ cargo install --path cli\n$ webforge --version"
+        show card "Precompiled Binary Releases":
+            badge is "GitHub Releases"
+            text is "Download standalone executables and Windows installer packages (.msi, .exe, zip) directly from GitHub:"
+            link:
+                label is "Download Latest Release (v2.0.0)"
+                url is "https://github.com/Tcode-Motion/techscript/releases"
+        show card "Python Package Manager (PyPI)":
+            badge is "Cross-Platform Wheel"
+            text is "Install the official TechScript launcher and compiler through Python pip:"
+            code is "$ pip install techscript\n$ techscript --version"
+            link:
+                label is "View techscript on PyPI"
+                url is "https://pypi.org/project/techscript/"
+
+    show section:
+        title is "Platform Support & Tooling"
+        show card "Supported Operating Systems":
+            badge is "Cross-Platform"
+            text is "• Windows 10/11 (x64) with native terminal integration\n• macOS 12+ (Apple Silicon M-series & Intel x64)\n• Linux (Ubuntu 20.04+, Debian 11+, Fedora 36+, Arch)"
+        show card "VS Code Language Extension":
+            badge is "IDE Extension"
+            text is "Syntax highlighting, semantic diagnostics, code formatting, and snippets for .txs files."
+            link:
+                label is "Install VS Code Extension"
+                url is "https://github.com/Tcode-Motion/techscript/tree/main/editors/vscode"
+        show card "Official Branding & Logo Package":
+            badge is "Design Assets"
+            text is "Download high-resolution vector logos, PNG icons (16px to 1024px), Windows ICOs, and branding guidelines."
+            link:
+                label is "Browse Logo Package on GitHub"
+                url is "https://github.com/Tcode-Motion/techscript/tree/main/assets/branding"

@@ -28,11 +28,8 @@ pub fn execute(path_str: Option<&str>) -> ExitCode {
                         if name != "build" && name != ".git" && name != "target" {
                             dirs.push(path);
                         }
-                    } else {
-                        let ext = path.extension().unwrap_or_default().to_string_lossy();
-                        if ext == "txs" || ext == "ts" {
-                            files_to_format.push(path);
-                        }
+                    } else if techscript_common::is_supported_source_file(&path) {
+                        files_to_format.push(path);
                     }
                 }
             }

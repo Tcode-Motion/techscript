@@ -51,10 +51,15 @@ pub use span::Span;
 // Source management
 pub use source::{FileId, Position, SourceFile, SourceManager};
 
-// File validation
+// File validation & extension registry
 pub use file_ext::{
-    is_techscript_file, validate_extension, CommonError, TECHSCRIPT_DOT_EXTENSION,
-    TECHSCRIPT_EXTENSION,
+    is_supported_source_file, is_techscript_file, resolve_source_module, validate_extension,
+    validate_source_file, CommonError, ExtensionStability, SourceFileDescriptor,
+    SourceResolutionError, SourceRole, TechScriptExtension, ANDROID_DOT_EXTENSION,
+    ANDROID_EXTENSION, GRAPHICS_ALT_DOT_EXTENSION, GRAPHICS_ALT_EXTENSION,
+    LEGACY_TECH_DOT_EXTENSION, LEGACY_TECH_EXTENSION, SCENE3D_DOT_EXTENSION, SCENE3D_EXTENSION,
+    SERVER_DOT_EXTENSION, SERVER_EXTENSION, TECHSCRIPT_DOT_EXTENSION, TECHSCRIPT_EXTENSION,
+    WEB_DOT_EXTENSION, WEB_EXTENSION,
 };
 
 // Constants

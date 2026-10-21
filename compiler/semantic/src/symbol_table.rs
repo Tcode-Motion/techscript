@@ -129,6 +129,17 @@ impl SymbolTable {
         add("println");
         add("get");
         add("set");
+        add("web_api_send");
+        add("web_api_fetch");
+        add("web_render_html");
+        add("web_start_server");
+        add("web_start_website");
+        add("clicked");
+        add("submitted");
+        add("changed");
+        add("hovered");
+        add("focused");
+        add("loaded");
 
         // ── Math functions re-exported at global scope ───────────────────────
         add("sqrt");

@@ -1,0 +1,29 @@
+page FullstackDemo "/examples/fullstack":
+    show heading "Full-Stack SQLite Demonstration"
+    show text "This page demonstrates genuine full-stack integration: client-side interaction, real HTTP API requests to /api/health and /api/examples, and persistent storage in SQLite."
+
+    show section:
+        title is "Live System Backend Integration"
+        show card "System Health Check (/api/health)":
+            badge is "REST API"
+            text is "Verify the running server status, compiler version, and SQLite integration."
+            button "Query /api/health":
+                action is "open /api/health"
+        show card "Example Data Catalog (/api/examples)":
+            badge is "JSON Endpoint"
+            text is "Fetch structured example records directly from the WebForge backend API."
+            button "Query /api/examples":
+                action is "open /api/examples"
+
+    show section:
+        title is "Interactive SQLite Record Persistence"
+        show card "Create a Record":
+            badge is "SQLite INSERT"
+            text is "Submit note or task data. The backend persists it to webforge.db using parameterized queries:"
+            show input "Enter note content..." called noteInput
+            button "Save to Database":
+                action is "noteInput.save"
+        show card "Database Architecture":
+            badge is "Zero-Config"
+            text is "Database files are automatically created as webforge.db with WAL mode enabled. In production builds, the SQLite file is bundled in dist/."
+            code is "database SiteData:\n    table notes:\n        column title as text\n        column content as text"

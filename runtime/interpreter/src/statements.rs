@@ -68,6 +68,18 @@ impl Interpreter {
     }
 
     fn execute_if_stmt(&mut self, if_stmt: &techscript_ast::IfStmt) -> ExecResult {
+        if let techscript_ast::Expression::Binary(ref bin) = if_stmt.condition {
+            if bin.op == "is" {
+                if let (techscript_ast::Expression::Identifier(ref left_id), techscript_ast::Expression::Identifier(ref right_id)) = (&*bin.left, &*bin.right) {
+                    let ev = right_id.name.as_str();
+                    if ev == "clicked" || ev == "click" || ev == "submitted" || ev == "submit" || ev == "changed" || ev == "change" {
+                        self.register_webforge_event_handler(&left_id.name, ev, &if_stmt.body)?;
+                        return Ok(FlowSignal::Normal);
+                    }
+                }
+            }
+        }
+
         let cond_val = self.visit_expression(&if_stmt.condition)?;
         if cond_val.is_truthy() {
             return self.execute_block(&if_stmt.body);
@@ -82,6 +94,140 @@ impl Interpreter {
             return self.execute_block(else_body);
         }
         Ok(FlowSignal::Normal)
+    }
+
+    fn register_webforge_event_handler(
+        &mut self,
+        target: &str,
+        event: &str,
+        body: &Block,
+    ) -> Result<(), RuntimeError> {
+        let mut handlers = Vec::new();
+        for stmt in &body.statements {
+            match stmt {
+                Statement::Say(say_stmt) => {
+                    let msg = match &say_stmt.value {
+                        techscript_ast::Expression::Literal(lit) => match &lit.value {
+                            techscript_ast::LiteralVal::Str(s) => s.clone(),
+                            other => format!("{:?}", other),
+                        },
+                        _ => "Notification".to_string(),
+                    };
+                    handlers.push(DslBlockValue {
+                        kind: "event_handler".to_string(),
+                        args: vec![RuntimeValue::Str(target.to_string())],
+                        properties: vec![
+                            DslProperty {
+                                name: "target".to_string(),
+                                value: Some(RuntimeValue::Str(target.to_string())),
+                            },
+                            DslProperty {
+                                name: "event".to_string(),
+                                value: Some(RuntimeValue::Str(event.to_string())),
+                            },
+                            DslProperty {
+                                name: "action".to_string(),
+                                value: Some(RuntimeValue::Str("message".to_string())),
+                            },
+                            DslProperty {
+                                name: "arg1".to_string(),
+                                value: Some(RuntimeValue::Str(msg)),
+                            },
+                        ],
+                        children: vec![],
+                    });
+                }
+                Statement::Expression(expr_stmt) => {
+                    if let techscript_ast::Expression::Call(call) = &expr_stmt.expression {
+                        let func_name = match &*call.callee {
+                            techscript_ast::Expression::Identifier(id) => id.name.clone(),
+                            _ => String::new(),
+                        };
+                        if func_name == "web_api_send" {
+                            let endpoint = if let Some(arg0) = call.args.first() {
+                                match arg0 {
+                                    techscript_ast::Expression::Literal(lit) => match &lit.value {
+                                        techscript_ast::LiteralVal::Str(s) => s.clone(),
+                                        _ => "/api".to_string(),
+                                    },
+                                    techscript_ast::Expression::Identifier(id) => id.name.clone(),
+                                    _ => "/api".to_string(),
+                                }
+                            } else {
+                                "/api".to_string()
+                            };
+
+                            let payload_id = if let Some(arg1) = call.args.get(1) {
+                                match arg1 {
+                                    techscript_ast::Expression::Identifier(id) => id.name.clone(),
+                                    techscript_ast::Expression::Literal(lit) => match &lit.value {
+                                        techscript_ast::LiteralVal::Str(s) => s.clone(),
+                                        _ => String::new(),
+                                    },
+                                    _ => String::new(),
+                                }
+                            } else {
+                                String::new()
+                            };
+
+                            handlers.push(DslBlockValue {
+                                kind: "event_handler".to_string(),
+                                args: vec![RuntimeValue::Str(target.to_string())],
+                                properties: vec![
+                                    DslProperty {
+                                        name: "target".to_string(),
+                                        value: Some(RuntimeValue::Str(target.to_string())),
+                                    },
+                                    DslProperty {
+                                        name: "event".to_string(),
+                                        value: Some(RuntimeValue::Str(event.to_string())),
+                                    },
+                                    DslProperty {
+                                        name: "action".to_string(),
+                                        value: Some(RuntimeValue::Str("api_send".to_string())),
+                                    },
+                                    DslProperty {
+                                        name: "arg1".to_string(),
+                                        value: Some(RuntimeValue::Str(endpoint)),
+                                    },
+                                    DslProperty {
+                                        name: "arg2".to_string(),
+                                        value: Some(RuntimeValue::Str(payload_id)),
+                                    },
+                                ],
+                                children: vec![],
+                            });
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+
+        let key = "_event_handlers".to_string();
+        let has_list = self.ctx.global_env.borrow().lookup(&key).is_ok();
+        if has_list {
+            let env = self.ctx.global_env.borrow();
+            if let Ok(RuntimeValue::List { items, .. }) = env.lookup(&key) {
+                for h in handlers {
+                    items.borrow_mut().push(RuntimeValue::DslBlock(Rc::new(h)));
+                }
+            }
+        } else {
+            let items: Vec<RuntimeValue> = handlers
+                .into_iter()
+                .map(|h| RuntimeValue::DslBlock(Rc::new(h)))
+                .collect();
+            self.ctx.global_env.borrow_mut().define(
+                key,
+                RuntimeValue::List {
+                    items: Rc::new(RefCell::new(items)),
+                    is_const: false,
+                },
+                false,
+            );
+        }
+        Ok(())
     }
 
     fn execute_while_stmt(&mut self, while_stmt: &techscript_ast::WhileStmt) -> ExecResult {
@@ -361,13 +507,49 @@ impl Interpreter {
     ) -> Result<RuntimeValue, RuntimeError> {
         let mut args = Vec::new();
         for expr in &dsl.args {
-            args.push(self.visit_expression(expr)?);
+            let val = match expr {
+                techscript_ast::Expression::Identifier(ident) => {
+                    match self.env.borrow().lookup(&ident.name) {
+                        Ok(v) => v,
+                        Err(_) => RuntimeValue::Str(ident.name.clone()),
+                    }
+                }
+                techscript_ast::Expression::Call(call) => {
+                    if let techscript_ast::Expression::Identifier(ref callee_ident) = *call.callee {
+                        if self.env.borrow().lookup(&callee_ident.name).is_err() {
+                            args.push(RuntimeValue::Str(callee_ident.name.clone()));
+                            for a in &call.args {
+                                let arg_val = self.visit_expression(a).unwrap_or_else(|_| {
+                                    if let techscript_ast::Expression::Identifier(arg_id) = a {
+                                        RuntimeValue::Str(arg_id.name.clone())
+                                    } else {
+                                        RuntimeValue::Str(format!("{:?}", a))
+                                    }
+                                });
+                                args.push(arg_val);
+                            }
+                            continue;
+                        }
+                    }
+                    self.visit_expression(expr)?
+                }
+                _ => self.visit_expression(expr)?,
+            };
+            args.push(val);
         }
 
         let mut properties = Vec::new();
         for prop in &dsl.properties {
             let val = match &prop.value {
-                Some(expr) => Some(self.visit_expression(expr)?),
+                Some(expr) => match expr {
+                    techscript_ast::Expression::Identifier(ident) => {
+                        match self.env.borrow().lookup(&ident.name) {
+                            Ok(v) => Some(v),
+                            Err(_) => Some(RuntimeValue::Str(ident.name.clone())),
+                        }
+                    }
+                    _ => Some(self.visit_expression(expr)?),
+                },
                 None => None,
             };
             properties.push(DslProperty {
@@ -392,7 +574,15 @@ impl Interpreter {
                 }
                 techscript_ast::DSLChild::Property(prop) => {
                     let val = match &prop.value {
-                        Some(expr) => Some(self.visit_expression(expr)?),
+                        Some(expr) => match expr {
+                            techscript_ast::Expression::Identifier(ident) => {
+                                match self.env.borrow().lookup(&ident.name) {
+                                    Ok(v) => Some(v),
+                                    Err(_) => Some(RuntimeValue::Str(ident.name.clone())),
+                                }
+                            }
+                            _ => Some(self.visit_expression(expr)?),
+                        },
                         None => None,
                     };
                     properties.push(DslProperty {
@@ -400,6 +590,29 @@ impl Interpreter {
                         value: val,
                     });
                 }
+            }
+        }
+
+        for prop in &properties {
+            if prop.name == "id" {
+                if let Some(ref val) = prop.value {
+                    let id_str = val.to_string();
+                    self.ctx.global_env.borrow_mut().define(
+                        id_str.clone(),
+                        RuntimeValue::Str(id_str),
+                        false,
+                    );
+                }
+            }
+        }
+        if dsl.kind == "database" || dsl.kind == "table" {
+            if let Some(arg0) = args.first() {
+                let name = arg0.to_string();
+                self.ctx.global_env.borrow_mut().define(
+                    name.clone(),
+                    RuntimeValue::Str(name),
+                    false,
+                );
             }
         }
 

@@ -3,8 +3,9 @@
 //! Automatically migrates legacy TechScript 1.0.8 code to TechScript 2.0 canonical syntax.
 
 use crate::exit_code::ExitCode;
+use colored::Colorize;
 use std::fmt::Write;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 pub fn execute(path_str: Option<&str>) -> ExitCode {
     let current_dir = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
@@ -17,43 +18,120 @@ pub fn execute(path_str: Option<&str>) -> ExitCode {
 
     println!("Migrating TechScript files in: {:?}", target_path);
 
-    let mut files_to_migrate = Vec::new();
+    let mut discovered_files = Vec::new();
     if target_path.is_dir() {
-        let mut dirs = vec![target_path];
+        let mut dirs = vec![target_path.clone()];
         while let Some(dir) = dirs.pop() {
             if let Ok(entries) = std::fs::read_dir(dir) {
                 for entry in entries.flatten() {
                     let path = entry.path();
                     if path.is_dir() {
                         let name = path.file_name().unwrap_or_default().to_string_lossy();
-                        if name != "build" && name != ".git" && name != "target" {
+                        if name != "build" && name != ".git" && name != "target" && name != "node_modules" {
                             dirs.push(path);
                         }
-                    } else {
-                        let ext = path.extension().unwrap_or_default().to_string_lossy();
-                        if ext == "txs" || ext == "ts" {
-                            files_to_migrate.push(path);
-                        }
+                    } else if techscript_common::is_supported_source_file(&path) {
+                        discovered_files.push(path);
                     }
                 }
             }
         }
     } else {
-        files_to_migrate.push(target_path);
+        discovered_files.push(target_path.clone());
     }
 
-    let mut migrated_count = 0;
+    let mut renamed_count = 0;
+    let mut files_to_migrate = Vec::new();
 
+    // 1. Rename legacy .tech files to canonical .txs
+    for file in discovered_files {
+        let is_legacy = file
+            .extension()
+            .and_then(|ext| ext.to_str())
+            .map(|ext| ext.eq_ignore_ascii_case("tech"))
+            .unwrap_or(false);
+
+        if is_legacy {
+            let target_txs = file.with_extension("txs");
+            if target_txs.exists() {
+                eprintln!(
+                    "{}",
+                    format!(
+                        "Warning: Cannot rename '{}' to '{}' because destination already exists.",
+                        file.display(),
+                        target_txs.display()
+                    )
+                    .yellow()
+                );
+                files_to_migrate.push(file);
+            } else {
+                match std::fs::rename(&file, &target_txs) {
+                    Ok(_) => {
+                        println!(
+                            "{} Renamed legacy '{}' -> '{}'",
+                            "✓".green(),
+                            file.display(),
+                            target_txs.display()
+                        );
+                        renamed_count += 1;
+                        files_to_migrate.push(target_txs);
+                    }
+                    Err(e) => {
+                        eprintln!("Error renaming file {:?}: {}", file, e);
+                        files_to_migrate.push(file);
+                    }
+                }
+            }
+        } else {
+            files_to_migrate.push(file);
+        }
+    }
+
+    // 2. Update tech.toml entry if it still points to .tech
+    let toml_candidate = if target_path.is_dir() {
+        target_path.join("tech.toml")
+    } else {
+        target_path.parent().unwrap_or(&target_path).join("tech.toml")
+    };
+    if toml_candidate.exists() {
+        if let Ok(toml_content) = std::fs::read_to_string(&toml_candidate) {
+            if toml_content.contains(".tech\"") || toml_content.contains(".tech'") {
+                let updated_toml = toml_content
+                    .replace(".tech\"", ".txs\"")
+                    .replace(".tech'", ".txs'");
+                if let Err(e) = std::fs::write(&toml_candidate, updated_toml) {
+                    eprintln!("Error updating {}: {}", toml_candidate.display(), e);
+                } else {
+                    println!(
+                        "{} Updated manifest '{}' entry to canonical .txs",
+                        "✓".green(),
+                        toml_candidate.display()
+                    );
+                }
+            }
+        }
+    }
+
+    // 3. Migrate source code syntax and explicit import extensions
+    let mut syntax_migrated_count = 0;
     for file in files_to_migrate {
         match std::fs::read_to_string(&file) {
             Ok(content) => {
-                let migrated = migrate_source(&content);
+                let mut migrated = migrate_source(&content);
+
+                // Modernize explicit .tech import extensions in code (e.g. use "./foo.tech" -> "./foo.txs")
+                if migrated.contains(".tech\"") || migrated.contains(".tech'") {
+                    migrated = migrated
+                        .replace(".tech\"", ".txs\"")
+                        .replace(".tech'", ".txs'");
+                }
+
                 if migrated != content {
                     if let Err(e) = std::fs::write(&file, migrated) {
                         eprintln!("Error writing migrated file {:?}: {}", file, e);
                     } else {
-                        println!("Migrated: {:?}", file);
-                        migrated_count += 1;
+                        println!("{} Modernized syntax & imports: {:?}", "✓".green(), file);
+                        syntax_migrated_count += 1;
                     }
                 }
             }
@@ -63,7 +141,13 @@ pub fn execute(path_str: Option<&str>) -> ExitCode {
         }
     }
 
-    println!("Migrated {} files.", migrated_count);
+    println!();
+    println!(
+        "{} Migration complete: {} files renamed to .txs, {} files modernized.",
+        "✓".green().bold(),
+        renamed_count,
+        syntax_migrated_count
+    );
     ExitCode::Success
 }
 

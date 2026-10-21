@@ -1,0 +1,4 @@
+database PortalDB:
+    table feedback:
+        name is text
+        message is text

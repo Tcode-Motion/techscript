@@ -2,7 +2,7 @@ use crate::context::SemanticContext;
 use crate::pipeline::Pass;
 use crate::symbol_table::Symbol;
 use crate::types::Type;
-use techscript_ast::{Program, Statement};
+use techscript_ast::{DSLBlock, DSLChild, Expression, LiteralVal, Program, Statement};
 use techscript_errors::{Diagnostic, DiagnosticLevel, ErrorCode};
 
 /// First semantic compiler pass collecting top-level hoisted symbols.
@@ -19,6 +19,9 @@ impl Pass for CollectDecls {
 impl CollectDecls {
     fn collect_statement(&self, stmt: &Statement, context: &mut SemanticContext) {
         match stmt {
+            Statement::DSL(block) => {
+                Self::collect_dsl_symbols(block, context);
+            }
             Statement::FuncDecl(decl) => {
                 let name = decl.name.name.clone();
                 let is_builtin = [
@@ -107,6 +110,27 @@ impl CollectDecls {
                 self.collect_statement(&decl.declaration, context);
             }
             _ => {}
+        }
+    }
+
+    fn collect_dsl_symbols(block: &DSLBlock, context: &mut SemanticContext) {
+        for prop in &block.properties {
+            if prop.name == "id" {
+                if let Some(Expression::Literal(lit)) = &prop.value {
+                    if let LiteralVal::Str(id_name) = &lit.value {
+                        if !id_name.is_empty() && !context.symbol_table.scopes[0].symbols.contains_key(id_name) {
+                            let type_id = context.interner.any();
+                            let symbol = Symbol::new(id_name.clone(), true, false, false, type_id);
+                            context.symbol_table.register(id_name.clone(), symbol);
+                        }
+                    }
+                }
+            }
+        }
+        for child in &block.children {
+            if let DSLChild::Block(sub_block) = child {
+                Self::collect_dsl_symbols(sub_block, context);
+            }
         }
     }
 }

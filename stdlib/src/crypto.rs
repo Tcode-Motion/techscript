@@ -143,7 +143,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "aes_encrypt".to_string(),
                 arity: 2,
-                callback: |_ctx, args| helper_aes_encrypt(args),
+                callback: |_ctx, args| helper_aes_encrypt(&args),
             }),
         );
 
@@ -152,7 +152,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "aes_decrypt".to_string(),
                 arity: 2,
-                callback: |_ctx, args| helper_aes_decrypt(args),
+                callback: |_ctx, args| helper_aes_decrypt(&args),
             }),
         );
 
@@ -161,7 +161,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "bcrypt_hash".to_string(),
                 arity: 2,
-                callback: |_ctx, args| helper_bcrypt_hash(args),
+                callback: |_ctx, args| helper_bcrypt_hash(&args),
             }),
         );
 
@@ -170,7 +170,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "bcrypt_verify".to_string(),
                 arity: 2,
-                callback: |_ctx, args| helper_bcrypt_verify(args),
+                callback: |_ctx, args| helper_bcrypt_verify(&args),
             }),
         );
 

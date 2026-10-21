@@ -14,6 +14,8 @@ releases/latest/
 releases/*.exe
 releases/*.zip
 releases/*.tar.gz
+*.db
+webforge.db
 
 # Compiler Caches and Logs
 build/

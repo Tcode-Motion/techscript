@@ -1,0 +1,49 @@
+page Showcase "/showcase":
+    show heading "WebForge Project Showcase"
+    show text "Explore applications, full-stack architectures, 3D graphics, and developer tools built entirely with TechScript and WebForge."
+
+    show section:
+        title is "Interactive Showcases & Demos"
+        show card "Hardware-Accelerated 3D Laboratory":
+            badge is "12 Procedural Meshes"
+            text is "Experience the native WebGL 2.0 3D engine with 12 procedural geometries (Quantum Gyroscope, 4D Tesseract, DNA Double Helix, Satellite, Stellated Star), 10 color palettes, and 5 real-time GLSL shading styles."
+            button "Launch 3D Laboratory":
+                action is "open /showcase/3d"
+        show card "Full-Stack SQLite Note Manager":
+            badge is "Live Embedded Database"
+            text is "Real-time client form submission that writes directly into an embedded SQLite database through parameterized REST endpoints with zero ORM overhead."
+            button "Try Fullstack Demo":
+                action is "open /examples/fullstack"
+        show card "Interactive In-Browser Code Playground":
+            badge is "Live Web Sandbox"
+            text is "Interactive in-browser code sandbox for testing TechScript language constructs, pattern matching, async functions, and WebForge UI components."
+            button "Open Code Playground":
+                action is "open /playground"
+        show card "Instant Client-Side SPA Router":
+            badge is "Zero Reload"
+            text is "Experience seamless client-side page routing across 22+ compiled pages using HTML5 pushState, animated transitions, and route breadcrumbs."
+            button "Explore Architecture":
+                action is "open /framework"
+        show card "Zero-Dependency Production Pipeline":
+            badge is "High Performance"
+            text is "Compiles complete multi-route applications into optimized native binaries or static web bundles in under 100ms with zero npm or CDN dependencies."
+            button "View CLI Reference":
+                action is "open /cli"
+        show card "Official Package Ecosystem":
+            badge is "Modular Libraries"
+            text is "Browse official packages for cryptography, HTTP networking, SQLite ORM, WebGL graphics, and testing frameworks."
+            button "Browse Packages":
+                action is "open /packages"
+
+    show section:
+        title is "Developer Feedback Showcase"
+        show card "Submit Community Feedback":
+            badge is "Live SQLite INSERT"
+            text is "Send feedback or feature requests directly into webforge.db through our live API."
+            show input "Your Name or GitHub Handle" called FeedbackName
+            show input "Your Feedback or Feature Request" called FeedbackMessage
+            show button "Submit to SQLite" called SubmitFeedbackBtn
+
+when SubmitFeedbackBtn is clicked:
+    send FeedbackMessage to /api/feedback
+    show message "Feedback saved to SQLite database!"

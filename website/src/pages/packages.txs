@@ -1,0 +1,23 @@
+page Packages "/packages":
+    show heading "TechScript Package Ecosystem"
+    show text "Simple, reproducible dependency management without arbitrary execution scripts or untrusted post-install hooks."
+
+    show section:
+        title is "Package Manifests & Locking"
+        show card "webforge.toml & techscript.toml":
+            badge is "Project Manifest"
+            text is "Declarative TOML manifests for defining application metadata, dependencies, build targets, and dev ports."
+            code is "[package]\nname = \"my-portal\"\nversion = \"1.0.0\"\nframework = \"webforge\"\n\n[dependencies]\nstd_web = \"2.0.0\"\nstd_sqlite = \"2.0.0\""
+        show card "Cryptographic Lockfile (techscript.lock)":
+            badge is "Deterministic Integrity"
+            text is "Pins exact package versions with SHA-256 integrity checksums, preventing dependency confusion and supply chain attacks."
+            code is "[[package]]\nname = \"std_web\"\nversion = \"2.0.0\"\nchecksum = \"sha256-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\""
+
+    show section:
+        title is "Package Manager Commands"
+        show card "Install & Add Packages":
+            badge is "CLI"
+            code is "$ webforge add std_canvas\n✓ Added 'std_canvas' v2.0.0 to webforge.toml"
+        show card "List & Inspect Installed Packages":
+            badge is "Audit"
+            code is "$ webforge list\nDependencies:\n  ├── std_web v2.0.0 (built-in)\n  └── std_sqlite v2.0.0 (embedded)"

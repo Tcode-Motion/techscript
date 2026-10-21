@@ -1,0 +1,137 @@
+make a website called TechScriptWebForge
+
+header:
+    title is "TechScript WebForge"
+    nav:
+        link:
+            label is "Home"
+            url is "/"
+        link:
+            label is "Language"
+            url is "/language"
+        link:
+            label is "Framework"
+            url is "/framework"
+        link:
+            label is "Features"
+            url is "/features"
+        link:
+            label is "Components"
+            url is "/components"
+        link:
+            label is "Showcase"
+            url is "/showcase"
+        link:
+            label is "3D Lab"
+            url is "/showcase/3d"
+        link:
+            label is "Playground"
+            url is "/playground"
+        link:
+            label is "Docs"
+            url is "/docs"
+        link:
+            label is "Examples"
+            url is "/examples"
+        link:
+            label is "Packages"
+            url is "/packages"
+        link:
+            label is "Roadmap"
+            url is "/roadmap"
+        link:
+            label is "Community"
+            url is "/community"
+        link:
+            label is "Download"
+            url is "/download"
+        link:
+            label is "GitHub"
+            url is "https://github.com/Tcode-Motion/techscript"
+
+footer:
+    section:
+        title is "Framework"
+        link:
+            label is "Language Spec"
+            url is "/language"
+        link:
+            label is "Architecture"
+            url is "/framework"
+        link:
+            label is "Features"
+            url is "/features"
+        link:
+            label is "3D Laboratory"
+            url is "/showcase/3d"
+        link:
+            label is "Showcase"
+            url is "/showcase"
+        link:
+            label is "Community"
+            url is "/community"
+    section:
+        title is "Documentation"
+        link:
+            label is "Documentation Hub"
+            url is "/docs"
+        link:
+            label is "Getting Started"
+            url is "/docs/getting-started"
+        link:
+            label is "Syntax Guide"
+            url is "/docs/syntax"
+        link:
+            label is "Routing & SPA"
+            url is "/docs/routing"
+        link:
+            label is "REST API & SQLite"
+            url is "/docs/api"
+        link:
+            label is "3D Engine Guide"
+            url is "/docs/3d"
+    section:
+        title is "Ecosystem & Tools"
+        link:
+            label is "Online Playground"
+            url is "/playground"
+        link:
+            label is "Fullstack SQLite Demo"
+            url is "/examples/fullstack"
+        link:
+            label is "Code Examples"
+            url is "/examples"
+        link:
+            label is "CLI Reference"
+            url is "/cli"
+        link:
+            label is "Package Registry"
+            url is "/packages"
+        link:
+            label is "Project Roadmap"
+            url is "/roadmap"
+        link:
+            label is "Download Toolchain"
+            url is "/download"
+    section:
+        title is "Open Source & Community"
+        link:
+            label is "Official Website ↗"
+            url is "https://is-a.dev/techscript/"
+        link:
+            label is "GitHub Repository ↗"
+            url is "https://github.com/Tcode-Motion/techscript"
+        link:
+            label is "Releases & Downloads ↗"
+            url is "https://github.com/Tcode-Motion/techscript/releases"
+        link:
+            label is "PyPI Package ↗"
+            url is "https://pypi.org/project/techscript/"
+        link:
+            label is "VS Code Extension ↗"
+            url is "https://github.com/Tcode-Motion/techscript/tree/main/editors/vscode"
+        link:
+            label is "Community Discussions ↗"
+            url is "https://github.com/Tcode-Motion/techscript/discussions"
+
+start website

@@ -41,6 +41,7 @@ The 2.0 language line provides:
 - Synchronous, asynchronous, and parallel execution constructs.
 - A standard library for files, JSON, HTTP, databases, collections, cryptography, graphics, web workflows, and more.
 - A formatter, linter, migration tool, REPL, package manager, language server, and test runner.
+- **TechScript WebForge**: An integrated full-stack web development framework allowing anyone to create, run, build, and deploy complete websites with reactive UI, real SQLite persistence, and Three.js 3D WebGL scenes using simple English syntax. See [WebForge Guide](docs/WebForge.md).
 
 ## Why TechScript
 

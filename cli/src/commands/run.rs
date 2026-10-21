@@ -12,6 +12,7 @@ use crate::logging::{LogFormat, LogLevel, Logger};
 use crate::pipeline::{BuildProfile, CompilationPipeline, ExecutionBackend, PipelineOptions};
 use crate::profiler::TimingProfiler;
 use crate::watch::FileWatcher;
+use colored::Colorize;
 use std::path::{Path, PathBuf};
 
 pub fn execute(
@@ -37,6 +38,32 @@ pub fn execute(
         return ExitCode::IoError;
     }
 
+    // Validate source file extension and extract descriptor
+    let desc = match techscript_common::validate_source_file(&path) {
+        Ok(d) => d,
+        Err(e) => {
+            eprintln!("Error: {}", e);
+            if double_click {
+                println!("\n[Process completed. Press Enter to exit...]");
+                let mut buffer = String::new();
+                let _ = std::io::stdin().read_line(&mut buffer);
+            }
+            return ExitCode::IoError;
+        }
+    };
+
+    if desc.extension.is_legacy() {
+        eprintln!(
+            "{}",
+            "Notice: '.tech' is a legacy extension. TechScript official source files use '.txs'. You can migrate via 'tsc migrate'."
+                .yellow()
+        );
+    } else if let Some(hint) = desc.extension.migration_hint() {
+        if desc.role == techscript_common::SourceRole::Web {
+            println!("{}", format!("ℹ️  {}", hint).cyan());
+        }
+    }
+
     let current_dir = path.parent().unwrap_or(&path).to_path_buf();
 
     // Resolve build profile
@@ -52,8 +79,13 @@ pub fn execute(
         ExecutionBackend::Native
     } else {
         let mut default_backend = "vm";
-        if let Ok(content) = std::fs::read_to_string(file_path) {
-            let dsl_keywords = ["website", "canvas", "logo", "window", "dialog", "menu"];
+        if desc.role == techscript_common::SourceRole::Web || desc.role == techscript_common::SourceRole::Scene3D {
+            default_backend = "interpreter";
+        } else if let Ok(content) = std::fs::read_to_string(file_path) {
+            let dsl_keywords = [
+                "website", "canvas", "logo", "window", "dialog", "menu",
+                "make a website", "page", "database", "show", "when",
+            ];
             let mut use_interpreter = false;
             for line in content.lines() {
                 let trimmed = line.trim();
@@ -191,7 +223,10 @@ fn run_once(
         renderer.emit(diag);
     }
 
-    if res.bytecode.is_none() && opts.backend != ExecutionBackend::Native {
+    if res.bytecode.is_none()
+        && opts.backend != ExecutionBackend::Native
+        && opts.backend != ExecutionBackend::Interpreter
+    {
         return Err(anyhow::anyhow!("Compilation failed"));
     }
 

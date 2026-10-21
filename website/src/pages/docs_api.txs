@@ -1,0 +1,25 @@
+page ApiDocumentation "/docs/api":
+    show heading "Backend & REST API Guide"
+    show text "Build real backend endpoints, query embedded SQLite databases, and configure API security using WebForge."
+
+    show section:
+        title is "Built-in System Endpoints"
+        show card "GET /api/health":
+            badge is "System Health"
+            text is "Returns standard JSON health metadata including runtime status, compiler version, SQLite status, and security compliance."
+            code is "GET /api/health\nResponse:\n{\n  \"status\": \"ok\",\n  \"framework\": \"WebForge\",\n  \"version\": \"2.0.0\",\n  \"database\": \"SQLite (integrated)\"\n}"
+        show card "GET /api/examples":
+            badge is "Data Endpoint"
+            text is "Returns real project catalog records with categorization, source files, and difficulty levels."
+            code is "GET /api/examples\nResponse:\n[\n  { \"id\": \"01-counter\", \"category\": \"basics\" },\n  { \"id\": \"02-3d-lab\", \"category\": \"3d\" }\n]"
+
+    show section:
+        title is "Custom REST Endpoints & SQLite"
+        show card "Declarative Database Schema":
+            badge is "Persistence"
+            text is "Declare tables and column types directly in your .txs server configuration:"
+            code is "database Store:\n    table products:\n        column title as text\n        column price as float\n        column stock as int"
+        show card "Automatic CRUD Operations":
+            badge is "Zero-Code REST"
+            text is "WebForge automatically binds HTTP POST and GET methods to declared tables with SQL injection protection:"
+            code is "POST /api/products\nBody: { \"title\": \"Developer Laptop\", \"price\": 1499.00 }\n\nGET /api/products\nResponse: 200 OK [ ... ]"

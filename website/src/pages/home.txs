@@ -1,0 +1,100 @@
+page Home "/":
+    show hero:
+        title is "Build Without Boilerplate"
+        subtitle is "TechScript is the readable, statically-typed programming language compiled to native speed. WebForge is the official full-stack web framework with embedded SQLite, zero-dependency WebGL 3D graphics, and instant client-side SPA routing."
+        button "Explore Framework":
+            action is "open /framework"
+        button "3D Laboratory":
+            action is "open /showcase/3d"
+        button "Get Started":
+            action is "open /docs/getting-started"
+        button "GitHub Repo ↗":
+            action is "open https://github.com/Tcode-Motion/techscript"
+
+    show 3D "TechScriptLogo":
+        color is "cyan"
+        speed is 1.4
+    end
+
+    show section:
+        title is "Why TechScript + WebForge?"
+        show card "22 Compiled Routes":
+            badge is "Production Ready"
+            text is "The complete 22-page site compiles from a single main.txs entry point into an optimized multi-route SPA in under 100ms. Zero build config required."
+        show card "Zero Dependencies":
+            badge is "Self-Contained Runtime"
+            text is "WebForge3D engine, SQLite layer, SPA router, and notification system are all native Rust and embedded JS. No npm, no CDN, no external scripts."
+        show card "WebGL 2.0 Native":
+            badge is "Hardware Accelerated"
+            text is "Six procedural 3D geometries with PBR shaders, real-time FPS telemetry, orbit drag, and scroll-wheel zoom — entirely without Three.js or any external library."
+        show card "SQLite Full-Stack":
+            badge is "Full-Stack By Default"
+            text is "Every WebForge application ships with embedded SQLite. Declare tables in .txs syntax and instantly get REST API endpoints and a live records viewer."
+
+    show section:
+        title is "Language vs Framework"
+        show card "TechScript (Language)":
+            badge is "Language Specification"
+            text is "TechScript is a statically-typed, memory-safe programming language with natural English keywords. Features: strong typing, pattern matching, async coroutines, modular namespaces."
+            code is "let greeting = \"Hello, World!\"\nprint greeting\n\nfunction calculateTax(subtotal: Float) -> Float:\n    return subtotal * 0.08\n\n# Pattern matching\nmatch status:\n    case \"ok\" -> print \"All good!\"\n    case \"error\" -> print \"Something went wrong\""
+            link:
+                label is "Read Language Overview"
+                url is "/language"
+        show card "WebForge (Framework)":
+            badge is "Web Framework"
+            text is "WebForge is the official full-stack framework for TechScript. Declarative DOM lowering, client-side routing, SQLite integration, and native WebGL 3D — zero CDN dependencies."
+            code is "make a website called MyPortal\n\npage Dashboard \"/\":\n    show heading \"Analytics Overview\"\n    show scene3d CoreVisualizer\n\n    show section:\n        title is \"Platform Stats\"\n        show card \"Users\": text is \"12,450 active\"\n        show card \"Uptime\": text is \"99.97% SLA\""
+            link:
+                label is "Explore Framework Guide"
+                url is "/framework"
+
+    show section:
+        title is "Framework Architecture"
+        show card "Compiler & AST Lowering":
+            badge is "Rust Core Engine"
+            text is "Rust 2021 Edition. Lexer, recursive descent parser, and semantic analyzer transform declarative DSL trees into optimized execution graphs."
+        show card "Embedded SQLite Persistence":
+            badge is "Zero-Config Backend"
+            text is "Server routes interact with SQLite via parameterized queries, transactional guarantees, and instant REST API emission. No ORM or migration tool needed."
+        show card "Native WebGL 3D Engine":
+            badge is "Hardware Acceleration"
+            text is "Native WebGL 2.0/1.0 with custom PBR shaders, 6 procedural geometries, wireframe mode, orbit controls, and live FPS measurement — all built-in."
+        show card "SPA Client Router":
+            badge is "Zero Page Reload"
+            text is "Client-side route switching with history.pushState, animated page transitions, breadcrumb generation, and active link highlighting. No server round-trips."
+        show card "Declarative Interactivity":
+            badge is "TypeScript-Free"
+            text is "Declare button handlers, API submissions, and toast notifications directly in .txs syntax. The compiler lowers them to optimized vanilla JavaScript event listeners."
+        show card "Production Build Pipeline":
+            badge is "Deploy Anywhere"
+            text is "webforge build web compiles all routes to dist/ with a single index.html, bundled CSS, embedded JavaScript runtime, and SQLite database. Works on any static host."
+
+    show section:
+        title is "Interactive Showcase"
+        show card "Zero-Config Production Build":
+            badge is "Single-Binary Distribution"
+            text is "Compile your entire multi-route application with embedded SQLite, native 3D engine, and client-side SPA routing into an optimized single binary or static web bundle."
+            button "Explore CLI & Build":
+                action is "open /cli"
+        show card "Fullstack SQLite Demo":
+            badge is "Real Backend APIs"
+            text is "Live REST APIs at /api/health and /api/examples. Submit forms, persist records to SQLite, and see the database viewer update instantly."
+            button "View Fullstack Demo":
+                action is "open /examples/fullstack"
+        show card "Interactive Playground":
+            badge is "In-Browser Sandbox"
+            text is "Experiment with live TechScript WebForge syntax in your browser. Real-time UI preview, instant feedback, and syntax highlighting — no install needed."
+            button "Try Playground":
+                action is "open /playground"
+
+    show section:
+        title is "Getting Started"
+        show card "1. Install Toolchain":
+            badge is "CLI Setup"
+            code is "# Install from source (Rust 1.78+ required)\ncargo install --path cli\n\n# Verify installation\nwebforge --version\ntechscript --version"
+        show card "2. Create Project":
+            badge is "Project Generator"
+            code is "webforge new fullstack my-app\ncd my-app\n\n# Project structure:\n# my-app/\n#   src/main.txs    <- entry point\n#   src/pages/      <- page modules\n#   src/server/     <- API routes\n#   webforge.db     <- SQLite auto-created"
+        show card "3. Run Dev Server":
+            badge is "Live Reload"
+            code is "webforge dev --port 8085\n\n# Opens http://localhost:8085\n# All routes served from single binary\n# Edit .txs files -> server rebuilds live"

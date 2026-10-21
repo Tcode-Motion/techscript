@@ -1,0 +1,17 @@
+make a website called NotesApp
+
+database Notes:
+    table notes:
+        title is text
+        content is text
+
+page Home:
+    show heading "My Notes"
+    show input "Write a note" called NoteInput
+    show button "Save Note" called SaveButton
+
+when SaveButton is clicked:
+    send NoteInput to /api/notes
+    show message "Note saved"
+
+start website

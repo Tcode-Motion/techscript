@@ -1,0 +1,11 @@
+{
+  "description": "TechScript Programming Language and WebForge Framework Official Portal",
+  "repo": "https://github.com/Tcode-Motion/techscript",
+  "owner": {
+    "username": "Tcode-Motion",
+    "email": "core@techscript.dev"
+  },
+  "record": {
+    "CNAME": "tcode-motion.github.io"
+  }
+}

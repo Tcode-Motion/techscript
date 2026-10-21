@@ -1,0 +1,16 @@
+page NotFound "/404":
+    show heading "404 - Page Not Found"
+    show text "The requested TechScript WebForge route does not exist or has been relocated."
+
+    show section:
+        title is "Navigation Assistance"
+        show card "Return to Safety":
+            badge is "Home"
+            text is "Return to the main overview page to explore the TechScript language and WebForge ecosystem."
+            button "Back to Home":
+                action is "open /"
+        show card "Browse Documentation":
+            badge is "Docs"
+            text is "Read the official documentation, tutorials, and syntax guides to find what you are looking for."
+            button "Open Documentation":
+                action is "open /docs"

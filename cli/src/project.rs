@@ -71,35 +71,30 @@ pub struct ProjectBuildGraph {
 impl ProjectBuildGraph {
     /// Discovers workspace/packages from the given directory root.
     pub fn discover(root: &Path) -> anyhow::Result<Self> {
-        let manifest_path = root.join("tech.toml");
+        let manifest_opt = techscript_package_manager::find_manifest_in(root);
         let mut packages = HashMap::new();
         let mut members = Vec::new();
 
-        match std::fs::read_to_string(&manifest_path) {
-            Ok(content) => {
-                let manifest: Manifest = toml::from_str(&content)?;
+        if let Some(manifest_path) = manifest_opt {
+            let content = std::fs::read_to_string(&manifest_path)?;
+            let manifest: Manifest = toml::from_str(&content)?;
 
-                if let Some(workspace_cfg) = &manifest.workspace {
-                    // Workspace mode
-                    members = workspace_cfg.members.clone();
-                    for member_glob in &members {
-                        // Simulating directory lookup for member folders
-                        let member_dir = root.join(member_glob);
-                        if member_dir.exists() {
-                            let pkg = load_package(&member_dir)?;
-                            packages.insert(pkg.name.clone(), pkg);
-                        }
+            if let Some(workspace_cfg) = &manifest.workspace {
+                // Workspace mode
+                members = workspace_cfg.members.clone();
+                for member_glob in &members {
+                    // Simulating directory lookup for member folders
+                    let member_dir = root.join(member_glob);
+                    if member_dir.exists() {
+                        let pkg = load_package(&member_dir)?;
+                        packages.insert(pkg.name.clone(), pkg);
                     }
-                } else {
-                    // Single package mode
-                    let pkg = load_package(root)?;
-                    packages.insert(pkg.name.clone(), pkg);
                 }
+            } else {
+                // Single package mode
+                let pkg = load_package(root)?;
+                packages.insert(pkg.name.clone(), pkg);
             }
-            Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
-                // No tech.toml, single file virtual package mode
-            }
-            Err(e) => return Err(e.into()),
         }
 
         if packages.is_empty() {
@@ -331,45 +326,50 @@ impl ProjectBuildGraph {
                     continue;
                 }
 
-                // Resolve user import path (e.g. import utils -> utils.txs or utils.ts)
-                let mut relative_path = parent_dir.to_path_buf();
-                for part in &imp {
-                    relative_path.push(part);
-                }
-                let mut import_file = relative_path.with_extension("txs");
-                if !import_file.exists() {
-                    import_file = relative_path.with_extension("ts");
-                }
+                // Resolve user import path using deterministic extension registry (.txs prioritized)
+                let import_rel = imp.join("/");
+                let mut import_file = match techscript_common::resolve_source_module(parent_dir, &import_rel) {
+                    Ok(p) => p,
+                    Err(_) => {
+                        let mut fallback = parent_dir.to_path_buf();
+                        for part in &imp {
+                            fallback.push(part);
+                        }
+                        fallback.with_extension("txs")
+                    }
+                };
 
                 if !import_file.exists() {
-                    let mut pkg_path = self.workspace.root.join("packages");
-                    for part in &imp {
-                        pkg_path.push(part);
-                    }
-                    let mut try_file = pkg_path.with_extension("txs");
-                    if !try_file.exists() {
-                        try_file = pkg_path.with_extension("ts");
-                    }
-                    if !try_file.exists() {
-                        let manifest_toml = pkg_path.join("tech.toml");
-                        if let Some(cached_entry) = manifest_cache.get(&manifest_toml) {
-                            try_file = pkg_path.join(cached_entry);
-                        } else if manifest_toml.exists() {
-                            if let Ok(toml_content) = std::fs::read_to_string(&manifest_toml) {
-                                if let Ok(manifest) =
-                                    toml::from_str::<techscript_package_manager::Manifest>(
-                                        &toml_content,
-                                    )
-                                {
-                                    let entry = manifest.package.entry;
-                                    try_file = pkg_path.join(&entry);
-                                    manifest_cache.insert(manifest_toml, entry);
+                    let pkg_dir = self.workspace.root.join("packages");
+                    if let Ok(p) = techscript_common::resolve_source_module(&pkg_dir, &import_rel) {
+                        import_file = p;
+                    } else {
+                        let mut pkg_path = pkg_dir;
+                        for part in &imp {
+                            pkg_path.push(part);
+                        }
+                        let mut try_file = pkg_path.with_extension("txs");
+                        if !try_file.exists() {
+                            let manifest_toml = techscript_package_manager::manifest_path_in(&pkg_path);
+                            if let Some(cached_entry) = manifest_cache.get(&manifest_toml) {
+                                try_file = pkg_path.join(cached_entry);
+                            } else if manifest_toml.exists() {
+                                if let Ok(toml_content) = std::fs::read_to_string(&manifest_toml) {
+                                    if let Ok(manifest) =
+                                        toml::from_str::<techscript_package_manager::Manifest>(
+                                            &toml_content,
+                                        )
+                                    {
+                                        let entry = manifest.package.entry;
+                                        try_file = pkg_path.join(&entry);
+                                        manifest_cache.insert(manifest_toml, entry);
+                                    }
                                 }
                             }
                         }
-                    }
-                    if try_file.exists() {
-                        import_file = try_file;
+                        if try_file.exists() {
+                            import_file = try_file;
+                        }
                     }
                 }
 
@@ -468,7 +468,8 @@ impl ProjectBuildGraph {
 }
 
 fn load_package(dir: &Path) -> anyhow::Result<Package> {
-    let manifest_path = dir.join("tech.toml");
+    let manifest_path = techscript_package_manager::find_manifest_in(dir)
+        .ok_or_else(|| anyhow::anyhow!("Manifest not found in {:?}", dir))?;
     let content = std::fs::read_to_string(&manifest_path)?;
     let manifest: Manifest = toml::from_str(&content)?;
     let entry_file = dir.join(&manifest.package.entry);

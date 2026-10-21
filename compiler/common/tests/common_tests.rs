@@ -621,6 +621,138 @@ fn common_error_is_std_error() {
     assert!(!err.to_string().is_empty());
 }
 
+#[test]
+fn test_extension_registry_recognition() {
+    use techscript_common::{
+        is_supported_source_file, ExtensionStability, SourceRole, TechScriptExtension,
+    };
+
+    assert_eq!(
+        TechScriptExtension::from_path(Path::new("app/main.txs")),
+        Some(TechScriptExtension::Txs)
+    );
+    assert_eq!(
+        TechScriptExtension::from_path(Path::new("pages/home.wtxs")),
+        Some(TechScriptExtension::Wtxs)
+    );
+    assert_eq!(
+        TechScriptExtension::from_path(Path::new("server/api.stxs")),
+        Some(TechScriptExtension::Stxs)
+    );
+    assert_eq!(
+        TechScriptExtension::from_path(Path::new("mobile/screen.atxs")),
+        Some(TechScriptExtension::Atxs)
+    );
+    assert_eq!(
+        TechScriptExtension::from_path(Path::new("scenes/world.3txs")),
+        Some(TechScriptExtension::Scene3D)
+    );
+    assert_eq!(
+        TechScriptExtension::from_path(Path::new("scenes/shader.gtxs")),
+        Some(TechScriptExtension::Scene3D)
+    );
+    assert_eq!(
+        TechScriptExtension::from_path(Path::new("legacy/old.tech")),
+        Some(TechScriptExtension::LegacyTech)
+    );
+
+    // Case-sensitivity checks
+    assert_eq!(TechScriptExtension::from_path(Path::new("main.TXS")), None);
+    assert_eq!(TechScriptExtension::from_path(Path::new("page.WTXS")), None);
+    assert_eq!(TechScriptExtension::from_path(Path::new("doc.md")), None);
+
+    // Verify roles
+    assert_eq!(TechScriptExtension::Txs.role(), SourceRole::General);
+    assert_eq!(TechScriptExtension::Wtxs.role(), SourceRole::Web);
+    assert_eq!(TechScriptExtension::Stxs.role(), SourceRole::Server);
+    assert_eq!(TechScriptExtension::Atxs.role(), SourceRole::Android);
+    assert_eq!(TechScriptExtension::Scene3D.role(), SourceRole::Scene3D);
+
+    // Verify stability
+    assert_eq!(TechScriptExtension::Txs.stability(), ExtensionStability::OfficialDefault);
+    assert_eq!(TechScriptExtension::Wtxs.stability(), ExtensionStability::Specialized);
+    assert_eq!(TechScriptExtension::Scene3D.stability(), ExtensionStability::Experimental);
+    assert_eq!(TechScriptExtension::LegacyTech.stability(), ExtensionStability::Legacy);
+
+    // Verify is_supported_source_file
+    assert!(is_supported_source_file(Path::new("main.txs")));
+    assert!(is_supported_source_file(Path::new("home.wtxs")));
+    assert!(is_supported_source_file(Path::new("server.stxs")));
+    assert!(is_supported_source_file(Path::new("screen.atxs")));
+    assert!(is_supported_source_file(Path::new("mesh.3txs")));
+    assert!(is_supported_source_file(Path::new("old.tech")));
+    assert!(!is_supported_source_file(Path::new("main.rs")));
+    assert!(!is_supported_source_file(Path::new("main.js")));
+}
+
+#[test]
+fn test_validate_source_file_descriptors() {
+    use techscript_common::{validate_source_file, ExtensionStability, SourceRole};
+
+    let desc_txs = validate_source_file(Path::new("src/main.txs")).unwrap();
+    assert_eq!(desc_txs.role, SourceRole::General);
+    assert_eq!(desc_txs.stability, ExtensionStability::OfficialDefault);
+    assert!(desc_txs.allows_entry_point);
+
+    let desc_wtxs = validate_source_file(Path::new("src/pages/home.wtxs")).unwrap();
+    assert_eq!(desc_wtxs.role, SourceRole::Web);
+    assert_eq!(desc_wtxs.stability, ExtensionStability::Specialized);
+
+    let desc_stxs = validate_source_file(Path::new("src/server/api.stxs")).unwrap();
+    assert_eq!(desc_stxs.role, SourceRole::Server);
+
+    let err = validate_source_file(Path::new("src/main.py")).unwrap_err();
+    assert!(err.to_string().contains("Unsupported file extension"));
+}
+
+#[test]
+fn test_resolve_source_module_deterministic() {
+    use techscript_common::{resolve_source_module, SourceResolutionError};
+
+    let temp_dir = std::env::temp_dir().join(format!("techscript_test_{}", std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos()));
+    std::fs::create_dir_all(&temp_dir).unwrap();
+
+    // 1. Create a .txs file and test priority
+    let txs_file = temp_dir.join("utils.txs");
+    std::fs::write(&txs_file, "function helper() {}").unwrap();
+
+    let resolved = resolve_source_module(&temp_dir, "utils").unwrap();
+    assert_eq!(resolved, txs_file);
+
+    // 2. Create a specialized .wtxs file when no .txs exists
+    let wtxs_file = temp_dir.join("navbar.wtxs");
+    std::fs::write(&wtxs_file, "show heading 'Nav'").unwrap();
+
+    let resolved_web = resolve_source_module(&temp_dir, "navbar").unwrap();
+    assert_eq!(resolved_web, wtxs_file);
+
+    // 3. Ambiguity check: create both .wtxs and .stxs with same base name
+    let conflict_web = temp_dir.join("service.wtxs");
+    let conflict_srv = temp_dir.join("service.stxs");
+    std::fs::write(&conflict_web, "page Service:").unwrap();
+    std::fs::write(&conflict_srv, "database Srv:").unwrap();
+
+    let err = resolve_source_module(&temp_dir, "service").unwrap_err();
+    match err {
+        SourceResolutionError::AmbiguousImport { module, candidates } => {
+            assert_eq!(module, "service");
+            assert_eq!(candidates.len(), 2);
+        }
+        other => panic!("Expected AmbiguousImport, got: {:?}", other),
+    }
+
+    // 4. Missing module check
+    let missing_err = resolve_source_module(&temp_dir, "does_not_exist").unwrap_err();
+    match missing_err {
+        SourceResolutionError::NotFound { module, .. } => {
+            assert_eq!(module, "does_not_exist");
+        }
+        other => panic!("Expected NotFound, got: {:?}", other),
+    }
+
+    let _ = std::fs::remove_dir_all(&temp_dir);
+}
+
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // Constants Tests
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

@@ -406,3 +406,85 @@ fn test_dsl_expression_value() {
         panic!("Expected Statement::DSL");
     }
 }
+
+#[test]
+fn test_webforge_interactive_website() {
+    let src = r#"
+make a website called MyWebsite
+
+page Home:
+    show heading "Welcome!"
+    show text "Built with TechScript"
+    show button "Click Me" called GreetingButton
+
+when GreetingButton is clicked:
+    show message "Hello, World!"
+
+start website
+"#;
+    let program = parse_source(src);
+    assert_eq!(program.statements.len(), 4);
+    if let Statement::DSL(ref site) = program.statements[0] {
+        assert_eq!(site.kind, "website");
+    } else {
+        panic!("Expected website DSL block");
+    }
+    if let Statement::DSL(ref page) = program.statements[1] {
+        assert_eq!(page.kind, "page");
+        assert_eq!(page.children.len(), 3);
+    } else {
+        panic!("Expected page DSL block");
+    }
+    if let Statement::If(ref if_stmt) = program.statements[2] {
+        assert_eq!(if_stmt.body.statements.len(), 1);
+    } else {
+        panic!("Expected when event block");
+    }
+    assert!(matches!(program.statements[3], Statement::Expression(_)));
+}
+
+#[test]
+fn test_webforge_notes_database_app() {
+    let src = r#"
+make a website called NotesApp
+
+database Notes:
+    table notes:
+        title is text
+        content is text
+
+page Home:
+    show heading "My Notes"
+    show input "Write a note" called NoteInput
+    show button "Save Note" called SaveButton
+
+when SaveButton is clicked:
+    send NoteInput to /api/notes
+    show message "Note saved"
+
+start website
+"#;
+    let program = parse_source(src);
+    assert_eq!(program.statements.len(), 5);
+}
+
+#[test]
+fn test_webforge_3d_scene() {
+    let src = r#"
+show 3D scene called World:
+    add cube:
+        color is "blue"
+        rotation speed is 2
+    enable mouse controls
+"#;
+    let program = parse_source(src);
+    assert_eq!(program.statements.len(), 1);
+    if let Statement::DSL(ref scene) = program.statements[0] {
+        assert_eq!(scene.kind, "scene3d");
+        assert_eq!(scene.children.len(), 1);
+        assert_eq!(scene.properties.len(), 2);
+    } else {
+        panic!("Expected scene3d DSL block");
+    }
+}
+

@@ -1,0 +1,33 @@
+page Features "/features":
+    show heading "WebForge Framework Capabilities"
+    show text "Explore the deep engineering foundations that make TechScript WebForge a production-grade full-stack framework."
+
+    show section:
+        title is "Core Framework Pillars"
+        show card "Declarative UI Engine":
+            badge is "Frontend"
+            text is "Build complex user interfaces using clean, human-readable statements. WebForge eliminates JSX boilerplate, virtual DOM thrashing, and complicated build setups."
+            code is "page Profile \"/profile\":\n    show heading \"User Settings\"\n    input userEmail with placeholder \"name@domain.com\"\n    button \"Save Profile\" -> userEmail.save"
+        show card "Universal Client & Server Routing":
+            badge is "Navigation"
+            text is "Supports browser history pushState, deep links, static folder export, and instant client page switching without reloading assets or re-initializing WebGL canvases."
+            code is "page Docs \"/docs\":\n    title is \"Documentation\"\n    button \"Syntax Guide\" -> open \"/docs/syntax\""
+        show card "Integrated SQLite Engine":
+            badge is "Fullstack Persistence"
+            text is "No external database drivers or connection pooling services needed. WebForge embeds SQLite with automated table initialization and parameterized query protection."
+            code is "database SiteData:\n    table articles:\n        column title as text\n        column content as text"
+
+    show section:
+        title is "Developer Tooling & Ecosystem"
+        show card "WebForge CLI":
+            badge is "CLI & Build"
+            text is "Manage project lifecycles with simple commands: webforge new, webforge dev, webforge build web --release, and webforge test."
+            code is "$ webforge build web --release\n✓ WebForge Production Build Complete!\n  - dist/index.html (34 KB)\n  - dist/styles.css (8 KB)\n  - dist/app.js (12 KB)"
+        show card "Real-Time 3D Laboratory":
+            badge is "WebGL Acceleration"
+            text is "Hardware-accelerated 3D viewport powered by Three.js with PBR material editing, directional lighting control, and interactive camera orbits."
+            button "Experience 3D Lab":
+                action is "open /showcase/3d"
+        show card "Enterprise Security Architecture":
+            badge is "Security First"
+            text is "Built-in protection against SSRF, XSS, and SQL injection. Automated security headers: nosniff, SAMEORIGIN, strict-origin-when-cross-origin, and isolated sandboxing."

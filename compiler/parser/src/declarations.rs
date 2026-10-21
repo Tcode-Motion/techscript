@@ -1,7 +1,8 @@
 use crate::parser::{ParseResult, Parser};
 use techscript_ast::{
-    ConstDecl, EnumDecl, EnumVariant, ExportDecl, FieldSpec, FuncDecl, MethodDecl, MethodKeyword,
-    ModelDecl, Parameter, Pattern, Statement, StructDecl, TypeSpec, VarDecl,
+    ConstDecl, DSLBlock, EnumDecl, EnumVariant, ExportDecl, Expression, FieldSpec, FuncDecl,
+    LiteralExpr, LiteralVal, MethodDecl, MethodKeyword, ModelDecl, Parameter, Pattern, Statement,
+    StructDecl, TypeSpec, VarDecl,
 };
 use techscript_common::{Ident, Span};
 use techscript_errors::{DiagnosticReporter, ErrorCode};
@@ -13,7 +14,47 @@ impl<'a> Parser<'a> {
         &mut self,
         reporter: &mut DiagnosticReporter,
     ) -> ParseResult<Statement> {
-        if self.check(TokenKind::Make) || self.check(TokenKind::Let) || self.check(TokenKind::Var) {
+        if self.check(TokenKind::Make) {
+            // WebForge website declaration: `make a website called <Name>` or `make website <Name>`
+            if (self.peek_ahead(1).lexeme == "a" && self.peek_ahead(2).lexeme == "website")
+                || self.peek_ahead(1).lexeme == "website"
+            {
+                let start_pos = self.peek().span.start;
+                self.advance(); // consume 'make'
+                if self.peek().lexeme == "a" {
+                    self.advance(); // consume 'a'
+                }
+                if self.peek().lexeme == "website" {
+                    self.advance(); // consume 'website'
+                }
+                if self.peek().lexeme == "called" {
+                    self.advance(); // consume 'called'
+                }
+                let mut site_name = "App".to_string();
+                if self.check(TokenKind::Identifier) || self.check(TokenKind::StringLiteral) {
+                    site_name = self.peek().lexeme.clone();
+                    self.advance();
+                }
+                self.match_token(TokenKind::Colon);
+                self.consume_terminator(reporter)?;
+                let span = Span::new(start_pos, self.previous().span.end);
+                let name_expr = Expression::Literal(LiteralExpr::new(
+                    self.next_id(),
+                    LiteralVal::Str(site_name),
+                    span,
+                ));
+                return Ok(Statement::DSL(DSLBlock::new(
+                    self.next_id(),
+                    "website".to_string(),
+                    vec![name_expr],
+                    vec![],
+                    vec![],
+                    span,
+                )));
+            }
+            let decl = self.parse_variable_decl(reporter)?;
+            Ok(Statement::VarDecl(decl))
+        } else if self.check(TokenKind::Let) || self.check(TokenKind::Var) {
             let decl = self.parse_variable_decl(reporter)?;
             Ok(Statement::VarDecl(decl))
         } else if self.check(TokenKind::Const) || self.check(TokenKind::Keep) {

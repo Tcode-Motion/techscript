@@ -1,0 +1,29 @@
+page GettingStarted "/docs/getting-started":
+    show heading "Getting Started with WebForge"
+    show text "Follow this quick guide to set up your environment, generate a new project, and run your development server."
+
+    show section:
+        title is "Prerequisites & Installation"
+        show card "1. Install the TechScript Toolchain":
+            badge is "Rust Cargo"
+            text is "TechScript and WebForge are compiled via Cargo. Run the installation command in your terminal:"
+            code is "$ cargo install --path cli\n✓ Installed binaries: tech, tsc, webforge"
+        show card "2. Verify CLI Installation":
+            badge is "Verification"
+            text is "Check that the toolchain is accessible from your shell:"
+            code is "$ webforge --version\nWebForge v2.0.0 (TechScript Toolchain)"
+
+    show section:
+        title is "Create Your First Project"
+        show card "Scaffold New Project":
+            badge is "Project Generator"
+            text is "Create a fullstack application template with pages, scenes, server, and configuration:"
+            code is "$ webforge new fullstack my-portal\n$ cd my-portal\n$ ls\n  webforge.toml  src/main.txs  src/pages/  src/server/  src/scenes/"
+        show card "Start Development Server":
+            badge is "Live Dev"
+            text is "Launch the WebForge HTTP server with live reloading and SQLite initialization:"
+            code is "$ webforge dev --port 8085\n🚀 TechScript WebForge running on http://localhost:8085"
+        show card "Build for Production":
+            badge is "Optimized Bundle"
+            text is "Compile your TechScript project into standalone static and server assets in dist/:"
+            code is "$ webforge build web --release\n✓ WebForge Production Build Complete!\n  Output: dist/ (index.html, styles.css, app.js, 404.html)"

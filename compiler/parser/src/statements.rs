@@ -1,9 +1,10 @@
 use crate::parser::{ParseResult, Parser};
 use techscript_ast::{
-    Block, DSLBlock, DSLChild, DSLProperty, ExpressionStmt, ForStmt, IfStmt, ImportStmt,
-    RepeatStmt, ReturnStmt, SayStmt, Statement, ThrowStmt, TryStmt, WhileStmt,
+    Block, CallExpr, DSLBlock, DSLChild, DSLProperty, Expression, ExpressionStmt, ForStmt,
+    IfStmt, ImportStmt, LiteralExpr, LiteralVal, RepeatStmt, ReturnStmt, SayStmt,
+    Statement, ThrowStmt, TryStmt, WhileStmt,
 };
-use techscript_common::Span;
+use techscript_common::{Ident, Span};
 use techscript_errors::{DiagnosticReporter, ErrorCode};
 use techscript_syntax::TokenKind;
 
@@ -62,6 +63,57 @@ impl<'a> Parser<'a> {
             self.consume_terminator(reporter)?;
             let span = Span::new(start_pos, self.previous().span.end);
             Ok(Statement::Say(SayStmt::new(self.next_id(), value, span)))
+        } else if self.check(TokenKind::Send) && self.check_is_send_to() {
+            // WebForge API send: `send NoteInput to /api/notes`
+            let start_pos = self.peek().span.start;
+            self.advance(); // consume 'send'
+            let payload = if self.check(TokenKind::Identifier) && self.peek_ahead(1).lexeme == "to" {
+                let id_tok = self.advance();
+                Expression::Identifier(Ident::new(id_tok.lexeme.clone(), id_tok.span))
+            } else if self.check(TokenKind::StringLiteral) && self.peek_ahead(1).lexeme == "to" {
+                let str_tok = self.advance();
+                Expression::Literal(LiteralExpr::new(
+                    self.next_id(),
+                    LiteralVal::Str(str_tok.lexeme.clone()),
+                    str_tok.span,
+                ))
+            } else {
+                self.parse_expression(techscript_syntax::Precedence::None, reporter)?
+            };
+
+            if self.peek().lexeme == "to" {
+                self.advance(); // consume 'to'
+            }
+            let endpoint_expr = if self.check(TokenKind::StringLiteral) {
+                self.parse_expression(techscript_syntax::Precedence::None, reporter)?
+            } else {
+                let ep_start = self.peek().span.start;
+                let mut path_str = String::new();
+                while self.check(TokenKind::Slash) || self.check(TokenKind::Identifier) {
+                    path_str.push_str(&self.peek().lexeme);
+                    self.advance();
+                }
+                let ep_span = Span::new(ep_start, self.previous().span.end);
+                Expression::Literal(LiteralExpr::new(
+                    self.next_id(),
+                    LiteralVal::Str(path_str),
+                    ep_span,
+                ))
+            };
+            self.consume_terminator(reporter)?;
+            let span = Span::new(start_pos, self.previous().span.end);
+            let send_func = Expression::Identifier(Ident::new("web_api_send".to_string(), span));
+            let call = CallExpr::new(
+                self.next_id(),
+                Box::new(send_func),
+                vec![endpoint_expr, payload],
+                span,
+            );
+            Ok(Statement::Expression(ExpressionStmt::new(
+                self.next_id(),
+                Expression::Call(call),
+                span,
+            )))
         } else if self.check(TokenKind::Return)
             || self.check(TokenKind::Give)
             || self.check(TokenKind::Send)
@@ -145,6 +197,49 @@ impl<'a> Parser<'a> {
             let block = self.parse_block(reporter)?;
             Ok(Statement::Block(block))
         } else if self.check(TokenKind::Identifier)
+            && self.peek().lexeme == "start"
+            && self.peek_ahead(1).lexeme == "website"
+        {
+            let start_pos = self.peek().span.start;
+            self.advance(); // start
+            self.advance(); // website
+            let mut port_val = None;
+            if !self.check(TokenKind::Newline)
+                && !self.check(TokenKind::Semicolon)
+                && !self.is_at_end()
+            {
+                port_val =
+                    Some(self.parse_expression(techscript_syntax::Precedence::None, reporter)?);
+            }
+            self.consume_terminator(reporter)?;
+            let span = Span::new(start_pos, self.previous().span.end);
+            let start_func =
+                Expression::Identifier(Ident::new("web_start_website".to_string(), span));
+            let mut call_args = Vec::new();
+            if let Some(pv) = port_val {
+                call_args.push(pv);
+            }
+            let call = CallExpr::new(self.next_id(), Box::new(start_func), call_args, span);
+            Ok(Statement::Expression(ExpressionStmt::new(
+                self.next_id(),
+                Expression::Call(call),
+                span,
+            )))
+        } else if self.check(TokenKind::Identifier)
+            && self.peek().lexeme == "show"
+            && self.peek_ahead(1).lexeme == "message"
+        {
+            let start_pos = self.peek().span.start;
+            self.advance(); // show
+            self.advance(); // message
+            let val = self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
+            self.consume_terminator(reporter)?;
+            let span = Span::new(start_pos, self.previous().span.end);
+            Ok(Statement::Say(SayStmt::new(self.next_id(), val, span)))
+        } else if self.check(TokenKind::Identifier) && self.peek().lexeme == "show" {
+            let block = self.parse_dsl_block(reporter)?;
+            Ok(Statement::DSL(block))
+        } else if self.check(TokenKind::Identifier)
             && self.dsl_keywords.contains(&self.peek().lexeme)
         {
             let block = self.parse_dsl_block(reporter)?;
@@ -204,6 +299,12 @@ impl<'a> Parser<'a> {
                     || self.check(TokenKind::Elif)
                     || self.check(TokenKind::Catch)
                     || self.is_at_end()
+                    || (!has_then
+                        && (self.check(TokenKind::When)
+                            || self.check(TokenKind::Make)
+                            || (self.check(TokenKind::Identifier)
+                                && ["page", "database", "start", "website"]
+                                    .contains(&self.peek().lexeme.as_str()))))
                 {
                     break;
                 }
@@ -293,7 +394,29 @@ impl<'a> Parser<'a> {
         }
         self.advance(); // consume if/when
 
-        let condition = self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
+        // Support English-like WebForge event syntax: when <TargetId> is <clicked/submitted/...>:
+        let is_event_syntax = self.peek().kind == TokenKind::Identifier
+            && self.peek_ahead(1).lexeme == "is";
+
+        let condition = if is_event_syntax {
+            let target_token = self.advance();
+            let target_name = target_token.lexeme.clone();
+            self.advance(); // consume "is"
+            let event_token = self.advance(); // consume event (e.g. "clicked")
+            let event_name = event_token.lexeme.clone();
+            let span = Span::new(target_token.span.start, event_token.span.end);
+            techscript_ast::Expression::Binary(techscript_ast::BinaryExpr::new(
+                self.next_id(),
+                Box::new(techscript_ast::Expression::Identifier(Ident::new(target_name, target_token.span))),
+                "is".to_string(),
+                Box::new(techscript_ast::Expression::Identifier(Ident::new(event_name, event_token.span))),
+                span,
+            ))
+        } else {
+            self.parse_expression(techscript_syntax::Precedence::None, reporter)?
+        };
+
+        self.match_token(TokenKind::Colon);
         let body = self.parse_block_or_then_end(reporter)?;
 
         let mut else_ifs = Vec::new();
@@ -307,12 +430,14 @@ impl<'a> Parser<'a> {
 
             if self.match_token(TokenKind::Elif) {
                 let cond = self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
+                self.match_token(TokenKind::Colon);
                 let blk = self.parse_block_or_then_end(reporter)?;
                 else_ifs.push((cond, blk));
             } else if self.check(TokenKind::Or) && self.peek_ahead(1).kind == TokenKind::When {
                 self.advance(); // consume Or
                 self.advance(); // consume When
                 let cond = self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
+                self.match_token(TokenKind::Colon);
                 let blk = self.parse_block_or_then_end(reporter)?;
                 else_ifs.push((cond, blk));
             } else if self.match_token(TokenKind::Else) {
@@ -329,9 +454,11 @@ impl<'a> Parser<'a> {
                     self.advance(); // consume if/when
                     let cond =
                         self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
+                    self.match_token(TokenKind::Colon);
                     let blk = self.parse_block_or_then_end(reporter)?;
                     else_ifs.push((cond, blk));
                 } else {
+                    self.match_token(TokenKind::Colon);
                     else_body = Some(self.parse_block_or_then_end(reporter)?);
                     break;
                 }
@@ -521,20 +648,133 @@ impl<'a> Parser<'a> {
     /// Parse a declarative DSL block: `keyword [args...]` newline `[body...]` `end`
     pub fn parse_dsl_block(&mut self, reporter: &mut DiagnosticReporter) -> ParseResult<DSLBlock> {
         let start_pos = self.peek().span.start;
-        let kind = self.parse_identifier(reporter)?.name;
+        let mut kind = self.parse_identifier(reporter)?.name;
 
-        // Parse optional arguments until the statement terminator
+        if kind == "site" {
+            kind = "website".to_string();
+        } else if kind == "data" {
+            kind = "database".to_string();
+        } else if kind == "model3D" || kind == "model3d" || kind == "scene3d" || kind == "scene3D" {
+            kind = "scene3d".to_string();
+        } else if kind == "3D" || kind == "3d" {
+            if self.peek().lexeme == "scene" {
+                self.advance();
+            }
+            kind = "scene3d".to_string();
+        } else if kind == "show" || kind == "make" {
+            if self.peek().lexeme == "3D" || self.peek().lexeme == "3d" {
+                self.advance();
+                if self.peek().lexeme == "scene" || self.peek().lexeme == "model" {
+                    self.advance();
+                }
+                kind = "scene3d".to_string();
+            } else if (self.peek().kind == TokenKind::IntLiteral && self.peek().lexeme == "3")
+                && (self.peek_ahead(1).lexeme == "D" || self.peek_ahead(1).lexeme == "d")
+            {
+                self.advance(); // 3
+                self.advance(); // D
+                if self.peek().lexeme == "scene" || self.peek().lexeme == "model" {
+                    self.advance();
+                }
+                kind = "scene3d".to_string();
+            } else if self.check(TokenKind::Identifier) {
+                kind = self.advance().lexeme.clone();
+            }
+        }
+
+        // Parse optional arguments until the statement terminator or colon
         let mut args = Vec::new();
+        let mut properties = Vec::new();
         while !self.check(TokenKind::Newline)
             && !self.check(TokenKind::Semicolon)
+            && !self.check(TokenKind::Colon)
             && !self.is_at_end()
         {
-            args.push(self.parse_expression(techscript_syntax::Precedence::None, reporter)?);
+            if self.match_token(TokenKind::Arrow) {
+                let action_start = self.peek().span.start;
+                let mut action_str = String::new();
+                while !self.check(TokenKind::Newline)
+                    && !self.check(TokenKind::Semicolon)
+                    && !self.is_at_end()
+                {
+                    if !action_str.is_empty() {
+                        action_str.push(' ');
+                    }
+                    action_str.push_str(&self.peek().lexeme);
+                    self.advance();
+                }
+                let action_span = Span::new(action_start, self.previous().span.end);
+                properties.push(DSLProperty::new(
+                    self.next_id(),
+                    "action".to_string(),
+                    Some(Expression::Literal(LiteralExpr::new(
+                        self.next_id(),
+                        LiteralVal::Str(action_str),
+                        action_span,
+                    ))),
+                    action_span,
+                ));
+                break;
+            } else if self.peek().lexeme == "called" || self.peek().lexeme == "as" {
+                self.advance();
+                let id_start = self.peek().span.start;
+                let id_name = if self.check(TokenKind::Identifier)
+                    || self.check(TokenKind::StringLiteral)
+                {
+                    let s = self.peek().lexeme.clone();
+                    self.advance();
+                    s
+                } else {
+                    "element".to_string()
+                };
+                let id_span = Span::new(id_start, self.previous().span.end);
+                properties.push(DSLProperty::new(
+                    self.next_id(),
+                    "id".to_string(),
+                    Some(Expression::Literal(LiteralExpr::new(
+                        self.next_id(),
+                        LiteralVal::Str(id_name),
+                        id_span,
+                    ))),
+                    id_span,
+                ));
+            } else {
+                args.push(self.parse_expression(techscript_syntax::Precedence::Call, reporter)?);
+            }
         }
-        self.consume_terminator(reporter)?;
+        let has_colon = self.match_token(TokenKind::Colon);
+        let mut body_props = Vec::new();
+        let mut children = Vec::new();
 
-        // Parse body: properties and sub-blocks until `end`
-        let (properties, children) = self.parse_dsl_body(reporter)?;
+        if has_colon && !self.check(TokenKind::Newline) && !self.check(TokenKind::Semicolon) {
+            // Inline properties on the same line after ':'
+            while !self.check(TokenKind::Newline)
+                && !self.check(TokenKind::Semicolon)
+                && !self.check(TokenKind::End)
+                && !self.is_at_end()
+            {
+                if self.check(TokenKind::Identifier) {
+                    let prop = self.parse_dsl_property(reporter)?;
+                    body_props.push(prop);
+                } else {
+                    break;
+                }
+            }
+            if self.check(TokenKind::End) {
+                self.advance();
+            }
+            if !self.is_at_end() && (self.check(TokenKind::Newline) || self.check(TokenKind::Semicolon)) {
+                self.consume_terminator(reporter)?;
+            }
+        } else {
+            if !self.is_at_end() && (self.check(TokenKind::Newline) || self.check(TokenKind::Semicolon)) {
+                self.consume_terminator(reporter)?;
+            }
+            let (bp, ch) = self.parse_dsl_body(&kind, reporter)?;
+            body_props = bp;
+            children = ch;
+        }
+        properties.append(&mut body_props);
 
         let span = Span::new(start_pos, self.previous().span.end);
         Ok(DSLBlock::new(
@@ -550,6 +790,7 @@ impl<'a> Parser<'a> {
     /// Parse the body of a DSL block: zero or more properties and sub-blocks, terminated by `end`.
     fn parse_dsl_body(
         &mut self,
+        parent_kind: &str,
         reporter: &mut DiagnosticReporter,
     ) -> ParseResult<(Vec<DSLProperty>, Vec<DSLChild>)> {
         let mut properties = Vec::new();
@@ -560,8 +801,46 @@ impl<'a> Parser<'a> {
             if self.check(TokenKind::End) || self.is_at_end() {
                 break;
             }
+            let is_top_break = match parent_kind {
+                "link" => self.peek().lexeme == "link" || self.peek().lexeme == "nav" || self.peek().lexeme == "header" || self.peek().lexeme == "footer" || self.peek().lexeme == "page" || self.peek().lexeme == "database" || self.peek().lexeme == "start" || self.peek().lexeme == "show" || self.peek().lexeme == "card" || self.peek().lexeme == "section" || self.peek().lexeme == "button" || self.check(TokenKind::When),
+                "nav" => self.peek().lexeme == "nav" || self.peek().lexeme == "header" || self.peek().lexeme == "footer" || self.peek().lexeme == "page" || self.peek().lexeme == "database" || self.peek().lexeme == "start" || self.check(TokenKind::When),
+                "header" => self.peek().lexeme == "header" || self.peek().lexeme == "footer" || self.peek().lexeme == "page" || self.peek().lexeme == "database" || self.peek().lexeme == "start" || self.check(TokenKind::When),
+                "footer" => self.peek().lexeme == "header" || self.peek().lexeme == "footer" || self.peek().lexeme == "page" || self.peek().lexeme == "database" || self.peek().lexeme == "start" || self.check(TokenKind::When),
+                "button" => self.peek().lexeme == "button" || self.peek().lexeme == "show" || self.peek().lexeme == "card" || self.peek().lexeme == "section" || self.peek().lexeme == "page" || self.peek().lexeme == "database" || self.peek().lexeme == "start" || self.check(TokenKind::When),
+                "hero" => self.peek().lexeme == "hero" || self.peek().lexeme == "page" || self.peek().lexeme == "database" || self.peek().lexeme == "start" || (self.peek().lexeme == "show" && (self.peek_ahead(1).lexeme == "section" || self.peek_ahead(1).lexeme == "card" || self.peek_ahead(1).lexeme == "heading" || self.peek_ahead(1).lexeme == "hero" || self.peek_ahead(1).lexeme == "3D" || self.peek_ahead(1).lexeme == "3d" || self.peek_ahead(1).lexeme == "scene" || (self.peek_ahead(1).kind == TokenKind::IntLiteral && self.peek_ahead(1).lexeme == "3"))) || self.check(TokenKind::When),
+                "page" => self.peek().lexeme == "page" || self.peek().lexeme == "database" || self.peek().lexeme == "start" || self.check(TokenKind::When),
+                "database" => self.peek().lexeme == "page" || self.peek().lexeme == "database" || self.peek().lexeme == "start" || self.check(TokenKind::When),
+                "table" => self.peek().lexeme == "table" || self.peek().lexeme == "page" || self.peek().lexeme == "database" || self.peek().lexeme == "start" || self.check(TokenKind::When),
+                "cube" => self.peek().lexeme == "show" || self.peek().lexeme == "enable" || self.peek().lexeme == "add" || self.peek().lexeme == "page" || self.peek().lexeme == "start" || self.check(TokenKind::When),
+                "scene" | "scene3d" => self.peek().lexeme == "show" || self.peek().lexeme == "page" || self.peek().lexeme == "start" || self.check(TokenKind::When),
+                "section" => self.peek().lexeme == "page" || self.peek().lexeme == "database" || self.peek().lexeme == "start" || self.check(TokenKind::When) || (self.peek().lexeme == "show" && (self.peek_ahead(1).lexeme == "section" || self.peek_ahead(1).lexeme == "card" || self.peek_ahead(1).lexeme == "heading" || self.peek_ahead(1).lexeme == "button" || self.peek_ahead(1).lexeme == "input" || self.peek_ahead(1).lexeme == "3D" || self.peek_ahead(1).lexeme == "3d" || self.peek_ahead(1).lexeme == "scene" || (self.peek_ahead(1).kind == TokenKind::IntLiteral && self.peek_ahead(1).lexeme == "3"))),
+                "card" => self.peek().lexeme == "database" || self.peek().lexeme == "start" || self.check(TokenKind::When) || (self.peek().lexeme == "show" && (self.peek_ahead(1).lexeme == "section" || self.peek_ahead(1).lexeme == "card" || self.peek_ahead(1).lexeme == "heading" || self.peek_ahead(1).lexeme == "button" || self.peek_ahead(1).lexeme == "input" || self.peek_ahead(1).lexeme == "3D" || self.peek_ahead(1).lexeme == "3d" || self.peek_ahead(1).lexeme == "scene" || (self.peek_ahead(1).kind == TokenKind::IntLiteral && self.peek_ahead(1).lexeme == "3"))),
+                "item" => self.peek().lexeme == "page" || self.peek().lexeme == "database" || self.peek().lexeme == "start" || self.check(TokenKind::When) || (self.peek().lexeme == "show" && (self.peek_ahead(1).lexeme == "item" || self.peek_ahead(1).lexeme == "section" || self.peek_ahead(1).lexeme == "card" || self.peek_ahead(1).lexeme == "accordion" || self.peek_ahead(1).lexeme == "tabs" || self.peek_ahead(1).lexeme == "stats" || self.peek_ahead(1).lexeme == "timeline" || self.peek_ahead(1).lexeme == "alert" || self.peek_ahead(1).lexeme == "heading")),
+                "step" | "milestone" => self.peek().lexeme == "page" || self.peek().lexeme == "database" || self.peek().lexeme == "start" || self.check(TokenKind::When) || (self.peek().lexeme == "show" && (self.peek_ahead(1).lexeme == "step" || self.peek_ahead(1).lexeme == "milestone" || self.peek_ahead(1).lexeme == "timeline" || self.peek_ahead(1).lexeme == "section" || self.peek_ahead(1).lexeme == "card" || self.peek_ahead(1).lexeme == "accordion" || self.peek_ahead(1).lexeme == "tabs" || self.peek_ahead(1).lexeme == "stats" || self.peek_ahead(1).lexeme == "alert" || self.peek_ahead(1).lexeme == "heading")),
+                "tab" => self.peek().lexeme == "page" || self.peek().lexeme == "database" || self.peek().lexeme == "start" || self.check(TokenKind::When) || (self.peek().lexeme == "show" && (self.peek_ahead(1).lexeme == "tab" || self.peek_ahead(1).lexeme == "tabs" || self.peek_ahead(1).lexeme == "section" || self.peek_ahead(1).lexeme == "card" || self.peek_ahead(1).lexeme == "accordion" || self.peek_ahead(1).lexeme == "timeline" || self.peek_ahead(1).lexeme == "stats" || self.peek_ahead(1).lexeme == "alert" || self.peek_ahead(1).lexeme == "heading")),
+                "stat" => self.peek().lexeme == "page" || self.peek().lexeme == "database" || self.peek().lexeme == "start" || self.check(TokenKind::When) || (self.peek().lexeme == "show" && (self.peek_ahead(1).lexeme == "stat" || self.peek_ahead(1).lexeme == "stats" || self.peek_ahead(1).lexeme == "section" || self.peek_ahead(1).lexeme == "card" || self.peek_ahead(1).lexeme == "accordion" || self.peek_ahead(1).lexeme == "timeline" || self.peek_ahead(1).lexeme == "tabs" || self.peek_ahead(1).lexeme == "alert" || self.peek_ahead(1).lexeme == "heading")),
+                "alert" => self.peek().lexeme == "page" || self.peek().lexeme == "database" || self.peek().lexeme == "start" || self.check(TokenKind::When) || (self.peek().lexeme == "show" && (self.peek_ahead(1).lexeme == "alert" || self.peek_ahead(1).lexeme == "section" || self.peek_ahead(1).lexeme == "card" || self.peek_ahead(1).lexeme == "accordion" || self.peek_ahead(1).lexeme == "timeline" || self.peek_ahead(1).lexeme == "tabs" || self.peek_ahead(1).lexeme == "stats" || self.peek_ahead(1).lexeme == "heading")),
+                "stats" => self.peek().lexeme == "page" || self.peek().lexeme == "database" || self.peek().lexeme == "start" || self.check(TokenKind::When) || (self.peek().lexeme == "show" && (self.peek_ahead(1).lexeme == "section" || self.peek_ahead(1).lexeme == "card" || self.peek_ahead(1).lexeme == "timeline" || self.peek_ahead(1).lexeme == "accordion" || self.peek_ahead(1).lexeme == "tabs" || self.peek_ahead(1).lexeme == "stats" || self.peek_ahead(1).lexeme == "alert" || self.peek_ahead(1).lexeme == "heading")),
+                "timeline" => self.peek().lexeme == "page" || self.peek().lexeme == "database" || self.peek().lexeme == "start" || self.check(TokenKind::When) || (self.peek().lexeme == "show" && (self.peek_ahead(1).lexeme == "section" || self.peek_ahead(1).lexeme == "card" || self.peek_ahead(1).lexeme == "accordion" || self.peek_ahead(1).lexeme == "timeline" || self.peek_ahead(1).lexeme == "tabs" || self.peek_ahead(1).lexeme == "stats" || self.peek_ahead(1).lexeme == "alert" || self.peek_ahead(1).lexeme == "heading")),
+                "accordion" => self.peek().lexeme == "page" || self.peek().lexeme == "database" || self.peek().lexeme == "start" || self.check(TokenKind::When) || (self.peek().lexeme == "show" && (self.peek_ahead(1).lexeme == "tabs" || self.peek_ahead(1).lexeme == "section" || self.peek_ahead(1).lexeme == "card" || self.peek_ahead(1).lexeme == "timeline" || self.peek_ahead(1).lexeme == "accordion" || self.peek_ahead(1).lexeme == "stats" || self.peek_ahead(1).lexeme == "alert" || self.peek_ahead(1).lexeme == "heading")),
+                "tabs" => self.peek().lexeme == "page" || self.peek().lexeme == "database" || self.peek().lexeme == "start" || self.check(TokenKind::When) || (self.peek().lexeme == "show" && (self.peek_ahead(1).lexeme == "section" || self.peek_ahead(1).lexeme == "card" || self.peek_ahead(1).lexeme == "timeline" || self.peek_ahead(1).lexeme == "accordion" || self.peek_ahead(1).lexeme == "tabs" || self.peek_ahead(1).lexeme == "stats" || self.peek_ahead(1).lexeme == "alert" || self.peek_ahead(1).lexeme == "heading")),
+                _ => false,
+            };
+            let is_global_break = parent_kind != "website" && (
+                self.check(TokenKind::When)
+                || (self.check(TokenKind::Make) && (
+                    (self.peek_ahead(1).lexeme == "a" && self.peek_ahead(2).lexeme == "website")
+                    || self.peek_ahead(1).lexeme == "website"
+                ))
+                || (parent_kind == "page" && self.peek().lexeme == "page")
+                || self.peek().lexeme == "database"
+                || self.peek().lexeme == "start"
+            );
+            if is_top_break || is_global_break {
+                break;
+            }
 
-            if !self.check(TokenKind::Identifier) {
+            if !self.check(TokenKind::Identifier) && !self.check(TokenKind::Make) && !self.check(TokenKind::Model) {
                 let diag = techscript_errors::Diagnostic::new(
                     techscript_errors::DiagnosticLevel::Error,
                     ErrorCode::E0100,
@@ -575,7 +854,10 @@ impl<'a> Parser<'a> {
 
             let name = self.peek().lexeme.clone();
 
-            if name == "code" {
+            if name == "code"
+                && (self.peek_ahead(1).kind == TokenKind::Newline
+                    || self.peek_ahead(1).kind == TokenKind::Colon)
+            {
                 // Code block: parse raw TechScript statements until `end`
                 self.advance();
                 self.consume_terminator(reporter)?;
@@ -601,6 +883,266 @@ impl<'a> Parser<'a> {
                 )?;
                 let span = Span::new(code_start, self.previous().span.end);
                 children.push(DSLChild::Code(Block::new(self.next_id(), statements, span)));
+            } else if name == "show" || name == "make" {
+                self.advance(); // consume 'show' or 'make'
+                let elem_start = self.peek().span.start;
+                let elem_kind = if self.peek().lexeme == "3D" || self.peek().lexeme == "3d" {
+                    self.advance();
+                    if self.peek().lexeme == "scene" || self.peek().lexeme == "model" {
+                        self.advance();
+                    }
+                    "scene3d".to_string()
+                } else if (self.peek().kind == TokenKind::IntLiteral && self.peek().lexeme == "3")
+                    && (self.peek_ahead(1).lexeme == "D" || self.peek_ahead(1).lexeme == "d")
+                {
+                    self.advance(); // 3
+                    self.advance(); // D
+                    if self.peek().lexeme == "scene" || self.peek().lexeme == "model" {
+                        self.advance();
+                    }
+                    "scene3d".to_string()
+                } else if self.check(TokenKind::Identifier) {
+                    self.advance().lexeme.clone()
+                } else {
+                    "element".to_string()
+                };
+
+                let mut elem_args = Vec::new();
+                let mut elem_props = Vec::new();
+                while !self.check(TokenKind::Newline)
+                    && !self.check(TokenKind::Semicolon)
+                    && !self.check(TokenKind::Colon)
+                    && !self.is_at_end()
+                {
+                    if self.match_token(TokenKind::Arrow) {
+                        let action_start = self.peek().span.start;
+                        let mut action_str = String::new();
+                        while !self.check(TokenKind::Newline)
+                            && !self.check(TokenKind::Semicolon)
+                            && !self.is_at_end()
+                        {
+                            if !action_str.is_empty() {
+                                action_str.push(' ');
+                            }
+                            action_str.push_str(&self.peek().lexeme);
+                            self.advance();
+                        }
+                        let action_span = Span::new(action_start, self.previous().span.end);
+                        elem_props.push(DSLProperty::new(
+                            self.next_id(),
+                            "action".to_string(),
+                            Some(Expression::Literal(LiteralExpr::new(
+                                self.next_id(),
+                                LiteralVal::Str(action_str),
+                                action_span,
+                            ))),
+                            action_span,
+                        ));
+                        break;
+                    } else if self.peek().lexeme == "called" || self.peek().lexeme == "as" {
+                        self.advance();
+                        let id_start = self.peek().span.start;
+                        let id_name = if self.check(TokenKind::Identifier)
+                            || self.check(TokenKind::StringLiteral)
+                        {
+                            let s = self.peek().lexeme.clone();
+                            self.advance();
+                            s
+                        } else {
+                            "item".to_string()
+                        };
+                        let id_span = Span::new(id_start, self.previous().span.end);
+                        elem_props.push(DSLProperty::new(
+                            self.next_id(),
+                            "id".to_string(),
+                            Some(Expression::Literal(LiteralExpr::new(
+                                self.next_id(),
+                                LiteralVal::Str(id_name),
+                                id_span,
+                            ))),
+                            id_span,
+                        ));
+                    } else {
+                        let arg_expr = self.parse_expression(techscript_syntax::Precedence::Call, reporter)?;
+                        if elem_kind == "button" && !elem_props.iter().any(|p| p.name == "label") {
+                            let arg_span = arg_expr.span();
+                            elem_props.push(DSLProperty::new(
+                                self.next_id(),
+                                "label".to_string(),
+                                Some(arg_expr.clone()),
+                                arg_span,
+                            ));
+                        }
+                        elem_args.push(arg_expr);
+                    }
+                }
+
+                let has_colon = self.match_token(TokenKind::Colon);
+                let (elem_props_extra, elem_children) = if has_colon {
+                    if self.check(TokenKind::Newline) || self.check(TokenKind::Semicolon) {
+                        self.consume_terminator(reporter)?;
+                        let (sub_props, sub_children) = self.parse_dsl_body(&elem_kind, reporter)?;
+                        (sub_props, sub_children)
+                    } else {
+                        // Inline properties on the same line after ':'
+                        let mut sub_props = Vec::new();
+                        while !self.check(TokenKind::Newline)
+                            && !self.check(TokenKind::Semicolon)
+                            && !self.check(TokenKind::End)
+                            && !self.is_at_end()
+                        {
+                            if self.check(TokenKind::Identifier) {
+                                let prop = self.parse_dsl_property(reporter)?;
+                                sub_props.push(prop);
+                            } else {
+                                break;
+                            }
+                        }
+                        if self.check(TokenKind::End) {
+                            self.advance();
+                        }
+                        if !self.is_at_end() && (self.check(TokenKind::Newline) || self.check(TokenKind::Semicolon)) {
+                            self.consume_terminator(reporter)?;
+                        }
+                        (sub_props, Vec::new())
+                    }
+                } else {
+                    if !self.is_at_end() && (self.check(TokenKind::Newline) || self.check(TokenKind::Semicolon)) {
+                        self.consume_terminator(reporter)?;
+                    }
+                    (Vec::new(), Vec::new())
+                };
+                elem_props.extend(elem_props_extra);
+
+                let elem_span = Span::new(elem_start, self.previous().span.end);
+                let elem_block = DSLBlock::new(
+                    self.next_id(),
+                    elem_kind,
+                    elem_args,
+                    elem_props,
+                    elem_children,
+                    elem_span,
+                );
+                children.push(DSLChild::Block(elem_block));
+            } else if name == "add" {
+                self.advance(); // consume 'add'
+                let item_start = self.peek().span.start;
+                let item_kind = if self.check(TokenKind::Identifier) {
+                    self.advance().lexeme.clone()
+                } else {
+                    "item".to_string()
+                };
+
+                let mut item_args = Vec::new();
+                let mut item_props = Vec::new();
+                while !self.check(TokenKind::Newline)
+                    && !self.check(TokenKind::Semicolon)
+                    && !self.check(TokenKind::Colon)
+                    && !self.is_at_end()
+                {
+                    if self.peek().lexeme == "at" {
+                        self.advance();
+                        let at_val = self.parse_expression(techscript_syntax::Precedence::Call, reporter)?;
+                        let at_span = at_val.span();
+                        item_props.push(DSLProperty::new(self.next_id(), "at".to_string(), Some(at_val), at_span));
+                    } else if self.peek().lexeme == "size" {
+                        self.advance();
+                        let size_val = self.parse_expression(techscript_syntax::Precedence::Call, reporter)?;
+                        let size_span = size_val.span();
+                        item_props.push(DSLProperty::new(self.next_id(), "size".to_string(), Some(size_val), size_span));
+                    } else if self.peek().lexeme == "color" {
+                        self.advance();
+                        if self.check(TokenKind::Is) || self.peek().lexeme == "is" {
+                            self.advance();
+                        }
+                        let color_val = self.parse_expression(techscript_syntax::Precedence::Call, reporter)?;
+                        let color_span = color_val.span();
+                        item_props.push(DSLProperty::new(self.next_id(), "color".to_string(), Some(color_val), color_span));
+                    } else if self.peek().lexeme == "material" {
+                        self.advance();
+                        if self.check(TokenKind::Is) || self.peek().lexeme == "is" {
+                            self.advance();
+                        }
+                        let mat_val = self.parse_expression(techscript_syntax::Precedence::Call, reporter)?;
+                        let mat_span = mat_val.span();
+                        item_props.push(DSLProperty::new(self.next_id(), "material".to_string(), Some(mat_val), mat_span));
+                    } else {
+                        item_args.push(self.parse_expression(techscript_syntax::Precedence::Call, reporter)?);
+                    }
+                }
+
+                let has_colon = self.match_token(TokenKind::Colon);
+                let (extra_props, item_children) = if has_colon {
+                    if self.check(TokenKind::Newline) || self.check(TokenKind::Semicolon) {
+                        self.consume_terminator(reporter)?;
+                        self.parse_dsl_body(&item_kind, reporter)?
+                    } else {
+                        // inline properties
+                        let mut sub_props = Vec::new();
+                        while !self.check(TokenKind::Newline)
+                            && !self.check(TokenKind::Semicolon)
+                            && !self.check(TokenKind::End)
+                            && !self.is_at_end()
+                        {
+                            if self.check(TokenKind::Identifier) {
+                                let prop = self.parse_dsl_property(reporter)?;
+                                sub_props.push(prop);
+                            } else {
+                                break;
+                            }
+                        }
+                        if self.check(TokenKind::End) {
+                            self.advance();
+                        }
+                        if !self.is_at_end() && (self.check(TokenKind::Newline) || self.check(TokenKind::Semicolon)) {
+                            self.consume_terminator(reporter)?;
+                        }
+                        (sub_props, Vec::new())
+                    }
+                } else {
+                    if !self.is_at_end() && (self.check(TokenKind::Newline) || self.check(TokenKind::Semicolon)) {
+                        self.consume_terminator(reporter)?;
+                    }
+                    (Vec::new(), Vec::new())
+                };
+                item_props.extend(extra_props);
+
+                let item_span = Span::new(item_start, self.previous().span.end);
+                let item_block = DSLBlock::new(
+                    self.next_id(),
+                    item_kind,
+                    item_args,
+                    item_props,
+                    item_children,
+                    item_span,
+                );
+                children.push(DSLChild::Block(item_block));
+            } else if name == "enable" {
+                self.advance(); // consume 'enable'
+                let prop_start = self.previous().span.start;
+                let mut prop_name = String::new();
+                while !self.check(TokenKind::Newline)
+                    && !self.check(TokenKind::Semicolon)
+                    && !self.is_at_end()
+                {
+                    if !prop_name.is_empty() {
+                        prop_name.push('_');
+                    }
+                    prop_name.push_str(&self.peek().lexeme);
+                    self.advance();
+                }
+                self.consume_terminator(reporter)?;
+                let prop_span = Span::new(prop_start, self.previous().span.end);
+                properties.push(DSLProperty::new(
+                    self.next_id(),
+                    prop_name,
+                    Some(Expression::Literal(LiteralExpr::new(
+                        self.next_id(),
+                        LiteralVal::Bool(true),
+                        prop_span,
+                    ))),
+                    prop_span,
+                ));
             } else if self.dsl_sub_blocks.contains(&name) {
                 // Nested DSL sub-block
                 let block = self.parse_dsl_block(reporter)?;
@@ -612,12 +1154,9 @@ impl<'a> Parser<'a> {
             }
         }
 
-        self.consume(
-            TokenKind::End,
-            ErrorCode::E0105,
-            "Expected 'end' to close DSL block",
-            reporter,
-        )?;
+        if self.check(TokenKind::End) {
+            self.advance();
+        }
 
         Ok((properties, children))
     }
@@ -628,7 +1167,23 @@ impl<'a> Parser<'a> {
         reporter: &mut DiagnosticReporter,
     ) -> ParseResult<DSLProperty> {
         let start_pos = self.peek().span.start;
-        let name = self.parse_identifier(reporter)?.name;
+        let mut name = self.parse_identifier(reporter)?.name;
+
+        // Support multi-word property names like "rotation speed"
+        while self.check(TokenKind::Identifier) && self.peek().lexeme != "is" {
+            name.push('_');
+            name.push_str(&self.advance().lexeme);
+        }
+
+        // Support `is`, `from`, `by`, `to` prepositions in property
+        if self.check(TokenKind::Is)
+            || self.peek().lexeme == "is"
+            || self.peek().lexeme == "from"
+            || self.peek().lexeme == "by"
+            || self.peek().lexeme == "to"
+        {
+            self.advance();
+        }
 
         let mut value = None;
         // Check if there is a value expression on the same line
@@ -636,11 +1191,16 @@ impl<'a> Parser<'a> {
             && !self.check(TokenKind::Semicolon)
             && !self.check(TokenKind::End)
             && !self.check(TokenKind::RightBrace)
+            && !self.check(TokenKind::Comma)
             && !self.is_at_end()
         {
             value = Some(self.parse_expression(techscript_syntax::Precedence::None, reporter)?);
         }
-        self.consume_terminator(reporter)?;
+        if self.match_token(TokenKind::Comma) {
+            // Consumed comma separator between inline properties
+        } else if !self.check(TokenKind::End) && !self.check(TokenKind::RightBrace) && !self.is_at_end() {
+            self.consume_terminator(reporter)?;
+        }
 
         let span = Span::new(start_pos, self.previous().span.end);
         Ok(DSLProperty::new(self.next_id(), name, value, span))
@@ -684,5 +1244,24 @@ impl<'a> Parser<'a> {
             reporter.report(diag);
             Err(())
         }
+    }
+
+    /// Checks if a `send` keyword is part of a WebForge `send <val> to <endpoint>` construct.
+    fn check_is_send_to(&self) -> bool {
+        let mut i = 1;
+        while self.pos + i < self.tokens.len() {
+            let tk = &self.tokens[self.pos + i];
+            if tk.kind == TokenKind::Newline
+                || tk.kind == TokenKind::Semicolon
+                || tk.kind == TokenKind::Eof
+            {
+                break;
+            }
+            if tk.lexeme == "to" {
+                return true;
+            }
+            i += 1;
+        }
+        false
     }
 }

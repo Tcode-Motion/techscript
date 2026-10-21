@@ -1,0 +1,29 @@
+page CLI "/cli":
+    show heading "WebForge CLI Toolchain"
+    show text "A fast, intuitive command-line driver with binary aliases: webforge, tsc, and tech."
+
+    show section:
+        title is "Core Development Commands"
+        show card "1. Project Scaffolding":
+            badge is "webforge new"
+            text is "Generate production fullstack applications, websites, REST services, and 3D scenes:"
+            code is "$ webforge new fullstack my-site\n$ webforge new website my-landing\n$ webforge new api my-backend\n$ webforge new 3d my-viewport"
+        show card "2. Local Development":
+            badge is "webforge dev"
+            text is "Run local development server with automated SQLite database bootstrapping:"
+            code is "$ webforge dev --port 8085\n🚀 TechScript WebForge running on http://localhost:8085"
+        show card "3. Production Optimization":
+            badge is "webforge build"
+            text is "Emit standalone production assets with multi-route static HTML files:"
+            code is "$ webforge build web --release\n✓ WebForge Production Build Complete!\n  - dist/index.html\n  - dist/styles.css\n  - dist/app.js\n  - dist/assets/logo.png"
+
+    show section:
+        title is "Testing & Diagnostics"
+        show card "Automated Test Runner":
+            badge is "webforge test"
+            text is "Execute unit and integration tests across your codebase:"
+            code is "$ webforge test\nRunning 14 test suites... 14 passed; 0 failed"
+        show card "Environment Doctor":
+            badge is "webforge doctor"
+            text is "Verify compiler dependencies, Rust toolchain, and port availability:"
+            code is "$ webforge doctor\n✓ Compiler: OK\n✓ SQLite: OK\n✓ Network: OK"

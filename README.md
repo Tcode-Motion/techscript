@@ -9,10 +9,11 @@
 </p>
 
 <p align="center">
+  <a href="https://techscript.is-a.dev/techscript/"><img src="https://img.shields.io/badge/website-techscript.is--a.dev-0284C7?logo=googlechrome&style=for-the-badge" alt="WebForge Live Website"></a>
   <a href="https://github.com/Tcode-Motion/techscript/releases"><img src="https://img.shields.io/github/v/release/Tcode-Motion/techscript?color=06B6D4&label=release&logo=github&style=for-the-badge" alt="Release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-0284C7.svg?style=for-the-badge" alt="License"></a>
   <a href="https://github.com/Tcode-Motion/techscript/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Tcode-Motion/techscript/ci.yml?branch=main&label=CI&logo=github-actions&style=for-the-badge" alt="CI Status"></a>
-  <a href="https://is-a.dev/techscript/"><img src="https://img.shields.io/badge/docs-is--a.dev%2Ftechscript-14B8A6?logo=gitbook&style=for-the-badge" alt="Documentation"></a>
+  <a href="https://techscript.is-a.dev/techscript/"><img src="https://img.shields.io/badge/docs-techscript.is--a.dev-14B8A6?logo=gitbook&style=for-the-badge" alt="Documentation"></a>
   <a href="#installation"><img src="https://img.shields.io/badge/dependencies-Zero%20(Standalone)-22C55E?style=for-the-badge" alt="Zero Dependencies"></a>
 </p>
 
@@ -76,7 +77,7 @@ header:
             url is "/"
         link:
             label is "Docs"
-            url is "https://is-a.dev/techscript/"
+            url is "https://techscript.is-a.dev/techscript/"
 
 start website
 ```
@@ -105,6 +106,8 @@ TechScript is designed to be completely independent:
 ---
 
 ## WebForge Framework Deep-Dive
+
+> 🌐 **Live Website**: Experience the official WebForge showcase running live at **[https://techscript.is-a.dev/techscript/](https://techscript.is-a.dev/techscript/)**.
 
 WebForge is the official full-stack web framework built directly into TechScript. It bridges high-level declarative UI composition with backend persistence and client rendering.
 
@@ -183,7 +186,7 @@ header:
             url is "/about"
         link:
             label is "Docs"
-            url is "https://is-a.dev/techscript/"
+            url is "https://techscript.is-a.dev/techscript/"
 
 footer:
     section:
@@ -198,7 +201,7 @@ footer:
         title is "Resources"
         link:
             label is "Documentation"
-            url is "https://is-a.dev/techscript/"
+            url is "https://techscript.is-a.dev/techscript/"
         link:
             label is "GitHub"
             url is "https://github.com/Tcode-Motion/techscript"
@@ -212,7 +215,7 @@ page Home "/":
     hero:
         title is "Enterprise Cloud Storage"
         subtitle is "Fast, secure, and decentralized cloud infrastructure powered by TechScript WebForge."
-        button "Get Started" -> open "https://is-a.dev/techscript/"
+        button "Get Started" -> open "https://techscript.is-a.dev/techscript/"
         button "Learn More" -> open "/about"
 
     section:
@@ -569,7 +572,7 @@ We welcome community contributions, language enhancements, and bug reports!
 - **Contributing Guide**: [CONTRIBUTING.md](CONTRIBUTING.md) — Setup guidelines, branch strategy, testing rules, and pull request workflows.
 - **Code of Conduct**: [.github/CODE_OF_CONDUCT.md](.github/CODE_OF_CONDUCT.md) — Community expectations and inclusive collaboration.
 - **Security Policy**: [SECURITY.md](SECURITY.md) — Vulnerability reporting and patch timelines.
-- **Official Documentation**: [https://is-a.dev/techscript/](https://is-a.dev/techscript/)
+- **Official Website & Docs**: [https://techscript.is-a.dev/techscript/](https://techscript.is-a.dev/techscript/)
 - **GitHub Discussions**: [https://github.com/Tcode-Motion/techscript/discussions](https://github.com/Tcode-Motion/techscript/discussions)
 - **Issue Tracker**: [https://github.com/Tcode-Motion/techscript/issues](https://github.com/Tcode-Motion/techscript/issues)
 

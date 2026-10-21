@@ -80,7 +80,8 @@ graphify-out/
 *.bin
 *.out
 *.app
-bin/
+/bin/
+!**/src/bin/**
 build/
 dist/
 site/

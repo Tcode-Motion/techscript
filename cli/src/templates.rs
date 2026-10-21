@@ -255,7 +255,10 @@ impl ProjectTemplate {
                 created_paths.push(toml_path);
 
                 let app_path = dir.join("app.txs");
-                let app_content = format!("site \"{}\"\n", name);
+                let app_content = format!(
+                    "make a website called {}\n\nheader:\n    title is \"{}\"\n    nav:\n        link:\n            label is \"Home\"\n            url is \"/\"\n        link:\n            label is \"About\"\n            url is \"/about\"\n        link:\n            label is \"Docs\"\n            url is \"https://is-a.dev/techscript/\"\n\nfooter:\n    section:\n        title is \"{}\"\n        link:\n            label is \"Home\"\n            url is \"/\"\n        link:\n            label is \"About\"\n            url is \"/about\"\n    section:\n        title is \"TechScript\"\n        link:\n            label is \"Documentation\"\n            url is \"https://is-a.dev/techscript/\"\n        link:\n            label is \"GitHub Repository\"\n            url is \"https://github.com/Tcode-Motion/techscript\"\n\nstart website\n",
+                    name, name, name
+                );
                 std::fs::write(&app_path, app_content)?;
                 created_paths.push(app_path);
 
@@ -264,14 +267,17 @@ impl ProjectTemplate {
 
                 let home_path = pages_dir.join("home.txs");
                 let home_content = format!(
-                    "page Home \"/\":\n    title \"Welcome to {}\"\n    text \"Crafted with TechScript and WebForge.\"\n    button \"Get Started\" -> open About\n",
+                    "page Home \"/\":\n    title \"Welcome to {}\"\n    text \"A clean, modern website built with TechScript & WebForge.\"\n    text \"Edit pages/home.txs or app.txs to start customizing your application.\"\n    button \"Explore Documentation\" -> open \"https://is-a.dev/techscript/\"\n    button \"About This Site\" -> open About\n",
                     name
                 );
                 std::fs::write(&home_path, home_content)?;
                 created_paths.push(home_path);
 
                 let about_path = pages_dir.join("about.txs");
-                let about_content = "page About \"/about\":\n    title \"About This Site\"\n    text \"TechScript + WebForge delivers beginner-friendly, concise web development.\"\n    button \"Back to Home\" -> open Home\n";
+                let about_content = format!(
+                    "page About \"/about\":\n    title \"About {}\"\n    text \"This project is powered by TechScript 2.0 and WebForge.\"\n    text \"TechScript provides a readable, full-stack programming experience with native compilation and zero-config servers.\"\n    button \"Back to Home\" -> open Home\n",
+                    name
+                );
                 std::fs::write(&about_path, about_content)?;
                 created_paths.push(about_path);
 
@@ -281,7 +287,7 @@ impl ProjectTemplate {
 
                 let readme_path = dir.join("README.md");
                 let readme_content = format!(
-                    "# {}\n\nWebsite built with **TechScript + WebForge**.\n\n## Project Structure\n```text\n├── webforge.toml       # Project configuration\n├── app.txs             # Application entry\n├── pages/\n│   ├── home.txs        # Home page\n│   └── about.txs       # About page\n├── assets/\n│   ├── images/         # Images\n│   └── models/         # 3D models\n└── README.md\n```\n\n## Getting Started\n\nStart development server:\n```bash\nwebforge dev\n```\nVisit `http://localhost:3000` in your browser.\n\n## Production Build\n```bash\nwebforge build web --release\n```\n",
+                    "# {}\n\nA clean, modern website built with **TechScript & WebForge**.\n\n## Project Structure\n```text\n├── webforge.toml       # Project configuration\n├── app.txs             # Application entry (header, navigation bar, footer)\n├── pages/\n│   ├── home.txs        # Welcome / home page\n│   └── about.txs       # About page\n├── assets/\n│   ├── images/         # Images\n│   └── models/         # 3D models\n└── README.md\n```\n\n## Getting Started\n\nStart live development server:\n```bash\ntsc dev\n```\nVisit `http://localhost:3000` in your browser.\n\n## Production Build\n```bash\ntsc build --target web\n```\n",
                     name
                 );
                 std::fs::write(&readme_path, readme_content)?;

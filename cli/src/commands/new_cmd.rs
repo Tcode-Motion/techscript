@@ -120,7 +120,17 @@ pub fn execute(
             println!("\n{}", "✓ Project created successfully.".green().bold());
             println!("\nNext steps:");
             println!("  cd {}", name.cyan());
-            println!("  tsc run");
+            if matches!(
+                template,
+                ProjectTemplate::Website
+                    | ProjectTemplate::FullStack
+                    | ProjectTemplate::Api
+                    | ProjectTemplate::Scene3D
+            ) {
+                println!("  tsc dev");
+            } else {
+                println!("  tsc run");
+            }
             println!("  code .");
             ExitCode::Success
         }

@@ -755,8 +755,8 @@
     "semantic_hash": ""
   },
   "cli/src/commands/new_cmd.rs": {
-    "mtime": 1792593387.2380316,
-    "ast_hash": "4adff9c3efa2e3850f2adce6606db539",
+    "mtime": 1792594093.1340175,
+    "ast_hash": "78c36908c3ae9e6b69e6c3bfc9cd8610",
     "semantic_hash": ""
   },
   "cli/src/commands/publish.rs": {
@@ -855,8 +855,8 @@
     "semantic_hash": ""
   },
   "cli/src/templates.rs": {
-    "mtime": 1792593387.3423033,
-    "ast_hash": "5be3171543a3a4294a41ca39fa8ac381",
+    "mtime": 1792594079.7789545,
+    "ast_hash": "ee6307589c02c28888100e9f434da1c5",
     "semantic_hash": ""
   },
   "cli/src/watch.rs": {
@@ -920,10 +920,9 @@
     "semantic_hash": "f733a36b94eda91ac897027442112b4c"
   },
   "cli/src/bin/benchmark.rs": {
-    "mtime": 1792178447.3958964,
-    "seen": 1792180082.2492237,
-    "ast_hash": "0d563843202501ac5d3762812e95b6a7",
-    "semantic_hash": "0d563843202501ac5d3762812e95b6a7"
+    "mtime": 1785140122.0848536,
+    "ast_hash": "1d16d230fb582d138a2a3f285aac10e8",
+    "semantic_hash": ""
   },
   "cli/tests/e2e_tests.rs": {
     "mtime": 1785140122.9822142,
@@ -2674,8 +2673,8 @@
     "semantic_hash": ""
   },
   "cli/src/entrypoint.rs": {
-    "mtime": 1792593387.2873595,
-    "ast_hash": "81f7b02c27a4fd12fecc7c579ff25c14",
+    "mtime": 1792594050.7894287,
+    "ast_hash": "886a6e70c6031b907241d6ae9b606437",
     "semantic_hash": ""
   },
   "docs/WEBFORGE_3D.md": {
@@ -2784,8 +2783,8 @@
     "semantic_hash": ""
   },
   "stdlib/src/web/server.rs": {
-    "mtime": 1792593388.378336,
-    "ast_hash": "586632db8016831f3ac9d21f72520760",
+    "mtime": 1792593988.3958912,
+    "ast_hash": "df5036c5206a6bb12329e1bcc59852d0",
     "semantic_hash": ""
   },
   "stdlib/src/web/styles.rs": {
@@ -2836,6 +2835,26 @@
   "docs/FINAL_RELEASE_AND_DEPLOYMENT_REPORT.md": {
     "mtime": 1792593111.7026508,
     "ast_hash": "6d3f0e5f4bebe877955a24b46c40c620",
+    "semantic_hash": ""
+  },
+  "cli/src/bin/tech.rs": {
+    "mtime": 1792565101.737164,
+    "ast_hash": "f34f04012fc36618ab5a5432fcd9a698",
+    "semantic_hash": ""
+  },
+  "cli/src/bin/techscript.rs": {
+    "mtime": 1792565084.6025772,
+    "ast_hash": "f34f04012fc36618ab5a5432fcd9a698",
+    "semantic_hash": ""
+  },
+  "cli/src/bin/tsc.rs": {
+    "mtime": 1792565091.904184,
+    "ast_hash": "f34f04012fc36618ab5a5432fcd9a698",
+    "semantic_hash": ""
+  },
+  "cli/src/bin/webforge.rs": {
+    "mtime": 1792566302.9946966,
+    "ast_hash": "f34f04012fc36618ab5a5432fcd9a698",
     "semantic_hash": ""
   }
 }

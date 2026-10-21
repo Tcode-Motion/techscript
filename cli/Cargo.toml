@@ -4,7 +4,11 @@ version = "2.0.0"
 license = "Apache-2.0"
 edition = "2021"
 description = "TechScript 2.0 compiler driver — the official tsc executable"
-default-run = "webforge"
+default-run = "tsc"
+
+[[bin]]
+name = "tsc"
+path = "src/bin/tsc.rs"
 
 [[bin]]
 name = "webforge"
@@ -13,10 +17,6 @@ path = "src/bin/webforge.rs"
 [[bin]]
 name = "techscript"
 path = "src/bin/techscript.rs"
-
-[[bin]]
-name = "tsc"
-path = "src/bin/tsc.rs"
 
 [[bin]]
 name = "tech"

@@ -419,13 +419,13 @@ fn show_welcome_screen() {
     );
     println!("Version: v{}", techscript_common::TECHSCRIPT_VERSION);
     println!("\nUsage:");
+    println!("  tsc <command> [options]");
     println!("  webforge <command> [options]");
     println!("  techscript <command> [options]");
-    println!("  tsc <command> [options]");
     println!("\nQuick Start:");
-    println!("  webforge new my-site               Create a new WebForge project");
+    println!("  tsc new website my-site            Create a new WebForge project");
     println!("  cd my-site");
-    println!("  webforge dev                       Start live development server");
+    println!("  tsc dev                            Start live development server");
     println!("\nPopular Commands:");
     println!("  new                       Scaffold a new project or template");
     println!("  dev                       Start live development server");
@@ -433,7 +433,7 @@ fn show_welcome_screen() {
     println!("  test                      Run project test suites");
     println!("  add                       Add package dependency");
     println!("  doctor                    Evaluate environment health");
-    println!("\nFor a complete list of commands, try: webforge --help");
+    println!("\nFor a complete list of commands, try: tsc --help");
     println!(
         "{}",
         "========================================================"
@@ -469,13 +469,13 @@ fn show_custom_help() {
     );
     println!("Version: v{}", techscript_common::TECHSCRIPT_VERSION);
     println!("\nUsage:");
+    println!("  tsc <command> [options]");
     println!("  webforge <command> [options]");
     println!("  techscript <command> [options]");
-    println!("  tsc <command> [options]");
     println!("\nQuick Start:");
-    println!("  webforge new my-site");
+    println!("  tsc new website my-site");
     println!("  cd my-site");
-    println!("  webforge dev");
+    println!("  tsc dev");
     println!("\nCommon Commands:");
     println!("  {}", "Project & Framework".bold().yellow());
     println!("    new                     Scaffold a new project directory");

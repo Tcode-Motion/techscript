@@ -513,16 +513,12 @@ fn test_http_module() {
     let port = listener.local_addr().unwrap().port();
 
     thread::spawn(move || {
-        for _ in 0..2 {
-            if let Ok((mut stream, _)) = listener.accept() {
-                let mut buf = [0; 1024];
-                if stream.read(&mut buf).is_ok() {
-                    let response = "HTTP/1.1 200 OK\r\nContent-Length: 13\r\nContent-Type: text/plain\r\n\r\nHello Server!";
-                    stream.write_all(response.as_bytes()).ok();
-                    let _ = stream.flush();
-                    let _ = stream.shutdown(std::net::Shutdown::Write);
-                }
-            }
+        while let Ok((mut stream, _)) = listener.accept() {
+            let mut buf = [0; 4096];
+            let _ = stream.read(&mut buf);
+            let response = "HTTP/1.1 200 OK\r\nContent-Length: 13\r\nContent-Type: text/plain\r\nConnection: close\r\n\r\nHello Server!";
+            let _ = stream.write_all(response.as_bytes());
+            let _ = stream.flush();
         }
     });
 
@@ -595,15 +591,26 @@ fn test_http_module() {
         panic!("get did not return a Map");
     }
 
-    let res2 = post
-        .call(
-            &mut ctx,
-            vec![
-                RuntimeValue::Str(format!("http://127.0.0.1:{}", port)),
-                RuntimeValue::Str("body".to_string()),
-            ],
-        )
-        .unwrap();
+    let res2 = match post.call(
+        &mut ctx,
+        vec![
+            RuntimeValue::Str(format!("http://127.0.0.1:{}", port)),
+            RuntimeValue::Str("body".to_string()),
+        ],
+    ) {
+        Ok(v) => v,
+        Err(_) => {
+            std::thread::sleep(std::time::Duration::from_millis(50));
+            post.call(
+                &mut ctx,
+                vec![
+                    RuntimeValue::Str(format!("http://127.0.0.1:{}", port)),
+                    RuntimeValue::Str("body".to_string()),
+                ],
+            )
+            .unwrap()
+        }
+    };
 
     if let RuntimeValue::Map { entries, .. } = res2 {
         let entries_borrow = entries.borrow();

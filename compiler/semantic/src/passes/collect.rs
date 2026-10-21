@@ -118,7 +118,9 @@ impl CollectDecls {
             if prop.name == "id" {
                 if let Some(Expression::Literal(lit)) = &prop.value {
                     if let LiteralVal::Str(id_name) = &lit.value {
-                        if !id_name.is_empty() && !context.symbol_table.scopes[0].symbols.contains_key(id_name) {
+                        if !id_name.is_empty()
+                            && !context.symbol_table.scopes[0].symbols.contains_key(id_name)
+                        {
                             let type_id = context.interner.any();
                             let symbol = Symbol::new(id_name.clone(), true, false, false, type_id);
                             context.symbol_table.register(id_name.clone(), symbol);

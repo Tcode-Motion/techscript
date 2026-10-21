@@ -84,9 +84,18 @@ start website
 
     assert!(html.contains("MultiPortal"), "Header title missing");
     assert!(html.contains("data-route=\"/\""), "Home route missing");
-    assert!(html.contains("data-route=\"/dashboard\""), "Dashboard route missing");
-    assert!(html.contains("data-route=\"/settings\""), "Settings route missing");
-    assert!(html.contains("class=\"webforge-page-view"), "Page views not rendered");
+    assert!(
+        html.contains("data-route=\"/dashboard\""),
+        "Dashboard route missing"
+    );
+    assert!(
+        html.contains("data-route=\"/settings\""),
+        "Settings route missing"
+    );
+    assert!(
+        html.contains("class=\"webforge-page-view"),
+        "Page views not rendered"
+    );
     assert!(html.contains("webforgeRouter"), "SPA router missing");
 }
 
@@ -117,9 +126,15 @@ start website
     let html = web_render_html_pub(&ctx);
 
     assert!(html.contains("btn-glow"), "Glow variant CSS class missing");
-    assert!(html.contains("btn-anim-pulse"), "Pulse animation CSS class missing");
+    assert!(
+        html.contains("btn-anim-pulse"),
+        "Pulse animation CSS class missing"
+    );
     assert!(html.contains("var(--primary)"), "CSS tokens missing");
-    assert!(html.contains("backdrop-filter"), "Glassmorphism styling missing");
+    assert!(
+        html.contains("backdrop-filter"),
+        "Glassmorphism styling missing"
+    );
 }
 
 /// 3. Interactive buttons that change state
@@ -147,7 +162,10 @@ start website
     assert!(html.contains("btn-cyber"), "Cyber variant missing");
     assert!(html.contains("btn-anim-glitch"), "Glitch animation missing");
     assert!(html.contains("id=\"MainBtn\""), "Main button id missing");
-    assert!(html.contains("webforgeToast"), "Message toast action missing");
+    assert!(
+        html.contains("webforgeToast"),
+        "Message toast action missing"
+    );
 }
 
 /// 4. Forms with validation and error states
@@ -177,8 +195,14 @@ start website
 
     assert!(html.contains("id=\"UserName\""), "Input UserName missing");
     assert!(html.contains("id=\"UserEmail\""), "Input UserEmail missing");
-    assert!(html.contains("/api/contact"), "API endpoint binding missing");
-    assert!(html.contains("webforgeSubmitForm"), "Form submission function missing");
+    assert!(
+        html.contains("/api/contact"),
+        "API endpoint binding missing"
+    );
+    assert!(
+        html.contains("webforgeSubmitForm"),
+        "Form submission function missing"
+    );
 }
 
 /// 5. A reusable component with properties
@@ -220,8 +244,14 @@ start website
 
     assert!(html.contains("webforge-stats-grid"), "Stats grid missing");
     assert!(html.contains("125K"), "Stat value missing");
-    assert!(html.contains("webforge-accordion"), "Accordion container missing");
-    assert!(html.contains("webforge-tabs-container"), "Tabs container missing");
+    assert!(
+        html.contains("webforge-accordion"),
+        "Accordion container missing"
+    );
+    assert!(
+        html.contains("webforge-tabs-container"),
+        "Tabs container missing"
+    );
     assert!(html.contains("webforge-alert"), "Alert banner missing");
 }
 
@@ -247,8 +277,14 @@ start website
     let (_, ctx) = compile_txs(source);
     let html = web_render_html_pub(&ctx);
 
-    assert!(html.contains("/api/inquiries"), "API fetch endpoint missing");
-    assert!(html.contains("webforgeLoadDatabase"), "Database fetch routine missing");
+    assert!(
+        html.contains("/api/inquiries"),
+        "API fetch endpoint missing"
+    );
+    assert!(
+        html.contains("webforgeLoadDatabase"),
+        "Database fetch routine missing"
+    );
 }
 
 /// 7. A real backend endpoint with validation and JSON responses
@@ -256,13 +292,21 @@ start website
 fn test_conformance_07_real_backend_api_json() {
     // Validate that sanitize_identifier prevents SQL injection
     let clean = techscript_stdlib::web::db::sanitize_identifier("users; DROP TABLE users;--");
-    assert_eq!(clean, "usersDROPTABLEusers", "Sanitization must strip invalid chars");
+    assert_eq!(
+        clean, "usersDROPTABLEusers",
+        "Sanitization must strip invalid chars"
+    );
 
     // Insert and query SQLite
-    let res = techscript_stdlib::web::db::insert_record("test_api_records", "Test Title", "JSON Payload Body");
+    let res = techscript_stdlib::web::db::insert_record(
+        "test_api_records",
+        "Test Title",
+        "JSON Payload Body",
+    );
     assert!(res.is_ok(), "SQLite insert must succeed");
 
-    let records = techscript_stdlib::web::db::query_records("test_api_records", 10).expect("SQLite query failed");
+    let records = techscript_stdlib::web::db::query_records("test_api_records", 10)
+        .expect("SQLite query failed");
     assert!(!records.is_empty(), "Must retrieve inserted records");
     assert_eq!(records[0]["title"].as_str().unwrap(), "Test Title");
 }
@@ -300,7 +344,10 @@ start website
     let html = web_render_html_pub(&ctx);
 
     assert!(html.contains("/api/products"), "Table API route missing");
-    assert!(html.contains("products-container"), "Database view container missing");
+    assert!(
+        html.contains("products-container"),
+        "Database view container missing"
+    );
 }
 
 /// 9. Custom 3D model with editable properties and animation
@@ -329,9 +376,15 @@ start website
     let (_, ctx) = compile_txs(source);
     let html = web_render_html_pub(&ctx);
 
-    assert!(html.contains("webforge-3d-workbench"), "3D Studio workbench markup missing");
+    assert!(
+        html.contains("webforge-3d-workbench"),
+        "3D Studio workbench markup missing"
+    );
     assert!(html.contains("WebForgeCSG"), "CSG Boolean engine missing");
-    assert!(html.contains("WebForgeCustom3D"), "Custom 3D modeling manager missing");
+    assert!(
+        html.contains("WebForgeCustom3D"),
+        "Custom 3D modeling manager missing"
+    );
     assert!(html.contains("exportGLTF"), "GLTF export missing");
     assert!(html.contains("exportOBJ"), "OBJ export missing");
     assert!(html.contains("exportSTL"), "STL export missing");
@@ -356,8 +409,14 @@ start website
     let html = web_render_html_pub(&ctx);
 
     // Verify CDN / vendor library includes in HTML head
-    assert!(html.contains("three.min.js"), "Three.js vendor script missing");
-    assert!(html.contains("OrbitControls.js"), "OrbitControls library missing");
+    assert!(
+        html.contains("three.min.js"),
+        "Three.js vendor script missing"
+    );
+    assert!(
+        html.contains("OrbitControls.js"),
+        "OrbitControls library missing"
+    );
     assert!(html.contains("SVGLoader.js"), "SVGLoader library missing");
     assert!(html.contains("GLTFExporter.js"), "GLTFExporter missing");
     assert!(html.contains("STLExporter.js"), "STLExporter missing");
@@ -385,9 +444,18 @@ start website
     let html = web_render_html_pub(&ctx);
 
     assert!(html.contains("data-route=\"/docs\""), "/docs route missing");
-    assert!(html.contains("data-route=\"/docs/getting-started\""), "/docs/getting-started route missing");
-    assert!(html.contains("data-route=\"/docs/api/endpoints\""), "/docs/api/endpoints route missing");
-    assert!(html.contains("webforge-breadcrumbs"), "Breadcrumbs navigation missing");
+    assert!(
+        html.contains("data-route=\"/docs/getting-started\""),
+        "/docs/getting-started route missing"
+    );
+    assert!(
+        html.contains("data-route=\"/docs/api/endpoints\""),
+        "/docs/api/endpoints route missing"
+    );
+    assert!(
+        html.contains("webforge-breadcrumbs"),
+        "Breadcrumbs navigation missing"
+    );
 }
 
 /// 12. A production build served without development-only assumptions
@@ -409,8 +477,20 @@ start website
     let (_, ctx) = compile_txs(source);
     let html = web_render_html_pub(&ctx);
 
-    assert!(html.starts_with("<!DOCTYPE html>"), "Must be a complete standalone HTML document");
-    assert!(html.contains("<style>"), "Must embed compiled CSS design system");
-    assert!(html.contains("<script>"), "Must embed client runtime engine");
-    assert!(!html.contains("webpack"), "Must not rely on Webpack or NodeJS runtime");
+    assert!(
+        html.starts_with("<!DOCTYPE html>"),
+        "Must be a complete standalone HTML document"
+    );
+    assert!(
+        html.contains("<style>"),
+        "Must embed compiled CSS design system"
+    );
+    assert!(
+        html.contains("<script>"),
+        "Must embed client runtime engine"
+    );
+    assert!(
+        !html.contains("webpack"),
+        "Must not rely on Webpack or NodeJS runtime"
+    );
 }

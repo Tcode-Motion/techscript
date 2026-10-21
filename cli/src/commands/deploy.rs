@@ -73,16 +73,36 @@ services:
             }
             println!("  Created: Dockerfile");
             println!("  Created: docker-compose.yml");
-            println!("\n{}", "✓ Docker deployment files generated successfully.".green().bold());
-            println!("Run '{}' to launch in containerized mode.", "docker compose up --build -d".cyan());
+            println!(
+                "\n{}",
+                "✓ Docker deployment files generated successfully."
+                    .green()
+                    .bold()
+            );
+            println!(
+                "Run '{}' to launch in containerized mode.",
+                "docker compose up --build -d".cyan()
+            );
         }
         "static" | "vercel" | "netlify" => {
-            println!("⚡ Preparing static assets for CDN deployment (Vercel, Netlify, Cloudflare)...");
-            let res = crate::commands::build::execute(Some("web"), Some("release"), false, false, "web", false);
+            println!(
+                "⚡ Preparing static assets for CDN deployment (Vercel, Netlify, Cloudflare)..."
+            );
+            let res = crate::commands::build::execute(
+                Some("web"),
+                Some("release"),
+                false,
+                false,
+                "web",
+                false,
+            );
             if res != ExitCode::Success {
                 return res;
             }
-            println!("\n{}", "✓ Static assets ready in 'dist/' directory.".green().bold());
+            println!(
+                "\n{}",
+                "✓ Static assets ready in 'dist/' directory.".green().bold()
+            );
             println!("Deployment instructions:");
             println!("  • Vercel:           Run 'vercel --prod dist'");
             println!("  • Netlify:          Run 'netlify deploy --prod --dir=dist'");
@@ -90,9 +110,18 @@ services:
         }
         _ => {
             println!("Available Deployment Targets for TechScript WebForge:\n");
-            println!("  1. {}   Deploy production bundle to Vercel, Netlify, or Cloudflare Pages", "tsc deploy -t static".cyan().bold());
-            println!("  2. {}   Generate Dockerfile and docker-compose.yml for container deployment", "tsc deploy -t docker".cyan().bold());
-            println!("  3. {}   Directly compile production bundle into 'dist/'", "tsc build web --release".cyan().bold());
+            println!(
+                "  1. {}   Deploy production bundle to Vercel, Netlify, or Cloudflare Pages",
+                "tsc deploy -t static".cyan().bold()
+            );
+            println!(
+                "  2. {}   Generate Dockerfile and docker-compose.yml for container deployment",
+                "tsc deploy -t docker".cyan().bold()
+            );
+            println!(
+                "  3. {}   Directly compile production bundle into 'dist/'",
+                "tsc build web --release".cyan().bold()
+            );
             println!("\nTo execute any target, run 'tsc deploy -t <target>'.");
         }
     }

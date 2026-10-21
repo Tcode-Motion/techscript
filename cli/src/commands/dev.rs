@@ -55,7 +55,9 @@ pub fn execute(file_opt: Option<&str>, port_opt: Option<u16>) -> ExitCode {
                     .red()
                     .bold()
             );
-            eprintln!("Expected entry file: 'app.txs', 'src/main.txs', 'main.txs', or 'src/main.wtxs'");
+            eprintln!(
+                "Expected entry file: 'app.txs', 'src/main.txs', 'main.txs', or 'src/main.wtxs'"
+            );
             eprintln!(
                 "Run '{}' to create a new website project.",
                 "webforge new website <name>".cyan()
@@ -86,9 +88,7 @@ pub fn execute(file_opt: Option<&str>, port_opt: Option<u16>) -> ExitCode {
             .cyan()
             .bold()
     );
-    println!(
-        "            TECHSCRIPT WEBFORGE DEV SERVER               "
-    );
+    println!("            TECHSCRIPT WEBFORGE DEV SERVER               ");
     println!(
         "{}",
         "========================================================="
@@ -143,8 +143,12 @@ pub fn execute(file_opt: Option<&str>, port_opt: Option<u16>) -> ExitCode {
                         if techscript_common::is_supported_source_file(&sub_path) {
                             if let Ok(sub_content) = std::fs::read_to_string(&sub_path) {
                                 let mut sub_reporter = techscript_errors::DiagnosticReporter::new();
-                                if let Ok(sub_tokens) = techscript_lexer::lex(&sub_content, &mut sub_reporter) {
-                                    if let Ok(sub_prog) = techscript_parser::parse(&sub_tokens, &mut sub_reporter) {
+                                if let Ok(sub_tokens) =
+                                    techscript_lexer::lex(&sub_content, &mut sub_reporter)
+                                {
+                                    if let Ok(sub_prog) =
+                                        techscript_parser::parse(&sub_tokens, &mut sub_reporter)
+                                    {
                                         let _ = interpreter.interpret(&sub_prog);
                                     }
                                 }
@@ -164,8 +168,19 @@ pub fn execute(file_opt: Option<&str>, port_opt: Option<u16>) -> ExitCode {
         return ExitCode::Failure;
     }
 
-    println!("\n{}", "✓ WebForge application initialized successfully.".green().bold());
-    println!("🌐 Local address: {}", format!("http://localhost:{}", port).cyan().bold().underline());
+    println!(
+        "\n{}",
+        "✓ WebForge application initialized successfully."
+            .green()
+            .bold()
+    );
+    println!(
+        "🌐 Local address: {}",
+        format!("http://localhost:{}", port)
+            .cyan()
+            .bold()
+            .underline()
+    );
     println!("📁 SQLite persistence: {}", "webforge.db".yellow());
     println!("💡 Press Ctrl+C to terminate development server.\n");
 

@@ -73,7 +73,9 @@ fn test_legacy_tech_extension_compatibility_and_hint() {
     assert!(legacy_ext.is_legacy());
     assert!(!legacy_ext.is_canonical());
 
-    let hint = legacy_ext.migration_hint().expect("legacy must have migration hint");
+    let hint = legacy_ext
+        .migration_hint()
+        .expect("legacy must have migration hint");
     assert!(hint.contains(".txs"));
     assert!(hint.contains("tsc migrate"));
 }

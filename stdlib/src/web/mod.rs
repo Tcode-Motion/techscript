@@ -137,7 +137,10 @@ fn web_fetch(
         ));
     }
 
-    let agent = ureq::builder().resolver(server::SafeResolver).redirects(0).build();
+    let agent = ureq::builder()
+        .resolver(server::SafeResolver)
+        .redirects(0)
+        .build();
     let body = agent
         .get(&url)
         .call()
@@ -219,7 +222,10 @@ fn web_api_send(
     _ctx: &mut RuntimeContext,
     args: Vec<RuntimeValue>,
 ) -> Result<RuntimeValue, RuntimeError> {
-    let endpoint = args.get(0).map(|a| a.to_string()).unwrap_or_else(|| "/api".to_string());
+    let endpoint = args
+        .get(0)
+        .map(|a| a.to_string())
+        .unwrap_or_else(|| "/api".to_string());
     let payload = args.get(1).map(|a| a.to_string()).unwrap_or_default();
     if endpoint.starts_with("/api/") {
         let path_part = endpoint[5..].split('?').next().unwrap_or("notes");

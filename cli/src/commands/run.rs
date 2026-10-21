@@ -79,12 +79,23 @@ pub fn execute(
         ExecutionBackend::Native
     } else {
         let mut default_backend = "vm";
-        if desc.role == techscript_common::SourceRole::Web || desc.role == techscript_common::SourceRole::Scene3D {
+        if desc.role == techscript_common::SourceRole::Web
+            || desc.role == techscript_common::SourceRole::Scene3D
+        {
             default_backend = "interpreter";
         } else if let Ok(content) = std::fs::read_to_string(file_path) {
             let dsl_keywords = [
-                "website", "canvas", "logo", "window", "dialog", "menu",
-                "make a website", "page", "database", "show", "when",
+                "website",
+                "canvas",
+                "logo",
+                "window",
+                "dialog",
+                "menu",
+                "make a website",
+                "page",
+                "database",
+                "show",
+                "when",
             ];
             let mut use_interpreter = false;
             for line in content.lines() {

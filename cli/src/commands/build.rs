@@ -37,11 +37,19 @@ pub fn execute(
     };
 
     let is_web = target_str.to_lowercase() == "web"
-        || file_path.map(|f| f.to_lowercase() == "web").unwrap_or(false);
+        || file_path
+            .map(|f| f.to_lowercase() == "web")
+            .unwrap_or(false);
 
     if is_web {
-        let is_release = profile == BuildProfile::Release || profile == BuildProfile::ReleaseFast || profile == BuildProfile::ReleaseSmall;
-        let src_file = if file_path == Some("web") { None } else { file_path };
+        let is_release = profile == BuildProfile::Release
+            || profile == BuildProfile::ReleaseFast
+            || profile == BuildProfile::ReleaseSmall;
+        let src_file = if file_path == Some("web") {
+            None
+        } else {
+            file_path
+        };
         match build_web(src_file, is_release) {
             Ok(_) => return ExitCode::Success,
             Err(e) => {
@@ -410,8 +418,9 @@ fn build_web(source_file: Option<&str>, is_release: bool) -> Result<(), anyhow::
     let mut reporter = techscript_errors::DiagnosticReporter::new();
     let tokens = techscript_lexer::lex(&source, &mut reporter)
         .map_err(|e| anyhow::anyhow!("Lexer errors in {}: {:?}", entry_path.display(), e))?;
-    let program = techscript_parser::parse(&tokens, &mut reporter)
-        .map_err(|e| anyhow::anyhow!("Syntax parsing error in {}: {:?}", entry_path.display(), e))?;
+    let program = techscript_parser::parse(&tokens, &mut reporter).map_err(|e| {
+        anyhow::anyhow!("Syntax parsing error in {}: {:?}", entry_path.display(), e)
+    })?;
 
     // 4. Run with interpreter to evaluate DSL blocks and event handlers
     let mut interpreter = techscript_interpreter::Interpreter::new();
@@ -430,17 +439,30 @@ fn build_web(source_file: Option<&str>, is_release: bool) -> Result<(), anyhow::
                         if techscript_common::is_supported_source_file(&sub_path) {
                             if let Ok(sub_content) = std::fs::read_to_string(&sub_path) {
                                 let mut sub_reporter = techscript_errors::DiagnosticReporter::new();
-                                if let Ok(sub_tokens) = techscript_lexer::lex(&sub_content, &mut sub_reporter) {
+                                if let Ok(sub_tokens) =
+                                    techscript_lexer::lex(&sub_content, &mut sub_reporter)
+                                {
                                     match techscript_parser::parse(&sub_tokens, &mut sub_reporter) {
                                         Ok(sub_prog) => {
                                             if let Err(e) = interpreter.interpret(&sub_prog) {
-                                                eprintln!("Error interpreting {}: {:?}", sub_path.display(), e);
+                                                eprintln!(
+                                                    "Error interpreting {}: {:?}",
+                                                    sub_path.display(),
+                                                    e
+                                                );
                                             } else {
-                                                println!("Loaded modular file: {}", sub_path.display());
+                                                println!(
+                                                    "Loaded modular file: {}",
+                                                    sub_path.display()
+                                                );
                                             }
                                         }
                                         Err(e) => {
-                                            eprintln!("Error parsing {}: {:?}", sub_path.display(), e);
+                                            eprintln!(
+                                                "Error parsing {}: {:?}",
+                                                sub_path.display(),
+                                                e
+                                            );
                                         }
                                     }
                                 }
@@ -524,7 +546,8 @@ fn build_web(source_file: Option<&str>, is_release: bool) -> Result<(), anyhow::
         "database": "SQLite (integrated)",
         "routes_supported": routes.len() + 1,
         "security": "strict-isolated"
-    }).to_string();
+    })
+    .to_string();
     let _ = std::fs::write(api_dir.join("health"), &health_json);
 
     let examples_json = serde_json::json!([
@@ -540,7 +563,8 @@ fn build_web(source_file: Option<&str>, is_release: bool) -> Result<(), anyhow::
         "message": "Feedback received and stored",
         "endpoint": "/api/feedback",
         "database": "SQLite (webforge.db)"
-    }).to_string();
+    })
+    .to_string();
     let _ = std::fs::write(api_dir.join("feedback"), &feedback_json);
 
     // Extract styles if present in HTML, or generate canonical WebForge stylesheet
@@ -581,9 +605,24 @@ fn build_web(source_file: Option<&str>, is_release: bool) -> Result<(), anyhow::
     let _ = std::fs::create_dir_all(&dist_assets);
     let logo_srcs = [
         current_dir.join("assets").join("logo.png"),
-        current_dir.join("..").join("assets").join("branding").join("logo-package").join("source").join("logo-master-transparent.png"),
-        current_dir.join("..").join("assets").join("techscript-logo.png"),
-        current_dir.join("..").join("assets").join("branding").join("logo-package").join("png").join("icon-512.png"),
+        current_dir
+            .join("..")
+            .join("assets")
+            .join("branding")
+            .join("logo-package")
+            .join("source")
+            .join("logo-master-transparent.png"),
+        current_dir
+            .join("..")
+            .join("assets")
+            .join("techscript-logo.png"),
+        current_dir
+            .join("..")
+            .join("assets")
+            .join("branding")
+            .join("logo-package")
+            .join("png")
+            .join("icon-512.png"),
         PathBuf::from("assets/branding/logo-package/source/logo-master-transparent.png"),
         PathBuf::from("assets/techscript-logo.png"),
     ];
@@ -595,7 +634,13 @@ fn build_web(source_file: Option<&str>, is_release: bool) -> Result<(), anyhow::
     }
     let fav_srcs = [
         current_dir.join("assets").join("favicon.ico"),
-        current_dir.join("..").join("assets").join("branding").join("logo-package").join("ico").join("favicon.ico"),
+        current_dir
+            .join("..")
+            .join("assets")
+            .join("branding")
+            .join("logo-package")
+            .join("ico")
+            .join("favicon.ico"),
         PathBuf::from("assets/branding/logo-package/ico/favicon.ico"),
     ];
     for src in &fav_srcs {
@@ -606,7 +651,10 @@ fn build_web(source_file: Option<&str>, is_release: bool) -> Result<(), anyhow::
         }
     }
 
-    println!("\n{}", "✓ WebForge Production Build Complete!".green().bold());
+    println!(
+        "\n{}",
+        "✓ WebForge Production Build Complete!".green().bold()
+    );
     println!(
         "  Mode: {}",
         if is_release {

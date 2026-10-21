@@ -11,6 +11,7 @@ pub mod compile_db;
 pub mod config;
 pub mod crash;
 pub mod diagnostics;
+pub mod entrypoint;
 pub mod events;
 pub mod exit_code;
 pub mod logging;
@@ -23,7 +24,6 @@ pub mod scheduler;
 pub mod templates;
 pub mod theme;
 pub mod watch;
-pub mod entrypoint;
 
 use clap::{Parser as ClapParser, Subcommand};
 

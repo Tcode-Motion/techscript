@@ -47,7 +47,10 @@ pub fn execute() -> ExitCode {
     println!("Version: {}", manifest.package.version);
     println!(
         "Manifest: {}",
-        manifest_path.file_name().unwrap_or_default().to_string_lossy()
+        manifest_path
+            .file_name()
+            .unwrap_or_default()
+            .to_string_lossy()
     );
     println!();
 
@@ -57,8 +60,16 @@ pub fn execute() -> ExitCode {
         return ExitCode::Success;
     }
 
-    println!("{:<24} {:<16} {}", "PACKAGE".bold(), "VERSION".bold(), "STATUS".bold());
-    println!("{}", "------------------------------------------------------".dimmed());
+    println!(
+        "{:<24} {:<16} {}",
+        "PACKAGE".bold(),
+        "VERSION".bold(),
+        "STATUS".bold()
+    );
+    println!(
+        "{}",
+        "------------------------------------------------------".dimmed()
+    );
 
     for (name, dep) in &deps {
         let ver_str = match dep {
@@ -85,6 +96,9 @@ pub fn execute() -> ExitCode {
     }
 
     println!();
-    println!("Total dependencies: {}", deps.len().to_string().green().bold());
+    println!(
+        "Total dependencies: {}",
+        deps.len().to_string().green().bold()
+    );
     ExitCode::Success
 }

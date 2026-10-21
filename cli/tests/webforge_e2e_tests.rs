@@ -21,12 +21,24 @@ fn test_webforge_interactive_site() {
     assert!(res.is_ok(), "interpretation failed: {:?}", res);
 
     let html = techscript_stdlib::web::web_render_html_pub(&interpreter.ctx);
-    assert!(html.contains("<!DOCTYPE html>"), "must generate full HTML5 doc");
+    assert!(
+        html.contains("<!DOCTYPE html>"),
+        "must generate full HTML5 doc"
+    );
     assert!(html.contains("Welcome!"), "must contain heading text");
     assert!(html.contains("GreetingButton"), "must contain button ID");
-    assert!(html.contains("webforgeToast('Hello, World!')"), "must contain button click handler toast");
-    assert!(html.contains("Outfit"), "must include modern Outfit typography");
-    assert!(html.contains("backdrop-filter"), "must include sleek glassmorphism styling");
+    assert!(
+        html.contains("webforgeToast('Hello, World!')"),
+        "must contain button click handler toast"
+    );
+    assert!(
+        html.contains("Outfit"),
+        "must include modern Outfit typography"
+    );
+    assert!(
+        html.contains("backdrop-filter"),
+        "must include sleek glassmorphism styling"
+    );
 }
 
 #[test]
@@ -45,8 +57,14 @@ fn test_webforge_notes_sqlite_site() {
     assert!(html.contains("My Notes"), "must contain notes heading");
     assert!(html.contains("NoteInput"), "must contain NoteInput id");
     assert!(html.contains("SaveButton"), "must contain SaveButton id");
-    assert!(html.contains("/api/notes"), "must contain /api/notes endpoint call");
-    assert!(html.contains("Database Records (notes)"), "must contain database data section");
+    assert!(
+        html.contains("/api/notes"),
+        "must contain /api/notes endpoint call"
+    );
+    assert!(
+        html.contains("Database Records (notes)"),
+        "must contain database data section"
+    );
 
     // Verify real SQLite persistence functionality
     let conn = rusqlite::Connection::open("webforge_test.db").expect("create test sqlite db");
@@ -58,10 +76,15 @@ fn test_webforge_notes_sqlite_site() {
     conn.execute(
         "INSERT INTO notes (title, content) VALUES (?1, ?2)",
         rusqlite::params!["First Note", "TechScript WebForge works!"],
-    ).expect("insert record");
+    )
+    .expect("insert record");
 
-    let mut stmt = conn.prepare("SELECT title, content FROM notes WHERE title = ?1").expect("prepare select");
-    let mut rows = stmt.query(rusqlite::params!["First Note"]).expect("query rows");
+    let mut stmt = conn
+        .prepare("SELECT title, content FROM notes WHERE title = ?1")
+        .expect("prepare select");
+    let mut rows = stmt
+        .query(rusqlite::params!["First Note"])
+        .expect("query rows");
     let first_row = rows.next().expect("read row").expect("has row");
     let title: String = first_row.get(0).unwrap();
     let content: String = first_row.get(1).unwrap();
@@ -84,11 +107,26 @@ fn test_webforge_3d_webgl_scene() {
     assert!(res.is_ok(), "interpretation failed: {:?}", res);
 
     let html = techscript_stdlib::web::web_render_html_pub(&interpreter.ctx);
-    assert!(html.contains("webforge-3d-scene"), "must contain 3D scene viewport element");
-    assert!(html.contains("WebForge3D"), "must invoke native WebForge3D engine");
-    assert!(html.contains("data-geo"), "must render interactive geometry controls");
-    assert!(html.contains("data-color"), "must render interactive color controls");
-    assert!(html.contains("data-toggle=\"wireframe\""), "must render wireframe toggle");
+    assert!(
+        html.contains("webforge-3d-scene"),
+        "must contain 3D scene viewport element"
+    );
+    assert!(
+        html.contains("WebForge3D"),
+        "must invoke native WebForge3D engine"
+    );
+    assert!(
+        html.contains("data-geo"),
+        "must render interactive geometry controls"
+    );
+    assert!(
+        html.contains("data-color"),
+        "must render interactive color controls"
+    );
+    assert!(
+        html.contains("data-toggle=\"wireframe\""),
+        "must render wireframe toggle"
+    );
 }
 
 #[test]
@@ -99,7 +137,9 @@ fn test_webforge_production_build_generation() {
     fs::create_dir_all(&test_site_dir).unwrap();
 
     let main_tech = test_site_dir.join("main.tech");
-    fs::write(&main_tech, r#"make a website called TestProd
+    fs::write(
+        &main_tech,
+        r#"make a website called TestProd
 
 page Home:
     show heading "Production Ready"
@@ -109,7 +149,9 @@ when DeployBtn is clicked:
     show message "Deployed!"
 
 start website
-"#).unwrap();
+"#,
+    )
+    .unwrap();
 
     // Run build_web directly on the site
     let source = fs::read_to_string(&main_tech).unwrap();

@@ -110,8 +110,12 @@ pub fn execute(file_opt: Option<&str>) -> ExitCode {
                         if techscript_common::is_supported_source_file(&sub_path) {
                             if let Ok(sub_content) = std::fs::read_to_string(&sub_path) {
                                 let mut sub_rep = techscript_errors::DiagnosticReporter::new();
-                                if let Ok(sub_tokens) = techscript_lexer::lex(&sub_content, &mut sub_rep) {
-                                    if let Ok(sub_prog) = techscript_parser::parse(&sub_tokens, &mut sub_rep) {
+                                if let Ok(sub_tokens) =
+                                    techscript_lexer::lex(&sub_content, &mut sub_rep)
+                                {
+                                    if let Ok(sub_prog) =
+                                        techscript_parser::parse(&sub_tokens, &mut sub_rep)
+                                    {
                                         programs.push(sub_prog);
                                     }
                                 }
@@ -145,7 +149,10 @@ pub fn execute(file_opt: Option<&str>) -> ExitCode {
         "TYPE".bold(),
         "HANDLER / TARGET".bold()
     );
-    println!("{}", "--------------------------------------------------------------------------------".dimmed());
+    println!(
+        "{}",
+        "--------------------------------------------------------------------------------".dimmed()
+    );
 
     // Root UI Page
     println!(
@@ -164,14 +171,18 @@ pub fn execute(file_opt: Option<&str>) -> ExitCode {
         for stmt in &prog.statements {
             if let techscript_ast::Statement::DSL(block) = stmt {
                 if block.kind == "page" {
-                    let page_name = block.args.first().map(|e| match e {
-                        techscript_ast::Expression::Identifier(id) => id.name.clone(),
-                        techscript_ast::Expression::Literal(lit) => match &lit.value {
-                            techscript_ast::LiteralVal::Str(s) => s.clone(),
-                            _ => format!("{:?}", lit.value),
-                        },
-                        _ => "Page".to_string(),
-                    }).unwrap_or_else(|| "Page".to_string());
+                    let page_name = block
+                        .args
+                        .first()
+                        .map(|e| match e {
+                            techscript_ast::Expression::Identifier(id) => id.name.clone(),
+                            techscript_ast::Expression::Literal(lit) => match &lit.value {
+                                techscript_ast::LiteralVal::Str(s) => s.clone(),
+                                _ => format!("{:?}", lit.value),
+                            },
+                            _ => "Page".to_string(),
+                        })
+                        .unwrap_or_else(|| "Page".to_string());
 
                     let route_opt = block.args.get(1).and_then(|e| match e {
                         techscript_ast::Expression::Literal(lit) => match &lit.value {
@@ -182,7 +193,11 @@ pub fn execute(file_opt: Option<&str>) -> ExitCode {
                     });
                     let route = route_opt.unwrap_or_else(|| {
                         let n = page_name.to_lowercase();
-                        if n == "home" { "/".to_string() } else { format!("/{}", n) }
+                        if n == "home" {
+                            "/".to_string()
+                        } else {
+                            format!("/{}", n)
+                        }
                     });
                     if printed_routes.insert(route.clone()) {
                         println!(
@@ -195,13 +210,17 @@ pub fn execute(file_opt: Option<&str>) -> ExitCode {
                         count += 1;
                     }
                 } else if block.kind == "api" {
-                    let route = block.args.first().and_then(|e| match e {
-                        techscript_ast::Expression::Literal(lit) => match &lit.value {
-                            techscript_ast::LiteralVal::Str(s) => Some(s.clone()),
+                    let route = block
+                        .args
+                        .first()
+                        .and_then(|e| match e {
+                            techscript_ast::Expression::Literal(lit) => match &lit.value {
+                                techscript_ast::LiteralVal::Str(s) => Some(s.clone()),
+                                _ => None,
+                            },
                             _ => None,
-                        },
-                        _ => None,
-                    }).unwrap_or_else(|| "/api".to_string());
+                        })
+                        .unwrap_or_else(|| "/api".to_string());
                     if printed_routes.insert(route.clone()) {
                         println!(
                             "{:<8} {:<24} {:<16} {}",
@@ -218,17 +237,24 @@ pub fn execute(file_opt: Option<&str>) -> ExitCode {
                             if table_block.kind == "table" {
                                 let tbl = if let Some(arg) = table_block.args.first() {
                                     match arg {
-                                        techscript_ast::Expression::Identifier(id) => id.name.clone(),
-                                        techscript_ast::Expression::Literal(lit) => match &lit.value {
-                                            techscript_ast::LiteralVal::Str(s) => s.clone(),
-                                            _ => format!("{:?}", lit.value),
-                                        },
+                                        techscript_ast::Expression::Identifier(id) => {
+                                            id.name.clone()
+                                        }
+                                        techscript_ast::Expression::Literal(lit) => {
+                                            match &lit.value {
+                                                techscript_ast::LiteralVal::Str(s) => s.clone(),
+                                                _ => format!("{:?}", lit.value),
+                                            }
+                                        }
                                         _ => "notes".to_string(),
                                     }
                                 } else {
                                     "notes".to_string()
                                 };
-                                let clean: String = tbl.chars().filter(|c| c.is_alphanumeric() || *c == '_').collect();
+                                let clean: String = tbl
+                                    .chars()
+                                    .filter(|c| c.is_alphanumeric() || *c == '_')
+                                    .collect();
                                 let api_route = format!("/api/{}", clean);
                                 if printed_routes.insert(api_route.clone()) {
                                     println!(
@@ -267,8 +293,14 @@ pub fn execute(file_opt: Option<&str>) -> ExitCode {
         }
     }
 
-    println!("{}", "--------------------------------------------------------------------------------".dimmed());
-    println!("Total registered application routes: {}\n", count.to_string().green().bold());
+    println!(
+        "{}",
+        "--------------------------------------------------------------------------------".dimmed()
+    );
+    println!(
+        "Total registered application routes: {}\n",
+        count.to_string().green().bold()
+    );
 
     ExitCode::Success
 }

@@ -38,7 +38,13 @@ pub fn execute(package: &str) -> ExitCode {
     };
 
     if package.is_empty() || package == "." {
-        println!("Resolving all dependencies declared in {}...", manifest_path.file_name().unwrap_or_default().to_string_lossy());
+        println!(
+            "Resolving all dependencies declared in {}...",
+            manifest_path
+                .file_name()
+                .unwrap_or_default()
+                .to_string_lossy()
+        );
         let deps = manifest.dependencies.clone().unwrap_or_default();
         if deps.is_empty() {
             println!("No dependencies declared in manifest.");
@@ -214,13 +220,14 @@ pub fn execute(package: &str) -> ExitCode {
             return ExitCode::Failure;
         }
     };
-    let lockfile_name = if manifest_path.file_name().and_then(|f| f.to_str()) == Some("webforge.toml") {
-        "webforge.lock"
-    } else if manifest_path.file_name().and_then(|f| f.to_str()) == Some("tech.toml") {
-        "tech.lock"
-    } else {
-        "techscript.lock"
-    };
+    let lockfile_name =
+        if manifest_path.file_name().and_then(|f| f.to_str()) == Some("webforge.toml") {
+            "webforge.lock"
+        } else if manifest_path.file_name().and_then(|f| f.to_str()) == Some("tech.toml") {
+            "tech.lock"
+        } else {
+            "techscript.lock"
+        };
     let lockfile_path = current_dir.join(lockfile_name);
     if let Err(e) = fs::write(&lockfile_path, lockfile_toml) {
         eprintln!("Error writing {}: {}", lockfile_name, e);

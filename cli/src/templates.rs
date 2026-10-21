@@ -255,10 +255,7 @@ impl ProjectTemplate {
                 created_paths.push(toml_path);
 
                 let app_path = dir.join("app.txs");
-                let app_content = format!(
-                    "site \"{}\"\n",
-                    name
-                );
+                let app_content = format!("site \"{}\"\n", name);
                 std::fs::write(&app_path, app_content)?;
                 created_paths.push(app_path);
 
@@ -300,10 +297,7 @@ impl ProjectTemplate {
                 created_paths.push(toml_path);
 
                 let app_path = dir.join("app.txs");
-                let app_content = format!(
-                    "site \"{}\"\n",
-                    name
-                );
+                let app_content = format!("site \"{}\"\n", name);
                 std::fs::write(&app_path, app_content)?;
                 created_paths.push(app_path);
 

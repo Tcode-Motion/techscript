@@ -3,10 +3,10 @@
 //! Entry point orchestrating project loadings, subcommand dispatches,
 //! crash recovery setups, and logging formats.
 
+use crate::{Cli, Commands};
 use clap::Parser;
 use colored::Colorize;
 use std::path::PathBuf;
-use crate::{Cli, Commands};
 
 pub fn run() {
     // 1. Setup crash recovery build/ folder path
@@ -88,7 +88,13 @@ pub fn run() {
         if !subcommands.contains(&first_arg.as_str()) && !first_arg.starts_with('-') {
             let path = std::path::Path::new(first_arg);
             let ext = path.extension().and_then(|e| e.to_str()).unwrap_or("");
-            let is_script_ext = ext == "txs" || ext == "tsx" || ext == "tech" || ext == "tspkg" || ext == "wtxs" || ext == "stxs" || ext == "3txs";
+            let is_script_ext = ext == "txs"
+                || ext == "tsx"
+                || ext == "tech"
+                || ext == "tspkg"
+                || ext == "wtxs"
+                || ext == "stxs"
+                || ext == "3txs";
             if is_script_ext || path.exists() {
                 parsed_args.insert(1, "run".to_string());
             }
@@ -141,7 +147,11 @@ pub fn run() {
             debug,
             double_click,
         } => {
-            let prof = if *release { Some("release") } else { profile.as_deref() };
+            let prof = if *release {
+                Some("release")
+            } else {
+                profile.as_deref()
+            };
             crate::commands::run::execute(
                 file,
                 prof,
@@ -163,7 +173,11 @@ pub fn run() {
             time,
             target,
         } => {
-            let prof = if *release { Some("release") } else { profile.as_deref() };
+            let prof = if *release {
+                Some("release")
+            } else {
+                profile.as_deref()
+            };
             crate::commands::build::execute(
                 file.as_deref(),
                 prof,
@@ -188,9 +202,7 @@ pub fn run() {
             template.as_deref(),
             second_name.as_deref(),
         ),
-        Commands::Dev { file, port } => {
-            crate::commands::dev::execute(file.as_deref(), *port)
-        }
+        Commands::Dev { file, port } => crate::commands::dev::execute(file.as_deref(), *port),
         Commands::Routes { file } => crate::commands::routes::execute(file.as_deref()),
         Commands::Deploy { target } => crate::commands::deploy::execute(target.as_deref()),
         Commands::Doc { path } => crate::commands::doc::execute(path.as_deref()),

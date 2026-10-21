@@ -26,7 +26,11 @@ pub fn highlight_techscript_code(raw: &str) -> String {
         }
         let trimmed = line.trim_start();
         if trimmed.starts_with('#') || trimmed.starts_with("//") {
-            let _ = write!(out, "<span class=\"tok-comment\">{}</span>", escape_html(line));
+            let _ = write!(
+                out,
+                "<span class=\"tok-comment\">{}</span>",
+                escape_html(line)
+            );
             continue;
         }
 
@@ -40,7 +44,11 @@ pub fn highlight_techscript_code(raw: &str) -> String {
             if c == '"' {
                 if in_str {
                     cur_token.push(c);
-                    let _ = write!(out, "<span class=\"tok-string\">{}</span>", escape_html(&cur_token));
+                    let _ = write!(
+                        out,
+                        "<span class=\"tok-string\">{}</span>",
+                        escape_html(&cur_token)
+                    );
                     cur_token.clear();
                     in_str = false;
                 } else {
@@ -66,21 +74,38 @@ pub fn highlight_techscript_code(raw: &str) -> String {
 
             if !cur_token.is_empty() {
                 match cur_token.as_str() {
-                    "let" | "const" | "function" | "fn" | "return" | "match" | "case" | "if" | "else"
-                    | "for" | "while" | "print" | "import" | "export" | "make" | "website" | "page"
-                    | "show" | "heading" | "section" | "card" | "hero" | "button" | "link" | "text"
-                    | "action" | "badge" | "code" | "title" | "subtitle" | "url" | "scene3d"
-                    | "scene" | "add" | "end" | "is" | "called" | "table" | "database" | "enable" => {
-                        let _ = write!(out, "<span class=\"tok-keyword\">{}</span>", escape_html(&cur_token));
+                    "let" | "const" | "function" | "fn" | "return" | "match" | "case" | "if"
+                    | "else" | "for" | "while" | "print" | "import" | "export" | "make"
+                    | "website" | "page" | "show" | "heading" | "section" | "card" | "hero"
+                    | "button" | "link" | "text" | "action" | "badge" | "code" | "title"
+                    | "subtitle" | "url" | "scene3d" | "scene" | "add" | "end" | "is"
+                    | "called" | "table" | "database" | "enable" => {
+                        let _ = write!(
+                            out,
+                            "<span class=\"tok-keyword\">{}</span>",
+                            escape_html(&cur_token)
+                        );
                     }
                     "Float" | "Int" | "String" | "Boolean" | "List" | "Map" | "Scene" | "Cube" => {
-                        let _ = write!(out, "<span class=\"tok-type\">{}</span>", escape_html(&cur_token));
+                        let _ = write!(
+                            out,
+                            "<span class=\"tok-type\">{}</span>",
+                            escape_html(&cur_token)
+                        );
                     }
                     "true" | "false" | "null" | "nil" => {
-                        let _ = write!(out, "<span class=\"tok-literal\">{}</span>", escape_html(&cur_token));
+                        let _ = write!(
+                            out,
+                            "<span class=\"tok-literal\">{}</span>",
+                            escape_html(&cur_token)
+                        );
                     }
                     tok if tok.chars().all(|ch| ch.is_ascii_digit()) => {
-                        let _ = write!(out, "<span class=\"tok-number\">{}</span>", escape_html(&cur_token));
+                        let _ = write!(
+                            out,
+                            "<span class=\"tok-number\">{}</span>",
+                            escape_html(&cur_token)
+                        );
                     }
                     _ => {
                         out.push_str(&escape_html(&cur_token));
@@ -94,15 +119,24 @@ pub fn highlight_techscript_code(raw: &str) -> String {
         }
 
         if in_str {
-            let _ = write!(out, "<span class=\"tok-string\">{}</span>", escape_html(&cur_token));
+            let _ = write!(
+                out,
+                "<span class=\"tok-string\">{}</span>",
+                escape_html(&cur_token)
+            );
         } else if !cur_token.is_empty() {
             match cur_token.as_str() {
-                "let" | "const" | "function" | "fn" | "return" | "match" | "case" | "if" | "else"
-                | "for" | "while" | "print" | "import" | "export" | "make" | "website" | "page"
-                | "show" | "heading" | "section" | "card" | "hero" | "button" | "link" | "text"
-                | "action" | "badge" | "code" | "title" | "subtitle" | "url" | "scene3d"
-                | "scene" | "add" | "end" | "is" | "called" | "table" | "database" | "enable" => {
-                    let _ = write!(out, "<span class=\"tok-keyword\">{}</span>", escape_html(&cur_token));
+                "let" | "const" | "function" | "fn" | "return" | "match" | "case" | "if"
+                | "else" | "for" | "while" | "print" | "import" | "export" | "make" | "website"
+                | "page" | "show" | "heading" | "section" | "card" | "hero" | "button" | "link"
+                | "text" | "action" | "badge" | "code" | "title" | "subtitle" | "url"
+                | "scene3d" | "scene" | "add" | "end" | "is" | "called" | "table" | "database"
+                | "enable" => {
+                    let _ = write!(
+                        out,
+                        "<span class=\"tok-keyword\">{}</span>",
+                        escape_html(&cur_token)
+                    );
                 }
                 _ => out.push_str(&escape_html(&cur_token)),
             }
@@ -145,13 +179,20 @@ pub fn render_page(html: &mut String, dsl: &DslBlockValue) {
 
     if page_route.is_empty() {
         let n = page_name.to_lowercase().replace(' ', "-");
-        page_route = if n == "home" { "/".to_string() } else { format!("/{}", n) };
+        page_route = if n == "home" {
+            "/".to_string()
+        } else {
+            format!("/{}", n)
+        };
     }
 
     let safe_route_id = if page_route == "/" {
         "page-home".to_string()
     } else {
-        format!("page-{}", page_route.trim_start_matches('/').replace('/', "-"))
+        format!(
+            "page-{}",
+            page_route.trim_start_matches('/').replace('/', "-")
+        )
     };
 
     let is_home = page_route == "/" || page_route == "/home";
@@ -165,7 +206,10 @@ pub fn render_page(html: &mut String, dsl: &DslBlockValue) {
     );
 
     // Render breadcrumbs if nested route
-    if page_route.starts_with("/docs/") || page_route.starts_with("/showcase/") || page_route.starts_with("/examples/") {
+    if page_route.starts_with("/docs/")
+        || page_route.starts_with("/showcase/")
+        || page_route.starts_with("/examples/")
+    {
         let parts: Vec<&str> = page_route.trim_start_matches('/').split('/').collect();
         if parts.len() >= 2 {
             let _ = write!(
@@ -182,7 +226,11 @@ pub fn render_page(html: &mut String, dsl: &DslBlockValue) {
     for prop in &dsl.properties {
         if prop.name == "title" {
             if let Some(RuntimeValue::Str(t)) = &prop.value {
-                let _ = write!(html, "<h2 class=\"webforge-subheading\">{}</h2>", escape_html(t));
+                let _ = write!(
+                    html,
+                    "<h2 class=\"webforge-subheading\">{}</h2>",
+                    escape_html(t)
+                );
             }
         } else if prop.name == "text" {
             if let Some(RuntimeValue::Str(t)) = &prop.value {
@@ -201,12 +249,20 @@ pub fn render_hero(html: &mut String, dsl: &DslBlockValue) {
         match prop.name.as_str() {
             "title" => {
                 if let Some(RuntimeValue::Str(t)) = &prop.value {
-                    let _ = write!(html, "<h1 class=\"webforge-heading\">{}</h1>", escape_html(t));
+                    let _ = write!(
+                        html,
+                        "<h1 class=\"webforge-heading\">{}</h1>",
+                        escape_html(t)
+                    );
                 }
             }
             "subtitle" => {
                 if let Some(RuntimeValue::Str(t)) = &prop.value {
-                    let _ = write!(html, "<p class=\"subtitle webforge-text\">{}</p>", escape_html(t));
+                    let _ = write!(
+                        html,
+                        "<p class=\"subtitle webforge-text\">{}</p>",
+                        escape_html(t)
+                    );
                 }
             }
             _ => {}
@@ -238,14 +294,22 @@ pub fn render_section(html: &mut String, dsl: &DslBlockValue) {
         }
     }
     if !sec_id.is_empty() {
-        let _ = write!(html, "<section class=\"content-section\" id=\"{}\">", escape_html(&sec_id));
+        let _ = write!(
+            html,
+            "<section class=\"content-section\" id=\"{}\">",
+            escape_html(&sec_id)
+        );
     } else {
         html.push_str("<section class=\"content-section\">");
     }
     for prop in &dsl.properties {
         if prop.name == "title" {
             if let Some(RuntimeValue::Str(t)) = &prop.value {
-                let _ = write!(html, "<h2 class=\"webforge-subheading\">{}</h2>", escape_html(t));
+                let _ = write!(
+                    html,
+                    "<h2 class=\"webforge-subheading\">{}</h2>",
+                    escape_html(t)
+                );
             }
         }
     }
@@ -279,7 +343,10 @@ pub fn render_card(html: &mut String, dsl: &DslBlockValue) {
             }
             "code" => {
                 if let Some(RuntimeValue::Str(t)) = &prop.value {
-                    let unescaped = t.replace("\\n", "\n").replace("\\t", "    ").replace("\\\"", "\"");
+                    let unescaped = t
+                        .replace("\\n", "\n")
+                        .replace("\\t", "    ")
+                        .replace("\\\"", "\"");
                     let highlighted = highlight_techscript_code(&unescaped);
                     let _ = write!(
                         html,
@@ -297,7 +364,11 @@ pub fn render_card(html: &mut String, dsl: &DslBlockValue) {
             }
             "image" => {
                 if let Some(RuntimeValue::Str(t)) = &prop.value {
-                    let _ = write!(html, "<img src=\"{}\" alt=\"card image\" class=\"card-img\">", escape_html(t));
+                    let _ = write!(
+                        html,
+                        "<img src=\"{}\" alt=\"card image\" class=\"card-img\">",
+                        escape_html(t)
+                    );
                 }
             }
             _ => {}
@@ -309,9 +380,17 @@ pub fn render_card(html: &mut String, dsl: &DslBlockValue) {
 
 pub fn render_heading(html: &mut String, dsl: &DslBlockValue) {
     let mut id_attr = String::new();
-    let text = dsl.args.first().map(|a| a.to_string()).or_else(|| {
-        dsl.properties.iter().find(|p| p.name == "text").and_then(|p| p.value.as_ref().map(|v| v.to_string()))
-    }).unwrap_or_else(|| "Heading".to_string());
+    let text = dsl
+        .args
+        .first()
+        .map(|a| a.to_string())
+        .or_else(|| {
+            dsl.properties
+                .iter()
+                .find(|p| p.name == "text")
+                .and_then(|p| p.value.as_ref().map(|v| v.to_string()))
+        })
+        .unwrap_or_else(|| "Heading".to_string());
     for p in &dsl.properties {
         if p.name == "id" {
             if let Some(ref v) = p.value {
@@ -319,14 +398,27 @@ pub fn render_heading(html: &mut String, dsl: &DslBlockValue) {
             }
         }
     }
-    let _ = write!(html, "<h1{} class=\"webforge-heading\">{}</h1>", id_attr, escape_html(&text));
+    let _ = write!(
+        html,
+        "<h1{} class=\"webforge-heading\">{}</h1>",
+        id_attr,
+        escape_html(&text)
+    );
 }
 
 pub fn render_text(html: &mut String, dsl: &DslBlockValue) {
     let mut id_attr = String::new();
-    let text = dsl.args.first().map(|a| a.to_string()).or_else(|| {
-        dsl.properties.iter().find(|p| p.name == "text" || p.name == "content").and_then(|p| p.value.as_ref().map(|v| v.to_string()))
-    }).unwrap_or_default();
+    let text = dsl
+        .args
+        .first()
+        .map(|a| a.to_string())
+        .or_else(|| {
+            dsl.properties
+                .iter()
+                .find(|p| p.name == "text" || p.name == "content")
+                .and_then(|p| p.value.as_ref().map(|v| v.to_string()))
+        })
+        .unwrap_or_default();
     for p in &dsl.properties {
         if p.name == "id" {
             if let Some(ref v) = p.value {
@@ -334,7 +426,12 @@ pub fn render_text(html: &mut String, dsl: &DslBlockValue) {
             }
         }
     }
-    let _ = write!(html, "<p{} class=\"webforge-text\">{}</p>", id_attr, escape_html(&text));
+    let _ = write!(
+        html,
+        "<p{} class=\"webforge-text\">{}</p>",
+        id_attr,
+        escape_html(&text)
+    );
 }
 
 pub fn render_button(html: &mut String, dsl: &DslBlockValue) {
@@ -382,8 +479,15 @@ pub fn render_button(html: &mut String, dsl: &DslBlockValue) {
                     let act = v.to_string();
                     if let Some(target) = act.strip_prefix("open ") {
                         let clean = target.trim();
-                        if clean.starts_with("http://") || clean.starts_with("https://") || clean.starts_with("mailto:") || clean.starts_with("/api/") {
-                            onclick_attr = format!(" onclick=\"window.open('{}', '_blank')\"", escape_html(clean));
+                        if clean.starts_with("http://")
+                            || clean.starts_with("https://")
+                            || clean.starts_with("mailto:")
+                            || clean.starts_with("/api/")
+                        {
+                            onclick_attr = format!(
+                                " onclick=\"window.open('{}', '_blank')\"",
+                                escape_html(clean)
+                            );
                         } else {
                             let route = if clean.starts_with('/') {
                                 clean.to_string()
@@ -392,10 +496,14 @@ pub fn render_button(html: &mut String, dsl: &DslBlockValue) {
                             } else {
                                 format!("/{}", clean.to_lowercase().replace(' ', "-"))
                             };
-                            onclick_attr = format!(" onclick=\"webforgeRouter.navigate('{}')\"", escape_html(&route));
+                            onclick_attr = format!(
+                                " onclick=\"webforgeRouter.navigate('{}')\"",
+                                escape_html(&route)
+                            );
                         }
                     } else if act.contains("+=") || act.contains("=") {
-                        onclick_attr = format!(" onclick=\"webforgeAction('{}')\"", escape_html(&act));
+                        onclick_attr =
+                            format!(" onclick=\"webforgeAction('{}')\"", escape_html(&act));
                     } else {
                         onclick_attr = format!(" data-action=\"{}\"", escape_html(&act));
                     }
@@ -446,7 +554,10 @@ pub fn render_button(html: &mut String, dsl: &DslBlockValue) {
 pub fn render_timeline(html: &mut String, dsl: &DslBlockValue) {
     let mut id_attr = String::new();
     if let Some(arg0) = dsl.args.first() {
-        id_attr = format!(" id=\"timeline-{}\"", escape_html(&arg0.to_string().to_lowercase().replace(' ', "-")));
+        id_attr = format!(
+            " id=\"timeline-{}\"",
+            escape_html(&arg0.to_string().to_lowercase().replace(' ', "-"))
+        );
     }
     for p in &dsl.properties {
         if p.name == "id" {
@@ -457,7 +568,11 @@ pub fn render_timeline(html: &mut String, dsl: &DslBlockValue) {
     }
     let _ = write!(html, "<div{} class=\"webforge-timeline\">", id_attr);
     for (idx, child) in dsl.children.iter().enumerate() {
-        let mut title = child.args.first().map(|a| a.to_string()).unwrap_or_default();
+        let mut title = child
+            .args
+            .first()
+            .map(|a| a.to_string())
+            .unwrap_or_default();
         let mut desc = String::new();
         let mut date = String::new();
         let mut status = "done".to_string();
@@ -465,16 +580,44 @@ pub fn render_timeline(html: &mut String, dsl: &DslBlockValue) {
         let mut icon = "✓".to_string();
         for p in &child.properties {
             match p.name.as_str() {
-                "title" => if title.is_empty() { if let Some(ref v) = p.value { title = v.to_string(); } },
-                "description" | "text" | "content" => if let Some(ref v) = p.value { desc = v.to_string(); },
-                "date" | "time" | "quarter" => if let Some(ref v) = p.value { date = v.to_string(); },
-                "status" => if let Some(ref v) = p.value { status = v.to_string(); },
-                "badge" => if let Some(ref v) = p.value { badge = v.to_string(); },
-                "icon" => if let Some(ref v) = p.value { icon = v.to_string(); },
+                "title" => {
+                    if title.is_empty() {
+                        if let Some(ref v) = p.value {
+                            title = v.to_string();
+                        }
+                    }
+                }
+                "description" | "text" | "content" => {
+                    if let Some(ref v) = p.value {
+                        desc = v.to_string();
+                    }
+                }
+                "date" | "time" | "quarter" => {
+                    if let Some(ref v) = p.value {
+                        date = v.to_string();
+                    }
+                }
+                "status" => {
+                    if let Some(ref v) = p.value {
+                        status = v.to_string();
+                    }
+                }
+                "badge" => {
+                    if let Some(ref v) = p.value {
+                        badge = v.to_string();
+                    }
+                }
+                "icon" => {
+                    if let Some(ref v) = p.value {
+                        icon = v.to_string();
+                    }
+                }
                 _ => {}
             }
         }
-        if title.is_empty() { title = format!("Step {}", idx + 1); }
+        if title.is_empty() {
+            title = format!("Step {}", idx + 1);
+        }
         let status_class = match status.to_lowercase().as_str() {
             "completed" | "done" => "status-done",
             "active" | "current" | "in_progress" => "status-active",
@@ -496,8 +639,22 @@ pub fn render_timeline(html: &mut String, dsl: &DslBlockValue) {
             status_class = status_class,
             icon = escape_html(&icon),
             title = escape_html(&title),
-            badge_html = if !badge.is_empty() { format!("<span class=\"timeline-badge\">{}</span>", escape_html(&badge)) } else { String::new() },
-            date_html = if !date.is_empty() { format!("<span class=\"timeline-date\">{}</span>", escape_html(&date)) } else { String::new() },
+            badge_html = if !badge.is_empty() {
+                format!(
+                    "<span class=\"timeline-badge\">{}</span>",
+                    escape_html(&badge)
+                )
+            } else {
+                String::new()
+            },
+            date_html = if !date.is_empty() {
+                format!(
+                    "<span class=\"timeline-date\">{}</span>",
+                    escape_html(&date)
+                )
+            } else {
+                String::new()
+            },
             desc = escape_html(&desc)
         );
     }
@@ -507,20 +664,39 @@ pub fn render_timeline(html: &mut String, dsl: &DslBlockValue) {
 pub fn render_accordion(html: &mut String, dsl: &DslBlockValue) {
     let mut id_attr = String::new();
     if let Some(arg0) = dsl.args.first() {
-        id_attr = format!(" id=\"accordion-{}\"", escape_html(&arg0.to_string().to_lowercase().replace(' ', "-")));
+        id_attr = format!(
+            " id=\"accordion-{}\"",
+            escape_html(&arg0.to_string().to_lowercase().replace(' ', "-"))
+        );
     }
     let _ = write!(html, "<div{} class=\"webforge-accordion\">", id_attr);
     for (idx, child) in dsl.children.iter().enumerate() {
-        let mut title = child.args.first().map(|a| a.to_string()).unwrap_or_default();
+        let mut title = child
+            .args
+            .first()
+            .map(|a| a.to_string())
+            .unwrap_or_default();
         let mut content = String::new();
         for p in &child.properties {
             match p.name.as_str() {
-                "title" => if title.is_empty() { if let Some(ref v) = p.value { title = v.to_string(); } },
-                "content" | "text" | "description" => if let Some(ref v) = p.value { content = v.to_string(); },
+                "title" => {
+                    if title.is_empty() {
+                        if let Some(ref v) = p.value {
+                            title = v.to_string();
+                        }
+                    }
+                }
+                "content" | "text" | "description" => {
+                    if let Some(ref v) = p.value {
+                        content = v.to_string();
+                    }
+                }
                 _ => {}
             }
         }
-        if title.is_empty() { title = format!("Item {}", idx + 1); }
+        if title.is_empty() {
+            title = format!("Item {}", idx + 1);
+        }
         let is_first = idx == 0;
         let _ = write!(
             html,
@@ -540,18 +716,34 @@ pub fn render_accordion(html: &mut String, dsl: &DslBlockValue) {
 }
 
 pub fn render_tabs(html: &mut String, dsl: &DslBlockValue) {
-    let tab_id = dsl.args.first().map(|a| a.to_string()).unwrap_or_else(|| "tabs".to_string());
+    let tab_id = dsl
+        .args
+        .first()
+        .map(|a| a.to_string())
+        .unwrap_or_else(|| "tabs".to_string());
     let safe_id = escape_html(&tab_id.to_lowercase().replace(' ', "-"));
-    let _ = write!(html, "<div class=\"webforge-tabs webforge-tabs-container\" id=\"tabs-{}\">", safe_id);
+    let _ = write!(
+        html,
+        "<div class=\"webforge-tabs webforge-tabs-container\" id=\"tabs-{}\">",
+        safe_id
+    );
     html.push_str("<div class=\"tabs-nav\">");
     for (idx, child) in dsl.children.iter().enumerate() {
-        let mut title = child.args.first().map(|a| a.to_string()).unwrap_or_default();
+        let mut title = child
+            .args
+            .first()
+            .map(|a| a.to_string())
+            .unwrap_or_default();
         for p in &child.properties {
             if p.name == "title" && title.is_empty() {
-                if let Some(ref v) = p.value { title = v.to_string(); }
+                if let Some(ref v) = p.value {
+                    title = v.to_string();
+                }
             }
         }
-        if title.is_empty() { title = format!("Tab {}", idx + 1); }
+        if title.is_empty() {
+            title = format!("Tab {}", idx + 1);
+        }
         let _ = write!(
             html,
             "<button type=\"button\" class=\"tab-btn{}\" onclick=\"webforgeSelectTab(this, '{}-panel-{}')\">{}</button>",
@@ -565,8 +757,12 @@ pub fn render_tabs(html: &mut String, dsl: &DslBlockValue) {
     for (idx, child) in dsl.children.iter().enumerate() {
         let mut content = String::new();
         for p in &child.properties {
-            if (p.name == "text" || p.name == "content" || p.name == "description") && content.is_empty() {
-                if let Some(ref v) = p.value { content = v.to_string(); }
+            if (p.name == "text" || p.name == "content" || p.name == "description")
+                && content.is_empty()
+            {
+                if let Some(ref v) = p.value {
+                    content = v.to_string();
+                }
             }
         }
         let _ = write!(
@@ -577,7 +773,11 @@ pub fn render_tabs(html: &mut String, dsl: &DslBlockValue) {
             idx
         );
         if !content.is_empty() {
-            let _ = write!(html, "<p class=\"webforge-text\">{}</p>", escape_html(&content));
+            let _ = write!(
+                html,
+                "<p class=\"webforge-text\">{}</p>",
+                escape_html(&content)
+            );
         }
         render_children(html, child);
         html.push_str("</div>");
@@ -588,16 +788,38 @@ pub fn render_tabs(html: &mut String, dsl: &DslBlockValue) {
 pub fn render_stats(html: &mut String, dsl: &DslBlockValue) {
     html.push_str("<div class=\"webforge-stats-grid\">");
     for child in &dsl.children {
-        let mut value = child.args.first().map(|a| a.to_string()).unwrap_or_default();
+        let mut value = child
+            .args
+            .first()
+            .map(|a| a.to_string())
+            .unwrap_or_default();
         let mut label = String::new();
         let mut trend = String::new();
         let mut icon = String::new();
         for p in &child.properties {
             match p.name.as_str() {
-                "value" | "number" => if value.is_empty() { if let Some(ref v) = p.value { value = v.to_string(); } },
-                "label" | "title" => if let Some(ref v) = p.value { label = v.to_string(); },
-                "trend" | "change" => if let Some(ref v) = p.value { trend = v.to_string(); },
-                "icon" => if let Some(ref v) = p.value { icon = v.to_string(); },
+                "value" | "number" => {
+                    if value.is_empty() {
+                        if let Some(ref v) = p.value {
+                            value = v.to_string();
+                        }
+                    }
+                }
+                "label" | "title" => {
+                    if let Some(ref v) = p.value {
+                        label = v.to_string();
+                    }
+                }
+                "trend" | "change" => {
+                    if let Some(ref v) = p.value {
+                        trend = v.to_string();
+                    }
+                }
+                "icon" => {
+                    if let Some(ref v) = p.value {
+                        icon = v.to_string();
+                    }
+                }
                 _ => {}
             }
         }
@@ -611,8 +833,16 @@ pub fn render_stats(html: &mut String, dsl: &DslBlockValue) {
                 <div class=\"stat-value\">{}</div>\
             </div>",
             escape_html(&label),
-            if !icon.is_empty() { format!("<span class=\"stat-icon\">{}</span>", escape_html(&icon)) } else { String::new() },
-            if !trend.is_empty() { format!("<span class=\"stat-trend\">{}</span>", escape_html(&trend)) } else { String::new() },
+            if !icon.is_empty() {
+                format!("<span class=\"stat-icon\">{}</span>", escape_html(&icon))
+            } else {
+                String::new()
+            },
+            if !trend.is_empty() {
+                format!("<span class=\"stat-trend\">{}</span>", escape_html(&trend))
+            } else {
+                String::new()
+            },
             escape_html(&value)
         );
     }
@@ -625,9 +855,23 @@ pub fn render_alert(html: &mut String, dsl: &DslBlockValue) {
     let mut title = String::new();
     for p in &dsl.properties {
         match p.name.as_str() {
-            "message" | "text" | "content" => if message.is_empty() { if let Some(ref v) = p.value { message = v.to_string(); } },
-            "variant" | "type" => if let Some(ref v) = p.value { variant = v.to_string(); },
-            "title" => if let Some(ref v) = p.value { title = v.to_string(); },
+            "message" | "text" | "content" => {
+                if message.is_empty() {
+                    if let Some(ref v) = p.value {
+                        message = v.to_string();
+                    }
+                }
+            }
+            "variant" | "type" => {
+                if let Some(ref v) = p.value {
+                    variant = v.to_string();
+                }
+            }
+            "title" => {
+                if let Some(ref v) = p.value {
+                    title = v.to_string();
+                }
+            }
             _ => {}
         }
     }
@@ -648,7 +892,11 @@ pub fn render_alert(html: &mut String, dsl: &DslBlockValue) {
         </div>",
         escape_html(&variant.to_lowercase()),
         icon,
-        if !title.is_empty() { format!("<div class=\"alert-title\">{}</div>", escape_html(&title)) } else { String::new() },
+        if !title.is_empty() {
+            format!("<div class=\"alert-title\">{}</div>", escape_html(&title))
+        } else {
+            String::new()
+        },
         format!("<div class=\"alert-text\">{}</div>", escape_html(&message))
     );
 }
@@ -903,15 +1151,41 @@ pub fn render_custom_3d_studio(html: &mut String, _dsl: &DslBlockValue, id: &str
 }
 
 pub fn render_scene3d(html: &mut String, dsl: &DslBlockValue) {
-    let raw_scene_id = dsl.args.first().map(|a| a.to_string()).or_else(|| {
-        dsl.properties.iter().find(|p| p.name == "id").and_then(|p| p.value.as_ref().map(|v| v.to_string()))
-    }).unwrap_or_else(|| "World".to_string());
+    let raw_scene_id = dsl
+        .args
+        .first()
+        .map(|a| a.to_string())
+        .or_else(|| {
+            dsl.properties
+                .iter()
+                .find(|p| p.name == "id")
+                .and_then(|p| p.value.as_ref().map(|v| v.to_string()))
+        })
+        .unwrap_or_else(|| "World".to_string());
     let id = escape_html(&raw_scene_id);
 
     let is_custom_studio = raw_scene_id.to_lowercase().contains("custom")
         || raw_scene_id.to_lowercase().contains("playground")
-        || dsl.properties.iter().any(|p| p.name == "mode" && p.value.as_ref().map(|v| v.to_string()).unwrap_or_default() == "custom")
-        || dsl.children.iter().any(|c| matches!(c.kind.as_str(), "box" | "wall" | "roof" | "door" | "window" | "chimney" | "extrude" | "outline" | "cut" | "boolean" | "part"));
+        || dsl.properties.iter().any(|p| {
+            p.name == "mode"
+                && p.value.as_ref().map(|v| v.to_string()).unwrap_or_default() == "custom"
+        })
+        || dsl.children.iter().any(|c| {
+            matches!(
+                c.kind.as_str(),
+                "box"
+                    | "wall"
+                    | "roof"
+                    | "door"
+                    | "window"
+                    | "chimney"
+                    | "extrude"
+                    | "outline"
+                    | "cut"
+                    | "boolean"
+                    | "part"
+            )
+        });
 
     if is_custom_studio {
         render_custom_3d_studio(html, dsl, &id);
@@ -1063,7 +1337,11 @@ pub fn render_link(html: &mut String, dsl: &DslBlockValue) {
         if clean.starts_with('/') || clean.starts_with('#') {
             let clean_route = if clean.starts_with('#') {
                 let tag = clean.trim_start_matches('#');
-                if tag == "home" { "/".to_string() } else { format!("/{}", tag) }
+                if tag == "home" {
+                    "/".to_string()
+                } else {
+                    format!("/{}", tag)
+                }
             } else {
                 clean.to_string()
             };
@@ -1085,7 +1363,11 @@ pub fn render_link(html: &mut String, dsl: &DslBlockValue) {
             );
         }
     } else {
-        let _ = write!(html, "<a href=\"#\" class=\"webforge-link\">{}</a>", escape_html(&label));
+        let _ = write!(
+            html,
+            "<a href=\"#\" class=\"webforge-link\">{}</a>",
+            escape_html(&label)
+        );
     }
 }
 
@@ -1097,9 +1379,13 @@ pub fn render_nav(html: &mut String, dsl: &DslBlockValue) {
             let mut url = child.args.get(1).map(|a| a.to_string());
             for p in &child.properties {
                 if p.name == "label" || p.name == "text" {
-                    if label.is_none() { label = p.value.as_ref().map(|v| v.to_string()); }
+                    if label.is_none() {
+                        label = p.value.as_ref().map(|v| v.to_string());
+                    }
                 } else if p.name == "url" || p.name == "href" {
-                    if url.is_none() { url = p.value.as_ref().map(|v| v.to_string()); }
+                    if url.is_none() {
+                        url = p.value.as_ref().map(|v| v.to_string());
+                    }
                 }
             }
             let l = label.unwrap_or_else(|| "Link".to_string());
@@ -1121,7 +1407,10 @@ pub fn render_nav(html: &mut String, dsl: &DslBlockValue) {
                 );
             }
         } else {
-            dsl_to_html_inner(&RuntimeValue::DslBlock(std::rc::Rc::new(child.clone())), html);
+            dsl_to_html_inner(
+                &RuntimeValue::DslBlock(std::rc::Rc::new(child.clone())),
+                html,
+            );
         }
     }
     html.push_str("</nav>");
@@ -1163,12 +1452,18 @@ pub fn render_header_block(html: &mut String, dsl: &DslBlockValue) {
                         let mut url = link.args.get(1).map(|a| a.to_string());
                         for p in &link.properties {
                             if p.name == "label" || p.name == "text" {
-                                if label.is_none() { label = p.value.as_ref().map(|v| v.to_string()); }
+                                if label.is_none() {
+                                    label = p.value.as_ref().map(|v| v.to_string());
+                                }
                             } else if p.name == "url" || p.name == "href" {
-                                if url.is_none() { url = p.value.as_ref().map(|v| v.to_string()); }
+                                if url.is_none() {
+                                    url = p.value.as_ref().map(|v| v.to_string());
+                                }
                             }
                         }
-                        if let (Some(l), Some(u)) = (label, url) { v.push((l, u)); }
+                        if let (Some(l), Some(u)) = (label, url) {
+                            v.push((l, u));
+                        }
                     }
                 }
             }
@@ -1192,7 +1487,13 @@ pub fn render_header_block(html: &mut String, dsl: &DslBlockValue) {
     if declared_links.len() > 7 {
         for (label, url) in &declared_links[..6] {
             if url.starts_with('/') {
-                let _ = write!(html, "<a href=\"{}\" data-route=\"{}\">{}</a>", escape_html(url), escape_html(url), escape_html(label));
+                let _ = write!(
+                    html,
+                    "<a href=\"{}\" data-route=\"{}\">{}</a>",
+                    escape_html(url),
+                    escape_html(url),
+                    escape_html(label)
+                );
             } else {
                 let _ = write!(html, "<a href=\"{}\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"external-link\">{}</a>", escape_html(url), escape_html(label));
             }
@@ -1216,23 +1517,46 @@ pub fn render_header_block(html: &mut String, dsl: &DslBlockValue) {
                 _ => "•",
             };
             if url.starts_with('/') {
-                let _ = write!(html, "<a href=\"{}\" data-route=\"{}\">{} {}</a>", escape_html(url), escape_html(url), emoji, escape_html(label));
+                let _ = write!(
+                    html,
+                    "<a href=\"{}\" data-route=\"{}\">{} {}</a>",
+                    escape_html(url),
+                    escape_html(url),
+                    emoji,
+                    escape_html(label)
+                );
             } else {
-                let _ = write!(html, "<a href=\"{}\" target=\"_blank\" rel=\"noopener noreferrer\">{} {} ↗</a>", escape_html(url), emoji, escape_html(label));
+                let _ = write!(
+                    html,
+                    "<a href=\"{}\" target=\"_blank\" rel=\"noopener noreferrer\">{} {} ↗</a>",
+                    escape_html(url),
+                    emoji,
+                    escape_html(label)
+                );
             }
         }
         html.push_str("</div></div>");
     } else if !declared_links.is_empty() {
         for (label, url) in &declared_links {
             if url.starts_with('/') {
-                let _ = write!(html, "<a href=\"{}\" data-route=\"{}\">{}</a>", escape_html(url), escape_html(url), escape_html(label));
+                let _ = write!(
+                    html,
+                    "<a href=\"{}\" data-route=\"{}\">{}</a>",
+                    escape_html(url),
+                    escape_html(url),
+                    escape_html(label)
+                );
             } else {
                 let _ = write!(html, "<a href=\"{}\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"external-link\">{}</a>", escape_html(url), escape_html(label));
             }
         }
     } else {
         for (label, url) in primary {
-            let _ = write!(html, "<a href=\"{}\" data-route=\"{}\">{}</a>", url, url, label);
+            let _ = write!(
+                html,
+                "<a href=\"{}\" data-route=\"{}\">{}</a>",
+                url, url, label
+            );
         }
         html.push_str("<div class=\"nav-sep\"></div>");
         // Grouped 'More' dropdown
@@ -1249,7 +1573,11 @@ pub fn render_header_block(html: &mut String, dsl: &DslBlockValue) {
             ("🔧", "CLI Reference", "/cli"),
         ];
         for (emoji, label, url) in more {
-            let _ = write!(html, "<a href=\"{}\" data-route=\"{}\">{} {}</a>", url, url, emoji, label);
+            let _ = write!(
+                html,
+                "<a href=\"{}\" data-route=\"{}\">{} {}</a>",
+                url, url, emoji, label
+            );
         }
         html.push_str("<a href=\"https://github.com/Tcode-Motion/techscript\" target=\"_blank\" rel=\"noopener noreferrer\">⭐ GitHub</a>");
         html.push_str("</div></div>");
@@ -1268,11 +1596,21 @@ pub fn render_header_block(html: &mut String, dsl: &DslBlockValue) {
     html.push_str("<div id=\"mobile-drawer\" style=\"display:none;flex-direction:column;gap:0.5rem;padding:1.5rem;background:var(--surface);border-bottom:1px solid var(--border);\">");
 
     let all_mobile: &[(&str, &str)] = &[
-        ("Home", "/"), ("Language", "/language"), ("Framework", "/framework"),
-        ("Features", "/features"), ("Components", "/components"), ("3D Lab", "/showcase/3d"), ("Docs", "/docs"),
-        ("Examples", "/examples"), ("Showcase", "/showcase"), ("Packages", "/packages"),
-        ("Roadmap", "/roadmap"), ("Community", "/community"), ("Download", "/download"),
-        ("Playground", "/playground"), ("CLI", "/cli"),
+        ("Home", "/"),
+        ("Language", "/language"),
+        ("Framework", "/framework"),
+        ("Features", "/features"),
+        ("Components", "/components"),
+        ("3D Lab", "/showcase/3d"),
+        ("Docs", "/docs"),
+        ("Examples", "/examples"),
+        ("Showcase", "/showcase"),
+        ("Packages", "/packages"),
+        ("Roadmap", "/roadmap"),
+        ("Community", "/community"),
+        ("Download", "/download"),
+        ("Playground", "/playground"),
+        ("CLI", "/cli"),
     ];
     for (label, url) in all_mobile {
         let _ = write!(
@@ -1315,16 +1653,24 @@ pub fn render_footer_block(html: &mut String, dsl: &DslBlockValue) {
                     }
                 }
             }
-            let _ = write!(html, "<div class=\"footer-col\"><h4>{}</h4>", escape_html(&title));
+            let _ = write!(
+                html,
+                "<div class=\"footer-col\"><h4>{}</h4>",
+                escape_html(&title)
+            );
             for link in &child.children {
                 if link.kind == "link" {
                     let mut label = link.args.first().map(|a| a.to_string());
                     let mut url = link.args.get(1).map(|a| a.to_string());
                     for p in &link.properties {
                         if p.name == "label" || p.name == "text" {
-                            if label.is_none() { label = p.value.as_ref().map(|v| v.to_string()); }
+                            if label.is_none() {
+                                label = p.value.as_ref().map(|v| v.to_string());
+                            }
                         } else if p.name == "url" || p.name == "href" {
-                            if url.is_none() { url = p.value.as_ref().map(|v| v.to_string()); }
+                            if url.is_none() {
+                                url = p.value.as_ref().map(|v| v.to_string());
+                            }
                         }
                     }
                     let l = label.unwrap_or_else(|| "Link".to_string());
@@ -1339,7 +1685,8 @@ pub fn render_footer_block(html: &mut String, dsl: &DslBlockValue) {
                         let _ = write!(
                             html,
                             "<a href=\"{}\" target=\"_blank\" rel=\"noopener noreferrer\">{}</a>",
-                            escape_html(&u), escape_html(&l)
+                            escape_html(&u),
+                            escape_html(&l)
                         );
                     }
                 }
@@ -1440,7 +1787,11 @@ pub fn dsl_to_html_inner(val: &RuntimeValue, html: &mut String) {
 pub fn find_3d_scenes(blocks: &[RuntimeValue]) -> Vec<DslBlockValue> {
     let mut scenes = Vec::new();
     fn walk(dsl: &DslBlockValue, out: &mut Vec<DslBlockValue>) {
-        if dsl.kind == "scene" || dsl.kind == "scene3d" || dsl.kind == "model3d" || dsl.kind == "model3D" {
+        if dsl.kind == "scene"
+            || dsl.kind == "scene3d"
+            || dsl.kind == "model3d"
+            || dsl.kind == "model3D"
+        {
             out.push(dsl.clone());
         }
         for child in &dsl.children {
@@ -1462,10 +1813,14 @@ pub fn find_database_tables(blocks: &[RuntimeValue]) -> Vec<String> {
             if dsl.kind == "database" {
                 for child in &dsl.children {
                     if child.kind == "table" {
-                        let name = child.args.first()
+                        let name = child
+                            .args
+                            .first()
                             .map(|a| a.to_string())
                             .or_else(|| {
-                                child.properties.iter()
+                                child
+                                    .properties
+                                    .iter()
                                     .find(|p| p.name == "name" || p.name == "id")
                                     .and_then(|p| p.value.as_ref().map(|v| v.to_string()))
                             })
@@ -1483,7 +1838,10 @@ pub fn find_database_tables(blocks: &[RuntimeValue]) -> Vec<String> {
 }
 
 /// Renders the complete, self-contained HTML5 document for a TechScript WebForge application.
-pub fn render_complete_document(blocks: &[RuntimeValue], event_handlers: &[RuntimeValue]) -> String {
+pub fn render_complete_document(
+    blocks: &[RuntimeValue],
+    event_handlers: &[RuntimeValue],
+) -> String {
     let mut doc_title = "TechScript WebForge Application".to_string();
     let mut header_block: Option<DslBlockValue> = None;
     let mut footer_block: Option<DslBlockValue> = None;
@@ -1515,7 +1873,8 @@ pub fn render_complete_document(blocks: &[RuntimeValue], event_handlers: &[Runti
 
     let has_pages = blocks.iter().any(|b| {
         if let RuntimeValue::DslBlock(dsl) = b {
-            dsl.kind == "page" || (dsl.kind == "website" && dsl.children.iter().any(|c| c.kind == "page"))
+            dsl.kind == "page"
+                || (dsl.kind == "website" && dsl.children.iter().any(|c| c.kind == "page"))
         } else {
             false
         }
@@ -1534,7 +1893,10 @@ pub fn render_complete_document(blocks: &[RuntimeValue], event_handlers: &[Runti
             if dsl.kind == "website" {
                 for child in &dsl.children {
                     if child.kind != "header" && child.kind != "footer" {
-                        dsl_to_html_inner(&RuntimeValue::DslBlock(std::rc::Rc::new(child.clone())), &mut body_html);
+                        dsl_to_html_inner(
+                            &RuntimeValue::DslBlock(std::rc::Rc::new(child.clone())),
+                            &mut body_html,
+                        );
                     }
                 }
                 continue;
@@ -1690,9 +2052,17 @@ pub fn render_complete_document(blocks: &[RuntimeValue], event_handlers: &[Runti
     if !scenes_3d.is_empty() {
         doc.push_str("<script>document.addEventListener('DOMContentLoaded', () => {");
         for sc in &scenes_3d {
-            let sc_id = sc.args.first().map(|a| a.to_string()).or_else(|| {
-                sc.properties.iter().find(|p| p.name == "id").and_then(|p| p.value.as_ref().map(|v| v.to_string()))
-            }).unwrap_or_else(|| "World".to_string());
+            let sc_id = sc
+                .args
+                .first()
+                .map(|a| a.to_string())
+                .or_else(|| {
+                    sc.properties
+                        .iter()
+                        .find(|p| p.name == "id")
+                        .and_then(|p| p.value.as_ref().map(|v| v.to_string()))
+                })
+                .unwrap_or_else(|| "World".to_string());
 
             let mut initial_geo = "scifi".to_string();
             let mut initial_color = "cyan".to_string();
@@ -1701,7 +2071,26 @@ pub fn render_complete_document(blocks: &[RuntimeValue], event_handlers: &[Runti
             // 1. Direct arguments (e.g. `show 3D "mech"` or `model3D "quantum_chip"`)
             if let Some(arg) = sc.args.first() {
                 let s = arg.to_string().trim_matches('"').to_lowercase();
-                if ["scifi", "mech", "knot", "gyroscope", "tesseract", "dna", "satellite", "torus", "star", "crystal", "geodesic", "product", "quantum_chip", "black_hole", "mobius", "dyson_swarm"].contains(&s.as_str()) {
+                if [
+                    "scifi",
+                    "mech",
+                    "knot",
+                    "gyroscope",
+                    "tesseract",
+                    "dna",
+                    "satellite",
+                    "torus",
+                    "star",
+                    "crystal",
+                    "geodesic",
+                    "product",
+                    "quantum_chip",
+                    "black_hole",
+                    "mobius",
+                    "dyson_swarm",
+                ]
+                .contains(&s.as_str())
+                {
                     initial_geo = s;
                 }
             }
@@ -1716,7 +2105,11 @@ pub fn render_complete_document(blocks: &[RuntimeValue], event_handlers: &[Runti
                     if let Some(ref v) = p.value {
                         initial_color = v.to_string().trim_matches('"').to_string();
                     }
-                } else if p.name == "speed" || p.name == "rotation" || p.name == "rotation speed" || p.name == "rotation_speed" {
+                } else if p.name == "speed"
+                    || p.name == "rotation"
+                    || p.name == "rotation speed"
+                    || p.name == "rotation_speed"
+                {
                     if let Some(ref v) = p.value {
                         rot_speed = v.try_into_float().unwrap_or(1.2);
                     }
@@ -1749,7 +2142,11 @@ pub fn render_complete_document(blocks: &[RuntimeValue], event_handlers: &[Runti
                         if let Some(ref v) = p.value {
                             initial_color = v.to_string().trim_matches('"').to_string();
                         }
-                    } else if p.name == "speed" || p.name == "rotation" || p.name == "rotation speed" || p.name == "rotation_speed" {
+                    } else if p.name == "speed"
+                        || p.name == "rotation"
+                        || p.name == "rotation speed"
+                        || p.name == "rotation_speed"
+                    {
                         if let Some(ref v) = p.value {
                             rot_speed = v.try_into_float().unwrap_or(1.2);
                         }
@@ -1759,8 +2156,26 @@ pub fn render_complete_document(blocks: &[RuntimeValue], event_handlers: &[Runti
 
             let is_custom = sc_id.to_lowercase().contains("custom")
                 || sc_id.to_lowercase().contains("playground")
-                || sc.properties.iter().any(|p| p.name == "mode" && p.value.as_ref().map(|v| v.to_string()).unwrap_or_default() == "custom")
-                || sc.children.iter().any(|c| matches!(c.kind.as_str(), "box" | "wall" | "roof" | "door" | "window" | "chimney" | "extrude" | "outline" | "cut" | "boolean" | "part"));
+                || sc.properties.iter().any(|p| {
+                    p.name == "mode"
+                        && p.value.as_ref().map(|v| v.to_string()).unwrap_or_default() == "custom"
+                })
+                || sc.children.iter().any(|c| {
+                    matches!(
+                        c.kind.as_str(),
+                        "box"
+                            | "wall"
+                            | "roof"
+                            | "door"
+                            | "window"
+                            | "chimney"
+                            | "extrude"
+                            | "outline"
+                            | "cut"
+                            | "boolean"
+                            | "part"
+                    )
+                });
 
             if is_custom {
                 let _ = write!(
@@ -1793,9 +2208,15 @@ pub fn render_complete_document(blocks: &[RuntimeValue], event_handlers: &[Runti
                 let mut arg2 = String::new();
                 for p in &dsl.properties {
                     match p.name.as_str() {
-                        "action" => action = p.value.as_ref().map(|v| v.to_string()).unwrap_or_default(),
-                        "arg1" => arg1 = p.value.as_ref().map(|v| v.to_string()).unwrap_or_default(),
-                        "arg2" => arg2 = p.value.as_ref().map(|v| v.to_string()).unwrap_or_default(),
+                        "action" => {
+                            action = p.value.as_ref().map(|v| v.to_string()).unwrap_or_default()
+                        }
+                        "arg1" => {
+                            arg1 = p.value.as_ref().map(|v| v.to_string()).unwrap_or_default()
+                        }
+                        "arg2" => {
+                            arg2 = p.value.as_ref().map(|v| v.to_string()).unwrap_or_default()
+                        }
                         _ => {}
                     }
                 }

@@ -64,13 +64,14 @@ pub fn execute(package: &str) -> ExitCode {
     }
 
     // Update lockfile
-    let lockfile_name = if manifest_path.file_name().and_then(|f| f.to_str()) == Some("webforge.toml") {
-        "webforge.lock"
-    } else if manifest_path.file_name().and_then(|f| f.to_str()) == Some("tech.toml") {
-        "tech.lock"
-    } else {
-        "techscript.lock"
-    };
+    let lockfile_name =
+        if manifest_path.file_name().and_then(|f| f.to_str()) == Some("webforge.toml") {
+            "webforge.lock"
+        } else if manifest_path.file_name().and_then(|f| f.to_str()) == Some("tech.toml") {
+            "tech.lock"
+        } else {
+            "techscript.lock"
+        };
     let lockfile_path = current_dir.join(lockfile_name);
     if lockfile_path.exists() {
         if let Ok(lockfile_content) = fs::read_to_string(&lockfile_path) {

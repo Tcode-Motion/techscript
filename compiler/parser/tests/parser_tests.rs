@@ -487,4 +487,3 @@ show 3D scene called World:
         panic!("Expected scene3d DSL block");
     }
 }
-

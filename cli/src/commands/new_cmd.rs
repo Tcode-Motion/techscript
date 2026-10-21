@@ -9,7 +9,11 @@ use colored::Colorize;
 use std::io::{self, Write};
 use std::path::PathBuf;
 
-pub fn execute(name_opt: Option<&str>, template_str: Option<&str>, second_opt: Option<&str>) -> ExitCode {
+pub fn execute(
+    name_opt: Option<&str>,
+    template_str: Option<&str>,
+    second_opt: Option<&str>,
+) -> ExitCode {
     let mut resolved_name = name_opt.map(|s| s.to_string());
     let mut resolved_template = template_str.map(|s| s.to_string());
 

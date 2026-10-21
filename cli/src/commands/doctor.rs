@@ -173,7 +173,9 @@ impl DoctorContext {
     #[cfg(windows)]
     fn check_windows_associations(&mut self) {
         let mut association_ok = true;
-        let extensions = [".txs", ".wtxs", ".stxs", ".atxs", ".3txs", ".tech", ".tspkg"];
+        let extensions = [
+            ".txs", ".wtxs", ".stxs", ".atxs", ".3txs", ".tech", ".tspkg",
+        ];
         for ext in &extensions {
             let output = std::process::Command::new("powershell")
                 .env("EXT", ext)

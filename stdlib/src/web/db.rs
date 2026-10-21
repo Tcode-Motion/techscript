@@ -9,7 +9,10 @@ pub const DB_FILENAME: &str = "webforge.db";
 
 /// Sanitize an identifier (table or column name) to allow only alphanumeric ASCII and underscores.
 pub fn sanitize_identifier(raw: &str) -> String {
-    let clean: String = raw.chars().filter(|c| c.is_ascii_alphanumeric() || *c == '_').collect();
+    let clean: String = raw
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric() || *c == '_')
+        .collect();
     if clean.is_empty() {
         "records".to_string()
     } else {
@@ -27,10 +30,14 @@ pub fn init_sqlite_database(dsl: &DslBlockValue) {
     if let Ok(conn) = open_connection() {
         for child in &dsl.children {
             if child.kind == "table" {
-                let table_name = child.args.first()
+                let table_name = child
+                    .args
+                    .first()
                     .map(|a| a.to_string())
                     .or_else(|| {
-                        child.properties.iter()
+                        child
+                            .properties
+                            .iter()
                             .find(|p| p.name == "name" || p.name == "id")
                             .and_then(|p| p.value.as_ref().map(|v| v.to_string()))
                     })
@@ -53,7 +60,10 @@ pub fn init_sqlite_database(dsl: &DslBlockValue) {
 }
 
 /// Ensure a table exists before read/write operations.
-pub fn ensure_table_exists(conn: &rusqlite::Connection, table_name: &str) -> Result<(), rusqlite::Error> {
+pub fn ensure_table_exists(
+    conn: &rusqlite::Connection,
+    table_name: &str,
+) -> Result<(), rusqlite::Error> {
     let clean_name = sanitize_identifier(table_name);
     let create_sql = format!(
         "CREATE TABLE IF NOT EXISTS {} (\
@@ -74,13 +84,19 @@ pub fn insert_record(table_name: &str, title: &str, content: &str) -> Result<i64
     let clean_name = sanitize_identifier(table_name);
     ensure_table_exists(&conn, &clean_name)?;
 
-    let insert_sql = format!("INSERT INTO {} (title, content) VALUES (?1, ?2)", clean_name);
+    let insert_sql = format!(
+        "INSERT INTO {} (title, content) VALUES (?1, ?2)",
+        clean_name
+    );
     conn.execute(&insert_sql, rusqlite::params![title, content])?;
     Ok(conn.last_insert_rowid())
 }
 
 /// Query the most recent records from a table safely using parameterized SQL statements.
-pub fn query_records(table_name: &str, limit: usize) -> Result<Vec<serde_json::Value>, rusqlite::Error> {
+pub fn query_records(
+    table_name: &str,
+    limit: usize,
+) -> Result<Vec<serde_json::Value>, rusqlite::Error> {
     let conn = open_connection()?;
     let clean_name = sanitize_identifier(table_name);
     ensure_table_exists(&conn, &clean_name)?;

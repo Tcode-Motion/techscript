@@ -70,9 +70,19 @@ impl Interpreter {
     fn execute_if_stmt(&mut self, if_stmt: &techscript_ast::IfStmt) -> ExecResult {
         if let techscript_ast::Expression::Binary(ref bin) = if_stmt.condition {
             if bin.op == "is" {
-                if let (techscript_ast::Expression::Identifier(ref left_id), techscript_ast::Expression::Identifier(ref right_id)) = (&*bin.left, &*bin.right) {
+                if let (
+                    techscript_ast::Expression::Identifier(ref left_id),
+                    techscript_ast::Expression::Identifier(ref right_id),
+                ) = (&*bin.left, &*bin.right)
+                {
                     let ev = right_id.name.as_str();
-                    if ev == "clicked" || ev == "click" || ev == "submitted" || ev == "submit" || ev == "changed" || ev == "change" {
+                    if ev == "clicked"
+                        || ev == "click"
+                        || ev == "submitted"
+                        || ev == "submit"
+                        || ev == "changed"
+                        || ev == "change"
+                    {
                         self.register_webforge_event_handler(&left_id.name, ev, &if_stmt.body)?;
                         return Ok(FlowSignal::Normal);
                     }

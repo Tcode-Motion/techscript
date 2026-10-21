@@ -101,7 +101,6 @@ fn from_bool(
     Ok(RuntimeValue::Str(val.to_string()))
 }
 
-
 impl StdlibRegistry {
     pub fn register_strings(&mut self) {
         let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =

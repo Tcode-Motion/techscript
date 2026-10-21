@@ -328,16 +328,17 @@ impl ProjectBuildGraph {
 
                 // Resolve user import path using deterministic extension registry (.txs prioritized)
                 let import_rel = imp.join("/");
-                let mut import_file = match techscript_common::resolve_source_module(parent_dir, &import_rel) {
-                    Ok(p) => p,
-                    Err(_) => {
-                        let mut fallback = parent_dir.to_path_buf();
-                        for part in &imp {
-                            fallback.push(part);
+                let mut import_file =
+                    match techscript_common::resolve_source_module(parent_dir, &import_rel) {
+                        Ok(p) => p,
+                        Err(_) => {
+                            let mut fallback = parent_dir.to_path_buf();
+                            for part in &imp {
+                                fallback.push(part);
+                            }
+                            fallback.with_extension("txs")
                         }
-                        fallback.with_extension("txs")
-                    }
-                };
+                    };
 
                 if !import_file.exists() {
                     let pkg_dir = self.workspace.root.join("packages");
@@ -350,7 +351,8 @@ impl ProjectBuildGraph {
                         }
                         let mut try_file = pkg_path.with_extension("txs");
                         if !try_file.exists() {
-                            let manifest_toml = techscript_package_manager::manifest_path_in(&pkg_path);
+                            let manifest_toml =
+                                techscript_package_manager::manifest_path_in(&pkg_path);
                             if let Some(cached_entry) = manifest_cache.get(&manifest_toml) {
                                 try_file = pkg_path.join(cached_entry);
                             } else if manifest_toml.exists() {

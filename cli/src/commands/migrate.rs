@@ -27,7 +27,11 @@ pub fn execute(path_str: Option<&str>) -> ExitCode {
                     let path = entry.path();
                     if path.is_dir() {
                         let name = path.file_name().unwrap_or_default().to_string_lossy();
-                        if name != "build" && name != ".git" && name != "target" && name != "node_modules" {
+                        if name != "build"
+                            && name != ".git"
+                            && name != "target"
+                            && name != "node_modules"
+                        {
                             dirs.push(path);
                         }
                     } else if techscript_common::is_supported_source_file(&path) {
@@ -91,7 +95,10 @@ pub fn execute(path_str: Option<&str>) -> ExitCode {
     let toml_candidate = if target_path.is_dir() {
         target_path.join("tech.toml")
     } else {
-        target_path.parent().unwrap_or(&target_path).join("tech.toml")
+        target_path
+            .parent()
+            .unwrap_or(&target_path)
+            .join("tech.toml")
     };
     if toml_candidate.exists() {
         if let Ok(toml_content) = std::fs::read_to_string(&toml_candidate) {

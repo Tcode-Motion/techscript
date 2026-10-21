@@ -323,16 +323,16 @@ pub enum SourceResolutionError {
     /// Security violation: attempt to traverse outside the allowed directory.
     PathTraversalDetected { path: String },
     /// Unrecognized file extension.
-    UnsupportedExtension {
-        path: String,
-        extension: String,
-    },
+    UnsupportedExtension { path: String, extension: String },
 }
 
 impl fmt::Display for SourceResolutionError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::NotFound { module, searched_paths } => {
+            Self::NotFound {
+                module,
+                searched_paths,
+            } => {
                 write!(
                     f,
                     "Module '{}' not found. Searched locations: {:?}",
@@ -378,7 +378,10 @@ impl std::error::Error for SourceResolutionError {}
 ///    - If exactly one matches, returns it.
 ///    - If multiple match, returns [`SourceResolutionError::AmbiguousImport`].
 ///    - If none match, returns [`SourceResolutionError::NotFound`].
-pub fn resolve_source_module(base_dir: &Path, module_path: &str) -> Result<PathBuf, SourceResolutionError> {
+pub fn resolve_source_module(
+    base_dir: &Path,
+    module_path: &str,
+) -> Result<PathBuf, SourceResolutionError> {
     // Check path traversal and directory escapes
     let normalized = module_path.replace('\\', "/");
     if normalized.starts_with('/') || (normalized.len() >= 2 && normalized.as_bytes()[1] == b':') {
@@ -472,10 +475,7 @@ pub fn resolve_source_module(base_dir: &Path, module_path: &str) -> Result<PathB
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum CommonError {
     /// The provided file does not have a supported TechScript extension.
-    InvalidExtension {
-        path: String,
-        message: String,
-    },
+    InvalidExtension { path: String, message: String },
 }
 
 impl fmt::Display for CommonError {

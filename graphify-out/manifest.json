@@ -5,8 +5,8 @@
     "semantic_hash": ""
   },
   "cli/src/lib.rs": {
-    "mtime": 1792565813.5733733,
-    "ast_hash": "363dd935fa7fcc50b664af3b2965831d",
+    "mtime": 1792593387.29036,
+    "ast_hash": "3ff13dc7343b9cf6a36cbcf2d7ed7cfd",
     "semantic_hash": ""
   },
   "cli/tests/cli_tests.rs": {
@@ -30,8 +30,8 @@
     "semantic_hash": ""
   },
   "compiler/common/tests/common_tests.rs": {
-    "mtime": 1792561363.699887,
-    "ast_hash": "4bebf3b6f8d7db955acc6e8c878776ed",
+    "mtime": 1792593387.4381506,
+    "ast_hash": "ec3adda658d2fe4e702a85c2bcdf10f1",
     "semantic_hash": ""
   },
   "compiler/errors/src/lib.rs": {
@@ -70,8 +70,8 @@
     "semantic_hash": "25e7b37581c1cc53d1579e14bd682cf5"
   },
   "compiler/parser/tests/parser_tests.rs": {
-    "mtime": 1792573628.6744313,
-    "ast_hash": "ed11c0d01fd0c19907c2b900c6114ac9",
+    "mtime": 1792593387.7307403,
+    "ast_hash": "f27b475b0a4a3c28bfef6eb200fa35b1",
     "semantic_hash": ""
   },
   "compiler/semantic/src/lib.rs": {
@@ -180,8 +180,8 @@
     "semantic_hash": "094b1798cf69eca3ea8002bdb488b2ce"
   },
   "tools/package-manager/src/lib.rs": {
-    "mtime": 1792566215.9767826,
-    "ast_hash": "e1dc4547043722284b8732c761c6964a",
+    "mtime": 1792593388.4738507,
+    "ast_hash": "e8b17b94356f8f4673eae40677440671",
     "semantic_hash": ""
   },
   "tools/package-manager/tests/package_manager_tests.rs": {
@@ -195,8 +195,8 @@
     "semantic_hash": ""
   },
   "compiler/common/src/file_ext.rs": {
-    "mtime": 1792562072.3661988,
-    "ast_hash": "c96cac488a9d7112e06fcfb619fa8c5b",
+    "mtime": 1792593387.4230974,
+    "ast_hash": "b06c29a5c6ac500c7e9eefda82c48775",
     "semantic_hash": ""
   },
   "compiler/common/src/ident.rs": {
@@ -240,8 +240,8 @@
     "semantic_hash": ""
   },
   "compiler/parser/src/statements.rs": {
-    "mtime": 1792591127.4560175,
-    "ast_hash": "7b8edde1efda03da0ba1766bb33d9680",
+    "mtime": 1792593467.7406464,
+    "ast_hash": "526328ba0b89cd73cc477b5ec710cdde",
     "semantic_hash": ""
   },
   "compiler/semantic/src/context.rs": {
@@ -250,8 +250,8 @@
     "semantic_hash": ""
   },
   "compiler/semantic/src/passes/collect.rs": {
-    "mtime": 1792589403.5931227,
-    "ast_hash": "6a16eb63d4bd8ce5206a8ec71b89da4e",
+    "mtime": 1792593387.7567542,
+    "ast_hash": "63d4e4382df0a1b79f6b75267f6a6f43",
     "semantic_hash": ""
   },
   "compiler/semantic/src/passes/mod.rs": {
@@ -355,8 +355,8 @@
     "semantic_hash": "f220d62ee46d06b0f7578b76b485746b"
   },
   "runtime/interpreter/src/statements.rs": {
-    "mtime": 1792574252.6449597,
-    "ast_hash": "cc767787ff0dc3f041c2d4657369268e",
+    "mtime": 1792593387.8797202,
+    "ast_hash": "dbb33069f1e3109507cc1ad3431fd6b2",
     "semantic_hash": ""
   },
   "runtime/interpreter/src/visitor.rs": {
@@ -700,8 +700,8 @@
     "semantic_hash": "f9bfb72a9ae883808f1cd657b7a6efed"
   },
   "cli/src/commands/build.rs": {
-    "mtime": 1792584259.5795226,
-    "ast_hash": "2557c5b255aa2e5b1f72162f6ca21fde",
+    "mtime": 1792593387.1898506,
+    "ast_hash": "388c86329c8f113c437619d2af5f903f",
     "semantic_hash": ""
   },
   "cli/src/commands/check.rs": {
@@ -720,8 +720,8 @@
     "semantic_hash": "0508ea077bdbd8bb25de3fc405773422"
   },
   "cli/src/commands/doctor.rs": {
-    "mtime": 1792561759.9336982,
-    "ast_hash": "86ff7c0c4a5cd87c947de5eb3fcacc02",
+    "mtime": 1792593387.2063832,
+    "ast_hash": "c16ee409f76a67209a8f61ade9e7af1f",
     "semantic_hash": ""
   },
   "cli/src/commands/dump.rs": {
@@ -740,8 +740,8 @@
     "semantic_hash": ""
   },
   "cli/src/commands/install.rs": {
-    "mtime": 1792566250.7629955,
-    "ast_hash": "6aeaa7bab891e558348ead6ef0eb5585",
+    "mtime": 1792593387.2143924,
+    "ast_hash": "50e16e7b1e30aff63f7b7ffec9052287",
     "semantic_hash": ""
   },
   "cli/src/commands/lint.rs": {
@@ -755,8 +755,8 @@
     "semantic_hash": ""
   },
   "cli/src/commands/new_cmd.rs": {
-    "mtime": 1792564918.7035756,
-    "ast_hash": "c58a41f0d91dbd852a4260eea1f79004",
+    "mtime": 1792593387.2380316,
+    "ast_hash": "4adff9c3efa2e3850f2adce6606db539",
     "semantic_hash": ""
   },
   "cli/src/commands/publish.rs": {
@@ -770,8 +770,8 @@
     "semantic_hash": "fed54cc94936c5e127584c7d3ef92dfb"
   },
   "cli/src/commands/run.rs": {
-    "mtime": 1792561980.3182313,
-    "ast_hash": "f37f7e1f5e9f118d92c82562947f508b",
+    "mtime": 1792593387.256352,
+    "ast_hash": "2943c2fa7efce6fff29d8944f671add1",
     "semantic_hash": ""
   },
   "cli/src/commands/test.rs": {
@@ -780,8 +780,8 @@
     "semantic_hash": ""
   },
   "cli/src/commands/uninstall.rs": {
-    "mtime": 1792566280.6171825,
-    "ast_hash": "adedaa7610ac404db11cf1fd0e628474",
+    "mtime": 1792593387.2643464,
+    "ast_hash": "eae4cd15b8f79e1e8095c03179b58938",
     "semantic_hash": ""
   },
   "cli/src/commands/update.rs": {
@@ -845,8 +845,8 @@
     "semantic_hash": "e22cdabd786796a2b80ec997a9bb6584"
   },
   "cli/src/project.rs": {
-    "mtime": 1792564472.3792193,
-    "ast_hash": "32f75150cb99ffbd6203e6b936b519c0",
+    "mtime": 1792593387.3132837,
+    "ast_hash": "7855e49ce7553d7659c5d683a0eed9a5",
     "semantic_hash": ""
   },
   "cli/src/scheduler.rs": {
@@ -855,8 +855,8 @@
     "semantic_hash": ""
   },
   "cli/src/templates.rs": {
-    "mtime": 1792566882.4542313,
-    "ast_hash": "51ebb8ecb5fda2c85013ae051c8282ba",
+    "mtime": 1792593387.3423033,
+    "ast_hash": "5be3171543a3a4294a41ca39fa8ac381",
     "semantic_hash": ""
   },
   "cli/src/watch.rs": {
@@ -1092,8 +1092,8 @@
     "semantic_hash": ""
   },
   "stdlib/src/strings.rs": {
-    "mtime": 1792497054.4803383,
-    "ast_hash": "11d40c659b0a56ef037f5d79cb217a30",
+    "mtime": 1792593388.274034,
+    "ast_hash": "a5ecf53de0516a951b4f47c1eb6536bf",
     "semantic_hash": ""
   },
   "stdlib/src/sync.rs": {
@@ -1147,13 +1147,13 @@
     "semantic_hash": "3597eb3fa6901cdd10eaf70ad1f79de2"
   },
   "cli/src/commands/migrate.rs": {
-    "mtime": 1792561993.469456,
-    "ast_hash": "ec54df1c4c87bb1856d597a7ae42ff26",
+    "mtime": 1792593387.2317505,
+    "ast_hash": "f13180a16f9d54e4e8a83b8fa72499ee",
     "semantic_hash": ""
   },
   "compiler/semantic/src/dsl_schema.rs": {
-    "mtime": 1792589633.4207022,
-    "ast_hash": "ef2b9bfcdd7c14e995d05739862d7f49",
+    "mtime": 1792593387.749743,
+    "ast_hash": "bee5e226fc8a3a23a26bf9e0bbbd510a",
     "semantic_hash": ""
   },
   "compiler/semantic/src/passes/validate_dsl.rs": {
@@ -1469,23 +1469,23 @@
     "semantic_hash": ""
   },
   "cli/src/commands/deploy.rs": {
-    "mtime": 1792561748.3415434,
-    "ast_hash": "970f6902ade11ef608b99310f8a58ea6",
+    "mtime": 1792593387.1958504,
+    "ast_hash": "7fb5112beb4c3f27e243ea77ba8978f0",
     "semantic_hash": ""
   },
   "cli/src/commands/dev.rs": {
-    "mtime": 1792584248.028059,
-    "ast_hash": "fdb442e606fda575e9b82f94e6e3b773",
+    "mtime": 1792593387.2013943,
+    "ast_hash": "1bfb7b6c7245e9ea6b6305cfe5757018",
     "semantic_hash": ""
   },
   "cli/src/commands/routes.rs": {
-    "mtime": 1792584267.404153,
-    "ast_hash": "fa7782c86cf4bf28633f975c15df9935",
+    "mtime": 1792593387.249035,
+    "ast_hash": "929be324fc28c892ad016e0b17904ed5",
     "semantic_hash": ""
   },
   "cli/tests/webforge_e2e_tests.rs": {
-    "mtime": 1792577583.151528,
-    "ast_hash": "e22b16878b35dd634e9d19ffb8d0d6c8",
+    "mtime": 1792593387.3752215,
+    "ast_hash": "dce132048122f764d516ae3d0cadadc9",
     "semantic_hash": ""
   },
   "fix_file.sh": {
@@ -2654,8 +2654,8 @@
     "semantic_hash": ""
   },
   "cli/tests/extension_standard_tests.rs": {
-    "mtime": 1792562043.9625664,
-    "ast_hash": "424150518a2dfd8ca1ebde56cae93ff0",
+    "mtime": 1792593387.3628592,
+    "ast_hash": "3c298b467e6821b861aaac0a266a09d6",
     "semantic_hash": ""
   },
   "docs/TECHSCRIPT_FILE_EXTENSION_STANDARD.md": {
@@ -2664,18 +2664,18 @@
     "semantic_hash": ""
   },
   "cli/src/commands/list.rs": {
-    "mtime": 1792564784.0735574,
-    "ast_hash": "3595143ca569e0430dbd0a65ac2d051a",
+    "mtime": 1792593387.2247136,
+    "ast_hash": "1fdfda215b86fd474fa25dea0e032f73",
     "semantic_hash": ""
   },
   "cli/src/commands/search.rs": {
-    "mtime": 1792564796.2683008,
-    "ast_hash": "cfeeedcacc23f290c68d1d3354eb92b3",
+    "mtime": 1792593387.2583523,
+    "ast_hash": "b74e613b024ccd7cb0255e81ffc838f4",
     "semantic_hash": ""
   },
   "cli/src/entrypoint.rs": {
-    "mtime": 1792566347.6864808,
-    "ast_hash": "1cce46910bc9e593669bdcbe1355e11f",
+    "mtime": 1792593387.2873595,
+    "ast_hash": "81f7b02c27a4fd12fecc7c579ff25c14",
     "semantic_hash": ""
   },
   "docs/WEBFORGE_3D.md": {
@@ -2764,18 +2764,18 @@
     "semantic_hash": ""
   },
   "stdlib/src/web/db.rs": {
-    "mtime": 1792571881.6365795,
-    "ast_hash": "1a79cd29350cb294782c2b1e96bf00fb",
+    "mtime": 1792593388.302806,
+    "ast_hash": "07ba4e1213b6c31a1739f40c2ca50073",
     "semantic_hash": ""
   },
   "stdlib/src/web/mod.rs": {
-    "mtime": 1792572023.0240867,
-    "ast_hash": "3d6ffb7689c8d1c3c5b6a32b168f7aba",
+    "mtime": 1792593388.307806,
+    "ast_hash": "aac62750a326b105e71b15bbb1e617f5",
     "semantic_hash": ""
   },
   "stdlib/src/web/renderer.rs": {
-    "mtime": 1792591752.1339564,
-    "ast_hash": "d8fc1c3a7573bcc17c0a46e1fabda3c8",
+    "mtime": 1792593388.35934,
+    "ast_hash": "a249fdf6fa0e95356d9066b61b72c328",
     "semantic_hash": ""
   },
   "stdlib/src/web/runtime_js.rs": {
@@ -2784,8 +2784,8 @@
     "semantic_hash": ""
   },
   "stdlib/src/web/server.rs": {
-    "mtime": 1792577688.0489104,
-    "ast_hash": "1cb2eb08f44adea0aa336c73a945d178",
+    "mtime": 1792593388.378336,
+    "ast_hash": "586632db8016831f3ac9d21f72520760",
     "semantic_hash": ""
   },
   "stdlib/src/web/styles.rs": {
@@ -2799,8 +2799,8 @@
     "semantic_hash": ""
   },
   "cli/tests/conformance_tests.rs": {
-    "mtime": 1792591020.7818427,
-    "ast_hash": "e0309b2f6d7f8162e39c940e625ef48c",
+    "mtime": 1792593387.3558571,
+    "ast_hash": "0bf0d9d17de4f077bb07d0289d884e7c",
     "semantic_hash": ""
   },
   "tools/package_release.ps1": {
@@ -2831,6 +2831,11 @@
   "docs/TECHSCRIPT_LANGUAGE_ROADMAP.md": {
     "mtime": 1792590045.2722638,
     "ast_hash": "854b6e178d0d780d56377ec6eb9bcf7c",
+    "semantic_hash": ""
+  },
+  "docs/FINAL_RELEASE_AND_DEPLOYMENT_REPORT.md": {
+    "mtime": 1792593111.7026508,
+    "ast_hash": "6d3f0e5f4bebe877955a24b46c40c620",
     "semantic_hash": ""
   }
 }

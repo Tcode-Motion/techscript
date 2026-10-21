@@ -501,4 +501,3 @@ pub fn find_manifest_in(dir: &std::path::Path) -> Option<std::path::PathBuf> {
 pub fn manifest_path_in(dir: &std::path::Path) -> std::path::PathBuf {
     find_manifest_in(dir).unwrap_or_else(|| dir.join(WEBFORGE_MANIFEST_FILE))
 }
-

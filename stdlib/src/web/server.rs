@@ -82,13 +82,39 @@ impl Resolver for SafeResolver {
 }
 
 /// Attach standard enterprise security headers to a response.
-fn apply_security_headers<R: std::io::Read>(resp: tiny_http::Response<R>) -> tiny_http::Response<R> {
-    resp.with_header(tiny_http::Header::from_bytes(&b"Access-Control-Allow-Origin"[..], &b"*"[..]).unwrap())
-        .with_header(tiny_http::Header::from_bytes(&b"Access-Control-Allow-Methods"[..], &b"GET, POST, OPTIONS"[..]).unwrap())
-        .with_header(tiny_http::Header::from_bytes(&b"Access-Control-Allow-Headers"[..], &b"Content-Type, Authorization"[..]).unwrap())
-        .with_header(tiny_http::Header::from_bytes(&b"X-Content-Type-Options"[..], &b"nosniff"[..]).unwrap())
-        .with_header(tiny_http::Header::from_bytes(&b"X-Frame-Options"[..], &b"SAMEORIGIN"[..]).unwrap())
-        .with_header(tiny_http::Header::from_bytes(&b"Referrer-Policy"[..], &b"strict-origin-when-cross-origin"[..]).unwrap())
+fn apply_security_headers<R: std::io::Read>(
+    resp: tiny_http::Response<R>,
+) -> tiny_http::Response<R> {
+    resp.with_header(
+        tiny_http::Header::from_bytes(&b"Access-Control-Allow-Origin"[..], &b"*"[..]).unwrap(),
+    )
+    .with_header(
+        tiny_http::Header::from_bytes(
+            &b"Access-Control-Allow-Methods"[..],
+            &b"GET, POST, OPTIONS"[..],
+        )
+        .unwrap(),
+    )
+    .with_header(
+        tiny_http::Header::from_bytes(
+            &b"Access-Control-Allow-Headers"[..],
+            &b"Content-Type, Authorization"[..],
+        )
+        .unwrap(),
+    )
+    .with_header(
+        tiny_http::Header::from_bytes(&b"X-Content-Type-Options"[..], &b"nosniff"[..]).unwrap(),
+    )
+    .with_header(
+        tiny_http::Header::from_bytes(&b"X-Frame-Options"[..], &b"SAMEORIGIN"[..]).unwrap(),
+    )
+    .with_header(
+        tiny_http::Header::from_bytes(
+            &b"Referrer-Policy"[..],
+            &b"strict-origin-when-cross-origin"[..],
+        )
+        .unwrap(),
+    )
 }
 
 /// Starts the WebForge local HTTP server.
@@ -113,7 +139,10 @@ pub fn start_webforge_server(port: u16) -> Result<RuntimeValue, RuntimeError> {
         }
     };
 
-    println!("🚀 TechScript WebForge running on http://localhost:{}", port);
+    println!(
+        "🚀 TechScript WebForge running on http://localhost:{}",
+        port
+    );
 
     thread::spawn(move || {
         while SERVER_RUNNING.load(Ordering::SeqCst) {
@@ -132,8 +161,13 @@ pub fn start_webforge_server(port: u16) -> Result<RuntimeValue, RuntimeError> {
                     let clean_table = db::sanitize_identifier(path_part);
 
                     if method == "OPTIONS" {
-                        let resp = tiny_http::Response::empty(200)
-                            .with_header(tiny_http::Header::from_bytes(&b"Content-Type"[..], &b"application/json"[..]).unwrap());
+                        let resp = tiny_http::Response::empty(200).with_header(
+                            tiny_http::Header::from_bytes(
+                                &b"Content-Type"[..],
+                                &b"application/json"[..],
+                            )
+                            .unwrap(),
+                        );
                         let _ = req.respond(apply_security_headers(resp));
                         continue;
                     }
@@ -150,8 +184,13 @@ pub fn start_webforge_server(port: u16) -> Result<RuntimeValue, RuntimeError> {
                             "timestamp": std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_secs()
                         }).to_string();
 
-                        let resp = tiny_http::Response::from_string(res_json)
-                            .with_header(tiny_http::Header::from_bytes(&b"Content-Type"[..], &b"application/json"[..]).unwrap());
+                        let resp = tiny_http::Response::from_string(res_json).with_header(
+                            tiny_http::Header::from_bytes(
+                                &b"Content-Type"[..],
+                                &b"application/json"[..],
+                            )
+                            .unwrap(),
+                        );
                         let _ = req.respond(apply_security_headers(resp));
                         continue;
                     }
@@ -188,8 +227,13 @@ pub fn start_webforge_server(port: u16) -> Result<RuntimeValue, RuntimeError> {
                             }
                         ]).to_string();
 
-                        let resp = tiny_http::Response::from_string(res_json)
-                            .with_header(tiny_http::Header::from_bytes(&b"Content-Type"[..], &b"application/json"[..]).unwrap());
+                        let resp = tiny_http::Response::from_string(res_json).with_header(
+                            tiny_http::Header::from_bytes(
+                                &b"Content-Type"[..],
+                                &b"application/json"[..],
+                            )
+                            .unwrap(),
+                        );
                         let _ = req.respond(apply_security_headers(resp));
                         continue;
                     }
@@ -197,16 +241,29 @@ pub fn start_webforge_server(port: u16) -> Result<RuntimeValue, RuntimeError> {
                     if method == "POST" {
                         let mut body_str = String::new();
                         let _ = req.as_reader().read_to_string(&mut body_str);
-                        let json_val: Result<serde_json::Value, _> = serde_json::from_str(&body_str);
+                        let json_val: Result<serde_json::Value, _> =
+                            serde_json::from_str(&body_str);
 
-                        let title = json_val.as_ref().ok()
-                            .and_then(|j| j.get("title").or_else(|| j.get("name")).or_else(|| j.get("content")))
+                        let title = json_val
+                            .as_ref()
+                            .ok()
+                            .and_then(|j| {
+                                j.get("title")
+                                    .or_else(|| j.get("name"))
+                                    .or_else(|| j.get("content"))
+                            })
                             .and_then(|v| v.as_str())
                             .unwrap_or(&body_str)
                             .to_string();
 
-                        let content = json_val.as_ref().ok()
-                            .and_then(|j| j.get("content").or_else(|| j.get("message")).or_else(|| j.get("title")))
+                        let content = json_val
+                            .as_ref()
+                            .ok()
+                            .and_then(|j| {
+                                j.get("content")
+                                    .or_else(|| j.get("message"))
+                                    .or_else(|| j.get("title"))
+                            })
                             .and_then(|v| v.as_str())
                             .unwrap_or(&body_str)
                             .to_string();
@@ -217,18 +274,30 @@ pub fn start_webforge_server(port: u16) -> Result<RuntimeValue, RuntimeError> {
                             "status": "ok",
                             "message": "Resource saved successfully",
                             "endpoint": format!("/api/{}", clean_table)
-                        }).to_string();
+                        })
+                        .to_string();
 
-                        let resp = tiny_http::Response::from_string(res_json)
-                            .with_header(tiny_http::Header::from_bytes(&b"Content-Type"[..], &b"application/json"[..]).unwrap());
+                        let resp = tiny_http::Response::from_string(res_json).with_header(
+                            tiny_http::Header::from_bytes(
+                                &b"Content-Type"[..],
+                                &b"application/json"[..],
+                            )
+                            .unwrap(),
+                        );
                         let _ = req.respond(apply_security_headers(resp));
                         continue;
                     } else {
                         // GET /api/<table_name>
                         let items = db::query_records(&clean_table, 50).unwrap_or_default();
-                        let res_json = serde_json::to_string(&items).unwrap_or_else(|_| "[]".to_string());
-                        let resp = tiny_http::Response::from_string(res_json)
-                            .with_header(tiny_http::Header::from_bytes(&b"Content-Type"[..], &b"application/json"[..]).unwrap());
+                        let res_json =
+                            serde_json::to_string(&items).unwrap_or_else(|_| "[]".to_string());
+                        let resp = tiny_http::Response::from_string(res_json).with_header(
+                            tiny_http::Header::from_bytes(
+                                &b"Content-Type"[..],
+                                &b"application/json"[..],
+                            )
+                            .unwrap(),
+                        );
                         let _ = req.respond(apply_security_headers(resp));
                         continue;
                     }
@@ -236,8 +305,12 @@ pub fn start_webforge_server(port: u16) -> Result<RuntimeValue, RuntimeError> {
 
                 // 2. Handle Static Assets (/assets/ and /favicon.ico)
                 if raw_url.starts_with("/assets/") || raw_url == "/favicon.ico" {
-                    let clean_path = raw_url.trim_start_matches('/').split('?').next().unwrap_or("favicon.ico");
-                    
+                    let clean_path = raw_url
+                        .trim_start_matches('/')
+                        .split('?')
+                        .next()
+                        .unwrap_or("favicon.ico");
+
                     // Prevent path traversal
                     if clean_path.contains("..") {
                         let resp = tiny_http::Response::empty(403);
@@ -251,7 +324,9 @@ pub fn start_webforge_server(port: u16) -> Result<RuntimeValue, RuntimeError> {
                         PathBuf::from("website/dist").join(clean_path),
                         PathBuf::from("dist").join(clean_path),
                         if clean_path.ends_with("logo.png") || clean_path.ends_with(".png") {
-                            PathBuf::from("assets/branding/logo-package/source/logo-master-transparent.png")
+                            PathBuf::from(
+                                "assets/branding/logo-package/source/logo-master-transparent.png",
+                            )
                         } else {
                             PathBuf::from("assets/branding/logo-package/ico/favicon.ico")
                         },
@@ -281,8 +356,20 @@ pub fn start_webforge_server(port: u16) -> Result<RuntimeValue, RuntimeError> {
 
                     if let Some(bytes) = found_bytes {
                         let resp = tiny_http::Response::from_data(bytes)
-                            .with_header(tiny_http::Header::from_bytes(&b"Content-Type"[..], mime_type.as_bytes()).unwrap())
-                            .with_header(tiny_http::Header::from_bytes(&b"Cache-Control"[..], &b"public, max-age=86400"[..]).unwrap());
+                            .with_header(
+                                tiny_http::Header::from_bytes(
+                                    &b"Content-Type"[..],
+                                    mime_type.as_bytes(),
+                                )
+                                .unwrap(),
+                            )
+                            .with_header(
+                                tiny_http::Header::from_bytes(
+                                    &b"Cache-Control"[..],
+                                    &b"public, max-age=86400"[..],
+                                )
+                                .unwrap(),
+                            );
                         let _ = req.respond(apply_security_headers(resp));
                     } else {
                         let resp = tiny_http::Response::empty(404);
@@ -293,12 +380,20 @@ pub fn start_webforge_server(port: u16) -> Result<RuntimeValue, RuntimeError> {
 
                 // 3. Serve the Single-Page Application (SPA) HTML for all page routes
                 let page = PAGE_CONTENT.lock().unwrap();
-                let resp = tiny_http::Response::from_string(&*page)
-                    .with_header(tiny_http::Header::from_bytes(&b"Content-Type"[..], &b"text/html; charset=utf-8"[..]).unwrap());
+                let resp = tiny_http::Response::from_string(&*page).with_header(
+                    tiny_http::Header::from_bytes(
+                        &b"Content-Type"[..],
+                        &b"text/html; charset=utf-8"[..],
+                    )
+                    .unwrap(),
+                );
                 let _ = req.respond(apply_security_headers(resp));
             }
         }
     });
 
-    Ok(RuntimeValue::Str(format!("Server started on port {}", port)))
+    Ok(RuntimeValue::Str(format!(
+        "Server started on port {}",
+        port
+    )))
 }

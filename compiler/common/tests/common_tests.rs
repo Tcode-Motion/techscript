@@ -669,10 +669,22 @@ fn test_extension_registry_recognition() {
     assert_eq!(TechScriptExtension::Scene3D.role(), SourceRole::Scene3D);
 
     // Verify stability
-    assert_eq!(TechScriptExtension::Txs.stability(), ExtensionStability::OfficialDefault);
-    assert_eq!(TechScriptExtension::Wtxs.stability(), ExtensionStability::Specialized);
-    assert_eq!(TechScriptExtension::Scene3D.stability(), ExtensionStability::Experimental);
-    assert_eq!(TechScriptExtension::LegacyTech.stability(), ExtensionStability::Legacy);
+    assert_eq!(
+        TechScriptExtension::Txs.stability(),
+        ExtensionStability::OfficialDefault
+    );
+    assert_eq!(
+        TechScriptExtension::Wtxs.stability(),
+        ExtensionStability::Specialized
+    );
+    assert_eq!(
+        TechScriptExtension::Scene3D.stability(),
+        ExtensionStability::Experimental
+    );
+    assert_eq!(
+        TechScriptExtension::LegacyTech.stability(),
+        ExtensionStability::Legacy
+    );
 
     // Verify is_supported_source_file
     assert!(is_supported_source_file(Path::new("main.txs")));
@@ -709,7 +721,13 @@ fn test_validate_source_file_descriptors() {
 fn test_resolve_source_module_deterministic() {
     use techscript_common::{resolve_source_module, SourceResolutionError};
 
-    let temp_dir = std::env::temp_dir().join(format!("techscript_test_{}", std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos()));
+    let temp_dir = std::env::temp_dir().join(format!(
+        "techscript_test_{}",
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
     std::fs::create_dir_all(&temp_dir).unwrap();
 
     // 1. Create a .txs file and test priority

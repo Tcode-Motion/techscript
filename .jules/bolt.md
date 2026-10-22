@@ -66,3 +66,7 @@
 ## 2023-11-09 - Dominator Analysis Optimization
 **Learning:** In fixed-point iterative algorithms like the dominator tree analysis, using `Option<HashSet<T>>` and continuously allocating or cloning new sets (`new_dom = Some(pred_doms.clone())`, `all_blocks.clone()`) inside the inner loop is extremely expensive and produces O(N) intermediate allocations per block per iteration.
 **Action:** Always pre-allocate a single mutable `HashSet` outside the loop, use `.clear()` each iteration, and compute in-place intersections using `.extend()` and `.retain()`. Also, use `.clone_from()` for updates to reuse existing capacity instead of reassignment.
+
+## 2024-05-24 - Web Property Extraction Optimization
+**Learning:** Extracting properties from the `RuntimeValue` DSL property lists in `stdlib/src/web/renderer.rs` and `stdlib/src/web/db.rs` was inefficient because the code called `.iter().find()` to resolve `text`, `id`, and `name` attributes, which creates unnecessary iterator overhead and closure allocation.
+**Action:** Replace `.iter().find()` calls with a single-pass `for p in &dsl.properties` loop and `if` statements on the property names, stopping early when found, which significantly reduces execution overhead.

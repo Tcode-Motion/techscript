@@ -380,17 +380,16 @@ pub fn render_card(html: &mut String, dsl: &DslBlockValue) {
 
 pub fn render_heading(html: &mut String, dsl: &DslBlockValue) {
     let mut id_attr = String::new();
-    let text = dsl
-        .args
-        .first()
-        .map(|a| a.to_string())
-        .or_else(|| {
-            dsl.properties
-                .iter()
-                .find(|p| p.name == "text")
-                .and_then(|p| p.value.as_ref().map(|v| v.to_string()))
-        })
-        .unwrap_or_else(|| "Heading".to_string());
+    let mut text = dsl.args.first().map(|a| a.to_string());
+    if text.is_none() {
+        for p in &dsl.properties {
+            if p.name == "text" {
+                text = p.value.as_ref().map(|v| v.to_string());
+                break;
+            }
+        }
+    }
+    let text = text.unwrap_or_else(|| "Heading".to_string());
     for p in &dsl.properties {
         if p.name == "id" {
             if let Some(ref v) = p.value {
@@ -408,17 +407,16 @@ pub fn render_heading(html: &mut String, dsl: &DslBlockValue) {
 
 pub fn render_text(html: &mut String, dsl: &DslBlockValue) {
     let mut id_attr = String::new();
-    let text = dsl
-        .args
-        .first()
-        .map(|a| a.to_string())
-        .or_else(|| {
-            dsl.properties
-                .iter()
-                .find(|p| p.name == "text" || p.name == "content")
-                .and_then(|p| p.value.as_ref().map(|v| v.to_string()))
-        })
-        .unwrap_or_default();
+    let mut text = dsl.args.first().map(|a| a.to_string());
+    if text.is_none() {
+        for p in &dsl.properties {
+            if p.name == "text" || p.name == "content" {
+                text = p.value.as_ref().map(|v| v.to_string());
+                break;
+            }
+        }
+    }
+    let text = text.unwrap_or_default();
     for p in &dsl.properties {
         if p.name == "id" {
             if let Some(ref v) = p.value {
@@ -1151,17 +1149,16 @@ pub fn render_custom_3d_studio(html: &mut String, _dsl: &DslBlockValue, id: &str
 }
 
 pub fn render_scene3d(html: &mut String, dsl: &DslBlockValue) {
-    let raw_scene_id = dsl
-        .args
-        .first()
-        .map(|a| a.to_string())
-        .or_else(|| {
-            dsl.properties
-                .iter()
-                .find(|p| p.name == "id")
-                .and_then(|p| p.value.as_ref().map(|v| v.to_string()))
-        })
-        .unwrap_or_else(|| "World".to_string());
+    let mut raw_scene_id = dsl.args.first().map(|a| a.to_string());
+    if raw_scene_id.is_none() {
+        for p in &dsl.properties {
+            if p.name == "id" {
+                raw_scene_id = p.value.as_ref().map(|v| v.to_string());
+                break;
+            }
+        }
+    }
+    let raw_scene_id = raw_scene_id.unwrap_or_else(|| "World".to_string());
     let id = escape_html(&raw_scene_id);
 
     let is_custom_studio = raw_scene_id.to_lowercase().contains("custom")
@@ -1837,18 +1834,16 @@ pub fn find_database_tables(blocks: &[RuntimeValue]) -> Vec<String> {
             if dsl.kind == "database" {
                 for child in &dsl.children {
                     if child.kind == "table" {
-                        let name = child
-                            .args
-                            .first()
-                            .map(|a| a.to_string())
-                            .or_else(|| {
-                                child
-                                    .properties
-                                    .iter()
-                                    .find(|p| p.name == "name" || p.name == "id")
-                                    .and_then(|p| p.value.as_ref().map(|v| v.to_string()))
-                            })
-                            .unwrap_or_else(|| "records".to_string());
+                        let mut name = child.args.first().map(|a| a.to_string());
+                        if name.is_none() {
+                            for p in &child.properties {
+                                if p.name == "name" || p.name == "id" {
+                                    name = p.value.as_ref().map(|v| v.to_string());
+                                    break;
+                                }
+                            }
+                        }
+                        let name = name.unwrap_or_else(|| "records".to_string());
                         let clean = db::sanitize_identifier(&name);
                         if !tables.contains(&clean) {
                             tables.push(clean);
@@ -2076,17 +2071,16 @@ pub fn render_complete_document(
     if !scenes_3d.is_empty() {
         doc.push_str("<script>document.addEventListener('DOMContentLoaded', () => {");
         for sc in &scenes_3d {
-            let sc_id = sc
-                .args
-                .first()
-                .map(|a| a.to_string())
-                .or_else(|| {
-                    sc.properties
-                        .iter()
-                        .find(|p| p.name == "id")
-                        .and_then(|p| p.value.as_ref().map(|v| v.to_string()))
-                })
-                .unwrap_or_else(|| "World".to_string());
+            let mut sc_id = sc.args.first().map(|a| a.to_string());
+            if sc_id.is_none() {
+                for p in &sc.properties {
+                    if p.name == "id" {
+                        sc_id = p.value.as_ref().map(|v| v.to_string());
+                        break;
+                    }
+                }
+            }
+            let sc_id = sc_id.unwrap_or_else(|| "World".to_string());
 
             let mut initial_geo = "scifi".to_string();
             let mut initial_color = "cyan".to_string();

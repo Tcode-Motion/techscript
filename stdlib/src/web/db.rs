@@ -30,18 +30,16 @@ pub fn init_sqlite_database(dsl: &DslBlockValue) {
     if let Ok(conn) = open_connection() {
         for child in &dsl.children {
             if child.kind == "table" {
-                let table_name = child
-                    .args
-                    .first()
-                    .map(|a| a.to_string())
-                    .or_else(|| {
-                        child
-                            .properties
-                            .iter()
-                            .find(|p| p.name == "name" || p.name == "id")
-                            .and_then(|p| p.value.as_ref().map(|v| v.to_string()))
-                    })
-                    .unwrap_or_else(|| "records".to_string());
+                let mut table_name = child.args.first().map(|a| a.to_string());
+                if table_name.is_none() {
+                    for p in &child.properties {
+                        if p.name == "name" || p.name == "id" {
+                            table_name = p.value.as_ref().map(|v| v.to_string());
+                            break;
+                        }
+                    }
+                }
+                let table_name = table_name.unwrap_or_else(|| "records".to_string());
 
                 let clean_name = sanitize_identifier(&table_name);
                 let create_sql = format!(

@@ -1,0 +1,19 @@
+# TechScript AppForge: Language & CLI Reference Screen
+# Authored in 100% Pure TechScript (.txs)
+
+do get_cli_commands()
+    send [
+        { "cmd": "tsc app create <name>", "desc": "Scaffolds a new Appforge mobile/desktop application." },
+        { "cmd": "tsc app build android", "desc": "Compiles Android debug APK via Gradle toolchain." },
+        { "cmd": "tsc app build android --aab", "desc": "Builds release Android App Bundle (AAB) for Play Store." },
+        { "cmd": "tsc app run android", "desc": "Installs and launches on attached device via ADB." },
+        { "cmd": "tsc app doctor", "desc": "Audits JDK, Android SDK, Gradle, and ADB environments." },
+        { "cmd": "tsc check <file>", "desc": "Runs semantic and type analysis without compilation." },
+        { "cmd": "tsc run <file>", "desc": "Executes TechScript code directly through the runtime VM." },
+        { "cmd": "tsc web dev", "desc": "Starts Webforge development server with hot-reloading." },
+        { "cmd": "tsc native add <lang>", "desc": "Adds native foreign module (kotlin, rust, cpp, swift)." }
+    ]
+end
+
+commands = get_cli_commands()
+say $"[Docs Screen] Loaded {len(commands)} core CLI commands."

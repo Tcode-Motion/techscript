@@ -5,8 +5,8 @@
     "semantic_hash": ""
   },
   "cli/src/lib.rs": {
-    "mtime": 1792593387.29036,
-    "ast_hash": "3ff13dc7343b9cf6a36cbcf2d7ed7cfd",
+    "mtime": 1792771133.8736658,
+    "ast_hash": "45c82d85682aecb92a4674909c86abaf",
     "semantic_hash": ""
   },
   "cli/tests/cli_tests.rs": {
@@ -70,8 +70,8 @@
     "semantic_hash": "25e7b37581c1cc53d1579e14bd682cf5"
   },
   "compiler/parser/tests/parser_tests.rs": {
-    "mtime": 1792593387.7307403,
-    "ast_hash": "f27b475b0a4a3c28bfef6eb200fa35b1",
+    "mtime": 1792773235.2878687,
+    "ast_hash": "4908555a94d8ad3e31d0e0d07bc4ac1a",
     "semantic_hash": ""
   },
   "compiler/semantic/src/lib.rs": {
@@ -145,8 +145,8 @@
     "semantic_hash": "4e64004b175a914f5d41890ccf4db3a1"
   },
   "stdlib/tests/stdlib_tests.rs": {
-    "mtime": 1792500662.0875645,
-    "ast_hash": "150396944838526241b4c6a0ccdd5cda",
+    "mtime": 1792598547.9140778,
+    "ast_hash": "8c2a8c032f7cbd5f52b4cf4df57d7ea0",
     "semantic_hash": ""
   },
   "tools/formatter/src/lib.rs": {
@@ -235,13 +235,13 @@
     "semantic_hash": "66d43958b8ce109d79c62b8dab80c2b9"
   },
   "compiler/parser/src/parser.rs": {
-    "mtime": 1792587474.5240896,
-    "ast_hash": "13f863da859266bb70af55670a06a0b8",
+    "mtime": 1792772053.6438944,
+    "ast_hash": "2e95117b36a654e052e8d4cf0018105f",
     "semantic_hash": ""
   },
   "compiler/parser/src/statements.rs": {
-    "mtime": 1792593467.7406464,
-    "ast_hash": "526328ba0b89cd73cc477b5ec710cdde",
+    "mtime": 1792773235.2519093,
+    "ast_hash": "177f8638d64714a80900333f78af922c",
     "semantic_hash": ""
   },
   "compiler/semantic/src/context.rs": {
@@ -740,8 +740,8 @@
     "semantic_hash": ""
   },
   "cli/src/commands/install.rs": {
-    "mtime": 1792593387.2143924,
-    "ast_hash": "50e16e7b1e30aff63f7b7ffec9052287",
+    "mtime": 1792771133.8341315,
+    "ast_hash": "46cb0a9246150188a3dcbb7587b832bf",
     "semantic_hash": ""
   },
   "cli/src/commands/lint.rs": {
@@ -750,8 +750,8 @@
     "semantic_hash": ""
   },
   "cli/src/commands/mod.rs": {
-    "mtime": 1792564819.3606067,
-    "ast_hash": "c2b9185c9a25919e5ef1bbf02962d9b5",
+    "mtime": 1792771133.840234,
+    "ast_hash": "97e4c8730b8ac1f180697227b683f454",
     "semantic_hash": ""
   },
   "cli/src/commands/new_cmd.rs": {
@@ -1405,30 +1405,10 @@
     "ast_hash": "082849ebcc92e712d7826a7f9db73690",
     "semantic_hash": ""
   },
-  "verify_all_examples.py": {
-    "mtime": 1785136349.6992824,
-    "ast_hash": "478059dd72b21dcb3c0534ce4f132d5d",
-    "semantic_hash": "478059dd72b21dcb3c0534ce4f132d5d"
-  },
   "compiler/ir/benches/builder_bench.rs": {
     "mtime": 1789466184.677719,
     "ast_hash": "24c324c6927973ceff956b9e27ca7153",
     "semantic_hash": "24c324c6927973ceff956b9e27ca7153"
-  },
-  "fix3.py": {
-    "mtime": 1789466184.7338398,
-    "ast_hash": "1e27a38a7301bb4f1009d54c21554a7c",
-    "semantic_hash": ""
-  },
-  "fix_journal.py": {
-    "mtime": 1789466184.7373624,
-    "ast_hash": "b354d5829a1782300ceda6d1c2528e48",
-    "semantic_hash": ""
-  },
-  "test_libc.rs": {
-    "mtime": 1789466185.143283,
-    "ast_hash": "827912d5ad874e875df12605b8cc7181",
-    "semantic_hash": "827912d5ad874e875df12605b8cc7181"
   },
   "tools/lsp/benches/bench.rs": {
     "mtime": 1789466185.1478105,
@@ -1485,11 +1465,6 @@
   "cli/tests/webforge_e2e_tests.rs": {
     "mtime": 1792593387.3752215,
     "ast_hash": "dce132048122f764d516ae3d0cadadc9",
-    "semantic_hash": ""
-  },
-  "fix_file.sh": {
-    "mtime": 1789466184.736365,
-    "ast_hash": "cdf10ff4cdcb2177717afc9ccdec8590",
     "semantic_hash": ""
   },
   "scripts/auto_import.py": {
@@ -1583,8 +1558,8 @@
     "semantic_hash": ""
   },
   ".jules/bolt.md": {
-    "mtime": 1792493617.97213,
-    "ast_hash": "5593638253718bceb901fa88cb12dc29",
+    "mtime": 1792768426.8089738,
+    "ast_hash": "904bcc8fb4c80c2fb470e21266f0da09",
     "semantic_hash": ""
   },
   "ATTRIBUTIONS.md": {
@@ -1608,18 +1583,8 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1792598174.1684122,
-    "ast_hash": "d7d13f82772e4498c5b3e0a07a4c969d",
-    "semantic_hash": ""
-  },
-  "RELEASE_NOTES_TEMPLATE.md": {
-    "mtime": 1789469074.6604671,
-    "ast_hash": "a9d6e692dd5075219a9eee4bc202c811",
-    "semantic_hash": ""
-  },
-  "RELEASE_PROCESS.md": {
-    "mtime": 1789467168.179698,
-    "ast_hash": "23b0d95a075b40ff77c3453229fd6073",
+    "mtime": 1792774313.1339128,
+    "ast_hash": "7cee75d3fb8136048f7fe0bdceef4fc3",
     "semantic_hash": ""
   },
   "SECURITY.md": {
@@ -1627,24 +1592,9 @@
     "ast_hash": "268d8102c88d133e0f399fc4792346e5",
     "semantic_hash": ""
   },
-  "SUPPORTED_VERSIONS.md": {
-    "mtime": 1789466184.6383605,
-    "ast_hash": "0c329e294a1f62bf01e527e41879aa57",
-    "semantic_hash": ""
-  },
-  "TECHSCRIPT_REVIEW.md": {
-    "mtime": 1792496469.48167,
-    "ast_hash": "3472e3dc25af1148777421ab73e589c0",
-    "semantic_hash": ""
-  },
   "THIRD_PARTY_LICENSES.md": {
     "mtime": 1789473121.8505683,
     "ast_hash": "d8b4f682c1cae200516485df26d27d6d",
-    "semantic_hash": ""
-  },
-  "VERSIONING.md": {
-    "mtime": 1789466683.6224885,
-    "ast_hash": "e5ad5fb97e07d8516433804ec2de0c21",
     "semantic_hash": ""
   },
   "assets/branding/logo-package/README.md": {
@@ -1993,8 +1943,8 @@
     "semantic_hash": ""
   },
   "docs/getting-started/installation.md": {
-    "mtime": 1789466184.7180798,
-    "ast_hash": "47c2e21092442f697fd6245d006860e6",
+    "mtime": 1792591773.9662004,
+    "ast_hash": "38431d602048966fc013fdefa87a9c5d",
     "semantic_hash": ""
   },
   "docs/guides/BestPractices.md": {
@@ -2673,8 +2623,8 @@
     "semantic_hash": ""
   },
   "cli/src/entrypoint.rs": {
-    "mtime": 1792596197.48867,
-    "ast_hash": "beb73058340482c07f9fa6b2d25491c9",
+    "mtime": 1792771133.8706753,
+    "ast_hash": "c3b5b714662bc022e887d16b2284e05f",
     "semantic_hash": ""
   },
   "docs/WEBFORGE_3D.md": {
@@ -2763,8 +2713,8 @@
     "semantic_hash": ""
   },
   "stdlib/src/web/db.rs": {
-    "mtime": 1792593388.302806,
-    "ast_hash": "07ba4e1213b6c31a1739f40c2ca50073",
+    "mtime": 1792768426.8099828,
+    "ast_hash": "f0c0308fee4e6b7d8300cdc34ff3cdc3",
     "semantic_hash": ""
   },
   "stdlib/src/web/mod.rs": {
@@ -2773,8 +2723,8 @@
     "semantic_hash": ""
   },
   "stdlib/src/web/renderer.rs": {
-    "mtime": 1792597646.5341854,
-    "ast_hash": "50ebd134a8ebf28e7dc919e076ed5fa6",
+    "mtime": 1792768426.8119822,
+    "ast_hash": "bcafa93ff0f016643fa19cf41f170e40",
     "semantic_hash": ""
   },
   "stdlib/src/web/runtime_js.rs": {
@@ -2805,16 +2755,6 @@
   "tools/package_release.ps1": {
     "mtime": 1792591936.4583192,
     "ast_hash": "722dedd713a14aa2f63488ebd5755cbc",
-    "semantic_hash": ""
-  },
-  "INSTALLATION.md": {
-    "mtime": 1792591773.9662004,
-    "ast_hash": "38431d602048966fc013fdefa87a9c5d",
-    "semantic_hash": ""
-  },
-  "SUPPORT.md": {
-    "mtime": 1792591802.4920318,
-    "ast_hash": "60cf48995add1ecff14bc73457415c3d",
     "semantic_hash": ""
   },
   "docs/RELEASE_2.0.0_REPORT.md": {
@@ -2855,6 +2795,366 @@
   "cli/src/bin/webforge.rs": {
     "mtime": 1792566302.9946966,
     "ast_hash": "f34f04012fc36618ab5a5432fcd9a698",
+    "semantic_hash": ""
+  },
+  "cli/src/commands/app/android.rs": {
+    "mtime": 1792780594.9318085,
+    "ast_hash": "4ddb8db050841dd72d730b6e52effb67",
+    "semantic_hash": ""
+  },
+  "cli/src/commands/app/build.rs": {
+    "mtime": 1792771133.775004,
+    "ast_hash": "0052be7ce53a983c794c596db4b5d822",
+    "semantic_hash": ""
+  },
+  "cli/src/commands/app/create.rs": {
+    "mtime": 1792777232.4958086,
+    "ast_hash": "f9ce7050ace483f5b9356c414adfb361",
+    "semantic_hash": ""
+  },
+  "cli/src/commands/app/doctor.rs": {
+    "mtime": 1792771133.7981334,
+    "ast_hash": "ba76e982d226fc389945d0b91f21702f",
+    "semantic_hash": ""
+  },
+  "cli/src/commands/app/mod.rs": {
+    "mtime": 1792771133.8001335,
+    "ast_hash": "40d27628daffee96253461acfa6784ea",
+    "semantic_hash": ""
+  },
+  "cli/src/commands/app/project.rs": {
+    "mtime": 1792771133.8011317,
+    "ast_hash": "4103b3c8fbe85b0492d9bc86080a387f",
+    "semantic_hash": ""
+  },
+  "cli/src/commands/app/run.rs": {
+    "mtime": 1792771133.8051457,
+    "ast_hash": "810ec5fd6118bfb8998e77b0ecb8064a",
+    "semantic_hash": ""
+  },
+  "cli/src/commands/app/windows.rs": {
+    "mtime": 1792741828.6322722,
+    "ast_hash": "3bf91a7e24c5677730d7ffb9258357bc",
+    "semantic_hash": ""
+  },
+  "cli/src/commands/app/wrap.rs": {
+    "mtime": 1792771133.8081453,
+    "ast_hash": "52688826cef83c071d24822fc7df1797",
+    "semantic_hash": ""
+  },
+  "cli/src/commands/logs.rs": {
+    "mtime": 1792771133.8371458,
+    "ast_hash": "a288bf5243f46e7cb1861b7c2952bd0b",
+    "semantic_hash": ""
+  },
+  "cli/src/commands/native.rs": {
+    "mtime": 1792742277.8872502,
+    "ast_hash": "411f3745c1d4f42510d80fe58c6f5bbe",
+    "semantic_hash": ""
+  },
+  "cli/src/commands/report.rs": {
+    "mtime": 1792771133.8451307,
+    "ast_hash": "40badb925433b3d6df256d1679486bbe",
+    "semantic_hash": ""
+  },
+  "cli/src/commands/web.rs": {
+    "mtime": 1792771133.8561332,
+    "ast_hash": "7d0440c2c5863a50636f72ad17c12afe",
+    "semantic_hash": ""
+  },
+  "examples/appforge/techscript-appforge/android/app/build.gradle.kts": {
+    "mtime": 1792779009.639469,
+    "ast_hash": "2eb0da73a85f31f4a30afcdbd7b8677e",
+    "semantic_hash": ""
+  },
+  "examples/appforge/techscript-appforge/android/app/src/main/assets/app_spec.json": {
+    "mtime": 1792784383.5330358,
+    "ast_hash": "b1cc4df5b08b0b0044f7dddc4d6149c5",
+    "semantic_hash": ""
+  },
+  "examples/appforge/techscript-appforge/android/build.gradle.kts": {
+    "mtime": 1792775296.9795473,
+    "ast_hash": "597303ec8d3eb4c692e7d5c0c3bc841a",
+    "semantic_hash": ""
+  },
+  "examples/appforge/techscript-appforge/android/settings.gradle.kts": {
+    "mtime": 1792770018.3714,
+    "ast_hash": "2a2b426d94110a831c04da5199ff96f8",
+    "semantic_hash": ""
+  },
+  "runtime/android_runtime/src/lib.rs": {
+    "mtime": 1792783825.4074183,
+    "ast_hash": "70d20002055a5871721e33889aa6e597",
+    "semantic_hash": ""
+  },
+  "runtime/android_runtime/src/renderer.rs": {
+    "mtime": 1792784342.8412316,
+    "ast_hash": "73c1bf18fc2fc9e347288cd39d05ad02",
+    "semantic_hash": ""
+  },
+  "runtime/android_runtime/src/theme.rs": {
+    "mtime": 1792782831.0084596,
+    "ast_hash": "6fc3c3cffaa848fc649f6633769e7675",
+    "semantic_hash": ""
+  },
+  "runtime/android_runtime/src/touch.rs": {
+    "mtime": 1792781661.4674969,
+    "ast_hash": "45f7180b8b2044e37f9e0c033274538f",
+    "semantic_hash": ""
+  },
+  "runtime/android_runtime/src/txs_runtime.rs": {
+    "mtime": 1792781612.178273,
+    "ast_hash": "baa7bd65a2f893fa97d013a23e2aa4da",
+    "semantic_hash": ""
+  },
+  "runtime/android_runtime/src/ui_model.rs": {
+    "mtime": 1792778878.268067,
+    "ast_hash": "be7e7b4cb531c9f2317ece044af66396",
+    "semantic_hash": ""
+  },
+  "scripts/verify_all_examples.py": {
+    "mtime": 1785136349.6992824,
+    "ast_hash": "478059dd72b21dcb3c0534ce4f132d5d",
+    "semantic_hash": ""
+  },
+  "docs/DEVELOPMENT_AND_SECURITY.md": {
+    "mtime": 1792769269.1700783,
+    "ast_hash": "222442cf82b574c1c31c0100f6ec71e6",
+    "semantic_hash": ""
+  },
+  "docs/FRAMEWORKS_AND_CLI.md": {
+    "mtime": 1792771093.4627702,
+    "ast_hash": "980fda439ffc6a588e3e9ce4b47cee1d",
+    "semantic_hash": ""
+  },
+  "docs/RELEASE_NOTES_TEMPLATE.md": {
+    "mtime": 1789469074.6604671,
+    "ast_hash": "a9d6e692dd5075219a9eee4bc202c811",
+    "semantic_hash": ""
+  },
+  "docs/RELEASE_PROCESS.md": {
+    "mtime": 1789467168.179698,
+    "ast_hash": "23b0d95a075b40ff77c3453229fd6073",
+    "semantic_hash": ""
+  },
+  "docs/SUPPORT.md": {
+    "mtime": 1792591802.4920318,
+    "ast_hash": "60cf48995add1ecff14bc73457415c3d",
+    "semantic_hash": ""
+  },
+  "docs/TECHSCRIPT_LANGUAGE_REFERENCE.md": {
+    "mtime": 1792769228.314104,
+    "ast_hash": "136b2c450c9d59a5c28226d62f75501d",
+    "semantic_hash": ""
+  },
+  "docs/VERSIONING.md": {
+    "mtime": 1789466683.6224885,
+    "ast_hash": "e5ad5fb97e07d8516433804ec2de0c21",
+    "semantic_hash": ""
+  },
+  "docs/appforge/architecture.md": {
+    "mtime": 1792741514.1107,
+    "ast_hash": "3a9844b98c7fe88c4f3f9b70b7cee70e",
+    "semantic_hash": ""
+  },
+  "docs/appforge/build-system.md": {
+    "mtime": 1792741540.431728,
+    "ast_hash": "aa7bc279aa0857ec4dc3f78b42363ad4",
+    "semantic_hash": ""
+  },
+  "docs/appforge/native-languages.md": {
+    "mtime": 1792741569.977741,
+    "ast_hash": "1b0da85b05f225b4903ab821a4ead3d8",
+    "semantic_hash": ""
+  },
+  "docs/appforge/platform-support.md": {
+    "mtime": 1792741553.6243877,
+    "ast_hash": "5e1aeab2f509bdef9814619ae6361242",
+    "semantic_hash": ""
+  },
+  "docs/appforge/project-structure.md": {
+    "mtime": 1792741529.328148,
+    "ast_hash": "0484b4ed53507c300ba5c43d49110771",
+    "semantic_hash": ""
+  },
+  "docs/appforge/web-wrapping.md": {
+    "mtime": 1792741580.425411,
+    "ast_hash": "596b31ac2a1245de42a092dbf07dad7e",
+    "semantic_hash": ""
+  },
+  "docs/audits/REPOSITORY_AUDIT_REPORT.md": {
+    "mtime": 1792771272.4248543,
+    "ast_hash": "40baf66f2e713633c926f573eab90af9",
+    "semantic_hash": ""
+  },
+  "docs/audits/TECHSCRIPT_REVIEW.md": {
+    "mtime": 1792496469.48167,
+    "ast_hash": "3472e3dc25af1148777421ab73e589c0",
+    "semantic_hash": ""
+  },
+  "docs/audits/current-state.md": {
+    "mtime": 1792741064.8731213,
+    "ast_hash": "cde7ff555a4102f005e1acc613eeaa76",
+    "semantic_hash": ""
+  },
+  "docs/audits/feature-gap-analysis.md": {
+    "mtime": 1792741121.3123918,
+    "ast_hash": "821f04b82c81eb416cfd1840d8a018af",
+    "semantic_hash": ""
+  },
+  "docs/audits/implementation-roadmap.md": {
+    "mtime": 1792741136.7970722,
+    "ast_hash": "89d3de4985c3e42692ed6ccd6ec7ef90",
+    "semantic_hash": ""
+  },
+  "docs/cli/commands.md": {
+    "mtime": 1792741590.8346498,
+    "ast_hash": "63fa08d3e7613296f605354c72b2d937",
+    "semantic_hash": ""
+  },
+  "docs/cli/toolchains.md": {
+    "mtime": 1792741602.8026235,
+    "ast_hash": "975aa85818ce19fbfb95563bed3d46ae",
+    "semantic_hash": ""
+  },
+  "examples/README.md": {
+    "mtime": 1792771036.8692148,
+    "ast_hash": "5d06af58e728af7f3223a243fdb07c4c",
+    "semantic_hash": ""
+  },
+  "examples/appforge/techscript-appforge/android/app/src/main/assets/app_info.txt": {
+    "mtime": 1792774555.9624317,
+    "ast_hash": "e70db9af8d2bc14ebc9fc44a1fe8e0fc",
+    "semantic_hash": ""
+  },
+  "media/README.md": {
+    "mtime": 1792772794.4221778,
+    "ast_hash": "0056db22e057a9ed90bd032746596fbe",
+    "semantic_hash": ""
+  },
+  "examples/appforge/techscript-appforge/android/app/src/main/assets/logo.png": {
+    "mtime": 1784206833.7639554,
+    "ast_hash": "0f6754a007ec9881dd06ad39a8250634",
+    "semantic_hash": ""
+  },
+  "examples/appforge/techscript-appforge/android/app/src/main/assets/techscript-logo.png": {
+    "mtime": 1784206833.7639554,
+    "ast_hash": "0f6754a007ec9881dd06ad39a8250634",
+    "semantic_hash": ""
+  },
+  "examples/appforge/techscript-appforge/android/app/src/main/res/drawable/ic_launcher_foreground.png": {
+    "mtime": 1792782760.2906888,
+    "ast_hash": "192589b226a487e4bafa656385f3f1f8",
+    "semantic_hash": ""
+  },
+  "examples/appforge/techscript-appforge/android/app/src/main/res/drawable/techscript_logo.png": {
+    "mtime": 1784206833.7639554,
+    "ast_hash": "0f6754a007ec9881dd06ad39a8250634",
+    "semantic_hash": ""
+  },
+  "examples/appforge/techscript-appforge/android/app/src/main/res/mipmap-hdpi/ic_launcher.png": {
+    "mtime": 1792782760.2376654,
+    "ast_hash": "eb2e2eb61aa00ff3feec1f8511f216d0",
+    "semantic_hash": ""
+  },
+  "examples/appforge/techscript-appforge/android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png": {
+    "mtime": 1792782760.2416804,
+    "ast_hash": "eb2e2eb61aa00ff3feec1f8511f216d0",
+    "semantic_hash": ""
+  },
+  "examples/appforge/techscript-appforge/android/app/src/main/res/mipmap-mdpi/ic_launcher.png": {
+    "mtime": 1792782760.2251523,
+    "ast_hash": "e9c71971b9d65e17ac3d52c2e969846f",
+    "semantic_hash": ""
+  },
+  "examples/appforge/techscript-appforge/android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png": {
+    "mtime": 1792782760.2321582,
+    "ast_hash": "e9c71971b9d65e17ac3d52c2e969846f",
+    "semantic_hash": ""
+  },
+  "examples/appforge/techscript-appforge/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png": {
+    "mtime": 1792782760.2484858,
+    "ast_hash": "2d96669b225f39eb2ee5d62c9b6c9b3b",
+    "semantic_hash": ""
+  },
+  "examples/appforge/techscript-appforge/android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png": {
+    "mtime": 1792782760.254484,
+    "ast_hash": "2d96669b225f39eb2ee5d62c9b6c9b3b",
+    "semantic_hash": ""
+  },
+  "examples/appforge/techscript-appforge/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png": {
+    "mtime": 1792782760.259483,
+    "ast_hash": "b76ad2e0e04044ecd13ad3e1fc6a3403",
+    "semantic_hash": ""
+  },
+  "examples/appforge/techscript-appforge/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png": {
+    "mtime": 1792782760.2669966,
+    "ast_hash": "b76ad2e0e04044ecd13ad3e1fc6a3403",
+    "semantic_hash": ""
+  },
+  "examples/appforge/techscript-appforge/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png": {
+    "mtime": 1792782760.2720137,
+    "ast_hash": "b443da434e782d92e5e08db51dba1e24",
+    "semantic_hash": ""
+  },
+  "examples/appforge/techscript-appforge/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png": {
+    "mtime": 1792782760.2791443,
+    "ast_hash": "b443da434e782d92e5e08db51dba1e24",
+    "semantic_hash": ""
+  },
+  "examples/appforge/techscript-appforge/assets/logo.png": {
+    "mtime": 1784206833.7639554,
+    "ast_hash": "0f6754a007ec9881dd06ad39a8250634",
+    "semantic_hash": ""
+  },
+  "media/logos/logo-black-bg-1254.png": {
+    "mtime": 1784206833.7727475,
+    "ast_hash": "d69bb2e48b682856020c21302854c4f9",
+    "semantic_hash": ""
+  },
+  "media/logos/logo-master-transparent.png": {
+    "mtime": 1784206833.7639554,
+    "ast_hash": "0f6754a007ec9881dd06ad39a8250634",
+    "semantic_hash": ""
+  },
+  "media/logos/techscript-logo.png": {
+    "mtime": 1784206833.7639554,
+    "ast_hash": "0f6754a007ec9881dd06ad39a8250634",
+    "semantic_hash": ""
+  },
+  "media/screenshots/appforge-showcase-android.png": {
+    "mtime": 1792776201.9024205,
+    "ast_hash": "f8d79c0526bf781459ffe53d544ea805",
+    "semantic_hash": ""
+  },
+  "media/screenshots/appforge-techscript-live.png": {
+    "mtime": 1792777787.3216188,
+    "ast_hash": "2a50704de769ebc64c1ee0abf9fdfa3c",
+    "semantic_hash": ""
+  },
+  "runtime/android_runtime/build.rs": {
+    "mtime": 1792780154.2793155,
+    "ast_hash": "c9f8f5f7296d30e8815fd0e1f5d0e5e5",
+    "semantic_hash": ""
+  },
+  "runtime/android_runtime/src/font8x8.rs": {
+    "mtime": 1792783280.8820486,
+    "ast_hash": "ad3c095356316558bf9db008e8aa8110",
+    "semantic_hash": ""
+  },
+  "runtime/android_runtime/src/geometry3d.rs": {
+    "mtime": 1792781410.390599,
+    "ast_hash": "6d0b0c0f3b87ed4a7c38db4e6bb90b53",
+    "semantic_hash": ""
+  },
+  "runtime/android_runtime/src/glass_ui.rs": {
+    "mtime": 1792783878.6699004,
+    "ast_hash": "7c7cb6f9e530c0c0d6b2eefad6b597e4",
+    "semantic_hash": ""
+  },
+  "runtime/android_runtime/src/typography.rs": {
+    "mtime": 1792783794.9545424,
+    "ast_hash": "7c098c55e6bb25b52eb99baa2f9c885e",
     "semantic_hash": ""
   }
 }

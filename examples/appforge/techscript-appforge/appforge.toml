@@ -1,0 +1,25 @@
+[app]
+id = "com.techscript.appforge"
+name = "TechScript AppForge"
+version = "2.0.0"
+version_code = 1
+entry = "src/main.txs"
+description = "Official Android developer companion app written in pure TechScript (.txs) for the AppForge ecosystem."
+
+[theme]
+primary = "#4f46e5"
+background = "#0b0f19"
+text = "#f8fafc"
+font_family = "Outfit"
+
+[android]
+package = "com.techscript.appforge"
+min_sdk = 26
+target_sdk = 34
+compile_sdk = 34
+orientation = "portrait"
+permissions = ["android.permission.INTERNET"]
+
+[windows]
+executable_name = "TechScriptAppForge.exe"
+company = "TechScript"

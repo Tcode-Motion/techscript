@@ -1,0 +1,28 @@
+// TechScript AppForge: Verified Developer Profile & About Screen
+// Authored in 100% Pure TechScript (.txs)
+
+do get_about_metadata()
+    send {
+        "app_name": "TechScript AppForge",
+        "app_id": "com.techscript.appforge",
+        "version": "2.0.0",
+        "creator": "Tanmoy Majumder",
+        "github_identity": "Tcode-Motion",
+        "official_website": "https://techscript.is-a.dev/techscript/",
+        "official_repository": "https://github.com/Tcode-Motion/techscript",
+        "developer_contact": "majumdertanmoy510@gmail.com",
+        "license": "Apache License 2.0",
+        "verified_links": [
+            { "label": "Official Website", "url": "https://techscript.is-a.dev/techscript/", "type": "web" },
+            { "label": "GitHub Repository", "url": "https://github.com/Tcode-Motion/techscript", "type": "code" },
+            { "label": "Report an Issue", "url": "https://github.com/Tcode-Motion/techscript/issues", "type": "bug" },
+            { "label": "Security Policy", "url": "https://github.com/Tcode-Motion/techscript/blob/main/SECURITY.md", "type": "shield" },
+            { "label": "Developer Email", "url": "mailto:majumdertanmoy510@gmail.com", "type": "mail" }
+        ]
+    }
+end
+
+do main()
+    about = get_about_metadata()
+    say "[About Screen] " + about["app_name"] + " v" + about["version"] + " by " + about["creator"] + " (" + about["github_identity"] + ")"
+end

@@ -1,0 +1,43 @@
+[package]
+name    = "techscript_android_runtime"
+version = "2.0.0"
+edition = "2021"
+license = "Apache-2.0"
+description = """
+TechScript AppForge — Rust native Android runtime.
+Implements android_main() via NativeActivity (android-activity crate).
+Compiles to libts_android.so via Android NDK.
+Zero Java/Kotlin application code required.
+"""
+
+# Produce a shared library loadable by Android's NativeActivity.
+[lib]
+name       = "ts_android"
+crate-type = ["cdylib"]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Core dependencies
+# ─────────────────────────────────────────────────────────────────────────────
+[dependencies]
+# android-activity: provides android_main() entry point via NativeActivity
+# This is the Rust equivalent of ANativeActivity — no Java needed.
+android-activity = { version = "0.6", features = ["native-activity"] }
+ndk              = { version = "0.9", default-features = false }
+
+# Log to Android logcat via __android_log_print
+log         = "0.4"
+android_log = "0.1"
+
+# JSON — parse TechScript compiled app_spec.json from assets
+serde      = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Synchronization primitives
+once_cell = "1"
+
+# Pure-Rust TrueType rasterizer for high-DPI modern typography (Roboto)
+fontdue = "0.9"
+
+[target.'cfg(not(target_os = "android"))'.dependencies]
+# For host builds (testing on desktop) — stub logging
+env_logger = { version = "0.11", optional = true }

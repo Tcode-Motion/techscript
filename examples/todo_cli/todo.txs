@@ -21,7 +21,7 @@ end
 
 do print_todos(todo_list)
     say "--- TODO LIST ---"
-    for i in 0..(len(todo_list))
+    for i in 0..(len(todo_list) - 1)
         status = "[ ]"
         when todo_list[i]["completed"]
             status = "[x]"

@@ -1,0 +1,18 @@
+# TechScript AppForge: Reusable Button Components
+# Authored in 100% Pure TechScript (.txs)
+
+do make_button(id, label, variant, action)
+    send {
+        "id": id,
+        "label": label,
+        "variant": variant,
+        "action": action
+    }
+end
+
+do render_button(btn)
+    say $"[Button] {btn.label} ({btn.variant}) -> {btn.action}"
+end
+
+btn_run = make_button("btn_run", "Run AppForge Code", "primary", "execute")
+render_button(btn_run)

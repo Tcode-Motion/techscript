@@ -1,0 +1,7 @@
+<resources>
+    <style name="Theme.Appforge" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">@color/background</item>
+        <item name="android:navigationBarColor">@color/background</item>
+        <item name="android:windowBackground">@color/background</item>
+    </style>
+</resources>

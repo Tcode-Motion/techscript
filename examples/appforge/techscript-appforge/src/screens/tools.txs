@@ -1,0 +1,21 @@
+# ==============================================================================
+# TechScript AppForge: Developer Tools & Diagnostics Screen
+# Path: src/screens/tools.txs
+#
+# Hardware diagnostics, live telemetry, and material shader customization.
+# ==============================================================================
+
+model ToolsScreen:
+    title = "Tools & Diagnostics"
+    active_material = "Indigo Prism"
+    fps_target = 60
+
+    do render()
+        say "[Tools] Runtime Telemetry and Device Diagnostics active"
+    end
+
+    do on_material_change(mat_name)
+        self.active_material = mat_name
+        say $"[Tools] 3D Material switched: {mat_name}"
+    end
+end

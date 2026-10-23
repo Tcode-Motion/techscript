@@ -354,4 +354,166 @@ pub enum Commands {
         /// Self-management subcommand: update, uninstall, repair
         subcommand: Option<String>,
     },
+
+    /// Appforge cross-platform mobile and desktop application framework commands
+    App {
+        #[command(subcommand)]
+        subcommand: AppCommands,
+    },
+
+    /// Webforge web application framework commands
+    Web {
+        #[command(subcommand)]
+        subcommand: WebCommands,
+    },
+
+    /// Adds native language bindings to project (kotlin, swift, rust, cpp, c, java)
+    Native {
+        #[command(subcommand)]
+        subcommand: NativeCommands,
+    },
+
+    /// Inspects centralized compiler and build logs
+    Logs {
+        /// Filter by minimum log level: trace, debug, info, warn, error
+        #[arg(short, long)]
+        level: Option<String>,
+
+        /// Follow log stream in real time
+        #[arg(short, long)]
+        follow: bool,
+    },
+
+    /// Generates diagnostic system and build report
+    Report,
+}
+
+#[derive(Subcommand, Debug, Clone)]
+pub enum AppCommands {
+    /// Creates a new Appforge cross-platform application project
+    Create {
+        /// Name of the new application project
+        name: String,
+
+        /// Application template
+        #[arg(short, long)]
+        template: Option<String>,
+    },
+
+    /// Compiles application for the target platform (android, windows, linux, etc.)
+    Build {
+        /// Target platform: android, windows, linux, macos, ios
+        platform: String,
+
+        /// Build in release mode
+        #[arg(long)]
+        release: bool,
+
+        /// Build in debug mode
+        #[arg(long)]
+        debug: bool,
+
+        /// Build Android App Bundle (.aab) instead of APK
+        #[arg(long)]
+        aab: bool,
+    },
+
+    /// Builds and runs application on connected device or emulator
+    Run {
+        /// Target platform: android, windows, linux
+        platform: String,
+
+        /// Specific device identifier (e.g. adb device ID)
+        #[arg(short, long)]
+        device: Option<String>,
+
+        /// Build in release mode before running
+        #[arg(long)]
+        release: bool,
+    },
+
+    /// Starts live development mode for Appforge
+    Dev,
+
+    /// Runs Appforge test suites
+    Test,
+
+    /// Debugs application on connected device
+    Debug {
+        /// Target platform: android, windows
+        platform: Option<String>,
+    },
+
+    /// Evaluates mobile and desktop toolchain installation health
+    Doctor {
+        /// Automatically repair detected issues where possible
+        #[arg(long)]
+        fix: bool,
+    },
+
+    /// Cleans application build artifacts and caches
+    Clean,
+
+    /// Wraps Webforge web application as a native mobile or desktop app
+    Wrap {
+        /// Source type: web
+        target: String,
+
+        /// Target platform: android, windows, linux, ios
+        #[arg(short, long, default_value = "android")]
+        platform: String,
+
+        /// Build release package
+        #[arg(long)]
+        release: bool,
+    },
+
+    /// Installs application APK onto connected device
+    Install {
+        /// Target platform: android
+        #[arg(default_value = "android")]
+        platform: String,
+
+        /// Specific device identifier
+        #[arg(short, long)]
+        device: Option<String>,
+    },
+}
+
+#[derive(Subcommand, Debug, Clone)]
+pub enum WebCommands {
+    /// Scaffolds a new Webforge website project
+    Create { name: String },
+
+    /// Starts live development server
+    Dev {
+        /// Source file path
+        file: Option<String>,
+
+        /// Port to bind
+        #[arg(short, long)]
+        port: Option<u16>,
+    },
+
+    /// Compiles Webforge website into production static dist/
+    Build {
+        /// Source file path
+        file: Option<String>,
+
+        /// Build in release mode
+        #[arg(long)]
+        release: bool,
+    },
+
+    /// Runs Webforge test suites
+    Test,
+}
+
+#[derive(Subcommand, Debug, Clone)]
+pub enum NativeCommands {
+    /// Adds a native language module (kotlin, swift, rust, cpp, c, java)
+    Add {
+        /// Language to add
+        language: String,
+    },
 }

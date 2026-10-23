@@ -1,0 +1,19 @@
+// TechScript AppForge: Build Diagnostics & Hardware Telemetry Screen
+// Authored in 100% Pure TechScript (.txs)
+
+do get_diagnostics_info()
+    send {
+        "compiler_version": "2.0.0",
+        "gradle_task": "assembleDebug",
+        "android_sdk_target": "API 34",
+        "min_sdk": "API 26",
+        "supported_architectures": ["arm64-v8a", "armeabi-v7a", "x86_64"],
+        "runtime_status": "Active & Connected",
+        "security_profile": "Least-Privilege (android.permission.INTERNET only)"
+    }
+end
+
+do main()
+    diag = get_diagnostics_info()
+    say "[Diagnostics Screen] Status: " + diag["runtime_status"] + " | Compiler: " + diag["compiler_version"]
+end

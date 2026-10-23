@@ -1,0 +1,76 @@
+{
+  "app": {
+    "creator": "Tanmoy Majumder",
+    "email": "majumdertanmoy510@gmail.com",
+    "github": "Tcode-Motion",
+    "id": "com.techscript.appforge",
+    "name": "TechScript AppForge",
+    "repository": "https://github.com/Tcode-Motion/techscript",
+    "version": "2.0.0",
+    "website": "https://techscript.is-a.dev/techscript/"
+  },
+  "routes": [
+    {
+      "id": "home",
+      "label": "Home",
+      "screen": "home"
+    },
+    {
+      "id": "showcase",
+      "label": "Showcase",
+      "screen": "showcase"
+    },
+    {
+      "id": "projects",
+      "label": "Projects",
+      "screen": "projects"
+    },
+    {
+      "id": "tools",
+      "label": "Tools",
+      "screen": "tools"
+    },
+    {
+      "id": "about",
+      "label": "About",
+      "screen": "about"
+    }
+  ],
+  "screens": [
+    {
+      "id": "home",
+      "source_file": "src/screens/home.txs",
+      "title": "Home",
+      "widgets": []
+    },
+    {
+      "id": "showcase",
+      "source_file": "src/screens/showcase.txs",
+      "title": "Showcase",
+      "widgets": []
+    },
+    {
+      "id": "projects",
+      "source_file": "src/screens/projects.txs",
+      "title": "Projects",
+      "widgets": []
+    },
+    {
+      "id": "tools",
+      "source_file": "src/screens/tools.txs",
+      "title": "Tools",
+      "widgets": []
+    },
+    {
+      "id": "about",
+      "source_file": "src/screens/about.txs",
+      "title": "About",
+      "widgets": []
+    }
+  ],
+  "theme": {
+    "accent": "#06b6d4",
+    "mode": "system",
+    "primary": "#4f46e5"
+  }
+}

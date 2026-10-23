@@ -27,6 +27,7 @@ members = [
     "tools/package-manager",
     "tools/packager",
     "runtime/native_runtime",
+    "runtime/android_runtime",
 ]
 
 [workspace.dependencies]
@@ -42,3 +43,10 @@ colored = "3"
 toml = "1.1"
 indexmap = "2"
 clap_complete = "4"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+strip = true
+

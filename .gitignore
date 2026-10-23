@@ -22,6 +22,8 @@ build/
 logs/
 .tsc-cache/
 .graphify-cache/
+.gradle/
+**/.gradle/
 
 # OS Temporary Files
 .DS_Store
@@ -80,6 +82,10 @@ graphify-out/
 *.bin
 *.out
 *.app
+*.apk
+*.aab
+*.so
+**/jniLibs/
 /bin/
 !**/src/bin/**
 build/

@@ -1,0 +1,18 @@
+// TechScript AppForge: Reusable Liquid Glass Cards
+// Authored in 100% Pure TechScript (.txs)
+
+do make_glass_card(title, value, description, badge)
+    send {
+        "title": title,
+        "value": value,
+        "description": description,
+        "badge": badge,
+        "border_color": "rgba(255, 255, 255, 0.08)",
+        "backdrop_blur": "16px"
+    }
+end
+
+do main()
+    card = make_glass_card("Compiler", "v2.0.0", "LLVM & Bytecode VM", "Stable")
+    say "[Cards] Rendered glass card: " + card["title"] + " = " + card["value"]
+end

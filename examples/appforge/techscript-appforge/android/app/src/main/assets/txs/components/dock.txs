@@ -1,0 +1,39 @@
+# TechScript AppForge: iOS-Inspired Floating Liquid Glass Dock
+# Authored in 100% Pure TechScript (.txs)
+
+do make_dock_item(id, label, icon, route)
+    send {
+        "id": id,
+        "label": label,
+        "icon": icon,
+        "route": route
+    }
+end
+
+do create_dock()
+    items = [
+        make_dock_item("home", "Home", "house", "/home"),
+        make_dock_item("workspace", "Projects", "folder", "/workspace"),
+        make_dock_item("docs", "Docs", "book", "/docs"),
+        make_dock_item("diagnostics", "Tools", "activity", "/diagnostics"),
+        make_dock_item("about", "About", "info", "/about")
+    ]
+    send {
+        "items": items,
+        "active_index": 0
+    }
+end
+
+do select_dock_item(dock, index)
+    when index >= 0
+        when index < len(dock.items)
+            dock["active_index"] = index
+            item = dock.items[index]
+            say $"Selected Dock Item: {item.label} ({item.route})"
+        end
+    end
+end
+
+app_dock = create_dock()
+say $"Dock initialized with {len(app_dock.items)} items."
+select_dock_item(app_dock, 1)

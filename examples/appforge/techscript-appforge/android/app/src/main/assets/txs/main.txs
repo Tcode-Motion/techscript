@@ -1,0 +1,13 @@
+// TechScript AppForge: Application Entry Point
+// Authored in 100% Pure TechScript (.txs)
+
+do main()
+    say "========================================================"
+    say "       TechScript AppForge (v2.0.0 LTS)"
+    say "   The Official Mobile Companion for TechScript"
+    say "========================================================"
+    say "Developer: Tanmoy Majumder (Tcode-Motion)"
+    say "Package ID: com.techscript.appforge"
+    say "Framework: AppForge Mobile Engine"
+    say "Status: Application initialized successfully."
+end

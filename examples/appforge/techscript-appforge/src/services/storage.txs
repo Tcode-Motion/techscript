@@ -1,0 +1,24 @@
+# TechScript AppForge: Storage & Project Persistence Service
+# Authored in 100% Pure TechScript (.txs)
+
+do get_default_workspace()
+    send {
+        "active_project": "my-mobile-app",
+        "created_at": "2026-10-23",
+        "entry_file": "src/main.txs",
+        "theme_preference": "system",
+        "recent_projects": [
+            { "name": "my-mobile-app", "type": "appforge", "updated": "Just now", "files": 5 },
+            { "name": "portfolio-site", "type": "webforge", "updated": "2 hours ago", "files": 8 },
+            { "name": "data-pipeline", "type": "console", "updated": "Yesterday", "files": 3 }
+        ]
+    }
+end
+
+do save_editor_content(file_path, content)
+    say $"[Storage] Persisted {len(content)} bytes to file: {file_path}"
+    send true
+end
+
+ws = get_default_workspace()
+say $"[Storage] Loaded workspace: {ws.active_project} ({len(ws.recent_projects)} recent projects)"

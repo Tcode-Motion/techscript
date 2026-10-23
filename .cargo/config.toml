@@ -1,0 +1,19 @@
+# TechScript AppForge — Cargo cross-compilation configuration
+# Wires Android NDK clang toolchain for all supported Android ABIs.
+# Used by: `tsc app build android` (Rust CLI) and direct `cargo build` invocations.
+
+[target.aarch64-linux-android]
+linker = "C:\\AndroidSDK\\ndk\\28.2.13676358\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\aarch64-linux-android26-clang.cmd"
+ar     = "C:\\AndroidSDK\\ndk\\28.2.13676358\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\llvm-ar"
+
+[target.armv7-linux-androideabi]
+linker = "C:\\AndroidSDK\\ndk\\28.2.13676358\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\armv7a-linux-androideabi26-clang.cmd"
+ar     = "C:\\AndroidSDK\\ndk\\28.2.13676358\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\llvm-ar"
+
+[target.x86_64-linux-android]
+linker = "C:\\AndroidSDK\\ndk\\28.2.13676358\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\x86_64-linux-android26-clang.cmd"
+ar     = "C:\\AndroidSDK\\ndk\\28.2.13676358\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\llvm-ar"
+
+[target.i686-linux-android]
+linker = "C:\\AndroidSDK\\ndk\\28.2.13676358\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\i686-linux-android26-clang.cmd"
+ar     = "C:\\AndroidSDK\\ndk\\28.2.13676358\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\llvm-ar"

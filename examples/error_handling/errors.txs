@@ -16,7 +16,7 @@ try
     res_err = divide(10, 0)
     say $"Result (should not print): {res_err}"
 catch error
-    say $"Caught expected error: {error}"
+    say $"Caught expected error: {error.message}"
 end
 
 say "Program continues running cleanly after catch block."

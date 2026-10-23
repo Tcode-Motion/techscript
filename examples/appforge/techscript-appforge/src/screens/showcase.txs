@@ -1,0 +1,33 @@
+# ==============================================================================
+# TechScript AppForge: Interactive Showcase Screen
+# Path: src/screens/showcase.txs
+#
+# Interactive component demonstrations rendered with Liquid Glass styling.
+# ==============================================================================
+
+model ShowcaseScreen:
+    title = "Interactive Showcase"
+    active_category = "all"
+    counter_value = 42
+    is_accelerated = true
+    glass_opacity = 0.85
+
+    do render()
+        say "[Showcase] Rendering Interactive Liquid Glass Gallery"
+    end
+
+    do on_category_selected(cat_id)
+        self.active_category = cat_id
+        say $"[Showcase] Filtered category: {cat_id}"
+    end
+
+    do on_counter_increment()
+        self.counter_value = self.counter_value + 1
+        say $"[Showcase] Counter: {self.counter_value}"
+    end
+
+    do on_toggle_acceleration()
+        self.is_accelerated = !self.is_accelerated
+        say $"[Showcase] Hardware Acceleration: {self.is_accelerated}"
+    end
+end

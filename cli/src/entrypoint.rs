@@ -85,6 +85,11 @@ pub fn run() {
             "rm",
             "help",
             "version",
+            "app",
+            "web",
+            "native",
+            "logs",
+            "report",
         ];
         if !subcommands.contains(&first_arg.as_str()) && !first_arg.starts_with('-') {
             let path = std::path::Path::new(first_arg);
@@ -250,6 +255,13 @@ pub fn run() {
         Commands::SelfCmd { subcommand } => {
             crate::commands::self_cmd::execute(subcommand.as_deref())
         }
+        Commands::App { subcommand } => crate::commands::app::execute(subcommand, cli.verbose),
+        Commands::Web { subcommand } => crate::commands::web::execute(subcommand, cli.verbose),
+        Commands::Native { subcommand } => crate::commands::native::execute(subcommand),
+        Commands::Logs { level, follow } => {
+            crate::commands::logs::execute(level.as_deref(), *follow)
+        }
+        Commands::Report => crate::commands::report::execute(),
     };
 
     // 4. Exit with status
@@ -487,18 +499,27 @@ fn show_custom_help() {
     println!("  webforge <command> [options]");
     println!("  techscript <command> [options]");
     println!("\nQuick Start:");
-    println!("  tsc new website my-site");
-    println!("  cd my-site");
-    println!("  tsc dev");
+    println!("  tsc app create my-app");
+    println!("  cd my-app");
+    println!("  tsc app run android");
     println!("\nCommon Commands:");
-    println!("  {}", "Project & Framework".bold().yellow());
-    println!("    new                     Scaffold a new project directory");
-    println!("    init                    Initialize a project in current folder");
-    println!("    dev                     Start live development server with hot-reload");
+    println!("  {}", "Appforge (Mobile & Desktop)".bold().yellow());
+    println!("    app create <name>       Scaffold a new Appforge application");
+    println!("    app build <platform>    Compile application (android, windows, etc.)");
+    println!("    app run <platform>      Build, install, and run on device or host");
+    println!("    app wrap web            Wrap Webforge web app as native mobile/desktop app");
+    println!("    app doctor              Inspect mobile and desktop toolchains");
+    println!("    app clean               Clean build outputs and caches");
+    println!("\n  {}", "Webforge (Web Framework)".bold().yellow());
+    println!("    web create <name>       Scaffold a new Webforge website");
+    println!("    web dev                 Start live development server with hot-reload");
+    println!("    web build               Compile Webforge project to static dist/");
+    println!("    dev                     Start live development server");
     println!("    routes                  Inspect registered server & web routes");
     println!("    deploy                  Prepare and deploy project to target host");
-    println!("    clean                   Clean build outputs and caches");
-    println!("\n  {}", "Development".bold().yellow());
+    println!("\n  {}", "Native & Interop".bold().yellow());
+    println!("    native add <lang>       Add native module (kotlin, swift, rust, cpp, c, java)");
+    println!("\n  {}", "Development & Compiler".bold().yellow());
     println!("    run                     Run a TechScript file or project");
     println!("    build                   Compile project (web / server / vm)");
     println!("    check                   Run semantic check without compiling");

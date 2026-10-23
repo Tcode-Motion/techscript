@@ -1,0 +1,20 @@
+// TechScript AppForge: Declarative UI Specification
+// Authored in 100% Pure TechScript (.txs)
+
+do build_appforge_ui()
+    send {
+        "app_id": "com.techscript.appforge",
+        "app_name": "TechScript AppForge",
+        "version": "2.0.0",
+        "creator": "Tanmoy Majumder",
+        "github": "Tcode-Motion",
+        "theme_mode": "system",
+        "screens": ["home", "workspace", "docs", "diagnostics", "about"],
+        "default_screen": "home"
+    }
+end
+
+do main()
+    ui = build_appforge_ui()
+    say "[AppForge App] Loaded UI spec for: " + ui["app_name"] + " v" + ui["version"]
+end

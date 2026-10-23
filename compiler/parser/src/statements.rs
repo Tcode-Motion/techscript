@@ -239,6 +239,18 @@ impl<'a> Parser<'a> {
             Ok(Statement::Say(SayStmt::new(self.next_id(), val, span)))
         } else if self.check(TokenKind::Identifier)
             && (self.peek().lexeme == "show" || self.dsl_keywords.contains(&self.peek().lexeme))
+            && !matches!(
+                self.peek_ahead(1).kind,
+                TokenKind::Equal
+                    | TokenKind::PlusEqual
+                    | TokenKind::MinusEqual
+                    | TokenKind::StarEqual
+                    | TokenKind::SlashEqual
+                    | TokenKind::PercentEqual
+                    | TokenKind::LeftBracket
+                    | TokenKind::Dot
+                    | TokenKind::LeftParen
+            )
         {
             let block = self.parse_dsl_block(reporter)?;
             Ok(Statement::DSL(block))
@@ -298,7 +310,9 @@ impl<'a> Parser<'a> {
                     || self.check(TokenKind::Catch)
                     || self.is_at_end()
                     || (!has_then
-                        && (self.check(TokenKind::When)
+                        && ((self.check(TokenKind::When)
+                            && self.peek_ahead(1).kind == TokenKind::Identifier
+                            && self.peek_ahead(2).lexeme == "is")
                             || self.check(TokenKind::Make)
                             || (self.check(TokenKind::Identifier)
                                 && ["page", "database", "start", "website"]
@@ -686,12 +700,13 @@ impl<'a> Parser<'a> {
             }
         }
 
-        // Parse optional arguments until the statement terminator or colon
+        // Parse optional arguments until the statement terminator, colon, or left brace
         let mut args = Vec::new();
         let mut properties = Vec::new();
         while !self.check(TokenKind::Newline)
             && !self.check(TokenKind::Semicolon)
             && !self.check(TokenKind::Colon)
+            && !self.check(TokenKind::LeftBrace)
             && !self.is_at_end()
         {
             if self.match_token(TokenKind::Arrow) {
@@ -745,7 +760,12 @@ impl<'a> Parser<'a> {
                 args.push(self.parse_expression(techscript_syntax::Precedence::Call, reporter)?);
             }
         }
-        let has_colon = self.match_token(TokenKind::Colon);
+        let has_brace = self.match_token(TokenKind::LeftBrace);
+        let has_colon = if !has_brace {
+            self.match_token(TokenKind::Colon)
+        } else {
+            false
+        };
         let mut body_props = Vec::new();
         let mut children = Vec::new();
 
@@ -754,6 +774,7 @@ impl<'a> Parser<'a> {
             while !self.check(TokenKind::Newline)
                 && !self.check(TokenKind::Semicolon)
                 && !self.check(TokenKind::End)
+                && !self.check(TokenKind::RightBrace)
                 && !self.is_at_end()
             {
                 if self.check(TokenKind::Identifier) {
@@ -763,7 +784,7 @@ impl<'a> Parser<'a> {
                     break;
                 }
             }
-            if self.check(TokenKind::End) {
+            if self.check(TokenKind::End) || self.check(TokenKind::RightBrace) {
                 self.advance();
             }
             if !self.is_at_end()
@@ -771,15 +792,57 @@ impl<'a> Parser<'a> {
             {
                 self.consume_terminator(reporter)?;
             }
-        } else {
+        } else if has_brace {
             if !self.is_at_end()
                 && (self.check(TokenKind::Newline) || self.check(TokenKind::Semicolon))
             {
                 self.consume_terminator(reporter)?;
             }
-            let (bp, ch) = self.parse_dsl_body(&kind, reporter)?;
+            let (bp, ch) = self.parse_dsl_body_delimited(&kind, true, reporter)?;
             body_props = bp;
             children = ch;
+        } else if has_colon {
+            if !self.is_at_end()
+                && (self.check(TokenKind::Newline) || self.check(TokenKind::Semicolon))
+            {
+                self.consume_terminator(reporter)?;
+            }
+            let (bp, ch) = self.parse_dsl_body_delimited(&kind, false, reporter)?;
+            body_props = bp;
+            children = ch;
+        } else {
+            // Neither brace nor colon.
+            // If the next line has 'end', parse body as classic block. Otherwise it's a standalone element (e.g. `button "Get Started"`).
+            let mut is_classic_end_block = false;
+            let mut scan = 0;
+            while self.pos + scan < self.tokens.len() {
+                let tk = &self.tokens[self.pos + scan];
+                if tk.kind == TokenKind::End {
+                    is_classic_end_block = true;
+                    break;
+                }
+                if tk.kind == TokenKind::RightBrace || tk.kind == TokenKind::Eof {
+                    break;
+                }
+                scan += 1;
+            }
+
+            if is_classic_end_block {
+                if !self.is_at_end()
+                    && (self.check(TokenKind::Newline) || self.check(TokenKind::Semicolon))
+                {
+                    self.consume_terminator(reporter)?;
+                }
+                let (bp, ch) = self.parse_dsl_body_delimited(&kind, false, reporter)?;
+                body_props = bp;
+                children = ch;
+            } else {
+                if !self.is_at_end()
+                    && (self.check(TokenKind::Newline) || self.check(TokenKind::Semicolon))
+                {
+                    self.consume_terminator(reporter)?;
+                }
+            }
         }
         properties.append(&mut body_props);
 
@@ -794,10 +857,19 @@ impl<'a> Parser<'a> {
         ))
     }
 
-    /// Parse the body of a DSL block: zero or more properties and sub-blocks, terminated by `end`.
+    /// Parse the body of a DSL block: zero or more properties and sub-blocks, terminated by `end` or `}`.
     fn parse_dsl_body(
         &mut self,
         parent_kind: &str,
+        reporter: &mut DiagnosticReporter,
+    ) -> ParseResult<(Vec<DSLProperty>, Vec<DSLChild>)> {
+        self.parse_dsl_body_delimited(parent_kind, false, reporter)
+    }
+
+    fn parse_dsl_body_delimited(
+        &mut self,
+        parent_kind: &str,
+        has_brace: bool,
         reporter: &mut DiagnosticReporter,
     ) -> ParseResult<(Vec<DSLProperty>, Vec<DSLChild>)> {
         let mut properties = Vec::new();
@@ -807,6 +879,10 @@ impl<'a> Parser<'a> {
             while self.match_token(TokenKind::Newline) {}
             if self.check(TokenKind::End) || self.is_at_end() {
                 break;
+            }
+            if has_brace && self.check(TokenKind::RightBrace) {
+                self.advance();
+                return Ok((properties, children));
             }
             let is_top_break = match parent_kind {
                 "link" => {
@@ -1083,7 +1159,8 @@ impl<'a> Parser<'a> {
                 }
                 _ => false,
             };
-            let is_global_break = parent_kind != "website"
+            let is_global_break = !has_brace
+                && parent_kind != "website"
                 && (self.check(TokenKind::When)
                     || (self.check(TokenKind::Make)
                         && ((self.peek_ahead(1).lexeme == "a"
@@ -1092,7 +1169,7 @@ impl<'a> Parser<'a> {
                     || (parent_kind == "page" && self.peek().lexeme == "page")
                     || self.peek().lexeme == "database"
                     || self.peek().lexeme == "start");
-            if is_top_break || is_global_break {
+            if (!has_brace && is_top_break) || is_global_break {
                 break;
             }
 
@@ -1237,8 +1314,16 @@ impl<'a> Parser<'a> {
                     }
                 }
 
-                let has_colon = self.match_token(TokenKind::Colon);
-                let (elem_props_extra, elem_children) = if has_colon {
+                let has_elem_brace = self.match_token(TokenKind::LeftBrace);
+                let has_colon = if !has_elem_brace {
+                    self.match_token(TokenKind::Colon)
+                } else {
+                    false
+                };
+                let (elem_props_extra, elem_children) = if has_elem_brace {
+                    self.consume_terminator(reporter)?;
+                    self.parse_dsl_body_delimited(&elem_kind, true, reporter)?
+                } else if has_colon {
                     if self.check(TokenKind::Newline) || self.check(TokenKind::Semicolon) {
                         self.consume_terminator(reporter)?;
                         let (sub_props, sub_children) =
@@ -1449,7 +1534,7 @@ impl<'a> Parser<'a> {
             }
         }
 
-        if self.check(TokenKind::End) {
+        if !has_brace && self.check(TokenKind::End) {
             self.advance();
         }
 

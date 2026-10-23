@@ -1,0 +1,26 @@
+# ==============================================================================
+# TechScript AppForge: Projects Explorer Screen
+# Path: src/screens/projects.txs
+#
+# Inspects real repository projects and displays live .txs source code.
+# ==============================================================================
+
+model ProjectsScreen:
+    title = "TechScript Projects"
+    selected_index = 0
+    show_source = false
+
+    do render()
+        say "[Projects] Exploring bundled repository projects"
+    end
+
+    do open_project(index)
+        self.selected_index = index
+        self.show_source = true
+        say $"[Projects] Inspecting project at index {index}"
+    end
+
+    do close_source_view()
+        self.show_source = false
+    end
+end

@@ -79,9 +79,19 @@ impl<'a> Parser<'a> {
         s.insert("table".to_string());
         s.insert("site".to_string());
         s.insert("component".to_string());
-        s.insert("data".to_string());
         s.insert("api".to_string());
         s.insert("edit".to_string());
+        // Appforge Application blocks
+        s.insert("app".to_string());
+        s.insert("screen".to_string());
+        s.insert("widget".to_string());
+        s.insert("layout".to_string());
+        s.insert("stack".to_string());
+        s.insert("row".to_string());
+        s.insert("column".to_string());
+        s.insert("navbar".to_string());
+        s.insert("tabbar".to_string());
+        s.insert("view".to_string());
         // Rich Web Components
         s.insert("timeline".to_string());
         s.insert("step".to_string());
@@ -145,6 +155,17 @@ impl<'a> Parser<'a> {
         s.insert("window".to_string());
         s.insert("dialog".to_string());
         s.insert("menu".to_string());
+        // Appforge sub-blocks
+        s.insert("app".to_string());
+        s.insert("screen".to_string());
+        s.insert("widget".to_string());
+        s.insert("layout".to_string());
+        s.insert("stack".to_string());
+        s.insert("row".to_string());
+        s.insert("column".to_string());
+        s.insert("navbar".to_string());
+        s.insert("tabbar".to_string());
+        s.insert("view".to_string());
         // Rich Web Components sub-blocks
         s.insert("timeline".to_string());
         s.insert("step".to_string());

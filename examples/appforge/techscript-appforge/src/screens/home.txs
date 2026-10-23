@@ -1,0 +1,25 @@
+// TechScript AppForge: Home Dashboard Screen
+// Authored in 100% Pure TechScript (.txs)
+
+do get_home_dashboard()
+    send {
+        "title": "TechScript AppForge",
+        "tagline": "The Official Mobile Developer Companion",
+        "quick_actions": [
+            { "id": "new_project", "label": "New Project", "cmd": "tsc app create <name>", "icon": "plus" },
+            { "id": "run_check", "label": "Semantic Check", "cmd": "tsc check src/main.txs", "icon": "check" },
+            { "id": "doctor", "label": "Toolchain Doctor", "cmd": "tsc app doctor", "icon": "cpu" }
+        ],
+        "metrics": [
+            { "label": "Language Version", "value": "2.0.0 LTS" },
+            { "label": "Workspace Crates", "value": "21 Crates" },
+            { "label": "Official Examples", "value": "20 Verified" },
+            { "label": "Android Execution", "value": "Tier 1 Native" }
+        ]
+    }
+end
+
+do main()
+    dash = get_home_dashboard()
+    say "[Home Screen] Ready: " + dash["title"] + " - " + dash["tagline"]
+end

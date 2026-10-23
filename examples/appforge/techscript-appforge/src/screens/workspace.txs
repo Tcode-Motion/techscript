@@ -1,0 +1,19 @@
+# TechScript AppForge: Project Workspace & Code Editor Screen
+# Authored in 100% Pure TechScript (.txs)
+
+do get_active_project_files()
+    send [
+        { "name": "appforge.toml", "type": "config", "size": 340, "desc": "Application & Android manifest config" },
+        { "name": "techscript.toml", "type": "package", "size": 180, "desc": "Capabilities and package dependencies" },
+        { "name": "src/main.txs", "type": "source", "size": 650, "desc": "Main application entry point" },
+        { "name": "src/app.txs", "type": "source", "size": 1240, "desc": "Appforge declarative UI definition" },
+        { "name": "src/theme.txs", "type": "source", "size": 890, "desc": "Liquid Glass design tokens and colors" }
+    ]
+end
+
+do get_editor_initial_source()
+    send "do main()\n    say \"Hello from TechScript AppForge!\"\nend\n"
+end
+
+files = get_active_project_files()
+say $"[Workspace Screen] Initialized with {len(files)} project files."

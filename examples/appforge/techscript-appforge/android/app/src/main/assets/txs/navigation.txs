@@ -1,0 +1,25 @@
+# TechScript AppForge: Route & Screen Navigation Manager
+# Authored in 100% Pure TechScript (.txs)
+
+do get_navigation_routes()
+    send [
+        { "id": "home", "title": "Home", "icon": "home", "badge": "" },
+        { "id": "workspace", "title": "Workspace", "icon": "folder", "badge": "Active" },
+        { "id": "docs", "title": "Docs", "icon": "book", "badge": "" },
+        { "id": "diagnostics", "title": "Diagnostics", "icon": "activity", "badge": "Live" },
+        { "id": "about", "title": "About", "icon": "info", "badge": "" }
+    ]
+end
+
+do validate_route(route_id)
+    routes = get_navigation_routes()
+    for r in routes
+        when r["id"] == route_id
+            send true
+        end
+    end
+    send false
+end
+
+routes = get_navigation_routes()
+say $"[Navigation] Registered {len(routes)} AppForge companion routes."

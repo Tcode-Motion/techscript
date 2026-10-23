@@ -1,0 +1,8 @@
+[package]
+name = "techscript-appforge"
+version = "2.0.0"
+entry = "src/main.txs"
+framework = "appforge"
+
+[capabilities]
+permissions = ["Network", "FileSystem", "Display"]

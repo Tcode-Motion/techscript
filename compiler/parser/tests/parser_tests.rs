@@ -469,21 +469,40 @@ start website
 }
 
 #[test]
-fn test_webforge_3d_scene() {
+fn test_simplified_appforge_brace_syntax() {
     let src = r#"
-show 3D scene called World:
-    add cube:
-        color is "blue"
-        rotation speed is 2
-    enable mouse controls
+app "TechScript AppForge" {
+    theme is "system"
+
+    screen Home {
+        title "Welcome to TechScript"
+        button "Create Project"
+    }
+}
 "#;
     let program = parse_source(src);
     assert_eq!(program.statements.len(), 1);
-    if let Statement::DSL(ref scene) = program.statements[0] {
-        assert_eq!(scene.kind, "scene3d");
-        assert_eq!(scene.children.len(), 1);
-        assert_eq!(scene.properties.len(), 2);
+    if let Statement::DSL(ref app) = program.statements[0] {
+        assert_eq!(app.kind, "app");
+        assert_eq!(app.children.len(), 1);
     } else {
-        panic!("Expected scene3d DSL block");
+        panic!("Expected app DSL block");
+    }
+}
+
+#[test]
+fn test_simplified_webforge_brace_syntax() {
+    let src = r#"
+page Home at "/home" {
+    title "Welcome to Webforge"
+    button "Get Started"
+}
+"#;
+    let program = parse_source(src);
+    assert_eq!(program.statements.len(), 1);
+    if let Statement::DSL(ref page) = program.statements[0] {
+        assert_eq!(page.kind, "page");
+    } else {
+        panic!("Expected page DSL block");
     }
 }

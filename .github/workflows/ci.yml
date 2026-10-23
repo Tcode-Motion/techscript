@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ main, dev ]
 
+permissions:
+  contents: read
+
 env:
   CARGO_TERM_COLOR: always
 
@@ -25,8 +28,13 @@ jobs:
         with:
           components: clippy, rustfmt
 
-      - name: Cache cargo registry
-        uses: actions/cache@v3
+      - name: Set up Python for example verification
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache cargo registry & target
+        uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/registry
@@ -36,7 +44,7 @@ jobs:
           restore-keys: |
             ${{ matrix.os }}-cargo-ci-
 
-      - name: Verify formatting
+      - name: Verify code formatting
         run: cargo fmt --all -- --check
 
       - name: Run clippy linter
@@ -45,10 +53,21 @@ jobs:
       - name: Run workspace tests
         run: cargo test --workspace --verbose
 
-      - name: Build workspace binaries
+      - name: Build release binaries
         run: cargo build --workspace --release
 
-      - name: Verify hello world example
+      - name: Verify CLI test suite
+        run: cargo test -p techscript_cli
+
+      - name: Verify 100% of official TechScript examples (20/20)
+        run: python verify_all_examples.py
+
+      - name: Verify Showcase App pure TechScript files
         shell: bash
         run: |
-          cargo run --bin tsc --release -- run examples/hello_world/hello.txs
+          ./target/release/tsc run showcase-app/src/main.txs
+          ./target/release/tsc run showcase-app/src/app.txs
+          ./target/release/tsc run showcase-app/src/navigation.txs
+          ./target/release/tsc run showcase-app/src/theme.txs
+          ./target/release/tsc run showcase-app/src/components/dock.txs
+          ./target/release/tsc run showcase-app/src/screens/home.txs

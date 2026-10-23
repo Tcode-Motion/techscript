@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    TechScript AppForge — Android Manifest
+    ========================================
+    This manifest references ONLY:
+      - android.app.NativeActivity  (OS system class — not authored Java)
+      - libts_android.so            (Rust — compiled from TechScript runtime)
+
+    The application entry point is android_main() in Rust, called by
+    NativeActivity after dlopen("libts_android.so").
+
+    No authored Java or Kotlin class is referenced here.
+    The android.app.NativeActivity class ships with the Android OS itself.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Network access for URL intents dispatched from TechScript -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Optional: vibration for haptic feedback in TechScript UI -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <application
+        android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:theme="@style/Theme.Appforge"
+        android:allowBackup="true"
+        android:hardwareAccelerated="true"
+        android:supportsRtl="true"
+        android:hasCode="false">
+        <!--
+            android:hasCode="false"
+            ─────────────────────────────────────────────────────────────────
+            Tells the Android APK package manager this application contains
+            NO Dalvik/ART bytecode (.dex files).
+            This is the definitive signal that zero Java/Kotlin runs here.
+            The OS skips the class loader entirely and delegates directly to
+            NativeActivity which loads libts_android.so.
+        -->
+
+        <activity
+            android:name="android.app.NativeActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|density|uiMode"
+            android:windowSoftInputMode="adjustResize">
+
+            <!--
+                Tell NativeActivity the name of our .so library.
+                It will call System.loadLibrary("ts_android") internally,
+                which loads libts_android.so from the APK's lib/ directory.
+                NativeActivity then looks for ANativeActivity_onCreate
+                (provided by android-activity crate via android_main shim).
+            -->
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="ts_android" />
+
+            <!-- Register as the launcher entry point -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

@@ -94,6 +94,14 @@ pub fn execute(package: &str) -> ExitCode {
         (package.to_string(), "^1.0.0".to_string())
     };
 
+    if name.contains("..") || name.contains('/') || name.contains('\\') || name.starts_with('.') {
+        eprintln!(
+            "Security error: Invalid package name '{}': path traversal characters are forbidden.",
+            name
+        );
+        return ExitCode::Failure;
+    }
+
     let constraint = match VersionConstraint::parse(&constraint_str) {
         Ok(c) => c,
         Err(e) => {

@@ -60,7 +60,7 @@ jobs:
         run: cargo test -p techscript_cli
 
       - name: Verify 100% of official TechScript examples (20/20)
-        run: python verify_all_examples.py
+        run: python scripts/verify_all_examples.py
 
       - name: Verify Showcase App pure TechScript files
         shell: bash

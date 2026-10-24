@@ -18,7 +18,7 @@ crate-type = ["cdylib"]
 # ─────────────────────────────────────────────────────────────────────────────
 # Core dependencies
 # ─────────────────────────────────────────────────────────────────────────────
-[dependencies]
+[target.'cfg(target_os = "android")'.dependencies]
 # android-activity: provides android_main() entry point via NativeActivity
 # This is the Rust equivalent of ANativeActivity — no Java needed.
 android-activity = { version = "0.6", features = ["native-activity"] }

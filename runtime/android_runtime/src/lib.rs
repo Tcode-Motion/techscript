@@ -1,3 +1,4 @@
+#![cfg(target_os = "android")]
 // =============================================================================
 // TechScript AppForge — Rust Native Android Runtime
 // runtime/android_runtime/src/lib.rs

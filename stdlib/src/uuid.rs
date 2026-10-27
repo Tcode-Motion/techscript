@@ -38,3 +38,36 @@ impl StdlibRegistry {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use techscript_runtime::context::{RuntimeConfig, RuntimeContext};
+
+    #[test]
+    fn test_register_uuid() {
+        let mut registry = StdlibRegistry::new();
+        registry.register_uuid();
+
+        let module = registry
+            .get_module("std.uuid")
+            .expect("Module std.uuid should be registered");
+        assert_eq!(module.name, "std.uuid");
+        assert_eq!(module.version, "1.0.0");
+        assert!(module.required_capabilities.is_empty());
+        assert!(module.exports.contains_key("uuid_v4"));
+
+        let uuid_v4 = module.exports.get("uuid_v4").unwrap();
+        assert_eq!(uuid_v4.name(), "uuid_v4");
+        assert_eq!(uuid_v4.arity(), 0);
+        assert!(uuid_v4.accepts_arity(0));
+
+        let mut ctx = RuntimeContext::new(RuntimeConfig::default());
+        let res = uuid_v4.call(&mut ctx, vec![]).unwrap();
+        if let RuntimeValue::Str(uuid_str) = res {
+            assert!(uuid_str.starts_with("123e4567-e89b-12d3-a456-"));
+        } else {
+            panic!("Expected RuntimeValue::Str");
+        }
+    }
+}

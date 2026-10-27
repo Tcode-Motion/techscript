@@ -85,9 +85,29 @@ impl BuiltinRegistry {
             Ok(Value::Null)
         });
         self.register("fstring_concat", |args| {
-            let mut res = String::new();
+            let cap: usize = args
+                .iter()
+                .map(|arg| match arg {
+                    Value::Str(s) => s.len(),
+                    Value::Bool(b) => {
+                        if *b {
+                            4
+                        } else {
+                            5
+                        }
+                    }
+                    Value::Null => 4,
+                    Value::Int(_) | Value::Float(_) => 10,
+                    _ => 16,
+                })
+                .sum();
+            let mut res = String::with_capacity(cap);
             for arg in args {
-                let _ = write!(res, "{}", arg);
+                if let Value::Str(s) = arg {
+                    res.push_str(s);
+                } else {
+                    let _ = write!(res, "{}", arg);
+                }
             }
             Ok(Value::Str(res))
         });

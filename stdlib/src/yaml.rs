@@ -67,3 +67,79 @@ impl StdlibRegistry {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::cell::RefCell;
+    use std::rc::Rc;
+    use techscript_runtime::context::{RuntimeConfig, RuntimeContext};
+    use techscript_runtime::value::RuntimeValue;
+
+    #[test]
+    fn test_register_yaml() {
+        let mut registry = StdlibRegistry::default();
+        registry.register_yaml();
+
+        let module = registry
+            .modules
+            .get("std.yaml")
+            .expect("Module std.yaml should be registered");
+        assert_eq!(module.name, "std.yaml");
+        assert_eq!(module.version, "1.0.0");
+        assert!(module.exports.contains_key("parse"));
+        assert!(module.exports.contains_key("stringify"));
+    }
+
+    #[test]
+    fn test_yaml_parse() {
+        let mut registry = StdlibRegistry::default();
+        registry.register_yaml();
+
+        let module = registry.modules.get("std.yaml").unwrap();
+        let parse_fn = module.exports.get("parse").unwrap();
+
+        let mut ctx = RuntimeContext::new(RuntimeConfig::default());
+        let yaml_input = "# Header comment\n\nname: Tanmoy\nage: 25\n# Footer comment\n";
+        let args = vec![RuntimeValue::Str(yaml_input.to_string())];
+
+        let result = parse_fn.call(&mut ctx, args).unwrap();
+
+        if let RuntimeValue::Map { entries, .. } = result {
+            let map = entries.borrow();
+            assert_eq!(
+                map.get("name").unwrap().try_into_string().unwrap(),
+                "Tanmoy"
+            );
+            assert_eq!(map.get("age").unwrap().try_into_string().unwrap(), "25");
+        } else {
+            panic!("Result is not a Map");
+        }
+    }
+
+    #[test]
+    fn test_yaml_stringify() {
+        let mut registry = StdlibRegistry::default();
+        registry.register_yaml();
+
+        let module = registry.modules.get("std.yaml").unwrap();
+        let stringify_fn = module.exports.get("stringify").unwrap();
+
+        let mut ctx = RuntimeContext::new(RuntimeConfig::default());
+
+        let mut map = indexmap::IndexMap::new();
+        map.insert("name".to_string(), RuntimeValue::Str("Tanmoy".to_string()));
+        map.insert("age".to_string(), RuntimeValue::Int(25));
+
+        let input_map = RuntimeValue::Map {
+            entries: Rc::new(RefCell::new(map)),
+            is_const: false,
+        };
+
+        let result = stringify_fn.call(&mut ctx, vec![input_map]).unwrap();
+
+        let res_str = result.try_into_string().unwrap();
+        assert!(res_str.contains("name: Tanmoy\n"));
+        assert!(res_str.contains("age: 25\n"));
+    }
+}

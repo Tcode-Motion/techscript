@@ -58,6 +58,7 @@ macro_rules! execute_request {
         let mut res_map = IndexMap::with_capacity(2);
         res_map.insert("status".to_string(), RuntimeValue::Int(status));
         res_map.insert("body".to_string(), RuntimeValue::Str(body));
+
         Ok(RuntimeValue::Map {
             entries: Rc::new(RefCell::new(res_map)),
             is_const: false,
@@ -65,126 +66,143 @@ macro_rules! execute_request {
     }};
 }
 
+fn register_http_get(
+    exports: &mut HashMap<String, Rc<dyn techscript_runtime::function::Callable>>,
+) {
+    exports.insert(
+        "get".to_string(),
+        Rc::new(StdFunction {
+            name: "get".to_string(),
+            arity: 1,
+            callback: |ctx, args| {
+                let url = args[0].try_into_string()?;
+                let mut req = ureq::get(&url);
+
+                if args.len() > 1 {
+                    if let RuntimeValue::Map { entries, .. } = &args[1] {
+                        for (k, v) in entries.borrow().iter() {
+                            if let Ok(val_str) = v.try_into_string() {
+                                req = req.set(k, &val_str);
+                            }
+                        }
+                    }
+                }
+
+                if url.contains("api.github.com/repos/Tcode-Motion/techscript") {
+                    if let Ok(resp) = req.call() {
+                        if resp.status() == 200 {
+                            if let Ok(body) = resp.into_string() {
+                                let mut res_map = IndexMap::with_capacity(2);
+                                res_map.insert("status".to_string(), RuntimeValue::Int(200));
+                                res_map.insert("body".to_string(), RuntimeValue::Str(body));
+                                return Ok(RuntimeValue::Map {
+                                    entries: Rc::new(RefCell::new(res_map)),
+                                    is_const: false,
+                                });
+                            }
+                        }
+                    }
+                    // Fallback response when GitHub API rate limits or offline in CI environments
+                    let mock_body =
+                        r#"{"name":"techscript","owner":{"login":"Tcode-Motion"}}"#.to_string();
+                    let mut res_map = IndexMap::with_capacity(2);
+                    res_map.insert("status".to_string(), RuntimeValue::Int(200));
+                    res_map.insert("body".to_string(), RuntimeValue::Str(mock_body));
+                    return Ok(RuntimeValue::Map {
+                        entries: Rc::new(RefCell::new(res_map)),
+                        is_const: false,
+                    });
+                }
+
+                execute_request!(ctx, "GET", req.call())
+            },
+        }),
+    );
+}
+
+fn register_http_post(
+    exports: &mut HashMap<String, Rc<dyn techscript_runtime::function::Callable>>,
+) {
+    exports.insert(
+        "post".to_string(),
+        Rc::new(StdFunction {
+            name: "post".to_string(),
+            arity: 2,
+            callback: |ctx, args| {
+                let url = args[0].try_into_string()?;
+                let body = args[1].try_into_string()?;
+                execute_request!(ctx, "POST", ureq::post(&url).send_string(&body))
+            },
+        }),
+    );
+}
+
+fn register_http_listen(
+    exports: &mut HashMap<String, Rc<dyn techscript_runtime::function::Callable>>,
+) {
+    exports.insert(
+        "listen".to_string(),
+        Rc::new(StdFunction {
+            name: "listen".to_string(),
+            arity: 2,
+            callback: |ctx, args| {
+                if !ctx.config.capabilities.contains(&Capability::Network) {
+                    return Err(RuntimeError::new(
+                        RuntimeErrorKind::InvalidOperation(
+                            "Security policy violation: Network capability is denied".to_string(),
+                        ),
+                        None,
+                        None,
+                    ));
+                }
+                let port = args[0].try_into_int()?;
+                let callback = args[1].clone();
+
+                if let RuntimeValue::Function(func) = callback {
+                    let listener = std::net::TcpListener::bind(format!("127.0.0.1:{}", port)).map_err(|e| {
+                        RuntimeError::new(RuntimeErrorKind::InvalidOperation(format!("HTTP listen bind error: {}", e)), None, None)
+                    })?;
+
+                    listener.set_nonblocking(true).ok();
+
+                    if let Ok((mut stream, _)) = listener.accept() {
+                        use std::io::{Read, Write};
+                        let mut buf = [0; 1024];
+                        if let Ok(n) = stream.read(&mut buf) {
+                            let request_text = String::from_utf8_lossy(&buf[..n]);
+                            let mut req_map = IndexMap::new();
+                            req_map.insert("raw".to_string(), RuntimeValue::Str(request_text.to_string()));
+                            let req_val = RuntimeValue::Map {
+                                entries: Rc::new(RefCell::new(req_map)),
+                                is_const: false,
+                            };
+
+                            if let Ok(res) = func.call(ctx, vec![req_val]) {
+                                let body = res.try_into_string().unwrap_or_else(|_| "Hello".to_string());
+                                let response_str = format!(
+                                    "HTTP/1.1 200 OK\r\nContent-Length: {}\r\nContent-Type: text/plain\r\n\r\n{}",
+                                    body.len(),
+                                    body
+                                );
+                                stream.write_all(response_str.as_bytes()).ok();
+                            }
+                        }
+                    }
+                }
+                Ok(RuntimeValue::Null)
+            },
+        }),
+    );
+}
+
 impl StdlibRegistry {
     pub fn register_http(&mut self) {
         let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
             HashMap::new();
 
-        exports.insert(
-            "get".to_string(),
-            Rc::new(StdFunction {
-                name: "get".to_string(),
-                arity: 1,
-                callback: |ctx, args| {
-                    let url = args[0].try_into_string()?;
-                    let mut req = ureq::get(&url);
-                    if args.len() > 1 {
-                        if let RuntimeValue::Map { entries, .. } = &args[1] {
-                            for (k, v) in entries.borrow().iter() {
-                                if let Ok(val_str) = v.try_into_string() {
-                                    req = req.set(k, &val_str);
-                                }
-                            }
-                        }
-                    }
-
-                    if url.contains("api.github.com/repos/Tcode-Motion/techscript") {
-                        if let Ok(resp) = req.call() {
-                            if resp.status() == 200 {
-                                if let Ok(body) = resp.into_string() {
-                                    let mut res_map = IndexMap::with_capacity(2);
-                                    res_map.insert("status".to_string(), RuntimeValue::Int(200));
-                                    res_map.insert("body".to_string(), RuntimeValue::Str(body));
-                                    return Ok(RuntimeValue::Map {
-                                        entries: Rc::new(RefCell::new(res_map)),
-                                        is_const: false,
-                                    });
-                                }
-                            }
-                        }
-                        // Fallback response when GitHub API rate limits or offline in CI environments
-                        let mock_body =
-                            r#"{"name":"techscript","owner":{"login":"Tcode-Motion"}}"#.to_string();
-                        let mut res_map = IndexMap::with_capacity(2);
-                        res_map.insert("status".to_string(), RuntimeValue::Int(200));
-                        res_map.insert("body".to_string(), RuntimeValue::Str(mock_body));
-                        return Ok(RuntimeValue::Map {
-                            entries: Rc::new(RefCell::new(res_map)),
-                            is_const: false,
-                        });
-                    }
-
-                    execute_request!(ctx, "GET", req.call())
-                },
-            }),
-        );
-
-        exports.insert(
-            "post".to_string(),
-            Rc::new(StdFunction {
-                name: "post".to_string(),
-                arity: 2,
-                callback: |ctx, args| {
-                    let url = args[0].try_into_string()?;
-                    let body = args[1].try_into_string()?;
-                    execute_request!(ctx, "POST", ureq::post(&url).send_string(&body))
-                },
-            }),
-        );
-
-        exports.insert(
-            "listen".to_string(),
-            Rc::new(StdFunction {
-                name: "listen".to_string(),
-                arity: 2,
-                callback: |ctx, args| {
-                    if !ctx.config.capabilities.contains(&Capability::Network) {
-                        return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Network capability is denied".to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
-                    let port = args[0].try_into_int()?;
-                    let callback = args[1].clone();
-
-                    if let RuntimeValue::Function(func) = callback {
-                        let listener = std::net::TcpListener::bind(format!("127.0.0.1:{}", port)).map_err(|e| {
-                            RuntimeError::new(RuntimeErrorKind::InvalidOperation(format!("HTTP listen bind error: {}", e)), None, None)
-                        })?;
-
-                        listener.set_nonblocking(true).ok();
-
-                        if let Ok((mut stream, _)) = listener.accept() {
-                            use std::io::{Read, Write};
-                            let mut buf = [0; 1024];
-                            if let Ok(n) = stream.read(&mut buf) {
-                                let request_text = String::from_utf8_lossy(&buf[..n]);
-                                let mut req_map = IndexMap::new();
-                                req_map.insert("raw".to_string(), RuntimeValue::Str(request_text.to_string()));
-                                let req_val = RuntimeValue::Map {
-                                    entries: Rc::new(RefCell::new(req_map)),
-                                    is_const: false,
-                                };
-
-                                if let Ok(res) = func.call(ctx, vec![req_val]) {
-                                    let body = res.try_into_string().unwrap_or_else(|_| "Hello".to_string());
-                                    let response_str = format!(
-                                        "HTTP/1.1 200 OK\r\nContent-Length: {}\r\nContent-Type: text/plain\r\n\r\n{}",
-                                        body.len(),
-                                        body
-                                    );
-                                    stream.write_all(response_str.as_bytes()).ok();
-                                }
-                            }
-                        }
-                    }
-                    Ok(RuntimeValue::Null)
-                },
-            }),
-        );
+        register_http_get(&mut exports);
+        register_http_post(&mut exports);
+        register_http_listen(&mut exports);
 
         self.register_module(
             "std.http",

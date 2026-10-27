@@ -701,6 +701,25 @@ fn test_system_diagnostics_and_process_execution() {
     } else {
         panic!("run did not return a Map");
     }
+
+    // 3. Verify process.run rejects null bytes in arguments
+    let null_arg_res = run.call(
+        &mut ctx,
+        vec![
+            RuntimeValue::Str(cmd.to_string()),
+            RuntimeValue::List {
+                items: Rc::new(RefCell::new(vec![RuntimeValue::Str(
+                    "hello\0world".to_string(),
+                )])),
+                is_const: false,
+            },
+        ],
+    );
+    assert!(null_arg_res.is_err());
+    assert!(null_arg_res
+        .unwrap_err()
+        .to_string()
+        .contains("Security policy violation: Null bytes in command arguments are denied"));
 }
 
 #[test]

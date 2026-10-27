@@ -38,7 +38,18 @@ fn process_run(
         RuntimeValue::List { items, .. } => {
             let mut list = Vec::new();
             for item in items.borrow().iter() {
-                list.push(item.try_into_string()?);
+                let s = item.try_into_string()?;
+                if s.contains('\0') {
+                    return Err(RuntimeError::new(
+                        RuntimeErrorKind::InvalidOperation(
+                            "Security policy violation: Null bytes in command arguments are denied"
+                                .to_string(),
+                        ),
+                        None,
+                        None,
+                    ));
+                }
+                list.push(s);
             }
             list
         }

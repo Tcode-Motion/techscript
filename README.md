@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://techscript.is-a.dev/">
+    <img src="docs/assets/brand/techscript-logo.png" alt="TechScript 2.0 Logo" width="160" />
+  </a>
+</p>
+
 <h1 align="center">TechScript 2.0</h1>
 
 <p align="center">
@@ -24,18 +30,85 @@
 
 ---
 
+## 📑 Table of Contents
+
+- [The Problem](#-the-problem)
+- [The Solution: What is TechScript 2.0?](#-the-solution-what-is-techscript-20)
+- [Why TechScript? (Comparison Matrix)](#-why-techscript-feature-comparison)
+- [Instant One-Line Installation](#-instant-one-line-installation)
+- [Canonical Syntax Quick-Start](#-canonical-syntax-quick-start)
+- [Syntax Mental Model & Invariants](#-syntax-mental-model--invariants)
+- [WebForge: Full-Stack Declarative Web Framework](#-webforge-full-stack-declarative-web-framework)
+- [AppForge: Native Mobile & Desktop Engine](#-appforge-native-mobile--desktop-engine)
+- [Official Editor Extensions (VS Code & Open VSX)](#-official-editor-extensions)
+- [AI Developer Skill](#-ai-developer-skill)
+- [Architecture & Compiler Pipeline](#-architecture--compiler-pipeline)
+- [Platform Support Matrix](#-platform-support-matrix)
+- [Complete Documentation Index](#-complete-documentation-index)
+- [License & Attribution](#-license--attribution)
+
+---
+
+## 🛑 The Problem
+
+Modern software development has become deeply fragmented, fragile, and bloated:
+
+1. **Massive Dependency Bloat & Runtime Friction:**  
+   Building a simple utility or reactive website frequently pulls in gigabytes of `node_modules` or complex Python virtual environments. Toolchains break across OS boundaries, versions collide, and packaging standalone executables is notoriously brittle.
+
+2. **Ecosystem Fragmentation:**  
+   Engineers are forced to juggle separate, incompatible languages and frameworks: one for web frontends (JavaScript/TypeScript), another for APIs (Python/Go), another for mobile apps (Kotlin/Swift), and another for native performance (Rust/C++).
+
+3. **Ambiguous Syntax & Hidden Mutations:**  
+   Most languages allow variables to be mutated without clear intent, mix multiple assignment keywords (`let`, `var`, `const`, `:=`), or rely on cryptic symbols. This creates subtle bugs, increases cognitive load, and slows down code comprehension.
+
+4. **AI Hallucination & Syntactic Drift:**  
+   Because existing languages have evolved decades of overlapping, competing idioms, AI coding assistants frequently hallucinate non-idiomatic patterns, deprecated APIs, and invalid constructs.
+
+---
+
+## 💡 The Solution: What is TechScript 2.0?
+
+**TechScript 2.0** is an independent, high-performance general-purpose programming language built from first principles in native Rust, unified with a full-stack web framework (**WebForge**) and a mobile native engine (**AppForge**).
+
+It is designed to be **human-readable, mathematically rigorous, completely self-contained, and AI-native**:
+
+- 🗣️ **English-Like Locked Canonical Syntax:** Crystal-clear declaration (`is`), mutation (`becomes`), constants (`constant ... is`), and functions (`to name(params):`). No curly brace noise, no cryptic assignment operators.
+- ⚡ **Zero-Dependency Native Architecture:** Ships as a self-contained single binary (`tsc`). Zero Python runtime, zero Node.js runtime, zero external VM requirements.
+- 🌐 **WebForge Full-Stack Web:** Author complete reactive websites with embedded SQLite schemas, client-side routing, and native WebGL 3D scenes in a single expressive `.tech` file that builds to static, zero-dependency production bundles.
+- 📱 **AppForge Native Mobile:** Author cross-platform Android and desktop applications in pure `.txs` with a hardware-accelerated liquid glass UI design system.
+- 🤖 **Locked AI Agent Skill:** Ships with an authoritative AI skill (`SKILL.md`) that gives Antigravity, Cursor, Claude Code, and Codex an immutable grammar specification, eliminating hallucinated syntax.
+- 🚀 **High-Throughput Execution:** Dual-engine architecture with an ultra-fast register-based bytecode VM for instant development and an LLVM backend for native machine code compilation.
+
+---
+
+## 📊 Why TechScript? (Feature Comparison)
+
+| Feature | **TechScript 2.0** | Python 3 | TypeScript / Node | Go |
+| :--- | :---: | :---: | :---: | :---: |
+| **Primary Philosophy** | Clear English Syntax & Unified Stack | Dynamic Scripting | Typed Web Scripting | Systems Concurrency |
+| **External Runtime Needed?** | ❌ **None** (Self-Contained) | ⚠️ Python Interpreter | ⚠️ Node.js / Bun runtime | ❌ None |
+| **Dependency Bloat** | ❌ **Zero** (`node_modules`-free) | ⚠️ `site-packages` / venv | ⚠️ Heavy `node_modules` | ❌ Minimal |
+| **Native Web Framework Built-in** | ✅ **WebForge** (3D + SQLite + UI) | ❌ External (Django/Flask) | ❌ External (Next.js/Vite) | ❌ External |
+| **Native Mobile Engine Built-in** | ✅ **AppForge** (Liquid Glass UI) | ❌ External (Kivy/BeeWare) | ❌ External (React Native) | ❌ Not suited |
+| **Locked AI Skill Specification** | ✅ **Built-in** (`SKILL.md`) | ❌ Fragmented | ❌ Fragmented | ❌ None |
+| **Syntax Invariant Lock** | ✅ **`is` vs `becomes`** | ❌ Mutable by default | ❌ `let` / `const` / `var` | ❌ `:=` vs `=` |
+| **Verified Test Pass Rate** | ✅ **100 / 100 Examples** | Varies | Varies | Varies |
+
+---
+
 ## ⚡ Instant One-Line Installation
 
-TechScript is an **entirely self-contained, independent native language toolchain** with zero external runtime or Python dependencies. Choose your platform:
+TechScript requires **zero prerequisites**. Choose your operating system below:
 
 ### 🪟 Windows (PowerShell One-Liner)
-Installs pre-compiled binaries into `%LOCALAPPDATA%\TechScript\bin` and automatically configures your User `PATH`:
+Installs pre-compiled native binaries into `%LOCALAPPDATA%\TechScript\bin` and automatically configures your User `PATH`:
 ```powershell
 irm https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.ps1 | iex
 ```
 
 ### 🐧 Linux, 🍎 macOS & 📱 Android (Termux)
-Universal POSIX installer with architecture auto-detection (x86_64, aarch64, Apple Silicon) and shell profile integration:
+Universal POSIX installer with architecture auto-detection (`x86_64`, `aarch64`, Apple Silicon) and shell profile integration:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
 ```
@@ -58,50 +131,70 @@ docker run --rm -v "${PWD}:/workspace" ghcr.io/tcode-motion/techscript:latest ru
 
 ---
 
-## 🤖 AI Coding Skill (Antigravity, Cursor, Codex, Gemini CLI, Claude Code)
+## 🚀 Canonical Syntax Quick-Start
 
-TechScript ships with a first-class **AI Developer Skill** ([`skills/techscript/SKILL.md`](skills/techscript/SKILL.md)) that provides language models and autonomous coding agents with the complete locked syntax, standard library signatures, CLI patterns, and invariant rules.
+TechScript code is clean, readable, and strictly locked to the canonical grammar:
 
-- 📖 **[Authoritative AI Skill Guide](skills/techscript/SKILL.md)** — Full specification and agent operational runbook.
+```techscript
+# Declare constants and initial variables
+constant platform_name is "TechScript 2.0"
+counter is 0
 
-### Install Skill in 1 Line:
-- **Google Antigravity & Agentic IDEs:** Automatically loaded from [`.agents/skills/techscript/SKILL.md`](.agents/skills/techscript/SKILL.md).
-- **Cursor / Claude Code / Codex / OpenClaw (POSIX):**
-  ```bash
-  curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/skills/techscript/install.sh | bash
-  ```
-- **Windows PowerShell (Gemini CLI / Antigravity):**
-  ```powershell
-  irm https://raw.githubusercontent.com/Tcode-Motion/techscript/main/skills/techscript/install.ps1 | iex
-  ```
+# Functions use 'to name(params):' with colon and 4-space indentation
+to calculate_bonus(score, base_payout):
+    if score >= 90:
+        return base_payout * 2.0
+    else if score >= 75:
+        return base_payout * 1.5
+    else:
+        return base_payout
+
+to greet_developer(name):
+    say "Hello, {name}! Welcome to {platform_name}."
+    return "done"
+
+# Invoke functions
+greet_developer("Engineer")
+
+bonus is calculate_bonus(95, 500.0)
+say "Awarded Bonus: ${bonus}"
+
+# Counted repetition loop
+repeat 3 times:
+    say "Writing clean, native, high-performance code."
+
+# While loop with explicit 'becomes' mutation
+while counter < 2:
+    counter becomes counter + 1
+    say "Processing job {counter}..."
+```
+
+Run your program instantly:
+```bash
+tsc run main.txs
+```
 
 ---
 
-## 📱 Official TechScript AppForge Mobile Application
+## 🎯 Syntax Mental Model & Invariants
 
-The official **TechScript AppForge** companion ([`examples/appforge/techscript-appforge/`](examples/appforge/techscript-appforge/)) is built **100% in pure TechScript (`.txs`)** running on the native Android engine with hardware bridge acceleration, liquid glass styling, and an interactive coding workspace.
-
-- 📥 **[Download Verified Release APK (v2.0.0 / v2.0.2)](dist/TechScript-AppForge-v2.0.0-release.apk)** *(Scheme v2 signed, 30.5 MB)*
-- 🔗 **[Direct GitHub Releases Download](https://github.com/Tcode-Motion/techscript/releases/download/v2.0.0/TechScript-AppForge-v2.0.0-release.apk)**
-
-### Real Device Screen Showcase (Android 14 / 16)
-
-<p align="center">
-  <img src="images&videos/apphome.jpeg" alt="AppForge Home Screen" width="220" style="border-radius: 12px; margin: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"/>
-  <img src="images&videos/appdocs.jpeg" alt="AppForge Interactive Documentation" width="220" style="border-radius: 12px; margin: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"/>
-  <img src="images&videos/appexplore.jpeg" alt="AppForge Explore & Packages" width="220" style="border-radius: 12px; margin: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"/>
-  <img src="images&videos/applaba.jpeg" alt="AppForge Code Playground" width="220" style="border-radius: 12px; margin: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"/>
-</p>
+To keep programs completely free of assignment ambiguity, TechScript enforces three clear invariants:
 
 ```mermaid
-graph LR
-    subgraph AppForge_Engine["AppForge Mobile Architecture"]
-        TXS["Pure .txs Screens & Components"] --> BRIDGE["Hardware JNI Native Bridge"]
-        BRIDGE --> RENDER["Hardware Accelerated Canvas (Skia/Vulkan/GL)"]
-        RENDER --> GLASS["Liquid Glass Dynamic Design System"]
-        GLASS --> TOUCH["Zero-Latency Touch & Motion Engine"]
-    end
+flowchart TD
+    Q1{"Is this the first time creating the variable?"}
+    Q1 -- Yes --> S1["Use 'is':<br><code>score is 100</code>"]
+    Q1 -- No --> Q2{"Are you modifying an existing variable?"}
+    Q2 -- Yes --> S2["Use 'becomes':<br><code>score becomes score + 10</code>"]
+    Q2 -- No --> Q3{"Is the value permanently constant?"}
+    Q3 -- Yes --> S3["Use 'constant ... is':<br><code>constant max_limit is 500</code>"]
 ```
+
+- **Variables:** Declared with `is` on first assignment (`name is "TechScript"`).
+- **Reassignment:** Modified only with `becomes` (`count becomes count + 1`).
+- **Constants:** Declared with `constant` and `is` (`constant max_retries is 5`).
+- **Blocks:** Colon `:` followed by 4-space indentation. No `do`, `then`, `begin`, or `{}` brackets.
+- **Output:** Built-in `say` expression with native curly-brace string interpolation (`say "Count: {count}"`).
 
 ---
 
@@ -111,7 +204,7 @@ graph LR
 - 🚀 **WebForge Live Interactive Example:** [**https://techscript.is-a.dev/techscript/**](https://techscript.is-a.dev/techscript/)
 
 > **What WebForge Does:**  
-> WebForge is TechScript's native full-stack web framework. It compiles `.tech` and `.txs` reactive single-page applications, client-side routing, SQLite database schemas, and embedded WebGL 3D CSG modeling directly to production HTML, CSS, and JS with zero `node_modules` dependency overhead.
+> WebForge compiles declarative `.tech` full-stack applications—including reactive components, client-side routing, SQLite database persistence, and WebGL 3D CSG modeling—directly to zero-dependency static production bundles with zero `node_modules`.
 
 ### 🎥 WebForge Official Demonstration Video
 
@@ -125,9 +218,7 @@ graph LR
   </p>
 </div>
 
-### 🌐 Full-Stack WebForge Code Sample with 3D & Relational Database
-
-WebForge allows authoring full-stack applications with databases, interactive UI, and 3D scenes in a single expressive file:
+### 🌐 Full-Stack WebForge Code Sample
 
 ```tech
 # Full-Stack WebForge Application with Embedded 3D Scene and Database
@@ -158,7 +249,7 @@ when SaveButton is clicked:
 start website
 ```
 
-### WebForge Developer Commands:
+### WebForge Developer Commands
 ```bash
 tsc web create my-portal   # Scaffold full-stack WebForge website
 cd my-portal
@@ -182,17 +273,66 @@ graph TD
 
 ---
 
-## 🧩 Official VS Code & Open VSX Extensions
+## 📱 AppForge: Native Mobile & Desktop Engine
+
+The official **TechScript AppForge** companion ([`examples/appforge/techscript-appforge/`](examples/appforge/techscript-appforge/)) is authored **100% in pure TechScript (`.txs`)** running on the native Android engine with hardware bridge acceleration, liquid glass styling, and an interactive coding playground.
+
+- 📥 **[Download Verified Release APK (v2.0.0 / v2.0.2)](dist/TechScript-AppForge-v2.0.0-release.apk)** *(Scheme v2 signed, 30.5 MB)*
+- 🔗 **[Direct GitHub Releases Download](https://github.com/Tcode-Motion/techscript/releases/download/v2.0.0/TechScript-AppForge-v2.0.0-release.apk)**
+
+### Real Device Screen Showcase (Android 14 / 16)
+
+<p align="center">
+  <img src="images&videos/apphome.jpeg" alt="AppForge Home Screen" width="210" style="border-radius: 10px; margin: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"/>
+  <img src="images&videos/appdocs.jpeg" alt="AppForge Interactive Documentation" width="210" style="border-radius: 10px; margin: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"/>
+  <img src="images&videos/appexplore.jpeg" alt="AppForge Explore & Packages" width="210" style="border-radius: 10px; margin: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"/>
+  <img src="images&videos/applaba.jpeg" alt="AppForge Code Playground" width="210" style="border-radius: 10px; margin: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"/>
+</p>
+<p align="center">
+  <em>Figure: TechScript AppForge running natively on Android with liquid-glass UI, documentation browser, package explorer, and live playground.</em>
+</p>
+
+```mermaid
+graph LR
+    subgraph AppForge_Engine["AppForge Mobile Architecture"]
+        TXS["Pure .txs Screens & Components"] --> BRIDGE["Hardware JNI Native Bridge"]
+        BRIDGE --> RENDER["Hardware Accelerated Canvas (Skia/Vulkan/GL)"]
+        RENDER --> GLASS["Liquid Glass Dynamic Design System"]
+        GLASS --> TOUCH["Zero-Latency Touch & Motion Engine"]
+    end
+```
+
+---
+
+## 🧩 Official Editor Extensions
 
 TechScript provides dedicated, platform-verified extension packages tailored for both the Visual Studio Marketplace and the Eclipse Open VSX Registry:
 
-| Registry Target | Publisher ID | Identifier | Direct VSIX Package | Official Registry Listing |
+| Registry Target | Publisher ID | Extension Identifier | Direct VSIX Package | Official Registry Listing |
 | :--- | :---: | :---: | :--- | :--- |
 | **VS Code Marketplace** | `tanmoy` | `tanmoy.techscript` | [**techscript-vscode-2.0.3.vsix**](releases/current/techscript-vscode-2.0.3.vsix) | [**Visual Studio Marketplace**](https://marketplace.visualstudio.com/items?itemName=tanmoy.techscript) |
 | **Open VSX Registry** | `Tcode-Motion` | `Tcode-Motion.techscript` | [**techscript-openvsx-2.0.4.vsix**](releases/current/techscript-openvsx-2.0.4.vsix) | [**Open VSX Registry**](https://open-vsx.org/extension/Tcode-Motion/techscript) |
 
-> **What It Does:**  
-> The official TechScript extension provides real-time Language Server Protocol (LSP) diagnostics, intelligent code completion, semantic syntax highlighting, colon-based auto-indentation, canonical snippets, and one-click build and execution inside VS Code, Cursor, and VSCodium.
+> **Key Capabilities:** Real-time Language Server Protocol (LSP) diagnostics, intelligent code completion, semantic syntax highlighting, colon-based auto-indentation, canonical snippets, and one-click build and execution inside VS Code, Cursor, and VSCodium.
+
+---
+
+## 🤖 AI Developer Skill
+
+TechScript ships with a first-class **AI Developer Skill** ([`skills/techscript/SKILL.md`](skills/techscript/SKILL.md)) that provides language models and autonomous coding agents with the complete locked syntax, standard library signatures, CLI patterns, and invariant rules.
+
+- 📖 **[Authoritative AI Skill Guide](skills/techscript/SKILL.md)** — Full specification and agent operational runbook.
+
+### Install Skill in 1 Line:
+- **Google Antigravity & Agentic IDEs:** Automatically loaded from [`.agents/skills/techscript/SKILL.md`](.agents/skills/techscript/SKILL.md).
+- **Cursor / Claude Code / Codex / OpenClaw (POSIX):**
+  ```bash
+  curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/skills/techscript/install.sh | bash
+  ```
+- **Windows PowerShell (Gemini CLI / Antigravity):**
+  ```powershell
+  irm https://raw.githubusercontent.com/Tcode-Motion/techscript/main/skills/techscript/install.ps1 | iex
+  ```
 
 ---
 
@@ -238,62 +378,17 @@ graph LR
 
 ---
 
-## 🎯 Language Syntax Invariants & Mental Model
+## 📋 Platform Support Matrix
 
-```mermaid
-flowchart TD
-    Q1{"Is this the first time creating the variable?"}
-    Q1 -- Yes --> S1["Use 'is':<br><code>score is 100</code>"]
-    Q1 -- No --> Q2{"Are you modifying an existing variable?"}
-    Q2 -- Yes --> S2["Use 'becomes':<br><code>score becomes score + 10</code>"]
-    Q2 -- No --> Q3{"Is the value permanently constant?"}
-    Q3 -- Yes --> S3["Use 'constant ... is':<br><code>constant max_limit is 500</code>"]
-```
-
----
-
-## 🚀 Canonical TechScript Quick-Start
-
-TechScript syntax is clean, expressive, and strictly locked to the canonical specification:
-
-```techscript
-# Declare constants and variables
-constant platform_name is "TechScript 2.0"
-counter is 0
-
-# Functions use 'to name(params):' with colon and indentation
-to calculate_bonus(score, base_payout):
-    if score >= 90:
-        return base_payout * 2.0
-    else if score >= 75:
-        return base_payout * 1.5
-    else:
-        return base_payout
-
-to greet_developer(name):
-    say "Hello, {name}! Welcome to {platform_name}."
-    return "done"
-
-# Execution
-greet_developer("Engineer")
-
-bonus is calculate_bonus(95, 500.0)
-say "Awarded Bonus: ${bonus}"
-
-# Counted repetition loop
-repeat 3 times:
-    say "Writing clean, native, high-performance code."
-
-# While loop with 'becomes' reassignment
-while counter < 2:
-    counter becomes counter + 1
-    say "Processing job {counter}..."
-```
-
-Run it immediately:
-```bash
-tsc run main.txs
-```
+| Platform / Target | Tier | Build Artifact | Verification Evidence |
+| :--- | :---: | :--- | :--- |
+| **Windows x86_64** | **Tier 1** | `TechScript_Setup.exe`, `tsc.exe`, `.zip` | Native Windows 11 compilation, 100/100 tests pass |
+| **Android APK** | **Tier 1** | `TechScript-AppForge-v2.0.0-release.apk` | Scheme v2 signed, verified on real device (`10ME8DF1CT0001Z`) |
+| **WebForge Static Web** | **Tier 1** | `dist/` (HTML, CSS, JS, SQLite, 3D CSG) | Deployed to [techscript.is-a.dev](https://techscript.is-a.dev/techscript/) |
+| **Linux x86_64 / aarch64** | **Tier 1** | `.tar.gz` pre-compiled binaries | GitHub Actions CI/CD automated cross-compilation |
+| **macOS (Apple Silicon & Intel)** | **Tier 1** | `.tar.gz` pre-compiled binaries | GitHub Actions CI/CD native macOS runner builds |
+| **Android Termux** | **Tier 1** | `techscript-2.0.0-termux-aarch64.tar.gz` | Built for `aarch64-linux-android` |
+| **Docker** | **Tier 1** | `ghcr.io/tcode-motion/techscript` | Multi-stage slim container with automated GHCR CI |
 
 ---
 
@@ -411,20 +506,6 @@ tsc run main.txs
 - [**Contributing Guidelines**](CONTRIBUTING.md) — How to contribute to TechScript.
 - [**Code of Conduct**](docs/CODE_OF_CONDUCT.md) — Community behavioral standards.
 - [**Media Guidelines**](docs/assets/README.md) — Guidelines for screenshots, logos, and videos.
-
----
-
-## 📋 Comprehensive Platform Support Matrix
-
-| Platform / Target | Tier | Build Artifact | Verification Evidence |
-| :--- | :---: | :--- | :--- |
-| **Windows x86_64** | **Tier 1** | `TechScript_Setup.exe`, `tsc.exe`, `.zip` | Native Windows 11 compilation, 100/100 tests pass |
-| **Android APK** | **Tier 1** | `TechScript-AppForge-v2.0.0-release.apk` | Scheme v2 signed, verified on real device (`10ME8DF1CT0001Z`) |
-| **WebForge Static Web** | **Tier 1** | `dist/` (HTML, CSS, JS, SQLite, 3D CSG) | Deployed to [techscript.is-a.dev](https://techscript.is-a.dev/techscript/) |
-| **Linux x86_64 / aarch64** | **Tier 1** | `.tar.gz` pre-compiled binaries | GitHub Actions CI/CD automated cross-compilation |
-| **macOS (Apple Silicon & Intel)** | **Tier 1** | `.tar.gz` pre-compiled binaries | GitHub Actions CI/CD native macOS runner builds |
-| **Android Termux** | **Tier 1** | `techscript-2.0.0-termux-aarch64.tar.gz` | Built for aarch64-linux-android |
-| **Docker** | **Tier 1** | `ghcr.io/tcode-motion/techscript` | Multi-stage slim container with automated GHCR CI |
 
 ---
 

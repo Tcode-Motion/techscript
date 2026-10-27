@@ -78,7 +78,20 @@ impl StdlibRegistry {
                     let msg = args[0].to_string();
                     #[cfg(target_os = "windows")]
                     {
-                        let _ = std::process::Command::new("msg").args(["*", &msg]).spawn();
+                        use base64::Engine;
+                        use std::process::Command;
+
+                        let b64_msg = base64::engine::general_purpose::STANDARD.encode(msg.encode_utf16().flat_map(|c| c.to_le_bytes()).collect::<Vec<u8>>());
+
+                        let script = format!(
+                            "Add-Type -AssemblyName PresentationFramework; [System.Windows.MessageBox]::Show([System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('{}')), 'Alert')",
+                            b64_msg
+                        );
+                        let b64_script = base64::engine::general_purpose::STANDARD.encode(script.encode_utf16().flat_map(|c| c.to_le_bytes()).collect::<Vec<u8>>());
+
+                        let _ = Command::new("powershell")
+                            .args(["-EncodedCommand", &b64_script])
+                            .spawn();
                     }
                     #[cfg(not(target_os = "windows"))]
                     {
@@ -126,5 +139,59 @@ mod tests {
         let alert = module.exports.get("alert").unwrap();
         assert_eq!(alert.name(), "alert");
         assert_eq!(alert.arity(), 1);
+    }
+
+    #[test]
+    fn test_alert_execution_with_special_characters() {
+        use std::collections::HashSet;
+        use techscript_runtime::context::{RuntimeConfig, RuntimeContext};
+
+        let mut registry = StdlibRegistry {
+            modules: std::collections::HashMap::new(),
+        };
+        registry.register_notification();
+
+        let module = registry.get_module("std.notification").unwrap();
+        let alert = module.exports.get("alert").unwrap();
+
+        let mut caps = HashSet::new();
+        caps.insert(Capability::Process);
+        let mut ctx = RuntimeContext::new(RuntimeConfig {
+            strict_mode: false,
+            max_recursion_depth: 1000,
+            enable_assertions: true,
+            capabilities: caps,
+        });
+
+        // Test alert with quotes and special characters to ensure escaping/encoding safety
+        let result = alert.call(
+            &mut ctx,
+            vec![RuntimeValue::Str("Hello 'world' \"& calc.exe;".to_string())],
+        );
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_alert_capability_denied() {
+        use std::collections::HashSet;
+        use techscript_runtime::context::{RuntimeConfig, RuntimeContext};
+
+        let mut registry = StdlibRegistry {
+            modules: std::collections::HashMap::new(),
+        };
+        registry.register_notification();
+
+        let module = registry.get_module("std.notification").unwrap();
+        let alert = module.exports.get("alert").unwrap();
+
+        let mut ctx = RuntimeContext::new(RuntimeConfig {
+            strict_mode: false,
+            max_recursion_depth: 1000,
+            enable_assertions: true,
+            capabilities: HashSet::new(), // Deny all capabilities including Process
+        });
+
+        let result = alert.call(&mut ctx, vec![RuntimeValue::Str("Test alert".to_string())]);
+        assert!(result.is_err());
     }
 }

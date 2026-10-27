@@ -182,8 +182,9 @@ Requires Python 3.10+. This installs the CLI (`tech run`, `tech repl`, `tech che
 ### 🐧 Linux (Ubuntu, Kali, Debian, Arch)
 
 ```bash
-# One-line installer
-curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
+# Universal installer
+curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh -o install.sh
+bash install.sh
 
 # Or, on Debian/Ubuntu:
 sudo apt update && sudo apt install techscript
@@ -195,8 +196,9 @@ sudo apt update && sudo apt install techscript
 # Homebrew
 brew install tcode-motion/techscript/techscript
 
-# Or the same one-line installer used on Linux
-curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
+# Or the same universal installer used on Linux
+curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh -o install.sh
+bash install.sh
 ```
 
 ### 📱 Android (Termux)

@@ -101,12 +101,14 @@ Modern development is fragmented, bloated, and brittle:
 
 **Windows (PowerShell)**
 ```powershell
-irm https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.ps1 | iex
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.ps1 -OutFile install.ps1
+.\install.ps1
 ```
 
 **Linux / macOS / Android Termux**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh -o install.sh
+bash install.sh
 ```
 
 **Standalone Packages**
@@ -345,8 +347,8 @@ Ships with a first-class **AI Developer Skill** ([`skills/techscript/SKILL.md`](
 | Platform | Install |
 |----------|---------|
 | Google Antigravity / Agentic IDEs | Auto-loaded from [`.agents/skills/techscript/SKILL.md`](.agents/skills/techscript/SKILL.md) |
-| Cursor / Claude Code / Codex (POSIX) | `curl -fsSL .../install.sh | bash` |
-| Windows PowerShell | `irm .../install.ps1 | iex` |
+| Cursor / Claude Code / Codex (POSIX) | `curl -fsSL .../install.sh -o install.sh && bash install.sh` |
+| Windows PowerShell | `Invoke-WebRequest -Uri .../install.ps1 -OutFile install.ps1; .\install.ps1` |
 
 Full scripts: [POSIX install.sh](https://raw.githubusercontent.com/Tcode-Motion/techscript/main/skills/techscript/install.sh) &middot; [PowerShell install.ps1](https://raw.githubusercontent.com/Tcode-Motion/techscript/main/skills/techscript/install.ps1)
 

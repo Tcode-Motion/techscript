@@ -1,0 +1,8 @@
+# 09 - Safe Error Handling
+# Path: examples/09_error_handling/error_handling.txs
+
+try:
+    say "Attempting operation..."
+    throw "File not found"
+catch err:
+    say "Caught expected error: {err}"

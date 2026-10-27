@@ -4,6 +4,39 @@ Release history for the TechScript compiler, runtime, standard library, and deve
 
 ---
 
+## TechScript 2.0.1 (Stable Release & Language Spec Lock)
+
+**Release date:** 2026-10-27
+**Release tag:** `v2.0.1`
+**Compatibility line:** `v2.0.x`
+
+This milestone release locks the canonical TechScript language syntax specification across all compiler crates, implements full conformance verification across all 100 official examples, delivers the pure-TechScript AppForge mobile engine with liquid glass UI on Android, and packages the verified production release APK.
+
+### Key Highlights
+
+- **Authoritative Canonical Syntax Locking**: Fully unified grammar across lexer, parser, semantic analyzer, interpreter, and VM:
+  - Variable declaration with `is` (`count is 0`) and reassignment with `becomes` (`count becomes count + 1`).
+  - Constant declarations using `constant name is value`.
+  - Functions declared using `to name(params):` with colon and 4-space indentation.
+  - Return statements using `return` and output using `say`.
+  - Native double-quoted string interpolation (`"Value: {val}"`) with escaped braces (`\{`, `\}`) and automatic literal fallback for raw JSON.
+  - Loops with `repeat N times:`, `for item in collection:`, and `while condition:`.
+- **Compiler & Lexer Fixes**:
+  - Implemented top-level and DSL block dedent token consumption in parser, resolving expression parsing conflicts.
+  - Enhanced lexer string scanner to distinguish raw JSON curly braces from expression interpolation blocks.
+- **100% Example Verification**:
+  - All 100 official TechScript examples (`examples/01_display/` through `examples/10_cli_tool/` + WebForge + AppForge) verified and passing (`100/100 PASSED`) via `tsc run`.
+- **AppForge Native Android Release APK**:
+  - Compiled and verified `dist/TechScript-AppForge-v2.0.0-release.apk` (30,529,303 bytes).
+  - Production v2 signature verified using `apksigner` with SHA-256 certificate thumbprint: `02:27:B2:0B:40:23:AC:AF:32:66:DB:D9:89:CE:D1:31:B8:9B:AA:E4:06:4F:A7:5E:43:19:9F:61:90:EA:E0:57`.
+  - Fully tested on physical Android device (`10ME8DF1CT0001Z`, Android 14, arm64-v8a).
+- **CI/CD & Repository Security**:
+  - Multi-platform GitHub Actions workflows updated for Ubuntu, Windows, and macOS.
+  - Protected private keystores (`*.jks`, `*.keystore`) and Android `local.properties` in `.gitignore`.
+  - Canonical website and repository URLs verified (`https://techscript.is-a.dev/techscript/`).
+
+---
+
 ## TechScript 2.0.0.1
 
 **Release date:** 2026-09-15

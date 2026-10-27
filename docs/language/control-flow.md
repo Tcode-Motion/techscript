@@ -1,71 +1,93 @@
-# TechScript Syntax Guide
+# Control Flow & Syntax Guide
 
-This document defines the formal grammar, keywords, and structural layout of TechScript.
+This document defines the formal grammar, canonical constructs, and control flow in TechScript.
 
 ---
 
 ## 📐 Block Structures
-Unlike C/C++ or JavaScript, TechScript does not use curly braces `{}` to define scopes. Blocks are defined by indentation or line breaks, and closed using the `end` keyword. Semicolons are not allowed.
+TechScript blocks are defined by a colon `:` followed by 4-space indentation. No curly braces `{}` or closing keywords like `end` or `done` are used for ordinary control flow or functions.
 
 ```txs
-# A typical block structure
-do print_numbers(max)
-    for i in 1..=max
-        say i
-    end
-end
+to print_numbers(max_count):
+    count is 1
+    while count <= max_count:
+        say "Number: {count}"
+        count becomes count + 1
+
+print_numbers(3)
 ```
 
 ---
 
-## 🔑 Keywords
+## 🔀 Conditionals (`if`, `else if`, `else`)
 
-TechScript defines a set of **canonical keywords**:
+Conditionals use standard readable expressions followed by a colon and indented body:
 
-| Keyword | Purpose |
-|:---|:---|
-| `do` | Defines a function |
-| `send` | Returns a value from a function |
-| `when` | Initiates a conditional block |
-| `else when` | Alternative conditional arm |
-| `else` | Default conditional arm |
-| `loop` | Counted loop |
-| `repeat` | While loop |
-| `for` | Collection iterator |
-| `in` | Membership checks & iterator binding |
-| `match` | Pattern matching statement |
-| `case` | Pattern matching arm |
-| `default` | Pattern matching fallback |
-| `try` | Exception boundary |
-| `catch` | Exception handler |
-| `throw` | Explicit panic or error |
-| `use` | Imports a module |
-| `class` | Declares a model/class |
-| `struct` | Declares a structured type |
-| `enum` | Declares a nominal enum |
-| `trait` | Shared behaviors interface |
-| `interface` | Contract layout |
-| `const` | Declares a constant |
-| `null` | Absence of value |
-| `say` | Built-in output print |
-| `ask` | Built-in input read |
-| `break` | Loop exit |
-| `continue` | Loop skip iteration |
-| `async` | Asynchronous modifier |
-| `await` | Futures block wait |
-| `parallel` | Multi-thread group execution |
-| `end` | Closes block scopes |
-| `new` | Instantiate class models |
-| `self` | Instance reference |
+```txs
+score is 85
+
+if score >= 90:
+    say "Grade: A"
+else if score >= 80:
+    say "Grade: B"
+else if score >= 70:
+    say "Grade: C"
+else:
+    say "Grade: Needs improvement"
+```
 
 ---
 
-## 📝 Comments
+## 🔁 Repetition Loops (`repeat N times:`)
 
-Single-line comments start with a `#` symbol:
+For executing code a fixed number of times, TechScript provides the clean `repeat` construct:
+
 ```txs
-# This is a comment
-x = 10 # This is an inline comment
+repeat 3 times:
+    say "Welcome to TechScript!"
 ```
 
-Multi-line comments are not supported by the syntax; repeat `#` on each line instead.
+---
+
+## 🔄 Iteration (`for item in collection:`)
+
+Iterate across arrays, strings, or collections:
+
+```txs
+fruits is ["Apple", "Banana", "Cherry"]
+
+for fruit in fruits:
+    say "Fruit: {fruit}"
+```
+
+---
+
+## ⏳ While Loops (`while condition:`)
+
+Execute continuously while a condition remains true:
+
+```txs
+active is true
+attempts is 0
+
+while active:
+    attempts becomes attempts + 1
+    if attempts >= 3:
+        active becomes false
+```
+
+---
+
+## 🔑 Canonical Keyword Summary
+
+| Construct | Canonical Syntax | Prohibited Legacy |
+| :--- | :--- | :--- |
+| Variable Declaration | `name is "val"` | `let`, `var`, `make` |
+| Variable Reassignment | `x becomes x + 1` | `:=`, `=` |
+| Constant | `constant max is 100` | `const`, `val` |
+| Function | `to name(param):` | `do`, `fn`, `def`, `func` |
+| Return | `return val` | `send val`, `give val` |
+| Output | `say "Message"` | `print()`, `println` |
+| Conditional | `if`, `else if`, `else:` | `when`, `else when` |
+| Counted Loop | `repeat N times:` | `loop N`, `repeat N end` |
+| Delimiters | `:` + 4-space indent | `end`, `done`, `{}` |

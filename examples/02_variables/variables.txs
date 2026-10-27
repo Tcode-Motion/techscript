@@ -1,0 +1,11 @@
+# 02 - Variables and Reassignment
+# Path: examples/02_variables/variables.txs
+
+name is "TechScript"
+version is 3
+constant author is "Tanmoy"
+
+say "Project: {name} v{version} by {author}"
+
+version becomes version + 1
+say "Next version: {version}"

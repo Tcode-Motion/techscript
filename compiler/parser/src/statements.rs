@@ -120,24 +120,6 @@ impl<'a> Parser<'a> {
             || self.check(TokenKind::Send)
         {
             let start_pos = self.peek().span.start;
-            let kw_token = self.peek();
-            if kw_token.kind == TokenKind::Return {
-                reporter.report(techscript_errors::Diagnostic::new(
-                    techscript_errors::DiagnosticLevel::Warning,
-                    techscript_errors::ErrorCode::TSW1003,
-                    "Warning TSW1003: 'return' is deprecated. Use 'send' to return values."
-                        .to_string(),
-                    kw_token.span,
-                ));
-            } else if kw_token.kind == TokenKind::Give {
-                reporter.report(techscript_errors::Diagnostic::new(
-                    techscript_errors::DiagnosticLevel::Warning,
-                    techscript_errors::ErrorCode::TSW1005,
-                    "Warning TSW1005: 'give' is deprecated. Use 'send' to return values."
-                        .to_string(),
-                    kw_token.span,
-                ));
-            }
             self.advance();
             let mut value = None;
             // Check if there is an expression on the same line
@@ -345,14 +327,6 @@ impl<'a> Parser<'a> {
     /// Parse block ` { statement* } `
     pub fn parse_block(&mut self, reporter: &mut DiagnosticReporter) -> ParseResult<Block> {
         let start_pos = self.peek().span.start;
-        if self.check(TokenKind::LeftBrace) {
-            reporter.report(techscript_errors::Diagnostic::new(
-                techscript_errors::DiagnosticLevel::Warning,
-                techscript_errors::ErrorCode::TSW1006,
-                "Warning TSW1006: Braces are deprecated. Use 'then ... end' or canonical end blocks instead.".to_string(),
-                self.peek().span,
-            ));
-        }
         self.consume(
             TokenKind::LeftBrace,
             ErrorCode::E0104,
@@ -374,14 +348,6 @@ impl<'a> Parser<'a> {
             }
         }
 
-        if self.check(TokenKind::RightBrace) {
-            reporter.report(techscript_errors::Diagnostic::new(
-                techscript_errors::DiagnosticLevel::Warning,
-                techscript_errors::ErrorCode::TSW1006,
-                "Warning TSW1006: Braces are deprecated. Use 'then ... end' or canonical end blocks instead.".to_string(),
-                self.peek().span,
-            ));
-        }
         self.consume(
             TokenKind::RightBrace,
             ErrorCode::E0105,
@@ -396,14 +362,6 @@ impl<'a> Parser<'a> {
     /// if/when condition { body } elif condition { body } else { body }
     fn parse_if_stmt(&mut self, reporter: &mut DiagnosticReporter) -> ParseResult<IfStmt> {
         let start_pos = self.peek().span.start;
-        if self.check(TokenKind::If) {
-            reporter.report(techscript_errors::Diagnostic::new(
-                techscript_errors::DiagnosticLevel::Warning,
-                techscript_errors::ErrorCode::TSW1007,
-                "Warning TSW1007: 'if' is deprecated. Use 'when' instead.".to_string(),
-                self.peek().span,
-            ));
-        }
         self.advance(); // consume if/when
 
         // Support English-like WebForge event syntax: when <TargetId> is <clicked/submitted/...>:
@@ -461,14 +419,6 @@ impl<'a> Parser<'a> {
             } else if self.match_token(TokenKind::Else) {
                 // Check if followed by "if" or "when" for backward compatibility else-ifs
                 if self.check(TokenKind::If) || self.check(TokenKind::When) {
-                    if self.check(TokenKind::If) {
-                        reporter.report(techscript_errors::Diagnostic::new(
-                            techscript_errors::DiagnosticLevel::Warning,
-                            techscript_errors::ErrorCode::TSW1007,
-                            "Warning TSW1007: 'if' is deprecated. Use 'when' instead.".to_string(),
-                            self.peek().span,
-                        ));
-                    }
                     self.advance(); // consume if/when
                     let cond =
                         self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
@@ -509,6 +459,7 @@ impl<'a> Parser<'a> {
             reporter,
         )?;
         let iterable = self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
+        self.match_token(TokenKind::Colon);
         let body = self.parse_block_or_then_end(reporter)?;
 
         let span = Span::new(start_pos, body.span.end);
@@ -518,27 +469,26 @@ impl<'a> Parser<'a> {
     /// while condition { body }
     fn parse_while_stmt(&mut self, reporter: &mut DiagnosticReporter) -> ParseResult<WhileStmt> {
         let start_pos = self.peek().span.start;
-        reporter.report(techscript_errors::Diagnostic::new(
-            techscript_errors::DiagnosticLevel::Warning,
-            techscript_errors::ErrorCode::TSW1008,
-            "Warning TSW1008: 'while' is deprecated. Use 'repeat' instead.".to_string(),
-            self.peek().span,
-        ));
         self.advance(); // consume while
 
         let condition = self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
+        self.match_token(TokenKind::Colon);
         let body = self.parse_block_or_then_end(reporter)?;
 
         let span = Span::new(start_pos, body.span.end);
         Ok(WhileStmt::new(self.next_id(), condition, body, span))
     }
 
-    /// repeat count { body }
+    /// repeat count [times] { body }
     fn parse_repeat_stmt(&mut self, reporter: &mut DiagnosticReporter) -> ParseResult<RepeatStmt> {
         let start_pos = self.peek().span.start;
         self.advance(); // consume repeat
 
         let count = self.parse_expression(techscript_syntax::Precedence::None, reporter)?;
+        if self.peek().lexeme == "times" {
+            self.advance(); // consume optional "times" keyword
+        }
+        self.match_token(TokenKind::Colon);
         let body = self.parse_block_or_then_end(reporter)?;
 
         let span = Span::new(start_pos, body.span.end);
@@ -557,6 +507,7 @@ impl<'a> Parser<'a> {
             ));
         }
         self.advance(); // consume try/attempt
+        self.match_token(TokenKind::Colon);
 
         let body = self.parse_block_or_then_end(reporter)?;
         self.consume(
@@ -566,6 +517,7 @@ impl<'a> Parser<'a> {
             reporter,
         )?;
         let catch_var = self.parse_identifier(reporter)?;
+        self.match_token(TokenKind::Colon);
         let catch_body = self.parse_block_or_then_end(reporter)?;
 
         let span = Span::new(start_pos, catch_body.span.end);
@@ -810,6 +762,9 @@ impl<'a> Parser<'a> {
             let (bp, ch) = self.parse_dsl_body_delimited(&kind, false, reporter)?;
             body_props = bp;
             children = ch;
+            if self.check(TokenKind::End) {
+                self.advance();
+            }
         } else {
             // Neither brace nor colon.
             // If the next line has 'end', parse body as classic block. Otherwise it's a standalone element (e.g. `button "Get Started"`).
@@ -836,6 +791,9 @@ impl<'a> Parser<'a> {
                 let (bp, ch) = self.parse_dsl_body_delimited(&kind, false, reporter)?;
                 body_props = bp;
                 children = ch;
+                if self.check(TokenKind::End) {
+                    self.advance();
+                }
             } else {
                 if !self.is_at_end()
                     && (self.check(TokenKind::Newline) || self.check(TokenKind::Semicolon))

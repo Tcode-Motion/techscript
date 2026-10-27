@@ -1,59 +1,74 @@
 # Variables in TechScript
 
-**Status: Implemented**
+**Status: Implemented & Canonical**
 
-Variables in TechScript are dynamically typed, and they are defined on their first assignment.
+Variables in TechScript are dynamically typed, strictly scoped, and follow the canonical declaration and reassignment grammar.
 
 ---
 
-## 🏷️ Assignment
-No keywords like `var`, `let`, or `make` are used. Simply assign a value to an identifier:
+## 🏷️ Declaration (`is`)
+TechScript uses `is` for declaring and binding a new variable:
 
 ```txs
-name = "Alice"
-age = 30
-is_active = true
+name is "Alice"
+age is 30
+is_active is true
 ```
 
-If you attempt to access an identifier before assigning to it, the compiler will trigger an undefined variable error (`TSE0300`):
+If you attempt to access an identifier before defining it, the compiler triggers an undefined variable diagnostic (`TSE0300`):
 ```txs
 say undefined_var # Compile error!
 ```
 
 ---
 
-## 🔄 Reassignment
-Variables can be reassigned to values of any type:
+## 🔒 Constants (`constant ... is`)
+Immutable values are declared using `constant`:
 
 ```txs
-x = 42
-say x      # 42
+constant max_attempts is 5
+constant app_name is "TechScript"
+```
 
-x = "Now a string"
-say x      # Now a string
+---
+
+## 🔄 Reassignment (`becomes`)
+To change the value of an existing variable, use `becomes`:
+
+```txs
+count is 0
+say "Initial: {count}"     # Initial: 0
+
+count becomes count + 1
+say "Updated: {count}"     # Updated: 1
+
+x is 42
+say "Number: {x}"
+
+x becomes "Now a string"
+say "Text: {x}"
 ```
 
 ---
 
 ## 🧬 Scoping Rules
-TechScript uses lexical scoping. Variables defined inside a block (such as a function, loop, or conditional) are not accessible outside that block:
+TechScript uses lexical scoping with indentation blocks. Variables defined inside a function, loop, or conditional are not accessible outside that block:
 
 ```txs
-do process()
-    local_val = 100
-    say local_val
-end
+to process():
+    local_val is 100
+    say "Inside: {local_val}"
 
 process()
-say local_val # Compile error! (local_val is out of scope)
+# say local_val  # Compile error: local_val is out of scope
 ```
 
 Inner blocks can shadow variables from outer scopes:
 ```txs
-x = 5
-when true
-    x = 10 # shadows outer x
-    say x  # 10
-end
-say x      # 5
+x is 5
+if true:
+    x is 10 # Shadows outer x within block
+    say "Block x: {x}" # 10
+
+say "Outer x: {x}"     # 5
 ```

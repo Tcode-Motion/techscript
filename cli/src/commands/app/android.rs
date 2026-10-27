@@ -25,13 +25,13 @@ use std::time::Instant;
 
 // Android ABIs to build. arm64-v8a covers virtually all modern devices.
 const ANDROID_ABIS: &[(&str, &str)] = &[
-    ("arm64-v8a",  "aarch64-linux-android"),
-    ("x86_64",     "x86_64-linux-android"),
+    ("arm64-v8a", "aarch64-linux-android"),
+    ("x86_64", "x86_64-linux-android"),
 ];
 
 // NDK paths
-const NDK_VERSION:  &str = "28.2.13676358";
-const NDK_BASE:     &str = "C:\\AndroidSDK\\ndk";
+const NDK_VERSION: &str = "28.2.13676358";
+const NDK_BASE: &str = "C:\\AndroidSDK\\ndk";
 const NDK_API_LEVEL: &str = "26"; // minSdk in build.gradle.kts
 
 pub struct AndroidBuildResult {
@@ -61,21 +61,30 @@ pub fn build(
     // ─────────────────────────────────────────────────────────────────────────
     // Step 1: Compile .txs sources → app_spec.json
     // ─────────────────────────────────────────────────────────────────────────
-    println!("{} {} Compiling TechScript sources → app_spec.json",
-        "[1/5]".dimmed(), "tsc".cyan().bold());
+    println!(
+        "{} {} Compiling TechScript sources → app_spec.json",
+        "[1/5]".dimmed(),
+        "tsc".cyan().bold()
+    );
     stage_app_assets(manifest, project_dir, verbose)?;
 
     // ─────────────────────────────────────────────────────────────────────────
     // Step 2: Cross-compile Rust runtime → libts_android.so for each ABI
     // ─────────────────────────────────────────────────────────────────────────
-    println!("{} {} Cross-compiling TechScript runtime → libts_android.so",
-        "[2/5]".dimmed(), "cargo".cyan().bold());
+    println!(
+        "{} {} Cross-compiling TechScript runtime → libts_android.so",
+        "[2/5]".dimmed(),
+        "cargo".cyan().bold()
+    );
     compile_rust_native_runtime(project_dir, is_release, verbose)?;
 
     // ─────────────────────────────────────────────────────────────────────────
     // Step 3: Stage .so files into android/app/src/main/jniLibs/<abi>/
     // ─────────────────────────────────────────────────────────────────────────
-    println!("{} Staging libts_android.so into jniLibs/", "[3/5]".dimmed());
+    println!(
+        "{} Staging libts_android.so into jniLibs/",
+        "[3/5]".dimmed()
+    );
     stage_native_libraries(project_dir, &android_dir, is_release, verbose)?;
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -89,8 +98,12 @@ pub fn build(
         "assembleDebug"
     };
 
-    println!("{} {} Packaging APK via Gradle [{}]",
-        "[4/5]".dimmed(), "gradle".cyan().bold(), gradle_task.yellow());
+    println!(
+        "{} {} Packaging APK via Gradle [{}]",
+        "[4/5]".dimmed(),
+        "gradle".cyan().bold(),
+        gradle_task.yellow()
+    );
     run_gradle(&android_dir, gradle_task, verbose)?;
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -120,12 +133,18 @@ pub fn build(
 
     let elapsed = start_time.elapsed().as_secs_f64();
 
-    println!("\n{} TechScript AppForge native APK built in {:.1}s",
-        "✓".green().bold(), elapsed);
+    println!(
+        "\n{} TechScript AppForge native APK built in {:.1}s",
+        "✓".green().bold(),
+        elapsed
+    );
     println!("  Artifact:   {}", dest.display().to_string().cyan());
     println!("  Size:       {:.1} MB", size as f64 / 1_048_576.0);
     println!("  Java/Kotlin: {}", "none".green().bold());
-    println!("  Runtime:     {}", "Rust (libts_android.so via NativeActivity)".green());
+    println!(
+        "  Runtime:     {}",
+        "Rust (libts_android.so via NativeActivity)".green()
+    );
 
     Ok(AndroidBuildResult {
         artifact_path: dest,
@@ -146,8 +165,8 @@ fn compile_rust_native_runtime(
     verbose: bool,
 ) -> Result<(), anyhow::Error> {
     // Find the workspace root (parent dirs until Cargo.toml with [workspace] is found)
-    let workspace_root = find_workspace_root(project_dir)
-        .unwrap_or_else(|| project_dir.to_path_buf());
+    let workspace_root =
+        find_workspace_root(project_dir).unwrap_or_else(|| project_dir.to_path_buf());
 
     let ndk_bin = format!(
         "{}\\{}\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin",
@@ -161,17 +180,25 @@ fn compile_rust_native_runtime(
             "{}\\{}-linux-android{}-clang.cmd",
             ndk_bin,
             // strip the "-linux-android" suffix to get the arch prefix for clang
-            rust_target.replace("-linux-android", "").replace("-androideabi", ""),
+            rust_target
+                .replace("-linux-android", "")
+                .replace("-androideabi", ""),
             NDK_API_LEVEL
         );
 
         // Build the android_runtime crate specifically
         let mut cmd = Command::new("cargo");
         cmd.arg("build")
-            .arg("-p").arg("techscript_android_runtime")
-            .arg("--target").arg(rust_target)
+            .arg("-p")
+            .arg("techscript_android_runtime")
+            .arg("--target")
+            .arg(rust_target)
             .arg("--config")
-            .arg(format!("target.{}.linker=\"{}\"", rust_target, linker_cmd.replace('\\', "\\\\")));
+            .arg(format!(
+                "target.{}.linker=\"{}\"",
+                rust_target,
+                linker_cmd.replace('\\', "\\\\")
+            ));
 
         if is_release {
             cmd.arg("--release");
@@ -188,8 +215,12 @@ fn compile_rust_native_runtime(
         let output = cmd.output()?;
         if !output.status.success() {
             let stderr = String::from_utf8_lossy(&output.stderr);
-            eprintln!("{} cargo build failed for {}:\n{}",
-                "error:".red().bold(), abi, stderr);
+            eprintln!(
+                "{} cargo build failed for {}:\n{}",
+                "error:".red().bold(),
+                abi,
+                stderr
+            );
             anyhow::bail!("Rust cross-compilation failed for target {}", rust_target);
         }
 
@@ -212,11 +243,15 @@ fn stage_native_libraries(
     is_release: bool,
     verbose: bool,
 ) -> Result<(), anyhow::Error> {
-    let workspace_root = find_workspace_root(project_dir)
-        .unwrap_or_else(|| project_dir.to_path_buf());
+    let workspace_root =
+        find_workspace_root(project_dir).unwrap_or_else(|| project_dir.to_path_buf());
 
     let profile = if is_release { "release" } else { "debug" };
-    let jni_dir = android_dir.join("app").join("src").join("main").join("jniLibs");
+    let jni_dir = android_dir
+        .join("app")
+        .join("src")
+        .join("main")
+        .join("jniLibs");
 
     for (abi, rust_target) in ANDROID_ABIS {
         let so_src = workspace_root
@@ -232,12 +267,17 @@ fn stage_native_libraries(
         if so_src.exists() {
             fs::copy(&so_src, &dest)?;
             let size = fs::metadata(&dest)?.len();
-            println!("    {} Staged libts_android.so → jniLibs/{abi}/ ({:.1} MB)",
-                "✓".green(), size as f64 / 1_048_576.0);
+            println!(
+                "    {} Staged libts_android.so → jniLibs/{abi}/ ({:.1} MB)",
+                "✓".green(),
+                size as f64 / 1_048_576.0
+            );
         } else {
             if verbose {
-                println!("    {} jniLibs/{abi}/libts_android.so not staged (not built)",
-                    "○".dimmed(), );
+                println!(
+                    "    {} jniLibs/{abi}/libts_android.so not staged (not built)",
+                    "○".dimmed(),
+                );
             }
         }
     }
@@ -290,7 +330,10 @@ fn stage_app_assets(
     fs::write(&spec_path, &spec_json)?;
 
     if verbose {
-        println!("  Staged app_spec.json ({} bytes) → assets/", spec_json.len());
+        println!(
+            "  Staged app_spec.json ({} bytes) → assets/",
+            spec_json.len()
+        );
     }
 
     Ok(())
@@ -342,12 +385,12 @@ fn compile_txs_to_spec(
         };
 
         let title = match *id {
-            "home"        => "Home",
-            "showcase"    => "Showcase",
-            "projects"    => "Projects",
-            "tools"       => "Tools",
-            "about"       => "About",
-            _             => id,
+            "home" => "Home",
+            "showcase" => "Showcase",
+            "projects" => "Projects",
+            "tools" => "Tools",
+            "about" => "About",
+            _ => id,
         };
 
         screens.push(serde_json::json!({
@@ -419,7 +462,12 @@ fn run_gradle(android_dir: &Path, task: &str, verbose: bool) -> Result<(), anyho
     );
 
     if !output.status.success() {
-        eprintln!("{} Gradle '{}' failed:\n{}", "error:".red().bold(), task, stderr);
+        eprintln!(
+            "{} Gradle '{}' failed:\n{}",
+            "error:".red().bold(),
+            task,
+            stderr
+        );
         anyhow::bail!("Gradle build failed. See logs/build-android-{ts}.log");
     }
 
@@ -471,8 +519,16 @@ fn locate_file(dir: &Path, ext: &str) -> Result<PathBuf, anyhow::Error> {
 
 fn verify_zip_structure(path: &Path) -> Result<(), anyhow::Error> {
     let bytes = fs::read(path)?;
-    if bytes.len() < 4 || bytes[0] != 0x50 || bytes[1] != 0x4b || bytes[2] != 0x03 || bytes[3] != 0x04 {
-        anyhow::bail!("Artifact '{}' is not a valid APK/ZIP (bad PK header)", path.display());
+    if bytes.len() < 4
+        || bytes[0] != 0x50
+        || bytes[1] != 0x4b
+        || bytes[2] != 0x03
+        || bytes[3] != 0x04
+    {
+        anyhow::bail!(
+            "Artifact '{}' is not a valid APK/ZIP (bad PK header)",
+            path.display()
+        );
     }
     Ok(())
 }
@@ -480,11 +536,15 @@ fn verify_zip_structure(path: &Path) -> Result<(), anyhow::Error> {
 pub fn resolve_android_home() -> Result<String, anyhow::Error> {
     for var in &["ANDROID_HOME", "ANDROID_SDK_ROOT"] {
         if let Ok(v) = std::env::var(var) {
-            if Path::new(&v).exists() { return Ok(v); }
+            if Path::new(&v).exists() {
+                return Ok(v);
+            }
         }
     }
     for candidate in &["C:\\AndroidSDK", "C:\\Android"] {
-        if Path::new(candidate).exists() { return Ok(candidate.to_string()); }
+        if Path::new(candidate).exists() {
+            return Ok(candidate.to_string());
+        }
     }
     anyhow::bail!("Android SDK not found. Set ANDROID_HOME environment variable.")
 }
@@ -492,10 +552,17 @@ pub fn resolve_android_home() -> Result<String, anyhow::Error> {
 fn which_gradle() -> Result<String, anyhow::Error> {
     if let Ok(gh) = std::env::var("GRADLE_HOME") {
         let b = Path::new(&gh).join("bin").join("gradle.bat");
-        if b.exists() { return Ok(b.to_string_lossy().to_string()); }
+        if b.exists() {
+            return Ok(b.to_string_lossy().to_string());
+        }
     }
-    for c in &["C:\\Gradle\\gradle-8.7\\bin\\gradle.bat", "C:\\Gradle\\bin\\gradle.bat"] {
-        if Path::new(c).exists() { return Ok(c.to_string()); }
+    for c in &[
+        "C:\\Gradle\\gradle-8.7\\bin\\gradle.bat",
+        "C:\\Gradle\\bin\\gradle.bat",
+    ] {
+        if Path::new(c).exists() {
+            return Ok(c.to_string());
+        }
     }
     Ok("gradle".to_string())
 }

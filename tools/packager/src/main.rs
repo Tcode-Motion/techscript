@@ -369,7 +369,7 @@ fn extract_workspace_version(root_dir: &Path) -> anyhow::Result<String> {
         .and_then(|t| t.get("version"))
         .and_then(|v| v.as_str())
         .map(|s| s.to_string())
-        .unwrap_or_else(|| "2.0.0".to_string());
+        .unwrap_or_else(|| "2.0.2".to_string());
 
     Ok(version)
 }
@@ -446,9 +446,9 @@ fn package_vsix(root_dir: &Path, dest_vsix: &Path, version: &str) -> anyhow::Res
         r#"<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
   <Metadata>
-    <Identity Id="techscript" Version="{}" Publisher="techscript-motion" />
-    <DisplayName>TechScript 2.0</DisplayName>
-    <Description>Official TechScript 2.0 language integration.</Description>
+    <Identity Id="techscript" Version="{}" Publisher="tanmoy" />
+    <DisplayName>TechScript</DisplayName>
+    <Description>Official TechScript 2.0 language support, syntax highlighting, snippets, formatting, and language server protocol integration.</Description>
     <Icon>extension/icon.png</Icon>
   </Metadata>
   <Installation>
@@ -457,6 +457,7 @@ fn package_vsix(root_dir: &Path, dest_vsix: &Path, version: &str) -> anyhow::Res
   <Dependencies />
   <Assets>
     <Asset Type="Microsoft.VisualStudio.Code.Manifest" Path="extension/package.json" />
+    <Asset Type="Microsoft.VisualStudio.Services.Content.Details" Path="extension/README.md" />
   </Assets>
 </PackageManifest>"#,
         version

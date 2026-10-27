@@ -60,6 +60,30 @@ impl BuiltinRegistry {
             println!();
             Ok(Value::Null)
         });
+        self.register("print", |args| {
+            let mut first = true;
+            for arg in args {
+                if !first {
+                    print!(" ");
+                }
+                print!("{}", arg);
+                first = false;
+            }
+            println!();
+            Ok(Value::Null)
+        });
+        self.register("println", |args| {
+            let mut first = true;
+            for arg in args {
+                if !first {
+                    print!(" ");
+                }
+                print!("{}", arg);
+                first = false;
+            }
+            println!();
+            Ok(Value::Null)
+        });
         self.register("fstring_concat", |args| {
             let mut res = String::new();
             for arg in args {

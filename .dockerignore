@@ -1,0 +1,17 @@
+target/
+.git/
+.github/
+.gradle/
+**/build/
+**/dist/
+node_modules/
+*.vsix
+*.jks
+*.keystore
+local.properties
+releases/
+images&videos/
+docs/assets/video/
+.tsc-cache/
+.graphify-cache/
+graphify-out/

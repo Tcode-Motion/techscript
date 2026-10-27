@@ -1,0 +1,28 @@
+# ==============================================================================
+# TechScript Canonical Human-Readable Syntax Demonstration
+# Path: examples/canonical_syntax/canonical_syntax.txs
+# ==============================================================================
+
+constant app_title is "TechScript"
+name is "Developer"
+count is 0
+
+to greet(person):
+    return "Hello, {person}!"
+
+to add(a, b):
+    return a + b
+
+if count < 10:
+    count becomes count + 1
+
+if count == 1:
+    say "Welcome to {app_title}! Count: {count}"
+else:
+    say "Count is different"
+
+say greet(name)
+say "Sum: {add(10, 25)}"
+
+repeat 3 times:
+    say "Practise a little every day!"

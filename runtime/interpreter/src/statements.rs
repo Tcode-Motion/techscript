@@ -817,6 +817,7 @@ impl Callable for ModelConstructor {
                 ctx: techscript_runtime::RuntimeContext::new(ctx.config.clone()),
                 env: Rc::clone(&ctx.global_env),
                 call_stack: Vec::new(),
+                main_invoked: false,
             };
             let init_val = match temp_interp.visit_expression(&field.initializer) {
                 Ok(val) => val,
@@ -904,6 +905,7 @@ impl Callable for BridgedMethod {
             },
             env: Rc::clone(&self.user_func.closure),
             call_stack: Vec::new(),
+            main_invoked: false,
         };
 
         // Push new local scope for method execution

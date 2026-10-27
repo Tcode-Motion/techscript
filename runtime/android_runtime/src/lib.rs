@@ -15,26 +15,26 @@
 //         → 5 primary application sections with real code and diagnostics
 // =============================================================================
 
-use android_activity::{
-    AndroidApp, InputStatus, MainEvent, PollEvent,
-};
-use std::time::{Duration, Instant};
+use android_activity::{AndroidApp, InputStatus, MainEvent, PollEvent};
+use std::time::Duration;
 
 mod font8x8;
-pub mod typography;
 mod geometry3d;
 mod glass_ui;
+pub mod native_bridge;
 mod renderer;
 mod theme;
 mod touch;
+pub mod txs_bridge;
 mod txs_runtime;
+pub mod typography;
 mod ui_model;
 
-use ui_model::AppSpec;
 use renderer::NativeRenderer;
-use txs_runtime::TechScriptRuntime;
 use theme::Theme;
 use touch::TouchTracker;
+use txs_runtime::TechScriptRuntime;
+use ui_model::AppSpec;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Application Entry Point — called by NativeActivity, not by Java
@@ -51,17 +51,34 @@ fn android_main(app: AndroidApp) {
 
     // Load TechScript app specification
     let spec = load_app_spec(&app);
-    log::info!("App: {} v{} by {}", spec.app.name, spec.app.version, spec.app.creator);
+    log::info!(
+        "App: {} v{} by {}",
+        spec.app.name,
+        spec.app.version,
+        spec.app.creator
+    );
 
     let mut runtime = TechScriptRuntime::new(spec);
     runtime.on_create();
+
+    // Restore persisted settings
+    let settings = native_bridge::NativeBridge::load_settings(&app);
+    runtime.set_theme_mode(&settings.theme_mode);
+    if !settings.last_screen.is_empty() {
+        runtime.navigate(&settings.last_screen);
+    }
+    runtime.auto_rotate = true;
+    runtime.anim_speed = settings.anim_speed.max(0.8);
+
+    // Load and execute real .txs scripts from Android APK assets
+    runtime
+        .bridge
+        .load_and_execute_assets(|path| try_load_asset(&app, path));
 
     let mut renderer: Option<NativeRenderer> = None;
     let mut current_theme = Theme::resolve_system(&app);
     let mut touch_tracker = TouchTracker::default();
 
-    let target_frame_ns = 1_000_000_000u64 / 60;
-    let mut last_frame = Instant::now();
     let mut needs_redraw = true;
     let mut should_exit = false;
 
@@ -69,14 +86,20 @@ fn android_main(app: AndroidApp) {
     // Main event loop — driven by Android OS native events
     // ─────────────────────────────────────────────────────────────────────
     loop {
-        app.poll_events(Some(Duration::from_millis(8)), |event| {
+        app.poll_events(Some(Duration::ZERO), |event| {
             match event {
                 // ── Lifecycle ──────────────────────────────────────────
                 PollEvent::Main(MainEvent::InitWindow { .. }) => {
-                    log::info!("[TechScript] Window created — initializing EGL & GLES 2.0 renderer");
+                    log::info!(
+                        "[TechScript] Window created — initializing EGL & GLES 2.0 renderer"
+                    );
                     match NativeRenderer::new(&app, &current_theme) {
                         Ok(r) => {
-                            log::info!("[TechScript] EGL & GLES 2.0 hardware renderer ready ({}x{})", r.width, r.height);
+                            log::info!(
+                                "[TechScript] EGL & GLES 2.0 hardware renderer ready ({}x{})",
+                                r.width,
+                                r.height
+                            );
                             renderer = Some(r);
                         }
                         Err(e) => {
@@ -109,10 +132,39 @@ fn android_main(app: AndroidApp) {
                     should_exit = true;
                 }
                 PollEvent::Main(MainEvent::ConfigChanged { .. }) => {
+                    log::info!("[TechScript] ConfigChanged (Orientation / Display Metrics change)");
                     current_theme = Theme::resolve_system(&app);
+                    if let (Some(ref mut r), Some(win)) = (&mut renderer, app.native_window()) {
+                        let nw = win.width();
+                        let nh = win.height();
+                        if nw > 0 && nh > 0 {
+                            r.resize(nw, nh);
+                        }
+                    }
+                    runtime.scroll_y = runtime.scroll_y.clamp(0.0, runtime.max_scroll_y);
+                    needs_redraw = true;
+                }
+                PollEvent::Main(MainEvent::WindowResized { .. }) => {
+                    log::info!("[TechScript] WindowResized");
+                    if let (Some(ref mut r), Some(win)) = (&mut renderer, app.native_window()) {
+                        let nw = win.width();
+                        let nh = win.height();
+                        if nw > 0 && nh > 0 {
+                            r.resize(nw, nh);
+                        }
+                    }
+                    runtime.scroll_y = runtime.scroll_y.clamp(0.0, runtime.max_scroll_y);
                     needs_redraw = true;
                 }
                 PollEvent::Main(MainEvent::SaveState { saver, .. }) => {
+                    let settings = native_bridge::AppSettings {
+                        theme_mode: runtime.theme_mode().to_string(),
+                        last_screen: runtime.active_screen().to_string(),
+                        auto_rotate: runtime.auto_rotate,
+                        anim_speed: runtime.anim_speed,
+                        scroll_y: runtime.scroll_y,
+                    };
+                    native_bridge::NativeBridge::save_settings(&app, &settings);
                     let state = runtime.active_screen().as_bytes().to_vec();
                     saver.store(&state);
                 }
@@ -127,10 +179,15 @@ fn android_main(app: AndroidApp) {
                                         event,
                                         &mut runtime,
                                         r,
+                                        &app,
                                         &mut touch_tracker,
                                         &mut needs_redraw,
                                     );
-                                    if handled { InputStatus::Handled } else { InputStatus::Unhandled }
+                                    if handled {
+                                        InputStatus::Handled
+                                    } else {
+                                        InputStatus::Unhandled
+                                    }
                                 } else {
                                     InputStatus::Unhandled
                                 }
@@ -152,7 +209,11 @@ fn android_main(app: AndroidApp) {
         // ── Frame render (continuous 60fps for 3D animation + UI) ───────
         if let Some(ref mut r) = renderer {
             // Apply theme switch if requested
-            let active_theme = if runtime.is_dark() { Theme::dark() } else { Theme::light() };
+            let active_theme = if runtime.is_dark() {
+                Theme::dark()
+            } else {
+                Theme::light()
+            };
 
             match r.render_frame(&mut runtime, &active_theme) {
                 Ok(_) => {
@@ -163,14 +224,10 @@ fn android_main(app: AndroidApp) {
                     renderer = None;
                 }
             }
+        } else {
+            // Window not initialized or backgrounded — idle sleep to save battery
+            std::thread::sleep(Duration::from_millis(16));
         }
-
-        // Frame pacing — target 60 fps
-        let elapsed = last_frame.elapsed().as_nanos() as u64;
-        if elapsed < target_frame_ns {
-            std::thread::sleep(Duration::from_nanos(target_frame_ns - elapsed));
-        }
-        last_frame = Instant::now();
     }
 
     log::info!("[TechScript] android_main() exiting cleanly");

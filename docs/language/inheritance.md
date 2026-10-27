@@ -8,32 +8,25 @@ Inheritance allows a class to inherit properties and methods from a parent class
 To inherit from another class, specify the parent class name in parentheses after the subclass name:
 
 ```txs
-class Animal
-    name = ""
+class Animal:
+    name is ""
 
-    do init(name)
-        self.name = name
-    end
+    to init(name):
+        self.name becomes name
 
-    do sleep()
-        say $"Self.name is sleeping..."
-    end
-end
+    to sleep():
+        say "{self.name} is sleeping..."
 
 # Dog inherits from Animal
-class Dog(Animal)
-    breed = ""
+class Dog(Animal):
+    breed is ""
 
-    do init(name, breed)
-        # Call parent constructor
-        self.name = name
-        self.breed = breed
-    end
+    to init(name, breed):
+        self.name becomes name
+        self.breed becomes breed
 
-    do bark()
+    to bark():
         say "Woof!"
-    end
-end
 ```
 
 ---
@@ -42,21 +35,15 @@ end
 Subclasses can override methods defined on the parent class:
 
 ```txs
-class Cat(Animal)
-    do sleep()
+class Cat(Animal):
+    to sleep():
         say "Cat is sleeping on the couch."
-    end
-end
 
-my_cat = new Cat("Whiskers")
+my_cat is new Cat("Whiskers")
 my_cat.sleep() # "Cat is sleeping on the couch."
 ```
 
 ---
 
 ## 🚫 Multiple Inheritance Prevention
-TechScript supports only single inheritance (a class can inherit from only one parent class). To share behaviors across multiple distinct domains, implement multiple [Traits](traits.md) instead:
-
-```txs
-class Dog(Animal) with Speaker, Runner
-```
+TechScript supports single inheritance. To share behaviors across multiple distinct types, implement [Traits](traits.md) or [Interfaces](interfaces.md).

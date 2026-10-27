@@ -1,4 +1,10 @@
 {
+  "activationEvents": [
+    "onLanguage:techscript"
+  ],
+  "bugs": {
+    "url": "https://github.com/Tcode-Motion/techscript/issues"
+  },
   "categories": [
     "Programming Languages",
     "Formatters",
@@ -6,31 +12,6 @@
     "Debuggers"
   ],
   "contributes": {
-    "configuration": {
-      "title": "TechScript",
-      "properties": {
-        "techscript.compiler.path": {
-          "default": "tsc",
-          "description": "Path to the TechScript compiler executable.",
-          "type": "string"
-        },
-        "techscript.lsp.path": {
-          "default": "",
-          "description": "Path to the TechScript language server. Leave empty to use techscript-lsp from PATH.",
-          "type": "string"
-        },
-        "techscript.format.onSave": {
-          "default": false,
-          "description": "Format TechScript files after saving.",
-          "type": "boolean"
-        },
-        "techscript.lint.onSave": {
-          "default": true,
-          "description": "Run the TechScript linter after saving a TechScript file.",
-          "type": "boolean"
-        }
-      }
-    },
     "commands": [
       {
         "command": "techscript.run",
@@ -113,6 +94,31 @@
         "title": "TechScript: Show Bytecode"
       }
     ],
+    "configuration": {
+      "properties": {
+        "techscript.compiler.path": {
+          "default": "tsc",
+          "description": "Path to the TechScript compiler executable.",
+          "type": "string"
+        },
+        "techscript.format.onSave": {
+          "default": false,
+          "description": "Format TechScript files after saving.",
+          "type": "boolean"
+        },
+        "techscript.lint.onSave": {
+          "default": true,
+          "description": "Run the TechScript linter after saving a TechScript file.",
+          "type": "boolean"
+        },
+        "techscript.lsp.path": {
+          "default": "",
+          "description": "Path to the TechScript language server. Leave empty to use techscript-lsp from PATH.",
+          "type": "string"
+        }
+      },
+      "title": "TechScript"
+    },
     "debuggers": [
       {
         "configurationAttributes": {
@@ -252,8 +258,14 @@
       ]
     }
   },
-  "description": "TechScript Virtian language support, autocomplete, diagnostics, formatting, and debugger integration.",
-  "displayName": "TechScript Virtian",
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  },
+  "description": "Official TechScript language support, syntax highlighting, snippets, formatting, and language server protocol integration.",
+  "devDependencies": {
+    "@vscode/vsce": "^3.6.2"
+  },
+  "displayName": "TechScript",
   "engines": {
     "vscode": "^1.75.0"
   },
@@ -261,6 +273,7 @@
     "color": "#1e1e24",
     "theme": "dark"
   },
+  "homepage": "https://techscript.is-a.dev/",
   "icon": "icon.png",
   "keywords": [
     "techscript",
@@ -275,26 +288,13 @@
     "snippets"
   ],
   "license": "Apache-2.0",
-  "homepage": "https://is-a.dev/techscript/",
+  "main": "./extension.js",
+  "name": "techscript",
+  "publisher": "tanmoy",
+  "qna": "https://github.com/Tcode-Motion/techscript/discussions",
   "repository": {
     "type": "git",
     "url": "https://github.com/Tcode-Motion/techscript"
   },
-  "bugs": {
-    "url": "https://github.com/Tcode-Motion/techscript/issues"
-  },
-  "qna": "https://github.com/Tcode-Motion/techscript/discussions",
-  "main": "./extension.js",
-  "name": "techscript",
-  "publisher": "Tcode-Motion",
-  "version": "2.0.0",
-  "activationEvents": [
-    "onLanguage:techscript"
-  ],
-  "dependencies": {
-    "vscode-languageclient": "^9.0.1"
-  },
-  "devDependencies": {
-    "@vscode/vsce": "^3.6.2"
-  }
+  "version": "2.0.3"
 }

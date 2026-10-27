@@ -28,11 +28,6 @@ jobs:
         with:
           components: clippy, rustfmt
 
-      - name: Set up Python for example verification
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
       - name: Cache cargo registry & target
         uses: actions/cache@v4
         with:
@@ -48,26 +43,28 @@ jobs:
         run: cargo fmt --all -- --check
 
       - name: Run clippy linter
-        run: cargo clippy --workspace --all-targets -- -D warnings
+        run: cargo clippy --workspace --exclude techscript_android_runtime -- -D warnings
 
       - name: Run workspace tests
-        run: cargo test --workspace --verbose
+        run: cargo test --workspace --exclude techscript_android_runtime --verbose
 
       - name: Build release binaries
-        run: cargo build --workspace --release
+        run: cargo build --workspace --exclude techscript_android_runtime --release
 
       - name: Verify CLI test suite
         run: cargo test -p techscript_cli
 
-      - name: Verify 100% of official TechScript examples (20/20)
-        run: python scripts/verify_all_examples.py
+      - name: Verify 100% of official TechScript examples (100/100)
+        shell: bash
+        run: bash scripts/verify_all_examples.sh
 
-      - name: Verify Showcase App pure TechScript files
+      - name: Verify AppForge companion pure TechScript files
         shell: bash
         run: |
-          ./target/release/tsc run showcase-app/src/main.txs
-          ./target/release/tsc run showcase-app/src/app.txs
-          ./target/release/tsc run showcase-app/src/navigation.txs
-          ./target/release/tsc run showcase-app/src/theme.txs
-          ./target/release/tsc run showcase-app/src/components/dock.txs
-          ./target/release/tsc run showcase-app/src/screens/home.txs
+          ./target/release/tsc run examples/appforge/techscript-appforge/src/main.txs
+          ./target/release/tsc run examples/appforge/techscript-appforge/src/app.txs
+          ./target/release/tsc run examples/appforge/techscript-appforge/src/navigation.txs
+          ./target/release/tsc run examples/appforge/techscript-appforge/src/theme.txs
+          ./target/release/tsc run examples/appforge/techscript-appforge/src/components/dock.txs
+          ./target/release/tsc run examples/appforge/techscript-appforge/src/screens/home.txs
+

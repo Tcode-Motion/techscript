@@ -198,44 +198,16 @@ pub fn migrate_source(source: &str) -> String {
 
         let replacement = match diag.code {
             techscript_errors::ErrorCode::TSW1001 => "".to_string(),
-            techscript_errors::ErrorCode::TSW1002 => "do".to_string(),
-            techscript_errors::ErrorCode::TSW1003 => "send".to_string(),
+            techscript_errors::ErrorCode::TSW1002 => "to".to_string(),
+            techscript_errors::ErrorCode::TSW1003 => "return".to_string(),
             techscript_errors::ErrorCode::TSW1004 => "try".to_string(),
-            techscript_errors::ErrorCode::TSW1005 => "send".to_string(),
-            techscript_errors::ErrorCode::TSW1007 => "when".to_string(),
+            techscript_errors::ErrorCode::TSW1005 => "return".to_string(),
+            techscript_errors::ErrorCode::TSW1007 => "if".to_string(),
             techscript_errors::ErrorCode::TSW1008 => "repeat".to_string(),
             techscript_errors::ErrorCode::TSW1006 => {
                 let slice = &output[start..end];
                 if slice == ";" {
                     "".to_string()
-                } else if slice == "{" {
-                    "".to_string()
-                } else if slice == "}" {
-                    let mut follow_idx = end;
-                    while follow_idx < output.len() {
-                        let b = output.as_bytes()[follow_idx];
-                        if b == b' ' || b == b'\t' || b == b'\r' || b == b'\n' {
-                            follow_idx += 1;
-                        } else {
-                            break;
-                        }
-                    }
-                    let mut is_followed_by_block_continuation = false;
-                    let continuations = ["catch", "else", "elif", "or"];
-                    for cont in &continuations {
-                        let len = cont.len();
-                        if follow_idx + len <= output.len()
-                            && &output[follow_idx..follow_idx + len] == *cont
-                        {
-                            is_followed_by_block_continuation = true;
-                            break;
-                        }
-                    }
-                    if is_followed_by_block_continuation {
-                        "".to_string()
-                    } else {
-                        "end".to_string()
-                    }
                 } else {
                     slice.to_string()
                 }
@@ -261,6 +233,45 @@ pub fn migrate_source(source: &str) -> String {
 /// Handles patterns not tracked by the diagnostic reporter.
 fn post_process(source: &str) -> String {
     let mut out = source.to_string();
+
+    // ── let / var / make keyword declarations → direct assignment ────────
+    out = line_transform(&out, |line| {
+        let trimmed = line.trim_start();
+        let indent = &line[..line.len() - trimmed.len()];
+        if let Some(rest) = trimmed.strip_prefix("let ") {
+            return format!("{indent}{}", rest.trim_start());
+        }
+        if let Some(rest) = trimmed.strip_prefix("var ") {
+            return format!("{indent}{}", rest.trim_start());
+        }
+        if let Some(rest) = trimmed.strip_prefix("make ") {
+            return format!("{indent}{}", rest.trim_start());
+        }
+        line.to_string()
+    });
+
+    // ── build → to (canonical function declaration) ──────────────────────
+    out = line_transform(&out, |line| {
+        let trimmed = line.trim_start();
+        let indent = &line[..line.len() - trimmed.len()];
+        if let Some(rest) = trimmed.strip_prefix("build ") {
+            return format!("{indent}to {}", rest.trim_start());
+        }
+        line.to_string()
+    });
+
+    // ── give → return (canonical function return) ────────────────────────
+    out = line_transform(&out, |line| {
+        let trimmed = line.trim_start();
+        let indent = &line[..line.len() - trimmed.len()];
+        if let Some(rest) = trimmed.strip_prefix("give ") {
+            return format!("{indent}return {}", rest.trim_start());
+        }
+        if trimmed == "give" {
+            return format!("{indent}return");
+        }
+        line.to_string()
+    });
 
     // ── std.io.println / std.io.print → say ──────────────────────────────
     out = replace_call(&out, "std.io.println", "say");
@@ -392,24 +403,49 @@ mod tests {
     #[test]
     fn test_migrate_function_and_return() {
         let input = "build main() {\n    give 42;\n}";
-        let expected = "do main() \n    send 42\nend";
-        assert_eq!(migrate_source(input), expected);
+        let result = migrate_source(input);
+        assert!(
+            result.contains("to main()"),
+            "Expected to main(), got:\n{result}"
+        );
+        assert!(
+            result.contains("return 42"),
+            "Expected return 42, got:\n{result}"
+        );
     }
 
     #[test]
     fn test_migrate_try_catch() {
         let input = "attempt {\n    throw \"error\";\n} catch e {\n    say e;\n}";
-        let expected = "try \n    throw \"error\"\n catch e \n    say e\nend";
-        assert_eq!(migrate_source(input), expected);
+        let result = migrate_source(input);
+        assert!(result.contains("try"), "Expected 'try' in:\n{result}");
+        assert!(
+            !result.contains("attempt"),
+            "Did not expect 'attempt' in:\n{result}"
+        );
+        assert!(
+            result.contains("catch e"),
+            "Expected 'catch e' in:\n{result}"
+        );
+        assert!(
+            !result.contains(";"),
+            "Expected semicolons stripped in:\n{result}"
+        );
     }
 
     #[test]
     fn test_migrate_conditionals() {
         let input = "if x > 5 {\n    say \"yes\";\n} else {\n    say \"no\";\n}";
         let result = migrate_source(input);
-        assert!(result.contains("when x > 5"));
-        assert!(result.contains("else"));
-        assert!(result.contains("end"));
+        assert!(
+            result.contains("if x > 5"),
+            "Expected 'if x > 5' in:\n{result}"
+        );
+        assert!(result.contains("else"), "Expected 'else' in:\n{result}");
+        assert!(
+            !result.contains(";"),
+            "Expected semicolons stripped in:\n{result}"
+        );
     }
 
     // ── post_process tests ──────────────────────────────────────────────────

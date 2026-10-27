@@ -307,3 +307,37 @@ end
     let res = run_source(source);
     assert!(res.is_ok());
 }
+
+#[test]
+fn test_interpreter_main_auto_execution() {
+    let source = r#"
+build main() {
+    return 42
+}
+"#;
+    let res = run_source(source);
+    assert!(res.is_ok());
+    assert_eq!(res.unwrap(), RuntimeValue::Int(42));
+}
+
+#[test]
+fn test_interpreter_main_explicit_call_no_double_execution() {
+    let source = r#"
+make counter = 0
+build main() {
+    counter = counter + 1
+    return counter
+}
+main()
+"#;
+    let mut reporter = DiagnosticReporter::new();
+    let tokens = lex(source, &mut reporter).unwrap();
+    let program = parse(&tokens, &mut reporter).unwrap();
+    let checked = analyze(program, &mut reporter).unwrap();
+    let mut interpreter = Interpreter::new();
+    let res = interpreter.interpret(&checked.program);
+    assert!(res.is_ok());
+    // counter must be 1, NOT 2!
+    let val = interpreter.env.borrow().lookup("counter").unwrap();
+    assert_eq!(val, RuntimeValue::Int(1));
+}

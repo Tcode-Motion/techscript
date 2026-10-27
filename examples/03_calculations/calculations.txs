@@ -1,0 +1,9 @@
+# 03 - Calculations and Arithmetic
+# Path: examples/03_calculations/calculations.txs
+
+price is 25
+quantity is 4
+shipping is 5
+
+total is (price * quantity) + shipping
+say "Total cost: {total}"

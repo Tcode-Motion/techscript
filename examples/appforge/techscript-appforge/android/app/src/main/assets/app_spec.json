@@ -16,9 +16,14 @@
       "screen": "home"
     },
     {
-      "id": "showcase",
-      "label": "Showcase",
-      "screen": "showcase"
+      "id": "explorer",
+      "label": "Explorer",
+      "screen": "explorer"
+    },
+    {
+      "id": "labs",
+      "label": "Labs",
+      "screen": "labs"
     },
     {
       "id": "projects",
@@ -26,9 +31,9 @@
       "screen": "projects"
     },
     {
-      "id": "tools",
-      "label": "Tools",
-      "screen": "tools"
+      "id": "docs",
+      "label": "Docs",
+      "screen": "docs"
     },
     {
       "id": "about",
@@ -44,9 +49,15 @@
       "widgets": []
     },
     {
-      "id": "showcase",
-      "source_file": "src/screens/showcase.txs",
-      "title": "Showcase",
+      "id": "explorer",
+      "source_file": "src/screens/explorer.txs",
+      "title": "Explorer",
+      "widgets": []
+    },
+    {
+      "id": "labs",
+      "source_file": "src/screens/labs.txs",
+      "title": "Labs",
       "widgets": []
     },
     {
@@ -56,9 +67,9 @@
       "widgets": []
     },
     {
-      "id": "tools",
-      "source_file": "src/screens/tools.txs",
-      "title": "Tools",
+      "id": "docs",
+      "source_file": "src/screens/docs.txs",
+      "title": "Documentation",
       "widgets": []
     },
     {
@@ -69,8 +80,8 @@
     }
   ],
   "theme": {
-    "accent": "#06b6d4",
+    "accent": "#22D3EE",
     "mode": "system",
-    "primary": "#4f46e5"
+    "primary": "#6366F1"
   }
 }

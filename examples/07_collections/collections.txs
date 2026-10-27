@@ -1,0 +1,7 @@
+# 07 - Lists and Collections
+# Path: examples/07_collections/collections.txs
+
+fruits is ["apple", "banana", "cherry"]
+say "First fruit: {fruits[0]}"
+say "Second fruit: {fruits[1]}"
+say "Total fruits: {len(fruits)}"

@@ -1,111 +1,102 @@
 # TechScript 2.0 Language Guide
 
-This guide introduces the core concepts and syntax of TechScript 2.0.
+This guide introduces the core concepts and canonical syntax of TechScript 2.0.
 
 ---
 
 ## 📐 Philosophy
-TechScript is designed around one core rule: **Write like a human, execute at native speeds.** Semicolons and curly braces are replaced by clean English-like keywords, and scopes are closed with the `end` keyword.
+TechScript is designed around one core rule: **Write like a human, execute at native speeds.** Blocks are defined using a colon `:` followed by 4-space indentation.
 
 ---
 
 ## 📦 Variables & Constants
-Variables are dynamically typed and initialized on first assignment:
+Variables are dynamically typed and initialized on first assignment using `is`:
 ```txs
-name = "Boss"
-age = 30
-is_active = true
+name is "Alice"
+age is 30
+is_active is true
+```
+
+Variables are updated using `becomes`:
+```txs
+age becomes age + 1
 ```
 
 Constants cannot be changed after declaration:
 ```txs
-const PI = 3.14159
+constant PI is 3.14159
 ```
 
 ---
 
 ## 🔀 Conditionals
-Use the `when` keyword for conditional branching:
+Use standard `if`, `else if`, and `else` blocks:
 ```txs
-score = 85
+score is 85
 
-when score >= 90
+if score >= 90:
     say "A"
-else when score >= 80
+else if score >= 80:
     say "B"
-else
+else:
     say "F"
-end
 ```
 
 ---
 
 ## 🔁 Loops
-TechScript features three types of loop structures:
+TechScript features clean loop structures:
 
-### Counted Loop (`loop`)
+### Counted Loop (`repeat N times:`)
 Executes a block exactly N times:
 ```txs
-loop 5
+repeat 5 times:
     say "Hello!"
-end
 ```
 
-### Condition Loop (`repeat`)
+### Condition Loop (`while`)
 Executes while a condition remains true:
 ```txs
-count = 0
-repeat count < 5
-    count += 1
-    say count
-end
+count is 0
+while count < 5:
+    count becomes count + 1
+    say "Count: {count}"
 ```
 
 ### Iterator Loop (`for`)
-Iterates over lists, maps, or ranges:
+Iterates over lists, maps, or collections:
 ```txs
-# Range iteration (inclusive)
-for i in 1..=5
-    say i
-end
-
-# List iteration
-names = ["Alice", "Bob"]
-for name in names
-    say name
-end
+names is ["Alice", "Bob"]
+for name in names:
+    say "Name: {name}"
 ```
 
 ---
 
 ## 🏗️ Functions
-Functions are declared using the `do` keyword and return values using the `send` keyword:
+Functions are declared using `to name(params):` and return values using `return`:
 ```txs
-do calculate_square(x)
-    send x * x
-end
+to calculate_square(x):
+    return x * x
 
-result = calculate_square(4)
-say result # 16
+result is calculate_square(4)
+say "Result: {result}" # 16
 ```
 
 ---
 
 ## 🧱 Objects & Models
-Classes are declared using the `class` keyword. Use the constructor method named `init` to initialize values:
+Classes are declared using the `class` keyword with colon and indentation:
 ```txs
-class Dog
-    name = ""
+class Dog:
+    name is ""
 
-    do init(name)
-        self.name = name
-    end
+    to init(name):
+        self.name becomes name
 
-    do speak()
-        say $"{self.name} says Woof!"
-    end
-end
+    to speak():
+        say "{self.name} says Woof!"
 
-my_dog = new Dog("Fido")
+my_dog is new Dog("Fido")
 my_dog.speak()
 ```

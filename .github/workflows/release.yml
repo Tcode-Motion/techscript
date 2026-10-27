@@ -184,7 +184,7 @@ jobs:
             
             ## 🚀 Getting Started
             
-            Documentation and interactive guides are available at [https://is-a.dev/techscript/](https://is-a.dev/techscript/).
+            Documentation and interactive guides are available at [https://techscript.is-a.dev/techscript/](https://techscript.is-a.dev/techscript/).
           draft: false
           prerelease: false
         env:

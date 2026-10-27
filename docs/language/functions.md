@@ -1,23 +1,34 @@
 # Functions in TechScript
 
-Functions are the core block units of logic inside TechScript programs.
+Functions are the core units of logic in TechScript.
 
 ---
 
-## 🏗️ Declaration
-Functions are declared using the `do` keyword and return values using the `send` keyword:
+## 🏗️ Declaration (`to name(params):`)
+Functions are declared using the `to` keyword followed by the function name, parameters, a colon `:`, and an indented block:
 
 ```txs
-do greet(name)
-    say $"Hello, {name}!"
-end
+to greet(name):
+    say "Hello, {name}!"
 
-do add(a, b)
-    send a + b
-end
+to add(a, b):
+    return a + b
 
-result = add(10, 20)
-say result # 30
+result is add(10, 20)
+say "Sum: {result}" # Sum: 30
+```
+
+---
+
+## 🎨 Return Values (`return`)
+Use `return` to send a value back to the caller:
+
+```txs
+to calculate_area(width, height):
+    return width * height
+
+area is calculate_area(5, 8)
+say "Area: {area}"
 ```
 
 ---
@@ -26,28 +37,23 @@ say result # 30
 You can define parameters with fallback values:
 
 ```txs
-do welcome(name, greeting = "Hello")
-    say $"{greeting}, {name}!"
-end
+to welcome(name, greeting = "Hello"):
+    say "{greeting}, {name}!"
 
 welcome("Alice")            # Hello, Alice!
-welcome("Bob", "Hi there") # Hi there, Bob!
+welcome("Bob", "Hi there")  # Hi there, Bob!
 ```
 
 ---
 
-## 🧬 Anonymous & Lambda Functions
-TechScript supports single-line lambda expressions:
+## 🔁 Recursion
+Functions can call themselves recursively:
 
 ```txs
-double = do(x) -> x * 2
-say double(5) # 10
-```
+to factorial(n):
+    if n <= 1:
+        return 1
+    return n * factorial(n - 1)
 
-And multi-line anonymous functions:
-```txs
-square = do(x)
-    send x * x
-end
-say square(4) # 16
+say "Factorial(5): {factorial(5)}" # 120
 ```

@@ -1,0 +1,11 @@
+# 06 - Functions and Return Values
+# Path: examples/06_functions/functions.txs
+
+to greet(name):
+    return "Hello, {name}!"
+
+to square(n):
+    return n * n
+
+say greet("World")
+say "Square of 7 is {square(7)}"

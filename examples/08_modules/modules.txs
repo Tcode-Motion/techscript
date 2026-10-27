@@ -1,0 +1,7 @@
+# 08 - Modules and Standard Library
+# Path: examples/08_modules/modules.txs
+
+use std.math
+
+val is std.math.sqrt(144)
+say "Square root of 144 is {val}"

@@ -1,82 +1,129 @@
 {
-  "Function": {
-    "prefix": "do",
-    "body": ["do ${1:name}(${2:parameters})", "    $0", "end"],
-    "description": "Declare a TechScript 2.0 function"
+  "Function Definition": {
+    "prefix": "to",
+    "body": [
+      "to ${1:name}(${2:parameters}):",
+      "    $0"
+    ],
+    "description": "Define a canonical TechScript function"
   },
-  "Function with return value": {
-    "prefix": "doreturn",
-    "body": ["do ${1:name}(${2:parameters})", "    send ${3:value}", "end"],
-    "description": "Declare a function that returns a value"
+  "Function with Return": {
+    "prefix": "toreturn",
+    "body": [
+      "to ${1:name}(${2:parameters}):",
+      "    $0",
+      "    return ${3:value}"
+    ],
+    "description": "Define a TechScript function with return statement"
   },
-  "Constant": {
-    "prefix": "const",
-    "body": ["const ${1:NAME} = ${2:value}"],
+  "Variable Declaration": {
+    "prefix": "is",
+    "body": [
+      "${1:name} is ${2:value}"
+    ],
+    "description": "Declare a new variable with 'is'"
+  },
+  "Variable Reassignment": {
+    "prefix": "becomes",
+    "body": [
+      "${1:name} becomes ${2:value}"
+    ],
+    "description": "Reassign an existing variable with 'becomes'"
+  },
+  "Constant Declaration": {
+    "prefix": "constant",
+    "body": [
+      "constant ${1:name} is ${2:value}"
+    ],
     "description": "Declare an immutable constant"
   },
-  "Conditional": {
-    "prefix": "when",
-    "body": ["when ${1:condition}", "    $2", "else", "    $0", "end"],
-    "description": "Create a when/else block"
+  "Print / Say": {
+    "prefix": "say",
+    "body": [
+      "say \"${1:Message: {value}}\""
+    ],
+    "description": "Output string or interpolated text"
   },
-  "Counted loop": {
-    "prefix": "loop",
-    "body": ["loop ${1:count}", "    $0", "end"],
-    "description": "Repeat a block a fixed number of times"
+  "If Conditional": {
+    "prefix": "if",
+    "body": [
+      "if ${1:condition}:",
+      "    $2",
+      "else:",
+      "    $0"
+    ],
+    "description": "If / Else conditional branch"
   },
-  "Condition loop": {
+  "If / Else If Conditional": {
+    "prefix": "ifelse",
+    "body": [
+      "if ${1:condition}:",
+      "    $2",
+      "else if ${3:other_condition}:",
+      "    $4",
+      "else:",
+      "    $0"
+    ],
+    "description": "If / Else If / Else conditional branch"
+  },
+  "Counted Repetition Loop": {
     "prefix": "repeat",
-    "body": ["repeat ${1:condition}", "    $0", "end"],
-    "description": "Repeat while a condition is true"
+    "body": [
+      "repeat ${1:3} times:",
+      "    $0"
+    ],
+    "description": "Repeat block N times"
   },
-  "Collection loop": {
+  "For Loop Iteration": {
     "prefix": "for",
-    "body": ["for ${1:item} in ${2:items}", "    $0", "end"],
-    "description": "Iterate over a collection"
+    "body": [
+      "for ${1:item} in ${2:collection}:",
+      "    $0"
+    ],
+    "description": "Iterate across collections or arrays"
   },
-  "Error handling": {
+  "While Loop": {
+    "prefix": "while",
+    "body": [
+      "while ${1:condition}:",
+      "    $0"
+    ],
+    "description": "Loop while condition evaluates to true"
+  },
+  "Try / Catch Error Boundary": {
     "prefix": "try",
-    "body": ["try", "    $1", "catch ${2:error}", "    $0", "end"],
-    "description": "Handle a recoverable error"
+    "body": [
+      "try:",
+      "    $1",
+      "catch ${2:err}:",
+      "    $0"
+    ],
+    "description": "Recoverable error boundary"
   },
-  "Class": {
+  "Class Definition": {
     "prefix": "class",
-    "body": ["class ${1:Name}", "    $0", "end"],
-    "description": "Declare a class"
+    "body": [
+      "class ${1:Name}:",
+      "    to init(${2:params}):",
+      "        $0"
+    ],
+    "description": "Declare a class model with constructor"
   },
-  "Constructor": {
-    "prefix": "init",
-    "body": ["do init(${1:parameters})", "    $0", "end"],
-    "description": "Declare a class constructor"
+  "WebForge Web Page": {
+    "prefix": "page",
+    "body": [
+      "page \"${1:/path}\":",
+      "    title is \"${2:Page Title}\"",
+      "    $0"
+    ],
+    "description": "WebForge declarative web route"
   },
-  "Enum": {
-    "prefix": "enum",
-    "body": ["enum ${1:Name}", "    ${2:Variant}", "end"],
-    "description": "Declare an enum"
-  },
-  "Trait": {
-    "prefix": "trait",
-    "body": ["trait ${1:Name}", "    $0", "end"],
-    "description": "Declare a trait"
-  },
-  "Interface": {
-    "prefix": "interface",
-    "body": ["interface ${1:Name}", "    $0", "end"],
-    "description": "Declare an interface"
-  },
-  "Import module": {
-    "prefix": "use",
-    "body": ["use ${1:module}"],
-    "description": "Import a module"
-  },
-  "Interpolated string": {
-    "prefix": "interp",
-    "body": ["$\"${1:Hello, {name}}\""],
-    "description": "Create an interpolated string"
-  },
-  "Test": {
-    "prefix": "test",
-    "body": ["do test_${1:name}()", "    $0", "end"],
-    "description": "Create a test function"
+  "AppForge Mobile Screen": {
+    "prefix": "screen",
+    "body": [
+      "screen \"${1:home}\":",
+      "    $0"
+    ],
+    "description": "AppForge mobile screen declaration"
   }
 }

@@ -81,6 +81,11 @@ impl VM {
                     .insert(func_name.clone(), RuntimeValue::Function(Rc::clone(func)));
             }
         }
+        // Register core runtime built-in functions (to_str, to_int, len, range, print, etc.)
+        for (name, func) in self.ctx.registry.iter() {
+            self.globals
+                .insert(name.to_string(), RuntimeValue::Function(Rc::clone(func)));
+        }
     }
 
     /// Evaluates bytecode from the entry module's entry function block.

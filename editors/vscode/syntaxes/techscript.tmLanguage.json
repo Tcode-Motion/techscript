@@ -3,8 +3,8 @@
   "name": "TechScript",
   "scopeName": "source.techscript",
   "patterns": [
-    { "include": "#attributes" },
     { "include": "#comments" },
+    { "include": "#attributes" },
     { "include": "#keywords" },
     { "include": "#types" },
     { "include": "#functions" },
@@ -27,9 +27,18 @@
     },
     "keywords": {
       "patterns": [
-        { "name": "keyword.control.techscript", "match": "\\b(when|else|loop|repeat|for|in|match|try|catch|end|send|await|parallel)\\b" },
-        { "name": "keyword.declaration.techscript", "match": "\\b(do|const|async|class|struct|enum|trait|interface|use|export|package|new)\\b" },
-        { "name": "keyword.operator.techscript", "match": "(=|==|!=|<|>|<=|>=|\\+|\\-|\\*|/|\\%|&&|\\|\\||!)" }
+        {
+          "name": "keyword.control.techscript",
+          "match": "\\b(if|else|repeat|times|while|for|in|match|case|default|try|catch|throw|return|say|ask|async|await|break|continue)\\b"
+        },
+        {
+          "name": "keyword.declaration.techscript",
+          "match": "\\b(to|is|becomes|constant|class|struct|enum|trait|interface|use|import|export|package|new)\\b"
+        },
+        {
+          "name": "keyword.operator.techscript",
+          "match": "(\\+|\\-|\\*|/|\\%|==|!=|<=|>=|<|>|&&|\\|\\||!|=)"
+        }
       ]
     },
     "types": {
@@ -40,14 +49,39 @@
     },
     "functions": {
       "patterns": [
-        { "name": "entity.name.function.techscript", "match": "\\b[a-z][a-zA-Z0-9_]*(?=\\s*\\()" }
+        { "name": "entity.name.function.techscript", "match": "(?<=to\\s+)[a-zA-Z_][a-zA-Z0-9_]*" },
+        { "name": "entity.name.function.call.techscript", "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*(?=\\s*\\()" }
       ]
     },
     "strings": {
       "patterns": [
-        { "name": "string.quoted.interpolated.techscript", "begin": "\\$\"", "end": "\"", "patterns": [{ "name": "constant.character.escape.techscript", "match": "\\\\." }] },
-        { "name": "string.quoted.double.techscript", "begin": "\"", "end": "\"", "patterns": [{ "name": "constant.character.escape.techscript", "match": "\\\\." }] },
-        { "name": "string.quoted.single.techscript", "begin": "'", "end": "'", "patterns": [{ "name": "constant.character.escape.techscript", "match": "\\\\." }] }
+        {
+          "name": "string.quoted.double.techscript",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            { "name": "constant.character.escape.techscript", "match": "\\\\." },
+            {
+              "name": "meta.embedded.expression.techscript",
+              "begin": "(?<!\\\\)\\{",
+              "end": "\\}",
+              "patterns": [
+                { "include": "#keywords" },
+                { "include": "#functions" },
+                { "include": "#numbers" },
+                { "include": "#literals" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.techscript",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            { "name": "constant.character.escape.techscript", "match": "\\\\." }
+          ]
+        }
       ]
     },
     "numbers": {
@@ -58,13 +92,14 @@
     },
     "literals": {
       "patterns": [
-        { "name": "constant.language.boolean.techscript", "match": "\\b(true|false|null)\\b" }
+        { "name": "constant.language.boolean.techscript", "match": "\\b(true|false)\\b" },
+        { "name": "constant.language.null.techscript", "match": "\\b(null|none)\\b" },
+        { "name": "variable.language.self.techscript", "match": "\\bself\\b" }
       ]
     },
     "dsl": {
       "patterns": [
-        { "name": "entity.name.tag.dsl.techscript", "match": "\\b(website|page|hero|section|card|button|link|nav|header|footer|input|form|main|aside|start|logo|rings|emblem|core|letter|circuits)\\b" },
-        { "name": "variable.other.dsl.techscript", "match": "\\b(text|color|size|count|thickness|shape|char|id|title|subtitle|url|label|placeholder)\\b" }
+        { "name": "entity.name.section.dsl.techscript", "match": "\\b(page|screen|widget|button|text|card|dock|row|column|spacer|database|table)\\b" }
       ]
     }
   }

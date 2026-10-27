@@ -33,10 +33,20 @@ android {
         manifestPlaceholders["nativeLibraryName"] = "ts_android"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("techscript-release.jks")
+            storePassword = "techscript2026"
+            keyAlias = "techscript"
+            keyPassword = "techscript2026"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled   = false
             isShrinkResources = false
+            signingConfig     = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

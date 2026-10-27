@@ -89,12 +89,15 @@ impl<'a> Parser<'a> {
     fn parse_variable_decl(&mut self, reporter: &mut DiagnosticReporter) -> ParseResult<VarDecl> {
         let start_pos = self.peek().span.start;
         let kw_span = self.peek().span;
-        reporter.report(techscript_errors::Diagnostic::new(
-            techscript_errors::DiagnosticLevel::Warning,
-            techscript_errors::ErrorCode::TSW1001,
-            "Warning TSW1001: Variable declaration keywords ('make', 'let', 'var') are deprecated. Declare variables automatically on assignment.".to_string(),
-            kw_span,
-        ));
+        if self.peek().kind == TokenKind::Make {
+            reporter.report(techscript_errors::Diagnostic::new(
+                techscript_errors::DiagnosticLevel::Warning,
+                techscript_errors::ErrorCode::TSW1001,
+                "Warning TSW1001: 'make' is deprecated. Use 'let' or direct assignment instead."
+                    .to_string(),
+                kw_span,
+            ));
+        }
         self.advance(); // consume keyword
 
         let pattern = self.parse_pattern(reporter)?;
@@ -178,19 +181,20 @@ impl<'a> Parser<'a> {
         }
 
         let kw = self.peek().kind;
-        if kw == TokenKind::Build || kw == TokenKind::Fun || kw == TokenKind::Function {
+        if kw == TokenKind::Build {
             reporter.report(techscript_errors::Diagnostic::new(
                 techscript_errors::DiagnosticLevel::Warning,
                 techscript_errors::ErrorCode::TSW1002,
-                "Warning TSW1002: 'build' is deprecated. Use 'do' for functions and top-level statements instead.".to_string(),
+                "Warning TSW1002: 'build' is deprecated. Use 'fn' or 'do' for functions instead."
+                    .to_string(),
                 self.peek().span,
             ));
-        } else if kw != TokenKind::Do {
+        } else if kw != TokenKind::Do && kw != TokenKind::Fun && kw != TokenKind::Function {
             let span = self.peek().span;
             reporter.report(techscript_errors::Diagnostic::new(
                 techscript_errors::DiagnosticLevel::Error,
                 ErrorCode::E0100,
-                "Expected do, build, or fun keyword in function declaration".to_string(),
+                "Expected fn, do, or fun keyword in function declaration".to_string(),
                 span,
             ));
             return Err(());
@@ -255,6 +259,7 @@ impl<'a> Parser<'a> {
             return_type = Some(self.parse_type_spec(reporter)?);
         }
 
+        self.match_token(TokenKind::Colon);
         let body = self.parse_block_or_then_end(reporter)?;
         let span = Span::new(start_pos, body.span.end);
 

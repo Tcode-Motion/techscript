@@ -1,16 +1,16 @@
-# Graph Report - techscript  (2026-10-24)
+# Graph Report - techscript  (2026-10-27)
 
 ## Corpus Check
-- 546 files · ~472,171 words
+- 570 files · ~538,613 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 5887 nodes · 9782 edges · 522 communities (410 shown, 112 thin omitted)
-- Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 37 edges (avg confidence: 0.8)
+- 6215 nodes · 10368 edges · 548 communities (428 shown, 120 thin omitted)
+- Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 36 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `bf87db3c`
+- Built from commit: `778d1c2b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -473,7 +473,6 @@
 - [[_COMMUNITY_Community 477|Community 477]]
 - [[_COMMUNITY_Community 478|Community 478]]
 - [[_COMMUNITY_Community 479|Community 479]]
-- [[_COMMUNITY_Community 480|Community 480]]
 - [[_COMMUNITY_Community 481|Community 481]]
 - [[_COMMUNITY_Community 482|Community 482]]
 - [[_COMMUNITY_Community 483|Community 483]]
@@ -483,13 +482,13 @@
 - [[_COMMUNITY_Community 487|Community 487]]
 - [[_COMMUNITY_Community 488|Community 488]]
 - [[_COMMUNITY_Community 489|Community 489]]
+- [[_COMMUNITY_Community 490|Community 490]]
 - [[_COMMUNITY_Community 491|Community 491]]
 - [[_COMMUNITY_Community 495|Community 495]]
 - [[_COMMUNITY_Community 496|Community 496]]
 - [[_COMMUNITY_Community 497|Community 497]]
 - [[_COMMUNITY_Community 498|Community 498]]
 - [[_COMMUNITY_Community 499|Community 499]]
-- [[_COMMUNITY_Community 500|Community 500]]
 - [[_COMMUNITY_Community 501|Community 501]]
 - [[_COMMUNITY_Community 502|Community 502]]
 - [[_COMMUNITY_Community 503|Community 503]]
@@ -511,18 +510,37 @@
 - [[_COMMUNITY_Community 519|Community 519]]
 - [[_COMMUNITY_Community 520|Community 520]]
 - [[_COMMUNITY_Community 521|Community 521]]
+- [[_COMMUNITY_Community 522|Community 522]]
+- [[_COMMUNITY_Community 523|Community 523]]
+- [[_COMMUNITY_Community 524|Community 524]]
+- [[_COMMUNITY_Community 525|Community 525]]
+- [[_COMMUNITY_Community 526|Community 526]]
+- [[_COMMUNITY_Community 527|Community 527]]
+- [[_COMMUNITY_Community 530|Community 530]]
+- [[_COMMUNITY_Community 536|Community 536]]
+- [[_COMMUNITY_Community 537|Community 537]]
+- [[_COMMUNITY_Community 538|Community 538]]
+- [[_COMMUNITY_Community 539|Community 539]]
+- [[_COMMUNITY_Community 540|Community 540]]
+- [[_COMMUNITY_Community 541|Community 541]]
+- [[_COMMUNITY_Community 542|Community 542]]
+- [[_COMMUNITY_Community 543|Community 543]]
+- [[_COMMUNITY_Community 544|Community 544]]
+- [[_COMMUNITY_Community 545|Community 545]]
+- [[_COMMUNITY_Community 546|Community 546]]
+- [[_COMMUNITY_Community 547|Community 547]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `Span` - 86 edges
 2. `NodeId` - 76 edges
 3. `TsValue` - 54 edges
-4. `Backend` - 45 edges
-5. `Self` - 42 edges
-6. `Vec` - 36 edges
-7. `IRBuilder` - 34 edges
-8. `LoweringContext` - 34 edges
-9. `TechScriptRuntime` - 34 edges
-10. `Result` - 29 edges
+4. `TechScriptRuntime` - 49 edges
+5. `Backend` - 45 edges
+6. `Self` - 42 edges
+7. `Vec` - 36 edges
+8. `IRBuilder` - 34 edges
+9. `LoweringContext` - 34 edges
+10. `NativeRenderer` - 33 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `execute()` --calls--> `find_manifest_in()`  [INFERRED]
@@ -558,11 +576,11 @@
 - 1-file cycle: `cli/src/commands/config.rs -> cli/src/commands/config.rs`
 - 1-file cycle: `cli/src/commands/deploy.rs -> cli/src/commands/deploy.rs`
 
-## Communities (522 total, 112 thin omitted)
+## Communities (548 total, 120 thin omitted)
 
 ### Community 0 - "LoweringContext"
-Cohesion: 0.05
-Nodes (36): 1. Overview, 2. Declarative 3D Syntax, 3. Modular 3D Scene Files (`.3txs`), 4. Responsive Resizing & WebGL Optimization, Components of a 3D Block, TechScript WebForge: 3D WebGL Graphics Guide, 1. Overview & Architecture, 2. Defining Schemas in TechScript (+28 more)
+Cohesion: 0.17
+Nodes (12): 1. System Requirements & Installation, 2. Creating Your First Project, 3. Project Directory Structure, 4. Running the Development Server, 5. Inspecting Registered Routes, 6. Building for Production, 7. Next Steps, Getting Started with TechScript WebForge (+4 more)
 
 ### Community 1 - "Span"
 Cohesion: 0.08
@@ -574,7 +592,7 @@ Nodes (30): Block, Callable, ConstDecl, DSLBlock, EnumDecl, ExecResult, FieldSpe
 
 ### Community 3 - ".compile_instruction"
 Cohesion: 0.19
-Nodes (11): CodegenContext, Drop, HashMap, Module, Result, Self, String, LLVMBackendOptions (+3 more)
+Nodes (11): Drop, HashMap, Module, Result, Self, String, cstring, LLVMBackendOptions (+3 more)
 
 ### Community 4 - "ResolveSymbols"
 Cohesion: 0.07
@@ -597,16 +615,16 @@ Cohesion: 0.09
 Nodes (62): c_char, HashMap, String, JmpBuf, ts_add(), ts_alloc_bool(), ts_alloc_enum(), ts_alloc_float() (+54 more)
 
 ### Community 9 - "cli/src/pipeline.rs"
-Cohesion: 0.20
-Nodes (17): Mat4, Self, Vec, compute_normal(), generate_crystal_mesh(), generate_hex_prism_mesh(), generate_mesh(), generate_octahedron_mesh() (+9 more)
+Cohesion: 0.15
+Nodes (44): Mat4, Self, Vec, add_box(), add_quad(), add_ring(), add_sphere(), add_strut() (+36 more)
 
 ### Community 10 - "packager/src/main.rs"
 Cohesion: 0.18
 Nodes (33): AsRef, build_and_copy_tools(), calculate_checksums_json(), compile_binary(), compile_inno_installer(), copy_dir_all(), copy_resources(), count_files() (+25 more)
 
 ### Community 11 - "interpreter_tests.rs"
-Cohesion: 0.14
-Nodes (12): analyze, parse, Result, RuntimeError, RuntimeValue, run_source(), test_interpreter_basic_arithmetic(), test_interpreter_dsl_block_produces_value() (+4 more)
+Cohesion: 0.15
+Nodes (11): Result, RuntimeError, RuntimeValue, run_source(), test_interpreter_basic_arithmetic(), test_interpreter_dsl_block_produces_value(), test_interpreter_dsl_block_with_code(), test_interpreter_empty() (+3 more)
 
 ### Community 12 - ".parse_statement"
 Cohesion: 0.21
@@ -621,8 +639,8 @@ Cohesion: 0.09
 Nodes (25): BytecodeModule, HashMap, Module, OptimizationLevel, Option, Path, PathBuf, Result (+17 more)
 
 ### Community 16 - "ProjectBuildGraph"
-Cohesion: 0.07
-Nodes (52): ExitCode, String, Program, RuntimeContext, dump_repl_ast(), dump_repl_bytecode(), dump_repl_ir(), eval_code() (+44 more)
+Cohesion: 0.14
+Nodes (32): Program, RuntimeContext, ordering, Result, RuntimeContext, RuntimeError, RuntimeValue, String (+24 more)
 
 ### Community 17 - "PassManager"
 Cohesion: 0.09
@@ -637,20 +655,20 @@ Cohesion: 0.16
 Nodes (13): BlockId, Drop, GlobalId, LLVMContextRef, LLVMValueRef, LocalId, Option, Self (+5 more)
 
 ### Community 20 - "migrate.rs"
-Cohesion: 0.18
-Nodes (16): ExitCode, F, Option, String, execute(), line_transform(), migrate_source(), post_process() (+8 more)
+Cohesion: 0.19
+Nodes (18): ExitCode, F, Option, String, execute(), line_transform(), migrate_source(), post_process() (+10 more)
 
 ### Community 21 - "DiagnosticReporter"
-Cohesion: 0.05
-Nodes (32): 🧬 Generic Classes, 🔒 Generic Constraints, 🏗️ Generic Functions, Generics in TechScript, Classes in TechScript, 🏗️ Declaration, 🧬 Instantiation, 🔒 Member Access Control (+24 more)
+Cohesion: 0.09
+Nodes (20): 🧬 Generic Classes, 🔒 Generic Constraints, 🏗️ Generic Functions, Generics in TechScript, Classes in TechScript, 🏗️ Declaration, 🧬 Instantiation, 🔒 Member Access Control (+12 more)
 
 ### Community 22 - "TimingProfiler"
 Cohesion: 0.15
 Nodes (14): CompilationEvent, Default, Duration, EventListener, HashMap, Into, Option, Self (+6 more)
 
 ### Community 23 - "VMDebugger"
-Cohesion: 0.16
-Nodes (8): BytecodeFunction, Default, HashSet, Opcode, Operand, RuntimeValue, Self, VMDebugger
+Cohesion: 0.10
+Nodes (13): BytecodeModule, Result, String, BytecodeFunction, Default, HashSet, Opcode, Operand (+5 more)
 
 ### Community 24 - "stdlib_tests.rs"
 Cohesion: 0.06
@@ -673,8 +691,8 @@ Cohesion: 0.18
 Nodes (7): CallHierarchyItem, CallHierarchyPrepareParams, GotoTypeDefinitionParams, GotoTypeDefinitionResponse, Hover, HoverParams, Position
 
 ### Community 29 - ".parse_expression"
-Cohesion: 0.20
-Nodes (10): DiagnosticReporter, Expression, ParseResult, Result, String, Token, TokenKind, Precedence (+2 more)
+Cohesion: 0.26
+Nodes (8): DiagnosticReporter, Expression, ParseResult, Result, String, Token, TokenKind, Parser<'a>
 
 ### Community 31 - "ValueStack"
 Cohesion: 0.24
@@ -689,8 +707,8 @@ Cohesion: 0.17
 Nodes (22): build_dsl_registry, HashMap, Self, String, Vec, DSLBlock, HashMap, Pass (+14 more)
 
 ### Community 34 - "Backend"
-Cohesion: 0.12
-Nodes (15): PartialEq, Debug, Display, Formatter, Option, Result, RuntimeError, RuntimeValue (+7 more)
+Cohesion: 0.06
+Nodes (40): callable, Module, Path, Result, String, error, function, LLVMCodeGenFileType (+32 more)
 
 ### Community 35 - "Result"
 Cohesion: 0.09
@@ -717,15 +735,15 @@ Cohesion: 0.20
 Nodes (8): NativeCallback, HashMap, Result, RuntimeError, Self, String, Value, BuiltinRegistry
 
 ### Community 41 - "RefCell"
-Cohesion: 0.09
-Nodes (8): AstVisitor, callable, flowsignal, refcell, Result, RuntimeValue, VMError, VM
+Cohesion: 0.12
+Nodes (11): AstVisitor, flowsignal, CheckedProgram, Result, RuntimeError, Value, runtimeerrorkind, interpret() (+3 more)
 
 ### Community 42 - "json.rs"
 Cohesion: 0.19
 Nodes (17): Diagnostic, DiagnosticReporter, Result, Self, Span, Token, TokenKind, Vec (+9 more)
 
 ### Community 43 - "parse"
-Cohesion: 0.33
+Cohesion: 0.30
 Nodes (9): Diagnostic, DiagnosticReporter, Program, Result, Token, Vec, parse(), parse_recovered() (+1 more)
 
 ### Community 45 - "BytecodeBuilder"
@@ -757,16 +775,12 @@ Cohesion: 0.07
 Nodes (26): Item, Iterator, Callable, Default, HashMap, Option, Rc, Result (+18 more)
 
 ### Community 52 - ".register_csv"
-Cohesion: 0.07
-Nodes (19): Context, runtimevalue, StdlibRegistry, test_csv_parse(), test_csv_register(), test_csv_stringify(), StdlibRegistry, test_register_ftp() (+11 more)
+Cohesion: 0.06
+Nodes (18): runtimevalue, StdlibRegistry, test_csv_parse(), test_csv_register(), test_csv_stringify(), StdlibRegistry, test_register_ftp(), StdlibRegistry (+10 more)
 
 ### Community 53 - "bench.rs"
 Cohesion: 0.70
 Nodes (4): criterion_benchmark(), find_boundary_fast(), find_boundary_slow(), Criterion
-
-### Community 54 - ".subtypes"
-Cohesion: 0.08
-Nodes (19): Attribution, Code of Conduct, Enforcement, Expected conduct, Purpose, Reporting, Scope, Unacceptable conduct (+11 more)
 
 ### Community 55 - ".register_ftp"
 Cohesion: 0.15
@@ -794,11 +808,11 @@ Nodes (25): Program, parse_source(), test_dsl_block_deeply_nested(), test_dsl_bl
 
 ### Community 63 - "techscript_runtime"
 Cohesion: 0.11
-Nodes (11): capability, crate, hashmap, io, rc, SqlParam, tcpstream, techscript_runtime (+3 more)
+Nodes (11): capability, crate, hashmap, rc, refcell, SqlParam, tcpstream, techscript_runtime (+3 more)
 
 ### Community 64 - "common_tests.rs"
-Cohesion: 0.14
-Nodes (6): Supported Versions, Authoritative Documentation Entry Points, License, 📱 Official TechScript AppForge Application, Unified `tsc` CLI Reference, Verified Platform Support & Maturity
+Cohesion: 0.40
+Nodes (4): 🏗️ Declaring External Functions, Foreign Function Interface (FFI) in TechScript, ⚠️ Security & Panics, 🧬 Supported Type Conversions
 
 ### Community 65 - "barcode.rs"
 Cohesion: 0.08
@@ -809,16 +823,16 @@ Cohesion: 0.15
 Nodes (10): CompilationEvent, Duration, EventListener, Self, String, format_duration(), LogFormat, Logger (+2 more)
 
 ### Community 69 - "ExitCode"
-Cohesion: 0.15
-Nodes (14): main(), Box, Error, Result, ExitCode, ExitCode, ExitCode, ExitCode (+6 more)
+Cohesion: 0.13
+Nodes (20): execute(), ExitCode, ExitCode, ExitCode, ExitCode, Option, ExitCode, ExitCode (+12 more)
 
 ### Community 70 - "Module"
 Cohesion: 0.36
 Nodes (6): BytecodeFunction, IRType, Self, String, Vec, BytecodeModule
 
 ### Community 71 - "OptimizationResult"
-Cohesion: 0.43
-Nodes (4): Default, Self, OptimizationContext, OptimizationLevel
+Cohesion: 0.10
+Nodes (19): ⚡ Agent One-Line Skill Installation Matrix, Blueprint 1: Core CLI & Data Processing Application, Blueprint 2: Standard Library Power User, Blueprint 3: WebForge Reactive Web Component, Blueprint 4: AppForge Cross-Platform Mobile Screen, 🔍 Compiler & Runtime Error Diagnostics, Linux / macOS / Claude Code / Cursor / OpenClaw / Codex:, 🚨 Non-Negotiable Rules (Apply to EVERY TechScript File) (+11 more)
 
 ### Community 72 - "Diagnostic"
 Cohesion: 0.11
@@ -845,20 +859,20 @@ Cohesion: 0.20
 Nodes (12): Default, Diagnostic, HashMap, NodeId, Option, Self, String, SymbolTable (+4 more)
 
 ### Community 78 - "Value"
-Cohesion: 0.17
-Nodes (14): InstructionId, IRType, Op, Option, Span, String, TerminatorKind, ValueId (+6 more)
+Cohesion: 0.10
+Nodes (19): InstructionId, IRType, Op, Option, Span, String, TerminatorKind, ValueId (+11 more)
 
 ### Community 79 - "CFGAnalysis"
-Cohesion: 0.13
-Nodes (14): BasicBlock, FunctionId, HashMap, IRType, LocalId, Self, String, Vec (+6 more)
+Cohesion: 0.27
+Nodes (9): BasicBlock, FunctionId, HashMap, IRType, LocalId, Self, String, Vec (+1 more)
 
 ### Community 80 - "crypto.rs"
 Cohesion: 0.09
 Nodes (18): 🏗️ Async Functions, Asynchronous Programming in TechScript, 🧬 Awaiting Futures, 🔁 Running Concurrent Tasks, Multithreading and Concurrency, 🔒 Shared State and Synchronization, 🏗️ The `parallel` Block, 🧬 Thread Spawning (+10 more)
 
 ### Community 81 - "hash.rs"
-Cohesion: 0.09
-Nodes (21): [1.0.8] — 2026-06-01, [2.0.0] — 2026-07-26 — **Syntax Freeze**, [2.0.0] — 2026-10-21 — **TechScript 2.0.0 — Stable Release**, Added, Added, Added, Added, Changed (+13 more)
+Cohesion: 0.08
+Nodes (24): [1.0.8] — 2026-06-01, [2.0.0] — 2026-07-26 — **Syntax Freeze**, [2.0.0] — 2026-10-21 — **TechScript 2.0.0 — Stable Release**, [2.0.1] — 2026-10-27 — **TechScript 2.0.1 — Language Spec Lock & Mobile Release**, Added, Added, Added, Added (+16 more)
 
 ### Community 82 - "RuntimeError"
 Cohesion: 0.23
@@ -873,20 +887,20 @@ Cohesion: 0.20
 Nodes (12): Environment, Rc, RefCell, Result, RuntimeContext, RuntimeError, RuntimeValue, String (+4 more)
 
 ### Community 85 - "SourceFile"
-Cohesion: 0.12
-Nodes (15): Arc, Display, Formatter, Option, Path, PathBuf, Result, Self (+7 more)
+Cohesion: 0.16
+Nodes (16): Any, NativeRegistry, Box, Default, Environment, HashMap, HashSet, Option (+8 more)
 
 ### Community 86 - "commands/build.rs"
-Cohesion: 0.11
-Nodes (39): AndroidBuildResult, build(), compile_rust_native_runtime(), compile_txs_to_spec(), copy_txs_dir(), debug_session(), find_workspace_root(), locate_file() (+31 more)
+Cohesion: 0.27
+Nodes (23): AndroidBuildResult, build(), compile_rust_native_runtime(), compile_txs_to_spec(), copy_txs_dir(), debug_session(), find_workspace_root(), locate_file() (+15 more)
 
 ### Community 87 - "LiteralVal"
 Cohesion: 0.18
 Nodes (15): BlockId, DslBlockId, Function, FunctionId, GlobalId, HashMap, IRType, LiteralVal (+7 more)
 
 ### Community 88 - "parser_tests.rs"
-Cohesion: 0.10
-Nodes (17): 🧬 Module Directory Structure, Modules in TechScript, 🏗️ Structure, 🎨 Alias Imports, Imports in TechScript, 🧬 Local vs Standard Library Imports, 🏗️ The `use` Keyword, 🧬 Package Structure (+9 more)
+Cohesion: 0.04
+Nodes (38): 1. Supported Platforms & Toolchain Requirements, 2. Platform Detection & Doctor Inspection, Appforge Platform Support Matrix, 1. Standard Project Layout, 2. Manifest Specification: `appforge.toml`, Appforge Project Structure Specification, 🧬 Module Directory Structure, Modules in TechScript (+30 more)
 
 ### Community 89 - "run_src"
 Cohesion: 0.24
@@ -909,8 +923,8 @@ Cohesion: 0.10
 Nodes (21): 00 — TechScript 2.0 Master Architecture, 10. Document Index, 1. Design Philosophy, 2. Engineering Principles, 3. System Overview, 4.1 Compiler Frontend, 4.2 Compiler Backend, 4.3 Runtime (+13 more)
 
 ### Community 94 - "techscript_ast"
-Cohesion: 0.17
-Nodes (11): execute(), ExitCode, ExitCode, ExitCode, Option, ExitCode, execute(), execute() (+3 more)
+Cohesion: 0.18
+Nodes (16): Default, F, Interpreter, Option, Result, RuntimeValue, Self, String (+8 more)
 
 ### Community 95 - "Op"
 Cohesion: 0.29
@@ -933,12 +947,12 @@ Cohesion: 0.10
 Nodes (21): 17 — TechScript 2.0 Development Roadmap, Compatibility & Evolution Analysis, Compatibility Notes, Future Roadmap, Migration Notes, Phase 1 — Compiler Frontend (Weeks 1–8), Phase 2 — Standard Library + Tools (Weeks 9–14), Phase 3 — Bytecode VM (Weeks 15–22) (+13 more)
 
 ### Community 100 - "Environment"
-Cohesion: 0.13
-Nodes (14): HashMap, LiteralVal, HashMap, IRType, LLVMContextRef, LLVMTypeRef, core, cstring (+6 more)
+Cohesion: 0.24
+Nodes (8): HashMap, IRType, LLVMContextRef, LLVMTypeRef, core, prelude, to_llvm_type(), test_type_mappings()
 
 ### Community 101 - "optimizer_tests.rs"
-Cohesion: 0.33
-Nodes (8): Module, OptimizationLevel, techscript_optimizer, optimize_source(), test_optimizer_algebraic_simplification(), test_optimizer_branch_simplification(), test_optimizer_constant_folding(), test_optimizer_dead_code_elimination()
+Cohesion: 0.17
+Nodes (17): analyze, BytecodeModule, Module, OptimizationLevel, lower, parse, techscript_optimizer, compile_source() (+9 more)
 
 ### Community 102 - "repl.rs"
 Cohesion: 0.07
@@ -953,7 +967,7 @@ Cohesion: 0.21
 Nodes (9): Default, Path, PathBuf, Result, Self, String, Vec, CompilationDatabase (+1 more)
 
 ### Community 105 - "file_ext.rs"
-Cohesion: 0.16
+Cohesion: 0.19
 Nodes (16): Display, Error, Formatter, Path, Result, CommonError, ExtensionStability, is_supported_source_file() (+8 more)
 
 ### Community 106 - "DefaultModuleResolver"
@@ -989,8 +1003,8 @@ Cohesion: 0.16
 Nodes (10): AssignmentExpr, BinaryExpr, ConstDecl, Pattern, Span, TokenKind, UnaryExpr, Value (+2 more)
 
 ### Community 114 - "ir_tests.rs"
-Cohesion: 0.05
-Nodes (39): 1. Executive Summary & Design Philosophy, 2. Complete Extension Reference Table, 3.1 `.txs` — Canonical TechScript Source File, 3.2 `.wtxs` — WebForge Web Pages & Components, 3.3 `.stxs` — Server-Side Endpoints & Background Tasks, 3.4 `.atxs` — Android Mobile UI Screens, 3.5 `.3txs` / `.gtxs` — 3D Scene Viewport & Graphics, 3.6 `.tech` — Legacy TechScript 1.0.8 Files (+31 more)
+Cohesion: 0.10
+Nodes (20): 1. Executive Summary & Design Philosophy, 2. Complete Extension Reference Table, 3.1 `.txs` — Canonical TechScript Source File, 3.2 `.wtxs` — WebForge Web Pages & Components, 3.3 `.stxs` — Server-Side Endpoints & Background Tasks, 3.4 `.atxs` — Android Mobile UI Screens, 3.5 `.3txs` / `.gtxs` — 3D Scene Viewport & Graphics, 3.6 `.tech` — Legacy TechScript 1.0.8 Files (+12 more)
 
 ### Community 116 - "std_database_execute"
 Cohesion: 0.15
@@ -1009,8 +1023,8 @@ Cohesion: 0.18
 Nodes (11): bytecodedisassembler, bytecodefunction, bytecodeinstruction, bytecodelowerer, bytecodevalidator, BytecodeModule, Module, constantpool (+3 more)
 
 ### Community 120 - ".compile_parallel"
-Cohesion: 0.21
-Nodes (12): DslBlockLintRule, DslNamingConventionRule, Linter, LintRule, Box, CheckedProgram, Diagnostic, DSLBlock (+4 more)
+Cohesion: 0.11
+Nodes (22): ProjectBuildGraph, Result, Self, Vec, CompilationPipeline, CompilationResult, PipelineOptions, project (+14 more)
 
 ### Community 121 - ".scaffold"
 Cohesion: 0.22
@@ -1025,24 +1039,24 @@ Cohesion: 0.11
 Nodes (17): 10. AI Rules, 11. Current Progress, 12. Remaining Work, 13. Important Files, 14. AI Workflow, 15. Session Memory, 16. Quick Context (One Minute Read), 1. Project Overview (+9 more)
 
 ### Community 124 - "OptimizationContext"
-Cohesion: 0.15
-Nodes (5): parser, AstVisitor, techscript_ast, techscript_common, techscript_errors
+Cohesion: 0.13
+Nodes (5): parser, Precedence, next_lower_precedence(), techscript_common, techscript_errors
 
 ### Community 125 - "VMError"
-Cohesion: 0.27
-Nodes (5): ExitCode, Self, Theme, DoctorContext, execute()
+Cohesion: 0.32
+Nodes (4): Self, Theme, DoctorContext, execute()
 
 ### Community 126 - "pm_tests.rs"
-Cohesion: 0.08
-Nodes (23): 10. Webforge Declarations (`use web`), 11. Appforge Declarations (`use app`), 12. Foreign Language Interoperability, 13. Compiler Support Matrix, 1. Introduction & Philosophy, 2.1 File Extensions & Source Roles, 2.2 Comments, 2.3 Identifiers & Keywords (+15 more)
+Cohesion: 0.12
+Nodes (16): 1. Introduction & Philosophy, 2.1 File Extensions & Source Roles, 2.2 Comments, 2. Source Files & Lexical Grammar, 3.1 Creating Variables, 3.2 Reassigning Variables, 3.3 Constants, 3. Variables & Declarations (+8 more)
 
 ### Community 127 - "run_once"
-Cohesion: 0.14
-Nodes (9): BuiltinRegistry, Default, Result, RuntimeValue, Self, VMError, NativeBridge, techscript_gc (+1 more)
+Cohesion: 0.13
+Nodes (14): 1.1 Non-Negotiable Tenets, 1. Vision & Core Principles, 2.1 Comments, 2.2 Reserved Words, 2.3 Normative Grammar Skeleton (EBNF), 2. Canonical Lexical Grammar & Tokens, 4.1 Canonical Function Declaration, 4.2 Optional Type Annotations (+6 more)
 
 ### Community 128 - "sync.rs"
-Cohesion: 0.29
-Nodes (7): Condvar, ScriptMutex, StdlibRegistry, test_script_mutex_lock_unlock(), test_script_mutex_new(), Mutex, Self
+Cohesion: 0.14
+Nodes (9): DidChangeTextDocumentParams, DidOpenTextDocumentParams, DidSaveTextDocumentParams, DocumentSymbolParams, DocumentSymbolResponse, CheckedProgram, Program, TsDiagnostic (+1 more)
 
 ### Community 129 - "LivenessAnalysis"
 Cohesion: 0.11
@@ -1053,16 +1067,16 @@ Cohesion: 0.11
 Nodes (18): 12 — TechScript 2.0 Standard Library Specification, 1.1 `io`, 1.2 `math`, 1.3 `string`, 1.4 `file`, 1.5 `web` (Optional v2.0), 1.6 `time`, 1.7 `random` (+10 more)
 
 ### Community 131 - "common/src/lib.rs"
-Cohesion: 0.14
-Nodes (9): DidChangeTextDocumentParams, DidOpenTextDocumentParams, DidSaveTextDocumentParams, DocumentSymbolParams, DocumentSymbolResponse, CheckedProgram, Program, TsDiagnostic (+1 more)
+Cohesion: 0.10
+Nodes (19): ⚡ Agent One-Line Skill Installation Matrix, Blueprint 1: Core CLI & Data Processing Application, Blueprint 2: Standard Library Power User, Blueprint 3: WebForge Reactive Web Component, Blueprint 4: AppForge Cross-Platform Mobile Screen, 🔍 Compiler & Runtime Error Diagnostics, Linux / macOS / Claude Code / Cursor / OpenClaw / Codex:, 🚨 Non-Negotiable Rules (Apply to EVERY TechScript File) (+11 more)
 
 ### Community 132 - "disassembler.rs"
 Cohesion: 0.48
 Nodes (4): BytecodeFunction, BytecodeModule, String, BytecodeDisassembler
 
 ### Community 133 - "runtime_tests.rs"
-Cohesion: 0.11
-Nodes (18): 14 — TechScript 2.0 Error Code Specification, Automatic Migration Tool, Catching Runtime Errors, Deprecation Warnings — Parser Phase — TSW1001–TSW1099, Diagnostic Format, DSL Validation Errors — TSE0400–TSE0499, E0104 Detail, Error Code Namespaces (+10 more)
+Cohesion: 0.09
+Nodes (23): 14 — TechScript 2.0 Error Code Specification, Automatic Migration Tool, Call & Signature Errors, Catching Runtime Errors, Control-Flow Errors, Deprecation Warnings — Parser Phase — TSW1001–TSW1099, Diagnostic Format, DSL Validation Errors — TSE0400–TSE0499 (+15 more)
 
 ### Community 134 - "Commands"
 Cohesion: 0.22
@@ -1089,16 +1103,16 @@ Cohesion: 0.40
 Nodes (4): Self, Vec, CallFrame, ExceptionHandler
 
 ### Community 140 - "clean.rs"
-Cohesion: 0.14
-Nodes (10): 11. Type Annotations (Optional — v2.0), 1. Program Structure, 2. Import / Module System, 3. Declarations, 4. Statements, 5. Control Flow, 6. Async & Parallel, 7. Raw Escape Hatch (+2 more)
+Cohesion: 0.11
+Nodes (14): 11. Type Annotations (Optional — v2.0), 1. Program Structure, 2. Import / Module System, 3. Declarations, 4. Statements, 5. Control Flow, 6. Async & Parallel, 7. Raw Escape Hatch (+6 more)
 
 ### Community 141 - "commands/docs.rs"
 Cohesion: 0.29
 Nodes (6): BytecodeInstruction, ConstantPool, LiteralVal, Self, Vec, Chunk
 
 ### Community 143 - "doc.rs"
-Cohesion: 0.07
-Nodes (10): AppSpec, MaterialPreset, MeshType, Option, Self, String, Vec, DocTopic (+2 more)
+Cohesion: 0.06
+Nodes (3): MeshType, Vec, TechScriptRuntime
 
 ### Community 144 - "Theme"
 Cohesion: 0.13
@@ -1111,10 +1125,6 @@ Nodes (15): 04 — TechScript 2.0 Compiler Architecture, 1. Pipeline Overview, 2
 ### Community 146 - ".incoming_calls"
 Cohesion: 0.13
 Nodes (15): 09 — TechScript 2.0 Runtime Design, 1. Runtime Architecture, 2. Value Representation, 3.1 Call Frame, 3.2 Environment Scopes, 3. Scope and Call Frame Design, 4. Module Loading System, 5.1 Startup Sequence (+7 more)
-
-### Community 149 - "verify_all_examples.py"
-Cohesion: 0.18
-Nodes (13): check_python_dependencies(), find_repo_root(), main(), Dynamically scans output_dir and validates generated files.     Excludes files s, validate_graphify_outputs(), check_api_keys(), check_graphify_installed(), check_python_version() (+5 more)
 
 ### Community 151 - "cli_example.rs"
 Cohesion: 0.13
@@ -1133,23 +1143,23 @@ Cohesion: 0.11
 Nodes (17): 1. Prioritization Framework, 2. Inventory of Issues and Gaps, 3. Summary Priority Matrix, Category A: Compiler Defects & Gaps, Category B: CLI Architecture & Commands, Category C: Appforge & Android Pipeline, Category D: Webforge Integration & Web Wrapping, Issue APP-01: Missing Appforge Project Scaffolding (+9 more)
 
 ### Community 156 - ".register_dns"
-Cohesion: 0.23
-Nodes (12): add_compat_header(), migrate_content(), migrate_directory(), migrate_templates(), process_file(), Path, Apply all migration transforms to file content., Skip compat examples — keep them in legacy syntax. (+4 more)
+Cohesion: 0.15
+Nodes (16): execute(), execute(), install(), list_adb_devices(), ExitCode, Error, ExitCode, Option (+8 more)
 
 ### Community 157 - ".register_docs"
 Cohesion: 0.15
 Nodes (11): Display, Formatter, Result, BlockId, DslBlockId, FunctionId, GlobalId, InstructionId (+3 more)
 
 ### Community 158 - ".register_email"
-Cohesion: 0.50
-Nodes (3): IRType, TypeInfo, Value
+Cohesion: 0.26
+Nodes (13): ExitCode, Interpreter, String, dump_repl_ast(), dump_repl_bytecode(), dump_repl_ir(), eval_code(), evaluate_type() (+5 more)
 
 ### Community 159 - ".register_encoding"
 Cohesion: 0.15
 Nodes (13): 07 — TechScript 2.0 Parser Design, 1.1 Decision: Recursive Descent + Pratt Parser, 1. Parsing Strategy, 2. Parser State, 3. Statement & Method Parsing, 4.1 Binding Power Table, 4. Expression Parsing — Pratt Parser, 5. Error Recovery (+5 more)
 
 ### Community 160 - ".register_excel"
-Cohesion: 0.17
+Cohesion: 0.11
 Nodes (5): FontAtlas, Self, Vec, GlassBatch, UIVertex
 
 ### Community 161 - ".register_http"
@@ -1189,20 +1199,20 @@ Cohesion: 0.22
 Nodes (9): UseDefAnalysis, Function, HashMap, HashSet, InstructionId, Op, Self, ValueId (+1 more)
 
 ### Community 171 - ".register_postgres"
-Cohesion: 0.11
-Nodes (20): Diagnostic, Duration, ErrorCode, FileId, Into, Option, Self, SourceManager (+12 more)
+Cohesion: 0.06
+Nodes (35): Arc, Diagnostic, Duration, ErrorCode, FileId, Into, Option, Self (+27 more)
 
 ### Community 172 - ".register_powerpoint"
 Cohesion: 0.23
 Nodes (11): parse_json_value(), StdlibRegistry, stringify_value(), stringify_value_inner(), test_parse_json_value(), test_stringify_error(), Result, RuntimeError (+3 more)
 
 ### Community 173 - ".register_profiler"
-Cohesion: 0.18
-Nodes (11): 1. Create a Branch, 2. Make Edits & Run Linting, 3. Run Tests, 4. Committing Changes, Contributing to TechScript, 🔄 Development & Git Workflow, Fork & Clone, Project Policies and Support (+3 more)
+Cohesion: 0.33
+Nodes (6): Contributing to TechScript, Fork & Clone, Project Policies and Support, 📝 Pull Request Checklist, 📂 Repository Structure Overview, 🛠️ Setting Up Your Development Environment
 
 ### Community 174 - ".register_qrcode"
-Cohesion: 0.18
-Nodes (11): 3. Canonical Semantic Rules (Frozen 2.0), Rule 10 — Undefined Variable Access, Rule 1 — Auto-Declaration, Rule 2 — Const Immutability, Rule 3 — Shadowing, Rule 4 — Closures & Scope Capture, Rule 5 — Loop Variables, Rule 6 — Catch Variable Scope (+3 more)
+Cohesion: 0.10
+Nodes (20): 10 — TechScript 2.0 Semantic Analysis Specification, 1. Overview, 2. Scope & Name Resolution, 3. Canonical Semantic Rules (Frozen 2.0), 4. Deprecation Warning Issuance, 5. Diagnostics & Suggestions, 6.1 Compatibility Notes, 6.2 Migration (+12 more)
 
 ### Community 175 - ".register_regex"
 Cohesion: 0.18
@@ -1221,8 +1231,8 @@ Cohesion: 0.18
 Nodes (10): 18 — TechScript 2.0 AI Context Document, Compiler & Repository Architecture, Development Roadmap, Document Index, Folder Structure, Key Language Features (v2.0), Language Philosophy, Project Overview (+2 more)
 
 ### Community 179 - ".register_socket"
-Cohesion: 0.18
-Nodes (11): 1. Create a Branch, 2. Make Edits & Run Linting, 3. Run Tests, 4. Committing Changes, Contributing to TechScript, 🔄 Development & Git Workflow, Fork & Clone, Project Policies and Support (+3 more)
+Cohesion: 0.33
+Nodes (6): Contributing to TechScript, Fork & Clone, Project Policies and Support, 📝 Pull Request Checklist, 📂 Repository Structure Overview, 🛠️ Setting Up Your Development Environment
 
 ### Community 180 - ".register_strings"
 Cohesion: 0.18
@@ -1237,7 +1247,7 @@ Cohesion: 0.16
 Nodes (12): DebugSymbols, Path, PathBuf, Result, Self, SourceMap, String, Vec (+4 more)
 
 ### Community 183 - ".register_testing"
-Cohesion: 0.18
+Cohesion: 0.17
 Nodes (11): `build`, Command Line Interface (CLI), 💻 Commands, `eval`, `fmt`, 🛠️ Global Flags, `lint`, `repl` (+3 more)
 
 ### Community 184 - ".register_theme"
@@ -1249,8 +1259,8 @@ Cohesion: 0.20
 Nodes (10): 04 — ARCHITECTURE, 1. System Pipeline, 2.1 AST (techscript_ast), 2.2 Symbol Table, 2. Shared Data Structures, 3.1 AST Interpreter (v2.0), 3.2 Bytecode VM (v2.1 - Planned), 3.3 LLVM Native Compiler (v3.0 - Planned) (+2 more)
 
 ### Community 186 - ".register_video"
-Cohesion: 0.30
-Nodes (25): DslBlockValue, String, dsl_to_html_inner(), escape_html(), highlight_techscript_code(), render_accordion(), render_alert(), render_button() (+17 more)
+Cohesion: 0.05
+Nodes (66): BuiltinRegistry, AnalysisManager, Module, OptimizationPass, OptimizationResult, AnalysisManager, Module, OptimizationPass (+58 more)
 
 ### Community 187 - ".register_word"
 Cohesion: 0.31
@@ -1273,8 +1283,8 @@ Cohesion: 0.20
 Nodes (9): Option, Self, Span, String, Vec, Diagnostic, DiagnosticLevel, DiagnosticReporter (+1 more)
 
 ### Community 192 - "fix_journal.py"
-Cohesion: 0.14
-Nodes (19): GlassBatch, AndroidApp, Display, Drop, FontAtlas, MaterialPreset, MeshType, Result (+11 more)
+Cohesion: 0.12
+Nodes (23): c_void, EGLContext, EGLDisplay, EGLSurface, GlassBatch, GLchar, GLenum, GLuint (+15 more)
 
 ### Community 193 - "package_manager_tests.rs"
 Cohesion: 0.36
@@ -1305,7 +1315,7 @@ Cohesion: 0.16
 Nodes (21): CheckedProgram, Diagnostic, Result, Vec, check_source(), test_dsl_semantic_duplicate_property_error(), test_dsl_semantic_full_web_page(), test_dsl_semantic_invalid_nested_block_warning() (+13 more)
 
 ### Community 201 - "DebugSymbols"
-Cohesion: 0.23
+Cohesion: 0.19
 Nodes (3): Option, Self, TechScriptExtension
 
 ### Community 202 - "DiagnosticStats"
@@ -1313,8 +1323,8 @@ Cohesion: 0.20
 Nodes (9): 1. Lexer (`compiler/lexer`), 2. Parser (`compiler/parser`), 3. AST & Symbol Table (`compiler/ast`), 4. Semantic Analyzer (`compiler/semantic`), 5. Intermediate Representation (IR) (`compiler/ir`), 6. Optimizer (`compiler/optimizer`), 7. Bytecode Gen / LLVM (`compiler/bytecode` & `compiler/llvm_backend`), 🗺️ Compilation Stages (+1 more)
 
 ### Community 203 - ".dummy"
-Cohesion: 0.20
-Nodes (10): Compatibility, Downloads, Fixes and Security, New in This Revision, Performance and Maintenance, TechScript 1.0.2, TechScript 1.0.8, TechScript 2.0.0 (+2 more)
+Cohesion: 0.15
+Nodes (12): Compatibility, Downloads, Fixes and Security, Key Highlights, New in This Revision, Performance and Maintenance, TechScript 1.0.2, TechScript 1.0.8 (+4 more)
 
 ### Community 204 - ".propagate_in_op"
 Cohesion: 0.20
@@ -1325,8 +1335,8 @@ Cohesion: 0.39
 Nodes (6): Option, Self, Span, String, CallFrame, FlowSignal
 
 ### Community 206 - "operations.rs"
-Cohesion: 0.20
-Nodes (10): Condition Loop (`repeat`), 🔀 Conditionals, Counted Loop (`loop`), 🏗️ Functions, Iterator Loop (`for`), 🔁 Loops, 🧱 Objects & Models, 📐 Philosophy (+2 more)
+Cohesion: 0.11
+Nodes (19): 1. Overview & Philosophy, 2. Getting Started, 3. English-Like Syntax Reference, 4. Frontend Design System, 5. Backend Server & Database Engine, 6. Three.js 3D WebGL Engine, 7. Production Builds & Deployment, 8. Verified Test Matrix (+11 more)
 
 ### Community 207 - "LintRule"
 Cohesion: 0.20
@@ -1353,8 +1363,8 @@ Cohesion: 0.25
 Nodes (4): Display, Formatter, Result, ExitCode
 
 ### Community 213 - ".fmt"
-Cohesion: 0.14
-Nodes (25): BuildCache, BytecodeModule, Duration, FileId, Option, Path, PathBuf, ProjectBuildGraph (+17 more)
+Cohesion: 0.09
+Nodes (40): ArtifactManager, BuildCache, ExitCode, Option, ExitCode, Option, Path, PathBuf (+32 more)
 
 ### Community 214 - "gc_tests.rs"
 Cohesion: 0.31
@@ -1369,12 +1379,12 @@ Cohesion: 0.22
 Nodes (7): Code of Conduct, Contributor Covenant Code of Conduct, Enforcement, Enforcement Responsibilities, Our Pledge, Our Standards, Scope
 
 ### Community 217 - ".register_config"
-Cohesion: 0.22
+Cohesion: 0.20
 Nodes (9): 🐲 Design & Philosophy, Does it require a Python runtime?, Does it support native compilation?, 🤝 Editor Integrations, ⚡ Execution & Speed, Frequently Asked Questions (FAQ), How do I configure VS Code?, How performant is TechScript? (+1 more)
 
 ### Community 218 - ".register_gui"
-Cohesion: 0.22
-Nodes (9): 01 — TechScript v2.0 Language Specification, §12 Comments, §15 Built-in Functions, §16 Stdlib Call Style, §1 Official Decisions, §4 Primitive Types, §5 Variables, §7 Modules (+1 more)
+Cohesion: 0.08
+Nodes (26): 01 — TechScript v2.0 Language Specification, §10 Error Handling, §12 Comments, §14 Collections, §15 Built-in Functions, §16 Stdlib Call Style, §17 Compatibility & Evolution, §1 Official Decisions (+18 more)
 
 ### Community 219 - ".register_math"
 Cohesion: 0.22
@@ -1389,8 +1399,8 @@ Cohesion: 0.22
 Nodes (8): Containment, 🧬 Elements Access & Modifications, 🏗️ Initialization, 🔁 Iteration, Length, Maps in TechScript, 📏 Properties, Retrieval & Assignment
 
 ### Community 223 - ".register_random"
-Cohesion: 0.10
-Nodes (25): execute(), scaffold_android_host(), scaffold_project(), which_gradle(), copy_dir_all(), execute(), Error, ExitCode (+17 more)
+Cohesion: 0.19
+Nodes (8): DominatorAnalysis, collections, BlockId, Function, HashMap, HashSet, Self, techscript_ir
 
 ### Community 224 - ".register_redis"
 Cohesion: 0.22
@@ -1401,8 +1411,8 @@ Cohesion: 0.22
 Nodes (8): 1. Keyword Management & Translation, 2. Static Keyword Lookup, 3. Operator Metadata, 4. Numeric Base Analyzer, Dependencies, Key API Features, Modules, techscript_syntax
 
 ### Community 226 - ".register_strings"
-Cohesion: 0.20
-Nodes (16): InputEvent, KeyEvent, MotionEvent, NativeRenderer, AndroidApp, AppSpec, Option, String (+8 more)
+Cohesion: 0.10
+Nodes (26): Box, Default, Self, Send, Vec, duration, InputEvent, KeyEvent (+18 more)
 
 ### Community 227 - ".register_svg"
 Cohesion: 0.25
@@ -1457,8 +1467,8 @@ Cohesion: 0.43
 Nodes (5): AnalysisManager, Module, OptimizationPass, OptimizationResult, CopyPropagation
 
 ### Community 240 - "HashMap"
-Cohesion: 0.12
-Nodes (10): DominatorAnalysis, collections, BlockId, Function, HashMap, HashSet, Self, error (+2 more)
+Cohesion: 0.24
+Nodes (9): AndroidApp, Default, Option, PathBuf, Result, Self, String, AppSettings (+1 more)
 
 ### Community 241 - "HashSet"
 Cohesion: 0.43
@@ -1497,15 +1507,15 @@ Cohesion: 0.29
 Nodes (7): 09 — AI BOOTSTRAP, 1. Quick-Start Context, 2.1 Rust Style, 2.2 Commit Messages, 2. Coding & Style Rules, 3. Important "Do Not Change" List, 4. Current Target (Milestone 1)
 
 ### Community 251 - "FnOnce"
-Cohesion: 0.11
-Nodes (27): BuildProfile, ExitCode, Error, ExitCode, Option, Path, Result, ExitCode (+19 more)
+Cohesion: 0.22
+Nodes (9): BuildProfile, Error, ExitCode, Option, Path, Result, execute(), run_once() (+1 more)
 
 ### Community 252 - "Result"
-Cohesion: 0.29
+Cohesion: 0.25
 Nodes (7): 1. Lexer (`compiler/lexer`), 2. Parser (`compiler/parser`), 3. Abstract Syntax Tree (`compiler/ast`), 4. Semantic Analyzer (`compiler/semantic`), 5. IR & Code Generation (`compiler/ir`, `compiler/bytecode`, `compiler/llvm_backend`), Compiler Architecture, 🗺️ Pipeline Stages
 
 ### Community 253 - "String"
-Cohesion: 0.29
+Cohesion: 0.25
 Nodes (7): Canvas Drawing Guide, Circles, 🎨 Drawing Shapes & Colors, 📝 Drawing Text, 🏗️ Initialization, Lines, Rectangles
 
 ### Community 254 - "Vec"
@@ -1513,8 +1523,8 @@ Cohesion: 0.29
 Nodes (7): §3 Operators, Arithmetic, Assignment, Bitwise, Comparison, Logical, Range & Special
 
 ### Community 255 - "Box"
-Cohesion: 0.29
-Nodes (6): DSLBlock, DslBlockId, Expression, LiteralVal, String, literal_val_to_string()
+Cohesion: 0.22
+Nodes (15): execute(), scaffold_android_host(), scaffold_project(), which_gradle(), copy_dir_all(), execute(), Error, ExitCode (+7 more)
 
 ### Community 256 - "Default"
 Cohesion: 0.29
@@ -1537,16 +1547,16 @@ Cohesion: 0.53
 Nodes (3): PassStatistics, Self, OptimizationResult
 
 ### Community 261 - "Result"
-Cohesion: 0.33
+Cohesion: 0.29
 Nodes (6): 1. Execution Stack, 2. Stack Frames, 🏗️ Core Architecture Components, 🔁 Garbage Collector (GC), 🧬 NaN-Boxed Value Representation, Virtual Machine (VM) Specification
 
 ### Community 262 - "Self"
-Cohesion: 0.14
-Nodes (12): 1. Pre-Release Checks, 2. Tagging & Versioning, 3. CI/CD Build & Packaging, 4. Verification & Testing, 5. Publishing the Release, Release Pipeline Stages, Release Roles & Responsibilities, Rollback & Hotfix Procedure (+4 more)
+Cohesion: 0.22
+Nodes (9): 1. Pre-Release Checks, 2. Tagging & Versioning, 3. CI/CD Build & Packaging, 4. Verification & Testing, 5. Publishing the Release, Release Pipeline Stages, Release Roles & Responsibilities, Rollback & Hotfix Procedure (+1 more)
 
 ### Community 263 - "String"
-Cohesion: 0.33
-Nodes (6): 🛠️ Automated Migration Command, 🧬 Code Migration Examples, Conditional Blocks, 📐 Overview of Key Syntax Changes, TechScript 2.0 Migration Guide, Variables & Constants
+Cohesion: 0.25
+Nodes (8): Added, Compatibility, Documentation, Downloads, Fixed and Security, Highlights, Performance and Maintenance, TechScript [VERSION] Release Notes
 
 ### Community 264 - "Vec"
 Cohesion: 0.33
@@ -1605,12 +1615,12 @@ Cohesion: 0.40
 Nodes (4): Canvas Example, Code (`draw.txs`), Expected Output, Running the Example
 
 ### Community 278 - "Community 278"
-Cohesion: 0.14
-Nodes (14): 10. How do I add dependencies?, 11. How do I debug build errors?, 12. Which platforms can I build on Windows?, 13. Which features are incomplete?, 1. How do I install TechScript?, 2. How do I create and run a basic program?, 3. How do I create a website?, 4. How do I use CSS, JavaScript, and TypeScript? (+6 more)
+Cohesion: 0.12
+Nodes (15): 1. Variable Binding & Mutation, 2. Functions & Subroutines, 3. String Interpolation, 4. Control Flow, 5. Classes & Models, 6. Error Handling, Conditionals (`if`, `else if`, `else:`), Constant Declaration (`constant ... is`) (+7 more)
 
 ### Community 279 - "Community 279"
-Cohesion: 0.27
-Nodes (11): HashMap, Option, Rc, RefCell, Result, RuntimeError, RuntimeValue, Self (+3 more)
+Cohesion: 0.12
+Nodes (15): 1. Variable Binding & Mutation, 2. Functions & Subroutines, 3. String Interpolation, 4. Control Flow, 5. Classes & Models, 6. Error Handling, Conditionals (`if`, `else if`, `else:`), Constant Declaration (`constant ... is`) (+7 more)
 
 ### Community 280 - "Community 280"
 Cohesion: 0.40
@@ -1637,12 +1647,12 @@ Cohesion: 0.40
 Nodes (4): Constants in TechScript, 🔒 Declaration, 🚫 Reassignment Prevention, 🧬 Scope & Lifetimes
 
 ### Community 286 - "Community 286"
-Cohesion: 0.40
-Nodes (5): ⚙️ Compilation Speed, ⚡ Execution Statistics, Loop Performance, Memory Allocation (NaN Boxing), Performance Benchmarks
+Cohesion: 0.15
+Nodes (12): Bool, Class, 🟡 Collection Types, 🔴 Custom Types, Float, Int, List / Array, Map / Dictionary (+4 more)
 
 ### Community 287 - "Community 287"
-Cohesion: 0.40
-Nodes (4): 🏗️ Declaring External Functions, Foreign Function Interface (FFI) in TechScript, ⚠️ Security & Panics, 🧬 Supported Type Conversions
+Cohesion: 0.17
+Nodes (12): 10. Conditions and branching, 13. Modules and imports, 14. Errors and safe failure handling, 15. Async and concurrency, 16.1 Common collection operations, 16.2 Formatter requirements, 16. Standard library design, 17. Tests and test-runner syntax (+4 more)
 
 ### Community 288 - "Community 288"
 Cohesion: 0.40
@@ -1681,8 +1691,8 @@ Cohesion: 0.40
 Nodes (4): Code (`guess.txs`), Expected Output, Guess the Number Example, Running the Example
 
 ### Community 297 - "Community 297"
-Cohesion: 0.40
-Nodes (5): 📐 1. Variable Assignments vs Constants, 🔀 2. Lexical Scoping and Variable Shadowing, 🔒 3. FFI Safety, 🧱 4. Designing Classes and Traits, Best Practices for TechScript Developers
+Cohesion: 0.29
+Nodes (7): Condvar, ScriptMutex, StdlibRegistry, test_script_mutex_lock_unlock(), test_script_mutex_new(), Mutex, Self
 
 ### Community 298 - "Community 298"
 Cohesion: 0.40
@@ -1697,20 +1707,20 @@ Cohesion: 0.40
 Nodes (4): Code (`parser.txs`), Expected Output, JSON Parser Example, Running the Example
 
 ### Community 301 - "Community 301"
-Cohesion: 0.40
-Nodes (4): 📐 Block Structures, 📝 Comments, 🔑 Keywords, TechScript Syntax Guide
+Cohesion: 0.25
+Nodes (7): 📐 Block Structures, 🔑 Canonical Keyword Summary, 🔀 Conditionals (`if`, `else if`, `else`), Control Flow & Syntax Guide, 🔄 Iteration (`for item in collection:`), 🔁 Repetition Loops (`repeat N times:`), ⏳ While Loops (`while condition:`)
 
 ### Community 302 - "Community 302"
 Cohesion: 0.40
 Nodes (4): Exceptions and Panics in TechScript, 🏗️ Recoverable Errors: `try` / `catch`, 🧬 Throwing Exceptions, 🚫 Unrecoverable Errors: Panics
 
 ### Community 303 - "Community 303"
-Cohesion: 0.40
-Nodes (4): 🧬 Anonymous & Lambda Functions, 🏗️ Declaration, Functions in TechScript, 🎨 Parameter Default Values
+Cohesion: 0.33
+Nodes (5): 🏗️ Declaration (`to name(params):`), Functions in TechScript, 🎨 Parameter Default Values, 🔁 Recursion, 🎨 Return Values (`return`)
 
 ### Community 304 - "Community 304"
-Cohesion: 0.40
-Nodes (4): 🏷️ Assignment, 🔄 Reassignment, 🧬 Scoping Rules, Variables in TechScript
+Cohesion: 0.33
+Nodes (5): 🔒 Constants (`constant ... is`), 🏷️ Declaration (`is`), 🔄 Reassignment (`becomes`), 🧬 Scoping Rules, Variables in TechScript
 
 ### Community 305 - "Community 305"
 Cohesion: 0.40
@@ -1761,20 +1771,20 @@ Cohesion: 0.50
 Nodes (3): Benchmark Details, Compilation Phase Speeds, TechScript 2.0 Compiler Performance Report
 
 ### Community 317 - "Community 317"
-Cohesion: 0.67
-Nodes (3): auto_import_file(), main(), Path
-
-### Community 318 - "Community 318"
-Cohesion: 0.67
-Nodes (3): install.sh script, log_message(), PATH
+Cohesion: 0.18
+Nodes (11): 1. Design Philosophy, 2. Core Grammar Rules, 3. Specialized Source Extensions, 4. Complete Working Example, A. Website Declaration, B. Defining Pages, C. Visual UI Elements, D. Event Handling & Client Actions (+3 more)
 
 ### Community 319 - "Community 319"
 Cohesion: 0.67
 Nodes (3): ExitCode, commandfactory, execute()
 
+### Community 321 - "Community 321"
+Cohesion: 0.22
+Nodes (8): 1. `math`, 2. `text`, 3. `collections`, 4. `json`, 5. `files`, 6. `http`, 7. `time`, TechScript Standard Library Reference
+
 ### Community 322 - "Community 322"
-Cohesion: 0.50
-Nodes (4): 🚀 Execution & Hot-Reloading, 🏗️ Structure of a Web Page, 🧬 Supported Elements, Web Application Builder Guide
+Cohesion: 0.22
+Nodes (9): 1. 📖 Core Language Specifications & Grammar, 2. 📘 Deep-Dive Language Guides, 3. 🌐 WebForge Full-Stack Web Framework, 4. 📱 AppForge Mobile & Desktop Native Engine, 5. ⚙️ Compiler, VM & Systems Engineering, 6. 🛠️ CLI, Developer Tools & Standard Library, 7. 🚀 Tutorials, Guides & 100 Verified Examples, 8. 📋 Governance, Release Engineering & Audits (+1 more)
 
 ### Community 323 - "Community 323"
 Cohesion: 0.40
@@ -1821,8 +1831,8 @@ Cohesion: 0.40
 Nodes (5): Color, AndroidApp, Self, Theme, argb()
 
 ### Community 335 - "Community 335"
-Cohesion: 0.50
-Nodes (3): 🧬 Capture by Reference, 🏗️ Capturing State, Closures in TechScript
+Cohesion: 0.22
+Nodes (8): 1. `math`, 2. `text`, 3. `collections`, 4. `json`, 5. `files`, 6. `http`, 7. `time`, TechScript Standard Library Reference
 
 ### Community 336 - "Community 336"
 Cohesion: 0.50
@@ -1841,8 +1851,8 @@ Cohesion: 0.50
 Nodes (4): 12.1 Compatibility Rules, 12.2 Freeze Declaration, 12.3 Future Roadmap, 12. Compatibility & Evolution
 
 ### Community 342 - "Community 342"
-Cohesion: 0.18
-Nodes (9): 🛑 Reporting a Vulnerability, Security Policy, 🛡️ Supported Versions, 💬 Community Channels, 🐛 Reporting Bugs, 💡 Requesting Features, 🔒 Security Inquiries, TechScript Support (+1 more)
+Cohesion: 0.33
+Nodes (6): 💬 Community Channels, 🐛 Reporting Bugs, 💡 Requesting Features, 🔒 Security Inquiries, TechScript Support, 📜 Version Support Policy
 
 ### Community 347 - "Community 347"
 Cohesion: 0.47
@@ -1860,17 +1870,25 @@ Nodes (9): 1. Overview, 1. Retrieve Records (`GET /api/posts`), 2. Automatic End
 Cohesion: 0.22
 Nodes (8): 1. Security Overview, 2. Core Security Guarantees, A. Capability-Based Sandboxing, B. Path Traversal Defenses, C. SQL Injection Immunity, D. Cross-Site Scripting (XSS) Mitigation, E. Secure Package Supply Chain, TechScript WebForge: Security Architecture & Auditing
 
+### Community 365 - "Community 365"
+Cohesion: 0.25
+Nodes (8): Attribution, Code of Conduct, Enforcement, Expected conduct, Purpose, Reporting, Scope, Unacceptable conduct
+
 ### Community 428 - "Community 428"
-Cohesion: 0.36
-Nodes (7): build(), WindowsBuildResult, AppforgeManifest, Error, Path, PathBuf, Result
+Cohesion: 0.29
+Nodes (7): 1. Overview & Architecture, 2. Defining Schemas in TechScript, 3. Automated Migration System, 4. Security & Parameterized Queries, 5. Development vs Production, Supported Data Types, TechScript WebForge: Database & Persistence Layer
 
 ### Community 433 - "Community 433"
 Cohesion: 0.25
 Nodes (7): 1. Build Pipeline Workflow, 2. Command Reference, 3. Build Artifact Outputs, Android, Appforge Build System Specification, Web Wrapping, Windows & Desktop
 
+### Community 439 - "Community 439"
+Cohesion: 0.17
+Nodes (12): 22. Hello world, 23. Variables and reassignment, 24. Functions, 25. Conditions and repetition, 26. Lists and objects, 27. Data processing, 28. Formatting and JSON, 29. Error handling (+4 more)
+
 ### Community 455 - "Community 455"
-Cohesion: 0.11
-Nodes (13): ExitCode, Option, ExitCode, Option, ExitCode, ExitCode, Self, colorize (+5 more)
+Cohesion: 0.29
+Nodes (7): 🏗️ Basic Commands, 📂 Cache Directory, `init`, `install`, Package Manager, `publish`, `update`
 
 ### Community 456 - "Community 456"
 Cohesion: 0.25
@@ -1884,17 +1902,21 @@ Nodes (6): 1. Overview, 2. Writing TechScript Tests, 3. WebForge End-to-End Test
 Cohesion: 0.46
 Nodes (7): is_launched_from_explorer(), levenshtein(), perform_first_run_check(), run(), show_custom_help(), show_welcome_screen(), suggest_subcommand()
 
+### Community 459 - "Community 459"
+Cohesion: 0.22
+Nodes (8): ExitCode, Option, ExitCode, ExitCode, Option, execute(), execute(), path
+
 ### Community 465 - "Community 465"
 Cohesion: 0.29
 Nodes (6): 1. Current Architecture, 2. Existing Working Features, 3. Broken / Underperforming Features Identified, 4. Missing Framework Capabilities, 5. Proposed Implementation Order, TechScript WebForge: Comprehensive Architecture & Web Stack Audit
 
 ### Community 466 - "Community 466"
-Cohesion: 0.25
-Nodes (8): Added, Compatibility, Documentation, Downloads, Fixed and Security, Highlights, Performance and Maintenance, TechScript [VERSION] Release Notes
+Cohesion: 0.29
+Nodes (6): 1. Overview, 2. Declarative 3D Syntax, 3. Modular 3D Scene Files (`.3txs`), 4. Responsive Resizing & WebGL Optimization, Components of a 3D Block, TechScript WebForge: 3D WebGL Graphics Guide
 
 ### Community 467 - "Community 467"
-Cohesion: 0.16
-Nodes (16): Any, NativeRegistry, Box, Default, Environment, HashMap, HashSet, Option (+8 more)
+Cohesion: 0.40
+Nodes (4): 1. General Execution & Compilation, 2. WebForge Web Development, 3. AppForge Mobile & Desktop, TechScript CLI (`tsc`) Toolchain Guide
 
 ### Community 468 - "Community 468"
 Cohesion: 0.33
@@ -1913,16 +1935,16 @@ Cohesion: 0.29
 Nodes (5): FuncDecl, IRType, Option, Program, TypeSpec
 
 ### Community 472 - "Community 472"
-Cohesion: 0.34
-Nodes (10): Module, Path, Result, String, LLVMCodeGenFileType, get_host_target_triple(), LLVMBackend, LLVMBackendOptions (+2 more)
+Cohesion: 0.40
+Nodes (5): 1. Create a Branch, 2. Make Edits & Run Linting, 3. Run Tests, 4. Committing Changes, 🔄 Development & Git Workflow
 
 ### Community 473 - "Community 473"
-Cohesion: 0.21
-Nodes (9): Box, Default, Self, Send, Vec, duration, CompilationEvent, EventBus (+1 more)
+Cohesion: 0.40
+Nodes (5): 1. Create a Branch, 2. Make Edits & Run Linting, 3. Run Tests, 4. Committing Changes, 🔄 Development & Git Workflow
 
 ### Community 474 - "Community 474"
 Cohesion: 0.15
-Nodes (14): ExitCode, Option, ExitCode, ExitCode, Option, ExitCode, Option, execute() (+6 more)
+Nodes (14): build(), WindowsBuildResult, main(), Box, Error, Result, AppforgeManifest, Error (+6 more)
 
 ### Community 475 - "Community 475"
 Cohesion: 0.33
@@ -1933,8 +1955,8 @@ Cohesion: 0.33
 Nodes (5): 1. TechScript Showcase App (`/showcase-app`), 🧪 Automated Verification, 💻 Language & Standard Library Examples, 📱 Official Showcase Applications, Official TechScript Examples & Applications
 
 ### Community 477 - "Community 477"
-Cohesion: 0.31
-Nodes (8): AnalysisManager, LiteralVal, Module, OptimizationPass, OptimizationResult, Option, TokenKind, ConstantFolding
+Cohesion: 0.39
+Nodes (8): RuntimeContext, run_txs(), test_canonical_error_handling(), test_canonical_functions_with_colon_blocks(), test_canonical_if_else_if_else(), test_canonical_repeat_loop(), test_canonical_variable_declaration_and_reassignment(), test_canonical_while_loop()
 
 ### Community 478 - "Community 478"
 Cohesion: 0.40
@@ -1944,13 +1966,9 @@ Nodes (4): 1. Overview, 2. Directory Layout & Scaffolding, 3. Invocation Convent
 Cohesion: 0.40
 Nodes (4): 1. Concept, 2. Architecture of Wrapped Web Apps, 3. Security Model, Appforge Web Wrapping: Packaging Webforge Apps for Mobile & Desktop
 
-### Community 480 - "Community 480"
-Cohesion: 0.28
-Nodes (9): AnalysisManager, HashMap, LiteralVal, LocalId, Module, Op, OptimizationPass, OptimizationResult (+1 more)
-
 ### Community 481 - "Community 481"
-Cohesion: 0.40
-Nodes (4): 🎯 Phase 1: Core Mechanics (v0.1.0 Alpha), 🚀 Phase 2: Tooling & Concurrency (v0.5.0 Beta), 🏆 Phase 3: Native Targets & Stability (v1.0.0 Stable), Project Roadmap
+Cohesion: 0.20
+Nodes (10): Condition Loop (`while`), 🔀 Conditionals, Counted Loop (`repeat N times:`), 🏗️ Functions, Iterator Loop (`for`), 🔁 Loops, 🧱 Objects & Models, 📐 Philosophy (+2 more)
 
 ### Community 482 - "Community 482"
 Cohesion: 0.40
@@ -1961,160 +1979,200 @@ Cohesion: 0.83
 Nodes (3): execute(), AppCommands, ExitCode
 
 ### Community 484 - "Community 484"
-Cohesion: 0.50
-Nodes (3): 1. Supported Platforms & Toolchain Requirements, 2. Platform Detection & Doctor Inspection, Appforge Platform Support Matrix
+Cohesion: 0.40
+Nodes (5): Reporting a vulnerability, Response process, Security Policy, Supply-chain and dependency reports, Supported versions
 
 ### Community 485 - "Community 485"
-Cohesion: 0.50
-Nodes (3): 1. Standard Project Layout, 2. Manifest Specification: `appforge.toml`, Appforge Project Structure Specification
+Cohesion: 0.40
+Nodes (5): 🐳 Docker Container, ⚡ Instant One-Line Installation, 🐧 Linux, 🍎 macOS & 📱 Android (Termux), 📦 Standalone Windows Setup Wizard (`.exe`), 🪟 Windows (PowerShell One-Liner)
 
 ### Community 486 - "Community 486"
 Cohesion: 0.29
-Nodes (6): HashMap, Self, String, Vec, FontAtlas, GlyphMetric
+Nodes (7): HashMap, Self, String, Vec, blit_official_logo(), FontAtlas, GlyphMetric
 
 ### Community 487 - "Community 487"
-Cohesion: 0.28
-Nodes (7): ExitCode, Option, ExitCode, Option, execute(), execute(), projecttemplate
+Cohesion: 0.09
+Nodes (19): ExitCode, ExitCode, ExitCode, Option, ExitCode, Option, ExitCode, ExitCode (+11 more)
 
 ### Community 488 - "Community 488"
-Cohesion: 0.22
-Nodes (9): 10 — TechScript 2.0 Semantic Analysis Specification, 1. Overview, 2. Scope & Name Resolution, 4. Deprecation Warning Issuance, 5. Diagnostics & Suggestions, 6.1 Compatibility Notes, 6.2 Migration, 6.3 Future Roadmap (+1 more)
+Cohesion: 0.36
+Nodes (8): Error, ExitCode, Option, Path, Result, build_web(), execute(), invoke_linker()
 
 ### Community 489 - "Community 489"
 Cohesion: 0.83
 Nodes (3): ExitCode, execute(), WebCommands
 
+### Community 490 - "Community 490"
+Cohesion: 0.40
+Nodes (5): Reporting a vulnerability, Response process, Security Policy, Supply-chain and dependency reports, Supported versions
+
 ### Community 491 - "Community 491"
-Cohesion: 0.32
-Nodes (6): ArtifactManager, ExitCode, ExitCode, Option, execute(), execute()
+Cohesion: 0.29
+Nodes (6): DSLBlock, DslBlockId, Expression, LiteralVal, String, literal_val_to_string()
 
 ### Community 495 - "Community 495"
-Cohesion: 0.36
-Nodes (7): ExitCode, Option, Path, PathBuf, Vec, execute(), find_test_files()
+Cohesion: 0.29
+Nodes (6): 1. Consult the Specification First, 2. Follow Canonical Constructs, 3. Maintain Complete Layer Separation, 4. Implementation Rigor, 🚨 MANDATORY GOVERNING DIRECTIVE: SYNTAX IS LOCKED, TECHSCRIPT REPOSITORY RULES FOR AI CODING AGENTS
 
 ### Community 496 - "Community 496"
-Cohesion: 0.39
-Nodes (7): BytecodeModule, lower, compile_source(), test_bytecode_compilation_and_validation(), test_bytecode_constant_deduplication(), test_bytecode_disassembler(), test_bytecode_serialization_roundtrip()
+Cohesion: 0.25
+Nodes (8): 33. Audit the existing repository before changing it, 34. Reconcile the spec and implementation, 35. Implement in small verified phases, 36. Required regression tests, 37. Create permanent project rules and syntax memory, 38. Deliverables, 39. Final report requirements, PART V — IMPLEMENTATION PLAN FOR THE CODING AI
 
 ### Community 497 - "Community 497"
 Cohesion: 0.43
-Nodes (5): AnalysisManager, Module, OptimizationPass, OptimizationResult, AlgebraicSimplification
-
-### Community 498 - "Community 498"
-Cohesion: 0.43
-Nodes (5): AnalysisManager, Module, OptimizationPass, OptimizationResult, BranchSimplification
-
-### Community 499 - "Community 499"
-Cohesion: 0.43
 Nodes (5): String, load_example(), test_webforge_3d_webgl_scene(), test_webforge_interactive_site(), test_webforge_notes_sqlite_site()
 
-### Community 500 - "Community 500"
+### Community 498 - "Community 498"
+Cohesion: 0.40
+Nodes (4): 📸 Adding New Phone Screenshots, 📁 Directory Structure, 🎥 Release Demonstration Video, TechScript Release Media & Asset Guidelines
+
+### Community 499 - "Community 499"
 Cohesion: 0.29
-Nodes (5): BytecodeModule, Result, String, BytecodeLoader, techscript_bytecode
+Nodes (6): 🛠️ Automated Migration Command, 🧬 Code Migration Examples, Conditional Blocks, 📐 Overview of Key Syntax Changes, TechScript 2.0 Migration Guide, Variables & Constants
 
 ### Community 501 - "Community 501"
+Cohesion: 0.40
+Nodes (4): 1. General Execution & Compilation, 2. WebForge Web Development, 3. AppForge Mobile & Desktop, TechScript CLI (`tsc`) Toolchain Guide
+
+### Community 502 - "Community 502"
+Cohesion: 0.12
+Nodes (14): CodegenContext, BlockId, GlobalId, HashMap, IRType, LiteralVal, Value, ValueId (+6 more)
+
+### Community 503 - "Community 503"
+Cohesion: 0.43
+Nodes (4): Default, Self, OptimizationContext, OptimizationLevel
+
+### Community 504 - "Community 504"
+Cohesion: 0.05
+Nodes (33): 🏗️ Declarative UI Blocks, Domain-Specific Language (DSL) Guide, 🎨 Rendering Pipeline, 🧬 Supported DSL Properties, ⚡ Compiler & Engine Specification, 🧱 Declarative Submodules, 🗺️ Documentation Portal Reference, 🚀 Getting Started (+25 more)
+
+### Community 505 - "Community 505"
 Cohesion: 0.47
 Nodes (5): ExitCode, Option, Result, execute(), open_browser()
 
-### Community 502 - "Community 502"
-Cohesion: 0.33
-Nodes (6): BlockId, GlobalId, Value, ValueId, Vec, CodegenEngine
-
-### Community 503 - "Community 503"
+### Community 506 - "Community 506"
 Cohesion: 0.33
 Nodes (3): Self, String, PassStatistics
 
-### Community 504 - "Community 504"
+### Community 507 - "Community 507"
 Cohesion: 0.33
-Nodes (6): ⚡ Compiler & Engine Specification, 🧱 Declarative Submodules, 🗺️ Documentation Portal Reference, 🚀 Getting Started, 🤝 Project, Release & Community, TechScript 2.0 Documentation Portal
+Nodes (6): 11.1 Repeat a fixed number of times, 11.2 Iterate through a collection, 11.3 Repeat over an inclusive numeric range, 11.4 While loop, 11.5 Loop controls, 11. Repetition and loops
 
-### Community 505 - "Community 505"
+### Community 508 - "Community 508"
+Cohesion: 0.50
+Nodes (4): 🎨 Alias Imports, Imports in TechScript, 🧬 Local vs Standard Library Imports, 🏗️ The `use` Keyword
+
+### Community 509 - "Community 509"
+Cohesion: 0.17
+Nodes (10): 1. What TechScript is, 2. Non-negotiable principles, 3. Canonical examples at a glance, FINAL ACCEPTANCE CONDITION, PART I — THE GOAL AND NON-NEGOTIABLE PRINCIPLES, TechScript: Final Canonical Syntax, Standard Library, Webforge, AppForge, and Agent Rules, 1. Locked Syntax Rules, 2. Canonical Complete Demonstration (+2 more)
+
+### Community 510 - "Community 510"
+Cohesion: 0.33
+Nodes (6): 18.1 Generic builder blocks, 18. Frameworks must not redefine TechScript, 19. Webforge: target example, 20. AppForge: target example, 21. Libraries and custom visual effects, PART III — FRAMEWORKS BUILT ON THE SAME LANGUAGE
+
+### Community 511 - "Community 511"
+Cohesion: 0.33
+Nodes (6): 8.1 String literals, 8.2 String interpolation, 8.3 Common text operations, 8.4 Number and value formatting, 8.5 Convert values to text, 8. Strings, formatting, interpolation, and conversion
+
+### Community 512 - "Community 512"
+Cohesion: 0.33
+Nodes (6): 5.1 Conditionals, 5.2 Counted Loops, 5.3 Range Loops, 5.4 Collections Iteration, 5.5 While Loops, 5. Control Flow
+
+### Community 513 - "Community 513"
+Cohesion: 0.33
+Nodes (4): Result, RuntimeValue, VMError, VM
+
+### Community 514 - "Community 514"
 Cohesion: 0.60
 Nodes (4): ExitCode, Option, default_toml_config(), execute()
 
-### Community 506 - "Community 506"
-Cohesion: 0.80
-Nodes (4): ExitCode, add_language(), execute(), NativeCommands
-
-### Community 507 - "Community 507"
-Cohesion: 0.40
-Nodes (5): Call & Signature Errors, Control-Flow Errors, Module Errors, Name & Scope Errors, Semantic Errors — TSE0300–TSE0499
-
-### Community 508 - "Community 508"
-Cohesion: 0.40
-Nodes (5): 📦 A Simple Calculations Script, 🎮 Explore Next, Getting Started with TechScript, 💻 Prerequisite, 🐉 Write Hello World
-
-### Community 509 - "Community 509"
-Cohesion: 0.70
-Nodes (5): RuntimeValue, Vec, find_3d_scenes(), find_database_tables(), render_complete_document()
-
-### Community 510 - "Community 510"
-Cohesion: 0.50
-Nodes (4): 🏗️ Declarative UI Blocks, Domain-Specific Language (DSL) Guide, 🎨 Rendering Pipeline, 🧬 Supported DSL Properties
-
-### Community 511 - "Community 511"
-Cohesion: 0.50
-Nodes (4): 📐 Block Delimiters, 🧬 Expressions & Statements, ⚖️ Operator Precedence Table, TechScript 2.0 Syntax Guide
-
-### Community 512 - "Community 512"
-Cohesion: 0.50
-Nodes (4): §14 Collections, Lists, Maps, Nested Collections
-
-### Community 513 - "Community 513"
-Cohesion: 0.50
-Nodes (4): §17 Compatibility & Evolution, Legacy Syntax in the 2.x Compiler, Migrating with `tsc migrate`, Version Roadmap
-
-### Community 514 - "Community 514"
-Cohesion: 0.50
-Nodes (4): 9.1 Precedence (lowest to highest), 9.2 Implicit Built-in Calls, 9.3 Primary Expressions, 9. Expressions
-
 ### Community 515 - "Community 515"
-Cohesion: 0.50
-Nodes (4): 📂 Example Folder Structure, Examples Directory Guide, 🗺️ Index of Core Examples, 🚀 Running the Examples
+Cohesion: 0.40
+Nodes (3): MaterialPreset, ProjectEntry, TechScriptBridge
 
 ### Community 516 - "Community 516"
-Cohesion: 0.50
-Nodes (4): 1. General-Purpose Program, 2. Full-Stack Website (Webforge), 3. Native Android App (Appforge), Quick-Start Guides
+Cohesion: 0.70
+Nodes (4): ExitCode, dump_ast(), dump_bytecode(), dump_ir()
 
-### Community 517 - "Community 517"
+### Community 518 - "Community 518"
+Cohesion: 0.40
+Nodes (4): 🎯 Phase 1: Core Mechanics (v0.1.0 Alpha), 🚀 Phase 2: Tooling & Concurrency (v0.5.0 Beta), 🏆 Phase 3: Native Targets & Stability (v1.0.0 Stable), Project Roadmap
+
+### Community 520 - "Community 520"
+Cohesion: 0.50
+Nodes (3): Canonical Constructs, Governing Directive, TechScript Language Rules for Coding Agents
+
+### Community 525 - "Community 525"
+Cohesion: 0.50
+Nodes (3): Option, String, DocTopic
+
+### Community 526 - "Community 526"
 Cohesion: 0.50
 Nodes (3): Distribution requirements, Representative direct dependencies, Third-Party Licenses
 
-### Community 518 - "Community 518"
+### Community 536 - "Community 536"
+Cohesion: 0.40
+Nodes (5): 📦 A Simple Calculations Script, 🎮 Explore Next, Getting Started with TechScript, 💻 Prerequisite, 🐉 Write Hello World
+
+### Community 537 - "Community 537"
+Cohesion: 0.40
+Nodes (5): 12.1 Function declaration, 12.2 Optional parameter and return types, 12.3 Default and named arguments, 12.4 Scope and closures, 12. Functions and returns
+
+### Community 538 - "Community 538"
+Cohesion: 0.40
+Nodes (5): 6.1 Create a variable, 6.2 Change an existing variable, 6.3 Constants, 6.4 Optional explicit type annotations, 6. Variables, reassignment, constants, and types
+
+### Community 539 - "Community 539"
+Cohesion: 0.40
+Nodes (5): 7.1 Literals, 7.2 Arithmetic operators, 7.3 Comparison operators, 7.4 Boolean operators, 7. Values and expressions
+
+### Community 540 - "Community 540"
+Cohesion: 0.40
+Nodes (5): 9.1 Lists, 9.2 Object/map literals, 9.3 Named types and records, 9.4 Formatting objects and collections, 9. Lists, maps, objects, and structured data
+
+### Community 542 - "Community 542"
+Cohesion: 0.67
+Nodes (3): ExitCode, Option, execute()
+
+### Community 543 - "Community 543"
+Cohesion: 0.67
+Nodes (3): ExitCode, Option, execute()
+
+### Community 544 - "Community 544"
+Cohesion: 0.67
+Nodes (3): ExitCode, Option, execute()
+
+### Community 545 - "Community 545"
+Cohesion: 0.67
+Nodes (3): ExitCode, execute(), Manifest
+
+### Community 546 - "Community 546"
+Cohesion: 0.67
+Nodes (3): ExitCode, Option, execute()
+
+### Community 547 - "Community 547"
 Cohesion: 0.50
-Nodes (3): Code Formatter, 🧬 Formatter Styles & Rules, 🏗️ Usage
-
-### Community 519 - "Community 519"
-Cohesion: 0.67
-Nodes (3): §10 Error Handling, Throwing Custom Errors, `try` / `catch` / `throw`
-
-### Community 520 - "Community 520"
-Cohesion: 0.67
-Nodes (3): 2.1 Canonical Keywords, 2.2 Deprecated Aliases, §2 Keywords
-
-### Community 521 - "Community 521"
-Cohesion: 0.67
-Nodes (3): §9 Conditionals, Pattern Matching — `match` / `case` / `default`, `when` / `else when` / `else`
+Nodes (4): 3.1 Creating Variables, 3.2 Mutating Variables, 3.3 Constants, 3. Variables & Assignment
 
 ## Knowledge Gaps
-- **2004 isolated node(s):** `Vec`, `Self`, `DebugSymbols`, `SourceMap`, `Result` (+1999 more)
+- **2187 isolated node(s):** `install.sh script`, `test_techscript.sh script`, `Vec`, `Self`, `DebugSymbols` (+2182 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **112 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **120 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Write` connect `techscript_runtime` to `DocumentFormatter`, `disassembler.rs`, `Community 455`, `BuiltinRegistry`, `.register_video`, `packager/src/main.rs`, `.register_postgres`, `Community 491`, `.write_to_file`, `migrate.rs`, `TimingProfiler`, `VMDebugger`, `.register_notification`?**
-  _High betweenness centrality (0.026) - this node is a cross-community bridge._
-- **Why does `Context` connect `.register_csv` to `HashMap`, `PassManager`, `fix_journal.py`?**
-  _High betweenness centrality (0.023) - this node is a cross-community bridge._
-- **Why does `LoweringContext` connect `Community 281` to `Community 321`, `.emit_to_file`, `diagnosticreporter`, `NativeBridge`, `Community 471`, `Box`?**
-  _High betweenness centrality (0.018) - this node is a cross-community bridge._
-- **What connects `Vec`, `Self`, `DebugSymbols` to the rest of the system?**
-  _2010 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `LoweringContext` be split into smaller, more focused modules?**
-  _Cohesion score 0.05 - nodes in this community are weakly interconnected._
+- **Why does `Write` connect `techscript_runtime` to `DocumentFormatter`, `disassembler.rs`, `Community 487`, `BuiltinRegistry`, `.register_video`, `packager/src/main.rs`, `.register_postgres`, `.write_to_file`, `migrate.rs`, `TimingProfiler`, `VMDebugger`, `.register_notification`, `Community 543`?**
+  _High betweenness centrality (0.032) - this node is a cross-community bridge._
+- **Why does `LoweringContext` connect `Community 281` to `Community 517`, `.emit_to_file`, `Community 491`, `diagnosticreporter`, `NativeBridge`, `Community 471`?**
+  _High betweenness centrality (0.014) - this node is a cross-community bridge._
+- **Why does `Backend` connect `.new` to `sync.rs`, `.register_image`, `Result`, `Option`, `lsp_tests.rs`, `Community 530`, `Vec`, `.get_word_at_offset`?**
+  _High betweenness centrality (0.013) - this node is a cross-community bridge._
+- **What connects `install.sh script`, `test_techscript.sh script`, `Vec` to the rest of the system?**
+  _2187 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Span` be split into smaller, more focused modules?**
   _Cohesion score 0.0815090824406148 - nodes in this community are weakly interconnected._
 - **Should `.execute_statement` be split into smaller, more focused modules?**
   _Cohesion score 0.07456140350877193 - nodes in this community are weakly interconnected._
+- **Should `ResolveSymbols` be split into smaller, more focused modules?**
+  _Cohesion score 0.07355769230769231 - nodes in this community are weakly interconnected._

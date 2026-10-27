@@ -8,11 +8,10 @@ TechScript features a high-performance event loop and cooperative concurrency ba
 Declaring a function with `async` makes it return a `Future` immediately instead of running blockingly:
 
 ```txs
-async do fetch_user_data(user_id)
+async to fetch_user_data(user_id):
     # Simulate network call using sleep
-    sleep(100) 
-    send { "id": user_id, "name": "Alice" }
-end
+    sleep(100)
+    return { "id": user_id, "name": "Alice" }
 ```
 
 ---
@@ -22,9 +21,9 @@ To extract the resolved value of a `Future`, use the `await` keyword:
 
 ```txs
 # This suspends the current async context until the future resolves
-user_future = fetch_user_data(42)
-user = await user_future
-say user["name"] # "Alice"
+user_future is fetch_user_data(42)
+user is await user_future
+say "{user['name']}" # "Alice"
 ```
 
 ---
@@ -33,16 +32,16 @@ say user["name"] # "Alice"
 You can launch multiple async calls concurrently and await them all:
 
 ```txs
-async do main()
-    future_a = fetch_user_data(1)
-    future_b = fetch_user_data(2)
+async to main():
+    future_a is fetch_user_data(1)
+    future_b is fetch_user_data(2)
     
     # Both calls run concurrently; await their resolutions
-    user_a = await future_a
-    user_b = await future_b
+    user_a is await future_a
+    user_b is await future_b
     
-    say $"{user_a['name']} and {user_b['name']} loaded."
-end
+    say "{user_a['name']} and {user_b['name']} loaded."
+    return "done"
 
 await main()
 ```

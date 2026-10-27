@@ -5,14 +5,13 @@ Traits define a set of methods that can be shared across multiple classes to ena
 ---
 
 ## 🏗️ Declaring a Trait
-Use the `trait` keyword. Traits specify method signatures without providing an implementation, or they can optionally provide default implementations:
+Use the `trait` keyword followed by a colon `:` and an indented block:
 
 ```txs
-trait Speaker
-    # Method signature (empty body)
-    do speak()
-    end
-end
+trait Speaker:
+    # Method signature
+    to speak():
+        pass
 ```
 
 ---
@@ -21,17 +20,13 @@ end
 Classes implement traits using the `with` keyword during declaration:
 
 ```txs
-class Dog with Speaker
-    do speak()
+class Dog with Speaker:
+    to speak():
         say "Woof!"
-    end
-end
 
-class Cat with Speaker
-    do speak()
+class Cat with Speaker:
+    to speak():
         say "Meow!"
-    end
-end
 ```
 
 ---
@@ -40,14 +35,14 @@ end
 You can write functions that accept any object implementing a specific trait:
 
 ```txs
-do make_sound(speaker: Speaker)
+to make_sound(speaker):
     speaker.speak()
-end
 
-dog = new Dog()
-cat = new Cat()
+dog is new Dog()
+cat is new Cat()
 
 make_sound(dog) # Woof!
 make_sound(cat) # Meow!
 ```
+
 For contract checks without implementations, see [Interfaces](interfaces.md).

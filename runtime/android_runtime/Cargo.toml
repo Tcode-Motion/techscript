@@ -23,6 +23,8 @@ crate-type = ["cdylib"]
 # This is the Rust equivalent of ANativeActivity — no Java needed.
 android-activity = { version = "0.6", features = ["native-activity"] }
 ndk              = { version = "0.9", default-features = false }
+ndk-sys          = "0.6"
+jni              = "0.22"
 
 # Log to Android logcat via __android_log_print
 log         = "0.4"
@@ -37,6 +39,15 @@ once_cell = "1"
 
 # Pure-Rust TrueType rasterizer for high-DPI modern typography (Roboto)
 fontdue = "0.9"
+
+# TechScript Language Engine: Lexer, Parser, Semantic Analyzer, AST & Interpreter
+techscript_lexer       = { path = "../../compiler/lexer" }
+techscript_parser      = { path = "../../compiler/parser" }
+techscript_semantic    = { path = "../../compiler/semantic" }
+techscript_interpreter = { path = "../../runtime/interpreter" }
+techscript_runtime     = { path = "../../runtime/runtime" }
+techscript_errors      = { path = "../../compiler/errors" }
+techscript_ast         = { path = "../../compiler/ast" }
 
 [target.'cfg(not(target_os = "android"))'.dependencies]
 # For host builds (testing on desktop) — stub logging

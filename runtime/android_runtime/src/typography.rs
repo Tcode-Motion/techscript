@@ -17,16 +17,50 @@ use std::fs;
 
 pub const ATLAS_WIDTH: usize = 512;
 pub const ATLAS_HEIGHT: usize = 512;
-pub const BASE_FONT_SIZE: f32 = 32.0;
+
+pub static LOGO_128_RGBA: &[u8] = include_bytes!("logo_128.rgba");
+
+pub const LOGO_UV: [f32; 4] = [
+    384.0 / 512.0, // u0 = 0.75
+    384.0 / 512.0, // v0 = 0.75
+    512.0 / 512.0, // u1 = 1.0
+    512.0 / 512.0, // v1 = 1.0
+];
+
+fn blit_official_logo(atlas: &mut [u8]) {
+    let logo_w = 128;
+    let logo_h = 128;
+    let start_x = ATLAS_WIDTH - logo_w; // 384
+    let start_y = ATLAS_HEIGHT - logo_h; // 384
+
+    for ly in 0..logo_h {
+        for lx in 0..logo_w {
+            let src_idx = (ly * logo_w + lx) * 4;
+            let dst_x = start_x + lx;
+            let dst_y = start_y + ly;
+            let dst_idx = (dst_y * ATLAS_WIDTH + dst_x) * 4;
+            if dst_idx + 3 < atlas.len() && src_idx + 3 < LOGO_128_RGBA.len() {
+                atlas[dst_idx] = LOGO_128_RGBA[src_idx];
+                atlas[dst_idx + 1] = LOGO_128_RGBA[src_idx + 1];
+                atlas[dst_idx + 2] = LOGO_128_RGBA[src_idx + 2];
+                atlas[dst_idx + 3] = LOGO_128_RGBA[src_idx + 3];
+            }
+        }
+    }
+}
+
+/// Rasterize at 48px so glyphs are sharp at headline (20–24dp) AND body (11–14dp) sizes.
+/// Each glyph is ~30px wide; all 95 ASCII printable chars fit in a 512×512 atlas across ~6 rows.
+pub const BASE_FONT_SIZE: f32 = 48.0;
 
 #[derive(Clone, Copy, Debug)]
 pub struct GlyphMetric {
-    pub uv: [f32; 4],        // u0, v0, u1, v1 in atlas
-    pub width: f32,          // pixel width in atlas
-    pub height: f32,         // pixel height in atlas
-    pub xmin: f32,           // horizontal bearing
-    pub ymin: f32,           // vertical bearing
-    pub advance_width: f32,  // horizontal advance
+    pub uv: [f32; 4],       // u0, v0, u1, v1 in atlas
+    pub width: f32,         // pixel width in atlas
+    pub height: f32,        // pixel height in atlas
+    pub xmin: f32,          // horizontal bearing
+    pub ymin: f32,          // vertical bearing
+    pub advance_width: f32, // horizontal advance
 }
 
 pub struct FontAtlas {
@@ -99,7 +133,7 @@ impl FontAtlas {
                 for col in 0..w {
                     let alpha = bitmap[row * w + col];
                     let dst_idx = ((cur_y + row) * ATLAS_WIDTH + (cur_x + col)) * 4;
-                    atlas_rgba[dst_idx]     = 255;
+                    atlas_rgba[dst_idx] = 255;
                     atlas_rgba[dst_idx + 1] = 255;
                     atlas_rgba[dst_idx + 2] = 255;
                     atlas_rgba[dst_idx + 3] = alpha;
@@ -135,6 +169,9 @@ impl FontAtlas {
             None => (BASE_FONT_SIZE * 0.85, BASE_FONT_SIZE * 1.25),
         };
 
+        // Blit official 128x128 TechScript brand logo into bottom-right quadrant of atlas
+        blit_official_logo(&mut atlas_rgba);
+
         log::info!("[TechScript Font] Successfully generated 512x512 TrueType atlas ({} glyphs, ascender={ascender:.1})", metrics.len());
 
         Self {
@@ -147,7 +184,16 @@ impl FontAtlas {
 
     /// Fallback font table in case system TTF is not accessible
     fn create_fallback_atlas() -> Self {
-        let atlas_rgba = crate::font8x8::generate_font_atlas_rgba();
+        let mut atlas_rgba = vec![0u8; ATLAS_WIDTH * ATLAS_HEIGHT * 4];
+        let base_atlas = crate::font8x8::generate_font_atlas_rgba();
+        // Copy 128x64 base atlas into top-left
+        for y in 0..64 {
+            for x in 0..128 {
+                let src_idx = (y * 128 + x) * 4;
+                let dst_idx = (y * ATLAS_WIDTH + x) * 4;
+                atlas_rgba[dst_idx..dst_idx + 4].copy_from_slice(&base_atlas[src_idx..src_idx + 4]);
+            }
+        }
         let mut metrics = HashMap::new();
 
         for ch in 32u8..=126u8 {
@@ -156,7 +202,12 @@ impl FontAtlas {
             metrics.insert(
                 c,
                 GlyphMetric {
-                    uv: [u0, v0, u1, v1],
+                    uv: [
+                        u0 * (128.0 / 512.0),
+                        v0 * (64.0 / 512.0),
+                        u1 * (128.0 / 512.0),
+                        v1 * (64.0 / 512.0),
+                    ],
                     width: 8.0,
                     height: 8.0,
                     xmin: 0.0,
@@ -165,6 +216,8 @@ impl FontAtlas {
                 },
             );
         }
+
+        blit_official_logo(&mut atlas_rgba);
 
         Self {
             atlas_rgba,

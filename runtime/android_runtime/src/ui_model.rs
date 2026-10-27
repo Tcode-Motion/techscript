@@ -172,9 +172,15 @@ pub struct ThemeConfig {
 }
 
 impl ThemeConfig {
-    fn default_primary() -> String { "#4f46e5".into() }
-    fn default_accent()  -> String { "#06b6d4".into() }
-    fn default_mode()    -> String { "system".into() }
+    fn default_primary() -> String {
+        "#4f46e5".into()
+    }
+    fn default_accent() -> String {
+        "#06b6d4".into()
+    }
+    fn default_mode() -> String {
+        "system".into()
+    }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -223,11 +229,16 @@ pub enum Widget {
     Divider,
 }
 
-fn default_spacer_height() -> i32 { 12 }
+fn default_spacer_height() -> i32 {
+    12
+}
 
 impl Widget {
     pub fn text(content: &str, style: WidgetStyle) -> Self {
-        Widget::Text { content: content.into(), style }
+        Widget::Text {
+            content: content.into(),
+            style,
+        }
     }
 
     pub fn button(label: &str, action: &str, color: &str) -> Self {

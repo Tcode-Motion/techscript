@@ -215,6 +215,9 @@ impl Interpreter {
                     None,
                 ));
             }
+            if func.name() == "main" {
+                self.main_invoked = true;
+            }
             self.call_stack.push(crate::control_flow::CallFrame::new(
                 func.name().to_string(),
                 Some(call.span),
@@ -419,26 +422,34 @@ impl Interpreter {
         match target {
             Expression::Identifier(ident) => {
                 let name = &ident.name;
-                let final_val = if op == "=" {
+                let is_direct_assign = matches!(op, "=" | "is" | "becomes" | "be");
+                let final_val = if is_direct_assign {
                     value_val
                 } else {
                     let current = self.env.borrow().lookup(name)?;
                     let basic_op = &op[0..op.len() - 1]; // e.g. "+=" -> "+"
                     eval_binary(basic_op, current, value_val)?
                 };
-                self.env
-                    .borrow_mut()
-                    .assign(name, final_val.clone())
-                    .map_err(|mut e| {
-                        e.span = Some(span);
-                        e
-                    })?;
+                if op == "is" {
+                    self.env
+                        .borrow_mut()
+                        .define(name.to_string(), final_val.clone(), false);
+                } else {
+                    self.env
+                        .borrow_mut()
+                        .assign(name, final_val.clone())
+                        .map_err(|mut e| {
+                            e.span = Some(span);
+                            e
+                        })?;
+                }
                 Ok(final_val)
             }
             Expression::Index(idx) => {
                 let obj_val = self.visit_expression(&idx.object)?;
                 let idx_val = self.visit_expression(&idx.index)?;
-                let final_val = if op == "=" {
+                let is_direct_assign = matches!(op, "=" | "is" | "becomes" | "be");
+                let final_val = if is_direct_assign {
                     value_val
                 } else {
                     let current = self.eval_index_access(&obj_val, &idx_val, span)?;
@@ -476,7 +487,8 @@ impl Interpreter {
             }
             Expression::Member(mem) => {
                 let obj_val = self.visit_expression(&mem.object)?;
-                let final_val = if op == "=" {
+                let is_direct_assign = matches!(op, "=" | "is" | "becomes" | "be");
+                let final_val = if is_direct_assign {
                     value_val
                 } else {
                     let current =

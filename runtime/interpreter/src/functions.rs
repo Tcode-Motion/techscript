@@ -66,6 +66,7 @@ impl Callable for BridgedFunction {
             },
             env: Rc::clone(&self.user_func.closure),
             call_stack: Vec::new(),
+            main_invoked: false,
         };
 
         // Create new local scope block for the function execution

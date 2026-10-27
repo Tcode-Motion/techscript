@@ -41,56 +41,60 @@ pub struct Theme {
 impl Theme {
     pub fn resolve_system(app: &AndroidApp) -> Self {
         let is_dark = app.config().ui_mode_night() == ndk::configuration::UiModeNight::Yes;
-        if is_dark { Self::dark() } else { Self::light() }
+        if is_dark {
+            Self::dark()
+        } else {
+            Self::light()
+        }
     }
 
     pub fn dark() -> Self {
         Self {
             is_dark: true,
-            bg:          argb(255, 8,   10,  18),  // #080A12
-            surface:     argb(210, 17,  21,  37),  // #111525
-            card:        argb(165, 24,  28,  48),  // Luminous Frosted Glass
-            border:      argb(50,  255, 255, 255), // Translucent Specular Rim
-            highlight:   argb(90,  255, 255, 255), // Top Rim Reflection
-            primary:     argb(255, 99,  102, 241), // #6366F1 Electric Indigo
-            violet:      argb(255, 139, 92,  246), // #8B5CF6 Primary Violet
-            accent:      argb(255, 34,  211, 238), // #22D3EE Cyan
-            magenta:     argb(255, 217, 70,  239), // #D946EF Magenta
-            secondary:   argb(255, 139, 92,  246), // Violet
-            success:     argb(255, 16,  185, 129), // #10B981 Emerald
-            text:        argb(255, 248, 250, 252), // #F8FAFC
-            text_muted:  argb(255, 167, 176, 192), // #A7B0C0
-            dock_bg:     argb(235, 17,  21,  37),  // #111525 Floating Liquid Dock
-            dock_active: argb(180, 99,  102, 241),
+            bg: argb(255, 3, 7, 18),            // #030712 Deep Midnight Navy
+            surface: argb(240, 8, 16, 38),      // #081026 Rich Navy Surface
+            card: argb(255, 10, 17, 40),        // #0A1128 Solid Dark Navy Card
+            border: argb(255, 30, 46, 93),      // #1E2E5D Crisp Electric Blue Border
+            highlight: argb(120, 0, 229, 255),  // Luminous Cyan Reflection
+            primary: argb(255, 99, 102, 241),   // #6366F1 Electric Indigo
+            violet: argb(255, 168, 85, 247),    // #A855F7 Vibrant Violet
+            accent: argb(255, 0, 229, 255),     // #00E5FF Electric Neon Cyan
+            magenta: argb(255, 217, 70, 239),   // #D946EF Magenta
+            secondary: argb(255, 168, 85, 247), // Violet
+            success: argb(255, 0, 229, 160),    // #00E5A0 Emerald Green
+            text: argb(255, 244, 247, 255),     // #F4F7FF Crisp Pure White
+            text_muted: argb(255, 142, 158, 194), // #8E9EC2 Blue-Gray Secondary
+            dock_bg: argb(255, 8, 15, 38),      // #080F26 Midnight Dock
+            dock_active: argb(255, 26, 36, 84), // #1A2454 Luminous Active Tab Pill
         }
     }
 
     pub fn light() -> Self {
         Self {
             is_dark: false,
-            bg:          argb(255, 246, 248, 252), // #F6F8FC
-            surface:     argb(230, 255, 255, 255), // Crisp White Frosted
-            card:        argb(240, 255, 255, 255),
-            border:      argb(35,  99,  102, 241), // Subtle Indigo Rim
-            highlight:   argb(255, 255, 255, 255),
-            primary:     argb(255, 99,  102, 241), // #6366F1
-            violet:      argb(255, 124, 58,  237), // #7C3AED
-            accent:      argb(255, 14,  165, 233), // #0EA5E9
-            magenta:     argb(255, 192, 38,  211), // #C026D3
-            secondary:   argb(255, 124, 58,  237),
-            success:     argb(255, 16,  185, 129),
-            text:        argb(255, 15,  23,  42),  // #0F172A
-            text_muted:  argb(255, 100, 116, 139), // #64748B
-            dock_bg:     argb(240, 255, 255, 255),
-            dock_active: argb(60,  99,  102, 241),
+            bg: argb(255, 218, 233, 248), // #DAE9F8 Soothing Eye-Comfort Sky Blue Background
+            surface: argb(240, 235, 245, 255), // #EBF5FF Soft Translucent Sky Surface
+            card: argb(245, 242, 249, 255), // #F2F9FF Frosted Liquid Ice Glass Card
+            border: argb(255, 172, 202, 236), // #ACC8EC Refined Azure Glass Refraction Border
+            highlight: argb(220, 255, 255, 255), // Frosted Specular Glint
+            primary: argb(255, 30, 64, 175), // #1E40AF Deep Royal Indigo
+            violet: argb(255, 109, 40, 217), // #6D28D9 Royal Violet
+            accent: argb(255, 2, 132, 199), // #0284C7 Sky Azure Cyan
+            magenta: argb(255, 162, 28, 175), // #A21CAF Rich Berry Magenta
+            secondary: argb(255, 91, 33, 182), // Deep Violet
+            success: argb(255, 4, 120, 87), // #047857 Deep Emerald Green
+            text: argb(255, 15, 23, 42),  // #0F172A Crisp Deep Navy Slate Text
+            text_muted: argb(255, 71, 85, 105), // #475569 High-Contrast Slate Text
+            dock_bg: argb(245, 228, 241, 253), // #E4F1FD Frosted Sky Navigation Dock
+            dock_active: argb(255, 196, 222, 250), // #C4DEF8 Luminous Sky Blue Active Tab Pill
         }
     }
 
     pub fn to_f32_color(color: Color) -> [f32; 4] {
         [
             ((color >> 16) & 0xFF) as f32 / 255.0,
-            ((color >>  8) & 0xFF) as f32 / 255.0,
-            ((color      ) & 0xFF) as f32 / 255.0,
+            ((color >> 8) & 0xFF) as f32 / 255.0,
+            ((color) & 0xFF) as f32 / 255.0,
             ((color >> 24) & 0xFF) as f32 / 255.0,
         ]
     }

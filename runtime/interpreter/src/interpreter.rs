@@ -11,6 +11,7 @@ pub struct Interpreter {
     pub ctx: RuntimeContext,
     pub env: Rc<RefCell<Environment>>,
     pub call_stack: Vec<CallFrame>,
+    pub main_invoked: bool,
 }
 
 impl Default for Interpreter {
@@ -29,6 +30,7 @@ impl Interpreter {
             ctx,
             env,
             call_stack: Vec::new(),
+            main_invoked: false,
         };
         interpreter.initialize_stdlib();
         interpreter
@@ -42,6 +44,7 @@ impl Interpreter {
             ctx,
             env,
             call_stack: Vec::new(),
+            main_invoked: false,
         };
         interpreter.initialize_stdlib();
         interpreter
@@ -127,16 +130,19 @@ impl Interpreter {
             }
         }
 
-        // Auto-execute main function if defined in environment
-        let main_val = self.env.borrow().lookup("main");
-        if let Ok(RuntimeValue::Function(main_func)) = main_val {
-            self.call_stack.push(crate::control_flow::CallFrame::new(
-                "main".to_string(),
-                None,
-            ));
-            let res = main_func.call(&mut self.ctx, vec![]);
-            self.call_stack.pop();
-            return res;
+        // Auto-execute main function if defined in environment and hasn't been invoked yet
+        if !self.main_invoked {
+            let main_val = self.env.borrow().lookup("main");
+            if let Ok(RuntimeValue::Function(main_func)) = main_val {
+                self.main_invoked = true;
+                self.call_stack.push(crate::control_flow::CallFrame::new(
+                    "main".to_string(),
+                    None,
+                ));
+                let res = main_func.call(&mut self.ctx, vec![]);
+                self.call_stack.pop();
+                return res;
+            }
         }
 
         Ok(RuntimeValue::Null)

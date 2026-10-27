@@ -251,7 +251,28 @@ impl<'a> Lexer<'a> {
             }
 
             // 3. Check for string / f-string starts
-            if remaining.starts_with("f\"") || remaining.starts_with("$\"") {
+            let is_fstring_prefix = remaining.starts_with("f\"") || remaining.starts_with("$\"");
+            let contains_interpolation = if remaining.starts_with('"') && !is_fstring_prefix {
+                let mut in_escape = false;
+                let mut found = false;
+                for c in remaining[1..].chars() {
+                    if in_escape {
+                        in_escape = false;
+                    } else if c == '\\' {
+                        in_escape = true;
+                    } else if c == '"' {
+                        break;
+                    } else if c == '{' {
+                        found = true;
+                        break;
+                    }
+                }
+                found
+            } else {
+                false
+            };
+
+            if is_fstring_prefix || contains_interpolation {
                 if self.scan_string(true, reporter).is_err() {
                     return Err(reporter.get_diagnostics().to_vec());
                 }
@@ -329,14 +350,82 @@ impl<'a> Lexer<'a> {
             }
         }
 
+        // Synthesize block-ending `end` tokens for indentation-based blocks
+        let mut final_tokens = Vec::new();
+        let mut indent_stack: Vec<usize> = Vec::new();
+        let mut expect_indent = false;
+        let mut is_line_start = true;
+
+        for i in 0..collapsed_tokens.len() {
+            let token = &collapsed_tokens[i];
+
+            if token.kind == TokenKind::Newline {
+                final_tokens.push(token.clone());
+                is_line_start = true;
+                continue;
+            }
+
+            if is_line_start {
+                is_line_start = false;
+                let col = {
+                    let before = &self.source[..token.span.start.min(self.source.len())];
+                    if let Some(pos) = before.rfind('\n') {
+                        token.span.start - (pos + 1)
+                    } else {
+                        token.span.start
+                    }
+                };
+
+                if expect_indent {
+                    if col > *indent_stack.last().unwrap_or(&0) {
+                        indent_stack.push(col);
+                    }
+                    expect_indent = false;
+                }
+
+                while let Some(&top) = indent_stack.last() {
+                    if col < top {
+                        indent_stack.pop();
+                        final_tokens.push(Token::new(
+                            TokenKind::End,
+                            "end".to_string(),
+                            token.span,
+                        ));
+                    } else {
+                        break;
+                    }
+                }
+            }
+
+            if token.kind == TokenKind::Colon {
+                if let Some(next) = collapsed_tokens.get(i + 1) {
+                    if next.kind == TokenKind::Newline {
+                        expect_indent = true;
+                    }
+                }
+            } else if token.kind == TokenKind::End && !indent_stack.is_empty() {
+                indent_stack.pop();
+            }
+
+            final_tokens.push(token.clone());
+        }
+
+        while indent_stack.pop().is_some() {
+            final_tokens.push(Token::new(
+                TokenKind::End,
+                "end".to_string(),
+                Span::new(self.source.len(), self.source.len()),
+            ));
+        }
+
         // Add EOF token
-        collapsed_tokens.push(Token::new(
+        final_tokens.push(Token::new(
             TokenKind::Eof,
             "".to_string(),
             Span::new(self.source.len(), self.source.len()),
         ));
 
-        Ok(collapsed_tokens)
+        Ok(final_tokens)
     }
 
     /// Maps internal `LogosToken` to public `TokenKind` and handles validation.
@@ -451,12 +540,15 @@ impl<'a> Lexer<'a> {
     ) -> Result<(), ()> {
         let start_pos = self.pos;
         if is_fstring {
-            let lexeme = self.source[start_pos..start_pos + 2].to_string();
-            self.pos += 2; // skip `f"` or `$"`
+            let is_explicit = self.source[start_pos..].starts_with("f\"")
+                || self.source[start_pos..].starts_with("$\"");
+            let prefix_len = if is_explicit { 2 } else { 1 };
+            let lexeme = self.source[start_pos..start_pos + prefix_len].to_string();
+            self.pos += prefix_len; // skip `f"`, `$"`, or `"`
             self.token_queue.push(Token::new(
                 TokenKind::FStringStart,
                 lexeme,
-                Span::new(start_pos, start_pos + 2),
+                Span::new(start_pos, start_pos + prefix_len),
             ));
 
             let mut text_start = self.pos;
@@ -482,6 +574,14 @@ impl<'a> Lexer<'a> {
                 }
 
                 if remaining.starts_with('{') {
+                    if text_buf.ends_with('\\') {
+                        // Escaped brace `\{` -> literal `{`
+                        text_buf.pop();
+                        text_buf.push('{');
+                        self.pos += 1;
+                        continue;
+                    }
+
                     if !text_buf.is_empty() {
                         self.token_queue.push(Token::new(
                             TokenKind::FStringText,
@@ -542,15 +642,27 @@ impl<'a> Lexer<'a> {
                             }
                         }
                         Err(inner_diags) => {
-                            for diag in inner_diags {
-                                let mut adjusted = diag.clone();
-                                adjusted.span = Span::new(
-                                    expr_text_start + diag.span.start,
-                                    expr_text_start + diag.span.end,
-                                );
-                                reporter.report(adjusted);
+                            if is_explicit {
+                                for diag in inner_diags {
+                                    let mut adjusted = diag.clone();
+                                    adjusted.span = Span::new(
+                                        expr_text_start + diag.span.start,
+                                        expr_text_start + diag.span.end,
+                                    );
+                                    reporter.report(adjusted);
+                                }
+                                return Err(());
+                            } else {
+                                // For standard double-quoted strings (e.g. JSON strings),
+                                // if `{...}` is not valid TechScript code, keep it as literal text.
+                                self.token_queue.pop();
+                                text_buf.push('{');
+                                text_buf.push_str(expr_substring);
+                                text_buf.push('}');
+                                self.pos += 1; // skip `}`
+                                text_start = self.pos;
+                                continue;
                             }
-                            return Err(());
                         }
                     }
 

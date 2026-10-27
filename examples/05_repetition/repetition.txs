@@ -1,0 +1,12 @@
+# 05 - Repetition and Loops
+# Path: examples/05_repetition/repetition.txs
+
+say "Counting with repeat:"
+repeat 3 times:
+    say "Loop iteration"
+
+say "Counting with while:"
+count is 1
+while count <= 3:
+    say "Step {count}"
+    count becomes count + 1

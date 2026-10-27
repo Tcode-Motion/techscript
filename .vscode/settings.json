@@ -18,5 +18,6 @@
         "**/public-release": true,
         "**/releases": true,
         "**/*.vsix": true
-    }
+    },
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

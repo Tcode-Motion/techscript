@@ -1,40 +1,40 @@
 # Closures in TechScript
 
-Closures are functions that capture variables from their enclosing lexical scope.
+Closures are functions that capture and retain variables from their enclosing lexical scope.
 
 ---
 
 ## 🏗️ Capturing State
-When you declare a function inside another function, the inner function has access to the outer function's parameters and local variables:
+When a function is declared inside an outer function, the inner function retains access to the outer function's variables:
 
 ```txs
-do create_counter(start_val)
-    count = start_val
+to create_counter(start_val):
+    count is start_val
     
-    # Return a closure
-    send do()
-        count += 1
-        send count
-    end
-end
+    to next_val():
+        count becomes count + 1
+        return count
+        
+    return next_val
 
-counter = create_counter(10)
-say counter() # 11
-say counter() # 12
+counter is create_counter(10)
+say "Count 1: {counter()}" # 11
+say "Count 2: {counter()}" # 12
 ```
 
-In this example, the variable `count` is captured and bound to the returned anonymous function even after `create_counter` has finished executing.
+In this example, the variable `count` is captured and retained by `next_val` across invocations.
 
 ---
 
-## 🧬 Capture by Reference
-Captured variables are captured by reference, meaning modifications are visible across multiple invocations:
+## 🧬 Capture Dynamics
+Captured variables maintain their state across executions:
 
 ```txs
-do build_multiplier(factor)
-    send do(value) -> value * factor
-end
+to build_multiplier(factor):
+    to multiply(value):
+        return value * factor
+    return multiply
 
-triple = build_multiplier(3)
-say triple(10) # 30
+triple is build_multiplier(3)
+say "Triple 10: {triple(10)}" # 30
 ```

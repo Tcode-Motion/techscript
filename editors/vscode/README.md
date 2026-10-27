@@ -1,89 +1,92 @@
-# TechScript Virtian for Visual Studio Code
+# TechScript for Visual Studio Code
 
-TechScript Virtian is the official Visual Studio Code extension for TechScript 2.0. It supports the canonical `do`/`end` language syntax and integrates with the local TechScript toolchain.
+The official Visual Studio Code and Open VSX extension for **TechScript 2.0**.
 
-## Virtian 2.0.3
+Provides rich language support, real-time Language Server Protocol (LSP) diagnostics, intelligent code completion, semantic syntax highlighting, colon-based auto-indentation, and canonical snippets.
 
-Virtian updates the editor experience for the current TechScript 2.0 release:
+---
 
-- Canonical syntax highlighting for `do`, `send`, `when`, `loop`, `repeat`, `for`, `try`, `catch`, and `end`.
-- Canonical 2.0 snippets with `end`-delimited blocks—no deprecated brace-based templates.
-- Interpolated-string and hash-comment highlighting.
-- Format-on-save and lint-on-save settings.
-- Configurable paths for `tsc` and `techscript-lsp`.
-- Explorer icon theme, task integration, command-palette commands, and language-server support.
+## Features
 
-## Requirements
+- **Semantic Syntax Highlighting**: Full grammar support for TechScript v2.0 keywords (`is`, `becomes`, `constant`, `to`, `say`, `return`, `repeat`, `for`, `while`, `class`), double-quoted interpolated strings (`"Hello, {name}!"`), and comments (`#`).
+- **Canonical Snippets**: Instant snippets for functions (`to`), loops (`repeat N times:`, `for item in collection:`, `while`), conditionals (`if`/`else if`/`else`), classes (`class`), and standard declarations.
+- **Language Server Protocol (LSP)**: Integrated with `techscript-lsp` for real-time error checking, hover documentation, symbol navigation, and autocomplete.
+- **Auto-Indentation**: Indentation rules enforcing the 4-space block standard following a colon (`:`).
+- **Format & Lint Integration**: Native format-on-save (`tsfmt` / `tsc fmt`) and lint-on-save (`tslint` / `tsc lint`) capabilities.
+- **One-Click Execution**: Integrated command palette actions to run, build, check, and test TechScript files directly from the editor.
 
-- Visual Studio Code 1.75 or newer.
-- TechScript 2.0.x installed locally.
-- `tsc` available on `PATH`, or configured with `techscript.compiler.path`.
-- `techscript-lsp` available on `PATH`, or configured with `techscript.lsp.path`, for language-server diagnostics and completions.
+---
 
-Install the toolchain from the [TechScript repository](https://github.com/Tcode-Motion/techscript).
+## Quick Start
 
-## Quick start
+Create a new file named `hello.txs`:
 
-Create a file named `hello.txs`:
+```techscript
+constant app_name is "TechScript"
 
-```txs
-do greet(name)
-    send $"Hello, {name}!"
-end
+to greet(user_name):
+    say "Hello, {user_name}! Welcome to {app_name}."
+    return "done"
 
-for name in ["Ada", "Lin"]
-    say greet(name)
-end
+names is ["Ada", "Alan", "Linus"]
+
+for person in names:
+    greet(person)
+
+repeat 2 times:
+    say "TechScript executes natively with zero overhead."
 ```
 
-Open the Command Palette with `Ctrl+Shift+P`, then select **TechScript: Run File**.
+Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`), then select:
+- **TechScript: Run File** (`techscript.run`)
 
-## Commands
+---
 
-| Command | Action |
-| --- | --- |
-| TechScript: Run File | Run the active TechScript file. |
-| TechScript: Build Project | Build the current project. |
-| TechScript: Check Code | Validate the current project. |
-| TechScript: Test Project | Run project tests. |
-| TechScript: Format File | Format the active file. |
-| TechScript: Lint File | Run the project linter. |
-| TechScript: Open REPL | Open an interactive `tsc repl` terminal. |
-| TechScript: Show Compiler Version | Display the installed compiler version. |
-| TechScript: Show AST / IR / Bytecode | Inspect compiler output for the active file. |
-| TechScript: Restart Language Server | Restart `techscript-lsp`. |
+## Extension Commands
 
-## Settings
+| Command | Identifier | Description |
+| :--- | :--- | :--- |
+| **TechScript: Run File** | `techscript.run` | Run the active TechScript file through the VM. |
+| **TechScript: Build Project** | `techscript.build` | Compile the current project. |
+| **TechScript: Check Code** | `techscript.check` | Run fast AST and semantic validation. |
+| **TechScript: Test Project** | `techscript.test` | Run the built-in test suite. |
+| **TechScript: Format File** | `techscript.format` | Format the current file using `tsc fmt`. |
+| **TechScript: Lint File** | `techscript.lint` | Run the TechScript linter. |
+| **TechScript: Open REPL** | `techscript.openRepl` | Launch an interactive TechScript REPL session. |
+| **TechScript: Restart Language Server** | `techscript.restartLsp` | Restart the background `techscript-lsp` process. |
+
+---
+
+## Configuration Settings
 
 | Setting | Default | Description |
-| --- | --- | --- |
-| `techscript.compiler.path` | `"tsc"` | Compiler executable or absolute path. |
-| `techscript.lsp.path` | `""` | Language-server executable; empty uses `techscript-lsp` from `PATH`. |
-| `techscript.format.onSave` | `false` | Format TechScript files after saving. |
-| `techscript.lint.onSave` | `true` | Run the TechScript linter after saving. |
+| :--- | :--- | :--- |
+| `techscript.compiler.path` | `"tsc"` | Path to the TechScript compiler binary (`tsc` or `tsc.exe`). |
+| `techscript.lsp.path` | `""` | Path to `techscript-lsp` (defaults to auto-detecting on `PATH`). |
+| `techscript.format.onSave` | `false` | Automatically format files on save using `tsc fmt`. |
+| `techscript.lint.onSave` | `true` | Automatically run linter on save. |
 
-Example `settings.json`:
+---
 
-```json
-{
-  "techscript.format.onSave": true,
-  "techscript.lint.onSave": true
-}
-```
+## Installation
 
-## Install
+- **VS Code Marketplace**: [marketplace.visualstudio.com/items?itemName=tanmoy.techscript](https://marketplace.visualstudio.com/items?itemName=tanmoy.techscript)
+- **Open VSX Registry**: [open-vsx.org/extension/tanmoy/techscript](https://open-vsx.org/extension/tanmoy/techscript)
+- **Manual Installation**:
+  Download `TechScript.vsix` from the [Releases](https://github.com/Tcode-Motion/techscript/releases), open VS Code, go to the Extensions view (`Ctrl+Shift+X`), click the **`...`** (Views and More) menu in the top right, and select **Install from VSIX...**.
 
-- [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=tanmoy.techscript)
-- [Open VSX Registry](https://open-vsx.org/extension/Tcode-Motion/techscript)
+---
 
-For a local install, download the `.vsix` file, open the Extensions view in VS Code, select **Views and More** (`...`), then select **Install from VSIX**.
+## Documentation & Community
 
-## Support
-
+- [Official Website](https://techscript.is-a.dev/)
+- [WebForge Live Example](https://techscript.is-a.dev/techscript/)
 - [Documentation](https://github.com/Tcode-Motion/techscript/tree/main/docs)
-- [Issues](https://github.com/Tcode-Motion/techscript/issues)
-- [Discussions](https://github.com/Tcode-Motion/techscript/discussions)
+- [GitHub Repository](https://github.com/Tcode-Motion/techscript)
+- [Issue Tracker](https://github.com/Tcode-Motion/techscript/issues)
+
+---
 
 ## License
 
-[Apache License 2.0](../../LICENSE)
+Licensed under the [Apache License 2.0](https://github.com/Tcode-Motion/techscript/blob/main/LICENSE).

@@ -1,0 +1,11 @@
+# 04 - Conditions and Branching
+# Path: examples/04_conditions/conditions.txs
+
+score is 85
+
+if score >= 90:
+    say "Grade: Excellent"
+else if score >= 70:
+    say "Grade: Good"
+else:
+    say "Grade: Keep learning"

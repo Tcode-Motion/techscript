@@ -23,6 +23,8 @@ impl NativeRegistry {
             functions: HashMap::new(),
         };
         registry.register("say", Rc::new(SayNative));
+        registry.register("print", Rc::new(SayNative));
+        registry.register("println", Rc::new(SayNative));
         registry.register("ask", Rc::new(AskNative));
         registry.register("len", Rc::new(LenNative));
         registry.register("type_of", Rc::new(TypeOfNative));

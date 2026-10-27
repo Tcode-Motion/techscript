@@ -1011,8 +1011,31 @@ impl LoweringContext {
         self.builder
             .emit_terminator(TerminatorKind::Jump(merge_block), if_stmt.span);
 
-        // Else path (with nested else-ifs mapped recursively)
+        // Else path (with nested else-ifs mapped)
         self.builder.enter_block(else_block, "if_else".to_string());
+        for (elif_cond, elif_body) in &if_stmt.else_ifs {
+            let elif_cond_val = self.lower_expression(elif_cond);
+            let elif_then = self.builder.new_block("elif_then".to_string());
+            let next_else = self.builder.new_block("elif_else".to_string());
+
+            self.builder.emit_terminator(
+                TerminatorKind::ConditionalJump {
+                    cond: elif_cond_val,
+                    then_block: elif_then,
+                    else_block: next_else,
+                },
+                if_stmt.span,
+            );
+
+            // elif then
+            self.builder.enter_block(elif_then, "elif_then".to_string());
+            self.lower_block(elif_body);
+            self.builder
+                .emit_terminator(TerminatorKind::Jump(merge_block), if_stmt.span);
+
+            self.builder.enter_block(next_else, "elif_else".to_string());
+        }
+
         if let Some(ref else_body) = if_stmt.else_body {
             self.lower_block(else_body);
         }
@@ -1215,41 +1238,147 @@ impl LoweringContext {
     }
 
     fn lower_repeat(&mut self, repeat_stmt: &techscript_ast::RepeatStmt) {
-        let cond_block = self.builder.new_block("repeat_cond".to_string());
-        let body_block = self.builder.new_block("repeat_body".to_string());
-        let exit_block = self.builder.new_block("repeat_exit".to_string());
+        let is_numeric = match &repeat_stmt.count {
+            techscript_ast::Expression::Literal(lit) => {
+                matches!(lit.value, techscript_ast::LiteralVal::Int(_))
+            }
+            _ => false,
+        };
 
-        self.builder
-            .emit_terminator(TerminatorKind::Jump(cond_block), repeat_stmt.span);
+        if is_numeric {
+            let count_val = self.lower_expression(&repeat_stmt.count);
+            let counter_local = self.builder.allocate_local(IRType::Int64);
+            self.builder.emit_effect(
+                Op::Store {
+                    target: Value::Local(counter_local),
+                    value: count_val,
+                },
+                repeat_stmt.span,
+            );
 
-        // Cond: evaluate condition each iteration
-        self.builder
-            .enter_block(cond_block, "repeat_cond".to_string());
-        let cond_val = self.lower_expression(&repeat_stmt.count);
-        self.builder.emit_terminator(
-            TerminatorKind::ConditionalJump {
-                cond: cond_val,
-                then_block: body_block,
-                else_block: exit_block,
-            },
-            repeat_stmt.span,
-        );
+            let cond_block = self.builder.new_block("repeat_cond".to_string());
+            let body_block = self.builder.new_block("repeat_body".to_string());
+            let dec_block = self.builder.new_block("repeat_dec".to_string());
+            let exit_block = self.builder.new_block("repeat_exit".to_string());
 
-        // Body
-        self.break_stack.push(exit_block);
-        self.continue_stack.push(cond_block);
+            self.builder
+                .emit_terminator(TerminatorKind::Jump(cond_block), repeat_stmt.span);
 
-        self.builder
-            .enter_block(body_block, "repeat_body".to_string());
-        self.lower_block(&repeat_stmt.body);
-        self.builder
-            .emit_terminator(TerminatorKind::Jump(cond_block), repeat_stmt.span);
+            // Cond: counter > 0
+            self.builder
+                .enter_block(cond_block, "repeat_cond".to_string());
+            let cur_val = self.builder.emit_instruction(
+                Op::Load(Value::Local(counter_local)),
+                IRType::Int64,
+                repeat_stmt.span,
+            );
+            let zero = self.builder.emit_instruction(
+                Op::Constant(techscript_ast::LiteralVal::Int(0)),
+                IRType::Int64,
+                repeat_stmt.span,
+            );
+            let has_more = self.builder.emit_instruction(
+                Op::Compare {
+                    op: techscript_syntax::TokenKind::Greater,
+                    left: Value::Temp(cur_val),
+                    right: Value::Temp(zero),
+                },
+                IRType::Bool,
+                repeat_stmt.span,
+            );
+            self.builder.emit_terminator(
+                TerminatorKind::ConditionalJump {
+                    cond: Value::Temp(has_more),
+                    then_block: body_block,
+                    else_block: exit_block,
+                },
+                repeat_stmt.span,
+            );
 
-        self.break_stack.pop();
-        self.continue_stack.pop();
+            // Body
+            self.break_stack.push(exit_block);
+            self.continue_stack.push(dec_block);
 
-        self.builder
-            .enter_block(exit_block, "repeat_exit".to_string());
+            self.builder
+                .enter_block(body_block, "repeat_body".to_string());
+            self.lower_block(&repeat_stmt.body);
+            self.builder
+                .emit_terminator(TerminatorKind::Jump(dec_block), repeat_stmt.span);
+
+            // Decrement: counter = counter - 1
+            self.builder
+                .enter_block(dec_block, "repeat_dec".to_string());
+            let old_val = self.builder.emit_instruction(
+                Op::Load(Value::Local(counter_local)),
+                IRType::Int64,
+                repeat_stmt.span,
+            );
+            let one = self.builder.emit_instruction(
+                Op::Constant(techscript_ast::LiteralVal::Int(1)),
+                IRType::Int64,
+                repeat_stmt.span,
+            );
+            let new_val = self.builder.emit_instruction(
+                Op::BinaryOp {
+                    op: techscript_syntax::TokenKind::Minus,
+                    left: Value::Temp(old_val),
+                    right: Value::Temp(one),
+                },
+                IRType::Int64,
+                repeat_stmt.span,
+            );
+            self.builder.emit_effect(
+                Op::Store {
+                    target: Value::Local(counter_local),
+                    value: Value::Temp(new_val),
+                },
+                repeat_stmt.span,
+            );
+            self.builder
+                .emit_terminator(TerminatorKind::Jump(cond_block), repeat_stmt.span);
+
+            self.break_stack.pop();
+            self.continue_stack.pop();
+
+            self.builder
+                .enter_block(exit_block, "repeat_exit".to_string());
+        } else {
+            let cond_block = self.builder.new_block("repeat_cond".to_string());
+            let body_block = self.builder.new_block("repeat_body".to_string());
+            let exit_block = self.builder.new_block("repeat_exit".to_string());
+
+            self.builder
+                .emit_terminator(TerminatorKind::Jump(cond_block), repeat_stmt.span);
+
+            // Cond: evaluate condition each iteration
+            self.builder
+                .enter_block(cond_block, "repeat_cond".to_string());
+            let cond_val = self.lower_expression(&repeat_stmt.count);
+            self.builder.emit_terminator(
+                TerminatorKind::ConditionalJump {
+                    cond: cond_val,
+                    then_block: body_block,
+                    else_block: exit_block,
+                },
+                repeat_stmt.span,
+            );
+
+            // Body
+            self.break_stack.push(exit_block);
+            self.continue_stack.push(cond_block);
+
+            self.builder
+                .enter_block(body_block, "repeat_body".to_string());
+            self.lower_block(&repeat_stmt.body);
+            self.builder
+                .emit_terminator(TerminatorKind::Jump(cond_block), repeat_stmt.span);
+
+            self.break_stack.pop();
+            self.continue_stack.pop();
+
+            self.builder
+                .enter_block(exit_block, "repeat_exit".to_string());
+        }
     }
 
     fn lower_try(&mut self, try_stmt: &techscript_ast::TryStmt) {

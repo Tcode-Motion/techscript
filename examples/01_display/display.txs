@@ -1,0 +1,5 @@
+# 01 - Display Output
+# Path: examples/01_display/display.txs
+
+say "Hello, world!"
+say "Welcome to TechScript!"

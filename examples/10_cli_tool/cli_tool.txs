@@ -1,0 +1,8 @@
+# 10 - Interactive / CLI Tool
+# Path: examples/10_cli_tool/cli_tool.txs
+
+to summarize(task, done_count, total_count):
+    percent is (done_count * 100) / total_count
+    return "Task '{task}': {percent}% complete ({done_count}/{total_count})"
+
+say summarize("Build TechScript Language", 10, 10)

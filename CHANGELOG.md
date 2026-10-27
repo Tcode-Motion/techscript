@@ -7,12 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.1] — 2026-10-27 — **TechScript 2.0.1 — Language Spec Lock & Mobile Release**
+
+> **Release Tag:** `v2.0.1`  
+> **Release Name:** `TechScript 2.0.1 — Language Spec Lock & Mobile Release`  
+> **License:** Apache License 2.0  
+> **Website:** https://techscript.is-a.dev/techscript/
+
+### Added
+
+- **Authoritative Canonical Language Syntax Lock**: Fully locked grammar across lexer, parser, semantic analyzer, interpreter, and VM:
+  - Declarations with `is` (`x is 10`) and reassignments with `becomes` (`x becomes x + 1`).
+  - Constants with `constant name is value`.
+  - Functions with `to name(params):` and `return`.
+  - Double-quoted native string interpolation `"Value: {val}"` without prefix.
+  - Counted loops with `repeat N times:`, collection loops with `for item in col:`, and `while condition:`.
+- **100/100 Official Examples Verification**: All 100 official TechScript examples verified and automated in CI (`scripts/verify_all_examples.py`).
+- **AppForge Pure-TechScript Android Companion App**: Verified release APK `dist/TechScript-AppForge-v2.0.0-release.apk` with v2 scheme signing and hardware integration.
+- **Structured Media Asset Storage**: Organized `docs/assets/` (`brand/`, `app/`, `website/`, `video/`) with screenshot workflow.
+
+### Fixed
+
+- **Parser Dedent & Block Consumption**: Parser now safely consumes trailing dedent tokens after delimited DSL blocks and at top-level program boundaries.
+- **Lexer String Braces**: Escaped braces (`\{`, `\}`) and graceful fallback for raw JSON string literals without explicit f-string prefix.
+- **CI/CD Host Compatibility**: Excluded `techscript_android_runtime` from host workspace builds/tests to prevent Android NDK build failures on standard runners.
+
+---
+
 ## [2.0.0] — 2026-10-21 — **TechScript 2.0.0 — Stable Release**
 
 > **Release Tag:** `v2.0.0`  
 > **Release Name:** `TechScript 2.0.0 — Stable Release`  
 > **License:** Apache License 2.0  
-> **Website:** https://is-a.dev/techscript/
+> **Website:** https://techscript.is-a.dev/techscript/
 
 ### Added
 

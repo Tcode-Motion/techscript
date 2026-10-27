@@ -22,8 +22,11 @@ impl<'a> Parser<'a> {
         let mut statements = Vec::new();
 
         while !self.is_at_end() {
-            // Skip leading newlines/semicolons before statements
-            while self.match_token(TokenKind::Newline) || self.match_token(TokenKind::Semicolon) {}
+            // Skip leading newlines/semicolons/trailing dedents before statements
+            while self.match_token(TokenKind::Newline)
+                || self.match_token(TokenKind::Semicolon)
+                || self.match_token(TokenKind::End)
+            {}
             if self.is_at_end() {
                 break;
             }
@@ -64,7 +67,10 @@ impl<'a> Parser<'a> {
         let mut statements = Vec::new();
 
         while !self.is_at_end() {
-            while self.match_token(TokenKind::Newline) || self.match_token(TokenKind::Semicolon) {}
+            while self.match_token(TokenKind::Newline)
+                || self.match_token(TokenKind::Semicolon)
+                || self.match_token(TokenKind::End)
+            {}
             if self.is_at_end() {
                 break;
             }

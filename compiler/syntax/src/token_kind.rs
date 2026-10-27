@@ -857,6 +857,7 @@ pub fn lookup_keyword(lexeme: &str) -> Option<TokenKind> {
         "let" => Some(TokenKind::Let),           // TSW1001 → plain assignment
         "var" => Some(TokenKind::Var),           // TSW1001 → plain assignment
         "fun" => Some(TokenKind::Fun),           // TSW1002 → do
+        "fn" => Some(TokenKind::Fun),            // canonical/modern function declaration
         "function" => Some(TokenKind::Function), // TSW1002 → do
         "attempt" => Some(TokenKind::Attempt),   // TSW1004 → try
         "none" => Some(TokenKind::None),         // TSW1011 → null
@@ -867,6 +868,10 @@ pub fn lookup_keyword(lexeme: &str) -> Option<TokenKind> {
         "each" => Some(TokenKind::Each),         // TSW1010 → for
         "switch" => Some(TokenKind::Switch),     // → match
         "be" => Some(TokenKind::Be),
+        "becomes" => Some(TokenKind::Equal), // human-readable assignment/reassignment
+        "is" => Some(TokenKind::Equal),      // canonical declaration/assignment
+        "constant" => Some(TokenKind::Const), // canonical constant declaration
+        "to" => Some(TokenKind::Do),         // canonical function declaration
         "equals" => Some(TokenKind::Equals),
         "then" => Some(TokenKind::Then), // TSW1006 → (removed)
 

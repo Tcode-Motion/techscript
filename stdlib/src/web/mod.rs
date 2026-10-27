@@ -13,7 +13,7 @@ pub mod runtime_js;
 pub mod server;
 pub mod styles;
 
-use crate::{StdFunction, StdlibModule, StdlibRegistry};
+use crate::{StdFnCallback, StdFunction, StdlibModule, StdlibRegistry};
 use std::collections::HashMap;
 use std::rc::Rc;
 use std::sync::atomic::Ordering;
@@ -237,106 +237,33 @@ fn web_api_send(
 
 impl StdlibRegistry {
     pub fn register_web(&mut self) {
-        let mut exports: HashMap<String, Rc<dyn Callable>> = HashMap::new();
+        let functions: &[(&str, usize, StdFnCallback)] = &[
+            ("start", 2, web_start),
+            ("page", 2, web_page),
+            ("serve", 1, web_serve),
+            ("stop", 0, web_stop),
+            ("set_content", 1, web_set_content),
+            ("fetch", 1, web_fetch),
+            ("render_html", 0, web_render_html),
+            ("render_dsl", 1, web_render_dsl),
+            ("web_start_website", 0, web_start_website),
+            ("start_website", 0, web_start_website),
+            ("web_api_send", 2, web_api_send),
+        ];
 
-        exports.insert(
-            "start".to_string(),
-            Rc::new(StdFunction {
-                name: "start".to_string(),
-                arity: 2,
-                callback: web_start,
-            }),
-        );
+        let mut exports: HashMap<String, Rc<dyn Callable>> =
+            HashMap::with_capacity(functions.len());
 
-        exports.insert(
-            "page".to_string(),
-            Rc::new(StdFunction {
-                name: "page".to_string(),
-                arity: 2,
-                callback: web_page,
-            }),
-        );
-
-        exports.insert(
-            "serve".to_string(),
-            Rc::new(StdFunction {
-                name: "serve".to_string(),
-                arity: 1,
-                callback: web_serve,
-            }),
-        );
-
-        exports.insert(
-            "stop".to_string(),
-            Rc::new(StdFunction {
-                name: "stop".to_string(),
-                arity: 0,
-                callback: web_stop,
-            }),
-        );
-
-        exports.insert(
-            "set_content".to_string(),
-            Rc::new(StdFunction {
-                name: "set_content".to_string(),
-                arity: 1,
-                callback: web_set_content,
-            }),
-        );
-
-        exports.insert(
-            "fetch".to_string(),
-            Rc::new(StdFunction {
-                name: "fetch".to_string(),
-                arity: 1,
-                callback: web_fetch,
-            }),
-        );
-
-        exports.insert(
-            "render_html".to_string(),
-            Rc::new(StdFunction {
-                name: "render_html".to_string(),
-                arity: 0,
-                callback: web_render_html,
-            }),
-        );
-
-        exports.insert(
-            "render_dsl".to_string(),
-            Rc::new(StdFunction {
-                name: "render_dsl".to_string(),
-                arity: 1,
-                callback: web_render_dsl,
-            }),
-        );
-
-        exports.insert(
-            "web_start_website".to_string(),
-            Rc::new(StdFunction {
-                name: "web_start_website".to_string(),
-                arity: 0,
-                callback: web_start_website,
-            }),
-        );
-
-        exports.insert(
-            "start_website".to_string(),
-            Rc::new(StdFunction {
-                name: "start_website".to_string(),
-                arity: 0,
-                callback: web_start_website,
-            }),
-        );
-
-        exports.insert(
-            "web_api_send".to_string(),
-            Rc::new(StdFunction {
-                name: "web_api_send".to_string(),
-                arity: 2,
-                callback: web_api_send,
-            }),
-        );
+        for &(name, arity, callback) in functions {
+            exports.insert(
+                name.to_string(),
+                Rc::new(StdFunction {
+                    name: name.to_string(),
+                    arity,
+                    callback,
+                }),
+            );
+        }
 
         self.register_module(
             "std.web",

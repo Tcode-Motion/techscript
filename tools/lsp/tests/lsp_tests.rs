@@ -177,23 +177,20 @@ async fn test_lsp_code_action_make_to_const() {
     let actions = res.unwrap();
 
     // Find the quick fix action
-    let mut found = false;
-    for action in actions {
-        if let CodeActionOrCommand::CodeAction(a) = action {
-            if a.title.contains("immutable 'const'") {
-                found = true;
+    let action = actions
+        .into_iter()
+        .find_map(|action| match action {
+            CodeActionOrCommand::CodeAction(a) if a.title.contains("immutable 'const'") => Some(a),
+            _ => None,
+        })
+        .expect("Did not find the 'Change to const' quick fix");
 
-                let edits = a.edit.unwrap().changes.unwrap();
-                let edits_for_uri = edits.get(&doc_uri).unwrap();
+    let edits = action.edit.unwrap().changes.unwrap();
+    let edits_for_uri = edits.get(&doc_uri).unwrap();
 
-                assert_eq!(edits_for_uri.len(), 1);
-                assert_eq!(edits_for_uri[0].new_text, "const ");
-                assert_eq!(edits_for_uri[0].range.start.line, 1);
-                assert_eq!(edits_for_uri[0].range.start.character, 4);
-                assert_eq!(edits_for_uri[0].range.end.character, 8);
-            }
-        }
-    }
-
-    assert!(found, "Did not find the 'Change to const' quick fix");
+    assert_eq!(edits_for_uri.len(), 1);
+    assert_eq!(edits_for_uri[0].new_text, "const ");
+    assert_eq!(edits_for_uri[0].range.start.line, 1);
+    assert_eq!(edits_for_uri[0].range.start.character, 4);
+    assert_eq!(edits_for_uri[0].range.end.character, 8);
 }

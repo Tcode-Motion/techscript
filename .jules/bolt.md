@@ -70,3 +70,7 @@
 ## 2024-05-24 - Web Property Extraction Optimization
 **Learning:** Extracting properties from the `RuntimeValue` DSL property lists in `stdlib/src/web/renderer.rs` and `stdlib/src/web/db.rs` was inefficient because the code called `.iter().find()` to resolve `text`, `id`, and `name` attributes, which creates unnecessary iterator overhead and closure allocation.
 **Action:** Replace `.iter().find()` calls with a single-pass `for p in &dsl.properties` loop and `if` statements on the property names, stopping early when found, which significantly reduces execution overhead.
+
+## 2026-10-28 - Standard Library File Operations String Allocation Optimization
+**Learning:** Calling `try_into_string(&self)` on owned `RuntimeValue` arguments in standard library functions like `sys_write_file` and `sys_read_file` clones the string payload, causing redundant string allocations and memory copy overhead for file operations.
+**Action:** Provide and use an `into_string(self)` method on `RuntimeValue` when owned arguments are available in standard library callback handlers to extract strings directly without allocation.

@@ -212,6 +212,13 @@ impl RuntimeValue {
         }
     }
 
+    pub fn into_string(self) -> Result<String, RuntimeError> {
+        match self {
+            Self::Str(s) => Ok(s),
+            other => Ok(other.to_string()),
+        }
+    }
+
     /// Verifies reference identity check (===).
     pub fn physical_eq(&self, other: &Self) -> bool {
         match (self, other) {

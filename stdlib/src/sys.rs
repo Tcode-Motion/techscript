@@ -25,7 +25,20 @@ fn sys_read_file(
     args: Vec<RuntimeValue>,
 ) -> Result<RuntimeValue, RuntimeError> {
     check_fs_capability(ctx)?;
-    let path = args[0].try_into_string()?;
+    let mut args_iter = args.into_iter();
+    let path = args_iter
+        .next()
+        .ok_or_else(|| {
+            RuntimeError::new(
+                RuntimeErrorKind::ArityMismatch {
+                    expected: 1,
+                    found: 0,
+                },
+                None,
+                None,
+            )
+        })?
+        .into_string()?;
     let content = std::fs::read_to_string(path).map_err(|e| {
         RuntimeError::new(
             RuntimeErrorKind::InvalidOperation(format!("IO error: {}", e)),
@@ -41,8 +54,33 @@ fn sys_write_file(
     args: Vec<RuntimeValue>,
 ) -> Result<RuntimeValue, RuntimeError> {
     check_fs_capability(ctx)?;
-    let path = args[0].try_into_string()?;
-    let content = args[1].try_into_string()?;
+    let mut args_iter = args.into_iter();
+    let path = args_iter
+        .next()
+        .ok_or_else(|| {
+            RuntimeError::new(
+                RuntimeErrorKind::ArityMismatch {
+                    expected: 2,
+                    found: 0,
+                },
+                None,
+                None,
+            )
+        })?
+        .into_string()?;
+    let content = args_iter
+        .next()
+        .ok_or_else(|| {
+            RuntimeError::new(
+                RuntimeErrorKind::ArityMismatch {
+                    expected: 2,
+                    found: 1,
+                },
+                None,
+                None,
+            )
+        })?
+        .into_string()?;
     std::fs::write(path, content).map_err(|e| {
         RuntimeError::new(
             RuntimeErrorKind::InvalidOperation(format!("IO error: {}", e)),
@@ -58,7 +96,20 @@ fn sys_exists(
     args: Vec<RuntimeValue>,
 ) -> Result<RuntimeValue, RuntimeError> {
     check_fs_capability(ctx)?;
-    let path = args[0].try_into_string()?;
+    let mut args_iter = args.into_iter();
+    let path = args_iter
+        .next()
+        .ok_or_else(|| {
+            RuntimeError::new(
+                RuntimeErrorKind::ArityMismatch {
+                    expected: 1,
+                    found: 0,
+                },
+                None,
+                None,
+            )
+        })?
+        .into_string()?;
     Ok(RuntimeValue::Bool(std::path::Path::new(&path).exists()))
 }
 

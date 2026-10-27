@@ -7,89 +7,102 @@ use techscript_runtime::{
     value::RuntimeValue,
 };
 
+fn show_fn() -> Rc<dyn techscript_runtime::function::Callable> {
+    Rc::new(StdFunction {
+        name: "show".to_string(),
+        arity: 2,
+        callback: |ctx, args| {
+            if !ctx.config.capabilities.contains(&Capability::Process) {
+                return Err(RuntimeError::new(
+                    RuntimeErrorKind::InvalidOperation(
+                        "Security policy violation: Process capability is denied".to_string(),
+                    ),
+                    None,
+                    None,
+                ));
+            }
+            let title = args[0].to_string();
+            let body = args[1].to_string();
+            #[cfg(target_os = "windows")]
+            {
+                use base64::Engine;
+                use std::process::Command;
+
+                let b64_title = base64::engine::general_purpose::STANDARD.encode(
+                    title
+                        .encode_utf16()
+                        .flat_map(|c| c.to_le_bytes())
+                        .collect::<Vec<u8>>(),
+                );
+                let b64_body = base64::engine::general_purpose::STANDARD.encode(
+                    body.encode_utf16()
+                        .flat_map(|c| c.to_le_bytes())
+                        .collect::<Vec<u8>>(),
+                );
+
+                let script = format!(
+                    "Add-Type -AssemblyName PresentationFramework; [System.Windows.MessageBox]::Show([System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('{}')), [System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('{}')))",
+                    b64_body, b64_title
+                );
+                let b64_script = base64::engine::general_purpose::STANDARD.encode(
+                    script
+                        .encode_utf16()
+                        .flat_map(|c| c.to_le_bytes())
+                        .collect::<Vec<u8>>(),
+                );
+
+                let _ = Command::new("powershell")
+                    .args(["-EncodedCommand", &b64_script])
+                    .spawn();
+            }
+            #[cfg(not(target_os = "windows"))]
+            {
+                let _ = std::process::Command::new("notify-send")
+                    .args([&title, &body])
+                    .spawn();
+            }
+            Ok(RuntimeValue::Null)
+        },
+    })
+}
+
+fn alert_fn() -> Rc<dyn techscript_runtime::function::Callable> {
+    Rc::new(StdFunction {
+        name: "alert".to_string(),
+        arity: 1,
+        callback: |ctx, args| {
+            if !ctx.config.capabilities.contains(&Capability::Process) {
+                return Err(RuntimeError::new(
+                    RuntimeErrorKind::InvalidOperation(
+                        "Security policy violation: Process capability is denied".to_string(),
+                    ),
+                    None,
+                    None,
+                ));
+            }
+            let msg = args[0].to_string();
+            #[cfg(target_os = "windows")]
+            {
+                let _ = std::process::Command::new("msg").args(["*", &msg]).spawn();
+            }
+            #[cfg(not(target_os = "windows"))]
+            {
+                let _ = std::process::Command::new("notify-send")
+                    .args(["Alert", &msg])
+                    .spawn();
+            }
+            Ok(RuntimeValue::Null)
+        },
+    })
+}
+
 impl StdlibRegistry {
     pub fn register_notification(&mut self) {
         let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
             HashMap::new();
 
-        exports.insert(
-            "show".to_string(),
-            Rc::new(StdFunction {
-                name: "show".to_string(),
-                arity: 2,
-                callback: |ctx, args| {
-                    if !ctx.config.capabilities.contains(&Capability::Process) {
-                        return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Process capability is denied"
-                                    .to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
-                    let title = args[0].to_string();
-                    let body = args[1].to_string();
-                    #[cfg(target_os = "windows")]
-                    {
-                        use base64::Engine;
-                        use std::process::Command;
-
-                        let b64_title = base64::engine::general_purpose::STANDARD.encode(title.encode_utf16().flat_map(|c| c.to_le_bytes()).collect::<Vec<u8>>());
-                        let b64_body = base64::engine::general_purpose::STANDARD.encode(body.encode_utf16().flat_map(|c| c.to_le_bytes()).collect::<Vec<u8>>());
-
-                        let script = format!(
-                            "Add-Type -AssemblyName PresentationFramework; [System.Windows.MessageBox]::Show([System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('{}')), [System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('{}')))",
-                            b64_body, b64_title
-                        );
-                        let b64_script = base64::engine::general_purpose::STANDARD.encode(script.encode_utf16().flat_map(|c| c.to_le_bytes()).collect::<Vec<u8>>());
-
-                        let _ = Command::new("powershell")
-                            .args(["-EncodedCommand", &b64_script])
-                            .spawn();
-                    }
-                    #[cfg(not(target_os = "windows"))]
-                    {
-                        let _ = std::process::Command::new("notify-send")
-                            .args([&title, &body])
-                            .spawn();
-                    }
-                    Ok(RuntimeValue::Null)
-                },
-            }),
-        );
-
-        exports.insert(
-            "alert".to_string(),
-            Rc::new(StdFunction {
-                name: "alert".to_string(),
-                arity: 1,
-                callback: |ctx, args| {
-                    if !ctx.config.capabilities.contains(&Capability::Process) {
-                        return Err(RuntimeError::new(
-                            RuntimeErrorKind::InvalidOperation(
-                                "Security policy violation: Process capability is denied"
-                                    .to_string(),
-                            ),
-                            None,
-                            None,
-                        ));
-                    }
-                    let msg = args[0].to_string();
-                    #[cfg(target_os = "windows")]
-                    {
-                        let _ = std::process::Command::new("msg").args(["*", &msg]).spawn();
-                    }
-                    #[cfg(not(target_os = "windows"))]
-                    {
-                        let _ = std::process::Command::new("notify-send")
-                            .args(["Alert", &msg])
-                            .spawn();
-                    }
-                    Ok(RuntimeValue::Null)
-                },
-            }),
-        );
+        exports.insert("show".to_string(), show_fn());
+        exports.insert("alert".to_string(), alert_fn());
 
         self.register_module(
             "std.notification",

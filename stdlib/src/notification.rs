@@ -30,30 +30,10 @@ impl StdlibRegistry {
                     }
                     let title = args[0].to_string();
                     let body = args[1].to_string();
-                    #[cfg(target_os = "windows")]
-                    {
-                        use base64::Engine;
-                        use std::process::Command;
-
-                        let b64_title = base64::engine::general_purpose::STANDARD.encode(title.encode_utf16().flat_map(|c| c.to_le_bytes()).collect::<Vec<u8>>());
-                        let b64_body = base64::engine::general_purpose::STANDARD.encode(body.encode_utf16().flat_map(|c| c.to_le_bytes()).collect::<Vec<u8>>());
-
-                        let script = format!(
-                            "Add-Type -AssemblyName PresentationFramework; [System.Windows.MessageBox]::Show([System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('{}')), [System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('{}')))",
-                            b64_body, b64_title
-                        );
-                        let b64_script = base64::engine::general_purpose::STANDARD.encode(script.encode_utf16().flat_map(|c| c.to_le_bytes()).collect::<Vec<u8>>());
-
-                        let _ = Command::new("powershell")
-                            .args(["-EncodedCommand", &b64_script])
-                            .spawn();
-                    }
-                    #[cfg(not(target_os = "windows"))]
-                    {
-                        let _ = std::process::Command::new("notify-send")
-                            .args([&title, &body])
-                            .spawn();
-                    }
+                    let _ = notify_rust::Notification::new()
+                        .summary(&title)
+                        .body(&body)
+                        .show();
                     Ok(RuntimeValue::Null)
                 },
             }),
@@ -76,16 +56,10 @@ impl StdlibRegistry {
                         ));
                     }
                     let msg = args[0].to_string();
-                    #[cfg(target_os = "windows")]
-                    {
-                        let _ = std::process::Command::new("msg").args(["*", &msg]).spawn();
-                    }
-                    #[cfg(not(target_os = "windows"))]
-                    {
-                        let _ = std::process::Command::new("notify-send")
-                            .args(["Alert", &msg])
-                            .spawn();
-                    }
+                    let _ = notify_rust::Notification::new()
+                        .summary("Alert")
+                        .body(&msg)
+                        .show();
                     Ok(RuntimeValue::Null)
                 },
             }),
@@ -126,5 +100,66 @@ mod tests {
         let alert = module.exports.get("alert").unwrap();
         assert_eq!(alert.name(), "alert");
         assert_eq!(alert.arity(), 1);
+    }
+
+    #[test]
+    fn test_notification_show_and_alert() {
+        use techscript_runtime::context::{RuntimeConfig, RuntimeContext};
+
+        let mut registry = StdlibRegistry {
+            modules: std::collections::HashMap::new(),
+        };
+        registry.register_notification();
+
+        let module = registry.get_module("std.notification").unwrap();
+        let show = module.exports.get("show").unwrap();
+        let alert = module.exports.get("alert").unwrap();
+
+        let mut config = RuntimeConfig::default();
+        config.capabilities.insert(Capability::Process);
+        let mut ctx = RuntimeContext::new(config);
+
+        let res_show = show.call(
+            &mut ctx,
+            vec![
+                RuntimeValue::Str("Test Title".to_string()),
+                RuntimeValue::Str("Test Body".to_string()),
+            ],
+        );
+        assert!(res_show.is_ok());
+        assert_eq!(res_show.unwrap(), RuntimeValue::Null);
+
+        let res_alert = alert.call(
+            &mut ctx,
+            vec![RuntimeValue::Str("Test Alert Message".to_string())],
+        );
+        assert!(res_alert.is_ok());
+        assert_eq!(res_alert.unwrap(), RuntimeValue::Null);
+    }
+
+    #[test]
+    fn test_notification_capability_denied() {
+        use techscript_runtime::context::{RuntimeConfig, RuntimeContext};
+
+        let mut registry = StdlibRegistry {
+            modules: std::collections::HashMap::new(),
+        };
+        registry.register_notification();
+
+        let module = registry.get_module("std.notification").unwrap();
+        let show = module.exports.get("show").unwrap();
+
+        let mut config = RuntimeConfig::default();
+        config.capabilities.remove(&Capability::Process);
+        let mut ctx = RuntimeContext::new(config);
+
+        let res_show = show.call(
+            &mut ctx,
+            vec![
+                RuntimeValue::Str("Test Title".to_string()),
+                RuntimeValue::Str("Test Body".to_string()),
+            ],
+        );
+        assert!(res_show.is_err());
     }
 }

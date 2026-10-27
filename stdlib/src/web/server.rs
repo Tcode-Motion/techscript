@@ -124,7 +124,15 @@ pub fn start_webforge_server(port: u16) -> Result<RuntimeValue, RuntimeError> {
     }
     SERVER_RUNNING.store(true, Ordering::SeqCst);
 
-    let server = match tiny_http::Server::http(format!("0.0.0.0:{}", port)) {
+    let server_res = tiny_http::Server::http(format!("0.0.0.0:{}", port)).or_else(|e| {
+        if port == 3000 {
+            tiny_http::Server::http("0.0.0.0:0")
+        } else {
+            Err(e)
+        }
+    });
+
+    let server = match server_res {
         Ok(s) => Mutex::new(s),
         Err(e) => {
             SERVER_RUNNING.store(false, Ordering::SeqCst);

@@ -70,7 +70,7 @@ pub fn execute(path_str: Option<&str>, fix: bool) -> ExitCode {
                     }
                 }
 
-                // Fix deprecation warnings
+                // If --fix is enabled, automatically modernize deprecated keywords and constructs
                 if fix {
                     let migrated = migrate_source(&content);
                     if migrated != content {

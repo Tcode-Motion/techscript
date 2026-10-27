@@ -56,3 +56,38 @@ impl StdlibRegistry {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_register_net() {
+        let mut registry = StdlibRegistry::new();
+        registry.register_net();
+
+        assert!(registry.has_module("std.net"));
+        let module = registry.get_module("std.net").unwrap();
+        assert_eq!(module.name, "std.net");
+        assert_eq!(module.version, "1.0.0");
+        assert_eq!(module.required_capabilities, vec![Capability::Network]);
+
+        assert_eq!(module.exports.len(), 4);
+
+        let tcp_listen = module.exports.get("tcp_listen").unwrap();
+        assert_eq!(tcp_listen.name(), "tcp_listen");
+        assert_eq!(tcp_listen.arity(), 1);
+
+        let tcp_connect = module.exports.get("tcp_connect").unwrap();
+        assert_eq!(tcp_connect.name(), "tcp_connect");
+        assert_eq!(tcp_connect.arity(), 2);
+
+        let tcp_send = module.exports.get("tcp_send").unwrap();
+        assert_eq!(tcp_send.name(), "tcp_send");
+        assert_eq!(tcp_send.arity(), 2);
+
+        let tcp_recv = module.exports.get("tcp_recv").unwrap();
+        assert_eq!(tcp_recv.name(), "tcp_recv");
+        assert_eq!(tcp_recv.arity(), 1);
+    }
+}

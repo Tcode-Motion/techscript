@@ -90,3 +90,83 @@ impl StdlibRegistry {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use techscript_runtime::context::{RuntimeConfig, RuntimeContext};
+    use techscript_runtime::error::RuntimeErrorKind;
+
+    #[test]
+    fn test_register_terminal() {
+        let mut registry = StdlibRegistry::default();
+        registry.register_terminal();
+
+        let module = registry
+            .modules
+            .get("std.terminal")
+            .expect("Module std.terminal should be registered");
+        assert_eq!(module.name, "std.terminal");
+        assert_eq!(module.version, "1.0.0");
+        assert!(module.exports.contains_key("clear"));
+        assert!(module.exports.contains_key("color"));
+        assert!(module.exports.contains_key("read"));
+    }
+
+    #[test]
+    fn test_terminal_color() {
+        let mut registry = StdlibRegistry::default();
+        registry.register_terminal();
+
+        let module = registry.modules.get("std.terminal").unwrap();
+        let color_fn = module.exports.get("color").unwrap();
+        let mut ctx = RuntimeContext::new(RuntimeConfig::default());
+
+        // Test valid colors
+        let res = color_fn
+            .call(&mut ctx, vec![RuntimeValue::Str("red".to_string())])
+            .unwrap();
+        assert_eq!(res.try_into_string().unwrap(), "\x1b[31m");
+
+        let res = color_fn
+            .call(&mut ctx, vec![RuntimeValue::Str("green".to_string())])
+            .unwrap();
+        assert_eq!(res.try_into_string().unwrap(), "\x1b[32m");
+
+        let res = color_fn
+            .call(&mut ctx, vec![RuntimeValue::Str("reset".to_string())])
+            .unwrap();
+        assert_eq!(res.try_into_string().unwrap(), "\x1b[0m");
+
+        // Test unknown color name returns empty string
+        let res = color_fn
+            .call(&mut ctx, vec![RuntimeValue::Str("unknown".to_string())])
+            .unwrap();
+        assert_eq!(res.try_into_string().unwrap(), "");
+
+        // Test type mismatch error
+        let err = color_fn
+            .call(&mut ctx, vec![RuntimeValue::Int(123)])
+            .unwrap_err();
+        match err.kind {
+            RuntimeErrorKind::TypeMismatch { expected, found } => {
+                assert_eq!(expected, "string");
+                assert_eq!(found, "other");
+            }
+            _ => panic!("Expected TypeMismatch error, got {:?}", err),
+        }
+    }
+
+    #[test]
+    fn test_terminal_clear() {
+        let mut registry = StdlibRegistry::default();
+        registry.register_terminal();
+
+        let module = registry.modules.get("std.terminal").unwrap();
+        let clear_fn = module.exports.get("clear").unwrap();
+        let mut ctx = RuntimeContext::new(RuntimeConfig::default());
+
+        let res = clear_fn.call(&mut ctx, vec![]).unwrap();
+        assert_eq!(res, RuntimeValue::Null);
+    }
+}

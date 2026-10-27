@@ -19,3 +19,34 @@ impl StdlibRegistry {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::StdlibRegistry;
+    use std::collections::HashMap;
+
+    #[test]
+    fn test_register_audio() {
+        let mut registry = StdlibRegistry {
+            modules: HashMap::new(),
+        };
+        registry.register_audio();
+
+        assert!(registry.has_module("std.audio"));
+        let module = registry.get_module("std.audio").unwrap();
+        assert_eq!(module.name, "std.audio");
+        assert_eq!(module.version, "1.0.0");
+        assert!(module.exports.is_empty());
+        assert!(module.required_capabilities.is_empty());
+    }
+
+    #[test]
+    fn test_register_audio_in_default_registry() {
+        let registry = StdlibRegistry::new();
+        assert!(registry.has_module("std.audio"));
+        let module = registry.get_module("std.audio").unwrap();
+        assert_eq!(module.name, "std.audio");
+        assert_eq!(module.version, "1.0.0");
+    }
+}

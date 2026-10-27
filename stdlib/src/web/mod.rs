@@ -173,6 +173,7 @@ fn web_start_website(
     ctx: &mut RuntimeContext,
     args: Vec<RuntimeValue>,
 ) -> Result<RuntimeValue, RuntimeError> {
+    check_network_capability(ctx)?;
     let port = if let Some(arg) = args.first() {
         arg.try_into_int().unwrap_or(3000) as u16
     } else {

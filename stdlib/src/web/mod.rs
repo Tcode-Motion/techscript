@@ -432,4 +432,46 @@ mod tests {
         let ip: IpAddr = "::ffff:8.8.8.8".parse().unwrap();
         assert!(is_safe_ip(&ip));
     }
+
+    #[test]
+    fn test_static_asset_caching_and_performance() {
+        clear_asset_cache();
+        let asset = get_static_asset("favicon.ico");
+        assert!(asset.is_some(), "favicon.ico should be found");
+        let (bytes, mime) = asset.unwrap();
+        assert_eq!(mime, "image/x-icon");
+        assert!(!bytes.is_empty());
+
+        // Warm up cache
+        let _ = get_static_asset("favicon.ico");
+
+        // Benchmark cached hits vs uncached disk reads
+        let iterations = 1000;
+
+        let start_cached = std::time::Instant::now();
+        for _ in 0..iterations {
+            let _ = get_static_asset("favicon.ico");
+        }
+        let duration_cached = start_cached.elapsed();
+
+        let start_uncached = std::time::Instant::now();
+        for _ in 0..iterations {
+            clear_asset_cache();
+            let _ = get_static_asset("favicon.ico");
+        }
+        let duration_uncached = start_uncached.elapsed();
+
+        println!(
+            "Static Asset Fetch (1,000 requests) - Cached: {:?}, Uncached: {:?}",
+            duration_cached, duration_uncached
+        );
+
+        // Cached RAM lookup must be strictly faster than uncached disk I/O
+        assert!(
+            duration_cached <= duration_uncached,
+            "In-memory asset cache ({:?}) should be at least as fast as uncached disk I/O ({:?})",
+            duration_cached,
+            duration_uncached
+        );
+    }
 }

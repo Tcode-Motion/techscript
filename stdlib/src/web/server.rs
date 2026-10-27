@@ -4,11 +4,12 @@
 //! integrated REST API endpoints, security headers, and SSRF prevention.
 
 use crate::web::db;
+use std::collections::HashMap;
 use std::io::Read;
 use std::net::{IpAddr, SocketAddr, ToSocketAddrs};
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 use std::thread;
 use techscript_runtime::error::RuntimeError;
 use techscript_runtime::value::RuntimeValue;
@@ -17,6 +18,75 @@ use url::Url;
 
 pub static SERVER_RUNNING: AtomicBool = AtomicBool::new(false);
 pub static PAGE_CONTENT: Mutex<String> = Mutex::new(String::new());
+
+pub static ASSET_CACHE: Mutex<Option<HashMap<String, Option<(Arc<Vec<u8>>, &'static str)>>>> =
+    Mutex::new(None);
+
+/// Clears the static asset cache (useful for testing or hot reloading).
+pub fn clear_asset_cache() {
+    let mut cache_guard = ASSET_CACHE.lock().unwrap();
+    *cache_guard = Some(HashMap::new());
+}
+
+/// Retrieves a static asset by clean path, using an in-memory cache to eliminate blocking disk I/O and redundant stat syscalls on repeated requests.
+pub fn get_static_asset(clean_path: &str) -> Option<(Arc<Vec<u8>>, &'static str)> {
+    {
+        let mut cache_guard = ASSET_CACHE.lock().unwrap();
+        let cache = cache_guard.get_or_insert_with(HashMap::new);
+        if let Some(cached) = cache.get(clean_path) {
+            return cached.clone();
+        }
+    }
+
+    let possible_paths = [
+        PathBuf::from(clean_path),
+        PathBuf::from("website").join(clean_path),
+        PathBuf::from("website/dist").join(clean_path),
+        PathBuf::from("dist").join(clean_path),
+        PathBuf::from("../website").join(clean_path),
+        PathBuf::from("../website/dist").join(clean_path),
+        PathBuf::from("../dist").join(clean_path),
+        if clean_path.ends_with("logo.png") || clean_path.ends_with(".png") {
+            PathBuf::from("assets/branding/logo-package/source/logo-master-transparent.png")
+        } else {
+            PathBuf::from("assets/branding/logo-package/ico/favicon.ico")
+        },
+        if clean_path.ends_with("logo.png") || clean_path.ends_with(".png") {
+            PathBuf::from("../assets/branding/logo-package/source/logo-master-transparent.png")
+        } else {
+            PathBuf::from("../assets/branding/logo-package/ico/favicon.ico")
+        },
+    ];
+
+    let mut asset = None;
+    for p in &possible_paths {
+        if let Ok(bytes) = std::fs::read(p) {
+            let mime_type = if clean_path.ends_with(".png") {
+                "image/png"
+            } else if clean_path.ends_with(".ico") {
+                "image/x-icon"
+            } else if clean_path.ends_with(".css") {
+                "text/css"
+            } else if clean_path.ends_with(".js") {
+                "application/javascript"
+            } else if clean_path.ends_with(".svg") {
+                "image/svg+xml"
+            } else {
+                "application/octet-stream"
+            };
+            asset = Some((Arc::new(bytes), mime_type));
+            break;
+        }
+    }
+
+    let mut cache_guard = ASSET_CACHE.lock().unwrap();
+    let cache = cache_guard.get_or_insert_with(HashMap::new);
+    // Bounded cache capacity (max 256 entries) to prevent memory exhaustion / DoS attacks from unbounded arbitrary path requests
+    if cache.len() < 256 {
+        cache.insert(clean_path.to_string(), asset.clone());
+    }
+    asset
+}
 
 /// Verify that an IP address is public and safe (prevent SSRF attacks).
 pub fn is_safe_ip(ip: &IpAddr) -> bool {
@@ -318,44 +388,8 @@ pub fn start_webforge_server(port: u16) -> Result<RuntimeValue, RuntimeError> {
                         continue;
                     }
 
-                    let possible_paths = [
-                        PathBuf::from(clean_path),
-                        PathBuf::from("website").join(clean_path),
-                        PathBuf::from("website/dist").join(clean_path),
-                        PathBuf::from("dist").join(clean_path),
-                        if clean_path.ends_with("logo.png") || clean_path.ends_with(".png") {
-                            PathBuf::from(
-                                "assets/branding/logo-package/source/logo-master-transparent.png",
-                            )
-                        } else {
-                            PathBuf::from("assets/branding/logo-package/ico/favicon.ico")
-                        },
-                    ];
-
-                    let mut found_bytes = None;
-                    let mut mime_type = "application/octet-stream";
-                    for p in &possible_paths {
-                        if p.exists() {
-                            if let Ok(bytes) = std::fs::read(p) {
-                                found_bytes = Some(bytes);
-                                if clean_path.ends_with(".png") {
-                                    mime_type = "image/png";
-                                } else if clean_path.ends_with(".ico") {
-                                    mime_type = "image/x-icon";
-                                } else if clean_path.ends_with(".css") {
-                                    mime_type = "text/css";
-                                } else if clean_path.ends_with(".js") {
-                                    mime_type = "application/javascript";
-                                } else if clean_path.ends_with(".svg") {
-                                    mime_type = "image/svg+xml";
-                                }
-                                break;
-                            }
-                        }
-                    }
-
-                    if let Some(bytes) = found_bytes {
-                        let resp = tiny_http::Response::from_data(bytes)
+                    if let Some((bytes, mime_type)) = get_static_asset(clean_path) {
+                        let resp = tiny_http::Response::from_data(&bytes[..])
                             .with_header(
                                 tiny_http::Header::from_bytes(
                                     &b"Content-Type"[..],

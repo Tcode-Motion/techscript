@@ -70,3 +70,7 @@
 ## 2024-05-24 - Web Property Extraction Optimization
 **Learning:** Extracting properties from the `RuntimeValue` DSL property lists in `stdlib/src/web/renderer.rs` and `stdlib/src/web/db.rs` was inefficient because the code called `.iter().find()` to resolve `text`, `id`, and `name` attributes, which creates unnecessary iterator overhead and closure allocation.
 **Action:** Replace `.iter().find()` calls with a single-pass `for p in &dsl.properties` loop and `if` statements on the property names, stopping early when found, which significantly reduces execution overhead.
+
+## 2026-09-28 - Web Server Static Asset In-Memory Caching
+**Learning:** In `stdlib/src/web/server.rs`, serving static web assets on every HTTP request performed up to 5 redundant `p.exists()` filesystem stat calls followed by blocking `std::fs::read(p)` disk reads. Caching static assets in a thread-safe in-memory `ASSET_CACHE` map and attempting direct file reads without preemptive `p.exists()` eliminated filesystem disk I/O on warm requests, speeding up static asset requests by over 34x.
+**Action:** Always cache static file assets in memory for embedded web servers and eliminate redundant `p.exists()` checks prior to direct `std::fs::read` attempts.

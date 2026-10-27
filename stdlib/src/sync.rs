@@ -4,7 +4,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 use std::sync::{Condvar, Mutex};
-use techscript_runtime::{error::RuntimeError, value::RuntimeValue};
+use techscript_runtime::{error::RuntimeError, value::RuntimeValue, RuntimeContext};
 
 pub struct ScriptMutex {
     locked: Mutex<bool>,
@@ -34,6 +34,58 @@ impl ScriptMutex {
     }
 }
 
+fn sync_make_mutex(
+    ctx: &mut RuntimeContext,
+    _args: Vec<RuntimeValue>,
+) -> Result<RuntimeValue, RuntimeError> {
+    let mutex = ScriptMutex::new();
+    let handle_id = ctx.resources.borrow_mut().insert(mutex);
+    let mut map = IndexMap::new();
+    map.insert("_handle".to_string(), RuntimeValue::Int(handle_id as i64));
+    Ok(RuntimeValue::Map {
+        entries: Rc::new(RefCell::new(map)),
+        is_const: false,
+    })
+}
+
+fn sync_mutex_lock(
+    ctx: &mut RuntimeContext,
+    args: Vec<RuntimeValue>,
+) -> Result<RuntimeValue, RuntimeError> {
+    if let RuntimeValue::Map { entries, .. } = &args[0] {
+        let handle_id = entries
+            .borrow()
+            .get("_handle")
+            .cloned()
+            .unwrap_or(RuntimeValue::Null)
+            .try_into_int()? as u32;
+        let resources = ctx.resources.borrow();
+        if let Some(mutex) = resources.get::<ScriptMutex>(handle_id) {
+            mutex.lock();
+        }
+    }
+    Ok(RuntimeValue::Null)
+}
+
+fn sync_mutex_unlock(
+    ctx: &mut RuntimeContext,
+    args: Vec<RuntimeValue>,
+) -> Result<RuntimeValue, RuntimeError> {
+    if let RuntimeValue::Map { entries, .. } = &args[0] {
+        let handle_id = entries
+            .borrow()
+            .get("_handle")
+            .cloned()
+            .unwrap_or(RuntimeValue::Null)
+            .try_into_int()? as u32;
+        let resources = ctx.resources.borrow();
+        if let Some(mutex) = resources.get::<ScriptMutex>(handle_id) {
+            mutex.unlock();
+        }
+    }
+    Ok(RuntimeValue::Null)
+}
+
 impl StdlibRegistry {
     pub fn register_sync(&mut self) {
         let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
@@ -44,16 +96,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "make_mutex".to_string(),
                 arity: 0,
-                callback: |ctx, _args| {
-                    let mutex = ScriptMutex::new();
-                    let handle_id = ctx.resources.borrow_mut().insert(mutex);
-                    let mut map = IndexMap::new();
-                    map.insert("_handle".to_string(), RuntimeValue::Int(handle_id as i64));
-                    Ok(RuntimeValue::Map {
-                        entries: Rc::new(RefCell::new(map)),
-                        is_const: false,
-                    })
-                },
+                callback: sync_make_mutex,
             }),
         );
 
@@ -62,21 +105,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "mutex_lock".to_string(),
                 arity: 1,
-                callback: |ctx, args| {
-                    if let RuntimeValue::Map { entries, .. } = &args[0] {
-                        let handle_id = entries
-                            .borrow()
-                            .get("_handle")
-                            .cloned()
-                            .unwrap_or(RuntimeValue::Null)
-                            .try_into_int()? as u32;
-                        let resources = ctx.resources.borrow();
-                        if let Some(mutex) = resources.get::<ScriptMutex>(handle_id) {
-                            mutex.lock();
-                        }
-                    }
-                    Ok(RuntimeValue::Null)
-                },
+                callback: sync_mutex_lock,
             }),
         );
 
@@ -85,21 +114,7 @@ impl StdlibRegistry {
             Rc::new(StdFunction {
                 name: "mutex_unlock".to_string(),
                 arity: 1,
-                callback: |ctx, args| {
-                    if let RuntimeValue::Map { entries, .. } = &args[0] {
-                        let handle_id = entries
-                            .borrow()
-                            .get("_handle")
-                            .cloned()
-                            .unwrap_or(RuntimeValue::Null)
-                            .try_into_int()? as u32;
-                        let resources = ctx.resources.borrow();
-                        if let Some(mutex) = resources.get::<ScriptMutex>(handle_id) {
-                            mutex.unlock();
-                        }
-                    }
-                    Ok(RuntimeValue::Null)
-                },
+                callback: sync_mutex_unlock,
             }),
         );
 
@@ -118,6 +133,36 @@ impl StdlibRegistry {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use techscript_runtime::context::RuntimeConfig;
+
+    #[test]
+    fn test_register_sync() {
+        let mut registry = StdlibRegistry::new();
+        registry.register_sync();
+
+        let module = registry.get_module("std.sync").unwrap();
+
+        let make_mutex = module.exports.get("make_mutex").unwrap();
+        assert_eq!(make_mutex.name(), "make_mutex");
+        assert_eq!(make_mutex.arity(), 0);
+
+        let mutex_lock = module.exports.get("mutex_lock").unwrap();
+        assert_eq!(mutex_lock.name(), "mutex_lock");
+        assert_eq!(mutex_lock.arity(), 1);
+
+        let mutex_unlock = module.exports.get("mutex_unlock").unwrap();
+        assert_eq!(mutex_unlock.name(), "mutex_unlock");
+        assert_eq!(mutex_unlock.arity(), 1);
+
+        let mut ctx = RuntimeContext::new(RuntimeConfig::default());
+        let mutex_val = make_mutex.call(&mut ctx, vec![]).unwrap();
+
+        let lock_res = mutex_lock.call(&mut ctx, vec![mutex_val.clone()]);
+        assert!(lock_res.is_ok());
+
+        let unlock_res = mutex_unlock.call(&mut ctx, vec![mutex_val]);
+        assert!(unlock_res.is_ok());
+    }
 
     #[test]
     fn test_script_mutex_new() {

@@ -70,7 +70,6 @@ pub fn execute(path_str: Option<&str>, fix: bool) -> ExitCode {
                     }
                 }
 
-                // Fix deprecation warnings
                 if fix {
                     let migrated = migrate_source(&content);
                     if migrated != content {

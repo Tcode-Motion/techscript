@@ -43,3 +43,16 @@ fn test_cli_emit_commands() {
         _ => panic!("Expected EmitLlvm subcommand"),
     }
 }
+
+#[test]
+fn test_cli_lint_options() {
+    let args = vec!["tech", "lint", "main.txs", "--fix"];
+    let cli = Cli::try_parse_from(args).expect("args parse successfully");
+    match cli.command {
+        Commands::Lint { path, fix } => {
+            assert_eq!(path.as_deref(), Some("main.txs"));
+            assert!(fix);
+        }
+        _ => panic!("Expected Lint subcommand"),
+    }
+}

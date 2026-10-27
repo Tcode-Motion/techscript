@@ -1,7 +1,7 @@
 # ============================================================
-# TechScript Official Windows Installer (PowerShell One-Liner)
+# TechScript Official Windows Installer (PowerShell Installer)
 # Run with:
-#   irm https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.ps1 | iex
+#   Invoke-WebRequest -Uri https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.ps1 -OutFile install.ps1; .\install.ps1
 # ============================================================
 $ErrorActionPreference = "Stop"
 

@@ -2,7 +2,7 @@
 # ============================================================
 #  TechScript v2.0.2 — Linux, macOS & Android Universal Installer
 #  Run with:
-#    curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
+#    curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh -o install.sh && bash install.sh
 # ============================================================
 
 set -e

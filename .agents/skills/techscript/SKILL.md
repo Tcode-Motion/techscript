@@ -310,12 +310,12 @@ This skill can be installed in seconds into any AI coding environment:
 
 ### Linux / macOS / Claude Code / Cursor / OpenClaw / Codex:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/skills/techscript/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/skills/techscript/install.sh -o install.sh && bash install.sh
 ```
 
 ### Windows PowerShell / Antigravity IDE / Gemini CLI / VS Code:
 ```powershell
-irm https://raw.githubusercontent.com/Tcode-Motion/techscript/main/skills/techscript/install.ps1 | iex
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/Tcode-Motion/techscript/main/skills/techscript/install.ps1 -OutFile install.ps1; .\install.ps1
 ```
 
 ---

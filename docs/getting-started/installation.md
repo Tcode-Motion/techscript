@@ -52,7 +52,7 @@ cargo build --release --workspace
 
 Run the universal installer script:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh -o install.sh && bash install.sh
 ```
 
 ### Option 2: Manual Tarball Installation

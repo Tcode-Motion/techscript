@@ -117,6 +117,222 @@ fn apply_security_headers<R: std::io::Read>(
     )
 }
 
+fn handle_api_request(mut req: tiny_http::Request, raw_url: &str, method: &str) {
+    if let Some(idx) = raw_url.find("/api/") {
+        let path_part = raw_url[idx + 5..].split('?').next().unwrap_or("health");
+        let clean_table = db::sanitize_identifier(path_part);
+
+        if method == "OPTIONS" {
+            let resp = tiny_http::Response::empty(200).with_header(
+                tiny_http::Header::from_bytes(&b"Content-Type"[..], &b"application/json"[..])
+                    .unwrap(),
+            );
+            let _ = req.respond(apply_security_headers(resp));
+            return;
+        }
+
+        if clean_table == "health" && method == "GET" {
+            let res_json = serde_json::json!({
+                "status": "ok",
+                "framework": "WebForge",
+                "version": "2.0.0",
+                "language": "TechScript",
+                "compiler": "techscriptc / webforge",
+                "database": "SQLite (integrated)",
+                "security": "strict-isolated",
+                "timestamp": std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_secs()
+            }).to_string();
+
+            let resp = tiny_http::Response::from_string(res_json).with_header(
+                tiny_http::Header::from_bytes(&b"Content-Type"[..], &b"application/json"[..])
+                    .unwrap(),
+            );
+            let _ = req.respond(apply_security_headers(resp));
+            return;
+        }
+
+        if clean_table == "examples" && method == "GET" {
+            let res_json = serde_json::json!([
+                {
+                    "id": "01-counter",
+                    "title": "Interactive State & Events",
+                    "category": "basics",
+                    "file": "src/pages/framework.txs",
+                    "description": "Declarative reactive buttons with inline state mutation."
+                },
+                {
+                    "id": "02-3d-lab",
+                    "title": "Procedural 3D Visualizer",
+                    "category": "3d",
+                    "file": "src/scenes/logo.txs",
+                    "description": "Hardware-accelerated WebGL with OrbitControls, PBR materials, and live TechScript reflection."
+                },
+                {
+                    "id": "03-sqlite-fullstack",
+                    "title": "Embedded SQLite Persistence",
+                    "category": "backend",
+                    "file": "src/server/api.txs",
+                    "description": "Zero-config parameterized SQLite queries and real REST API endpoints."
+                },
+                {
+                    "id": "04-multipage-router",
+                    "title": "SPA Routing Engine",
+                    "category": "routing",
+                    "file": "src/main.txs",
+                    "description": "Direct browser URL navigation, browser history, bookmarks, and deep links."
+                }
+            ]).to_string();
+
+            let resp = tiny_http::Response::from_string(res_json).with_header(
+                tiny_http::Header::from_bytes(&b"Content-Type"[..], &b"application/json"[..])
+                    .unwrap(),
+            );
+            let _ = req.respond(apply_security_headers(resp));
+            return;
+        }
+
+        if method == "POST" {
+            let mut body_str = String::new();
+            let _ = req.as_reader().read_to_string(&mut body_str);
+            let json_val: Result<serde_json::Value, _> = serde_json::from_str(&body_str);
+
+            let title = json_val
+                .as_ref()
+                .ok()
+                .and_then(|j| {
+                    j.get("title")
+                        .or_else(|| j.get("name"))
+                        .or_else(|| j.get("content"))
+                })
+                .and_then(|v| v.as_str())
+                .unwrap_or(&body_str)
+                .to_string();
+
+            let content = json_val
+                .as_ref()
+                .ok()
+                .and_then(|j| {
+                    j.get("content")
+                        .or_else(|| j.get("message"))
+                        .or_else(|| j.get("title"))
+                })
+                .and_then(|v| v.as_str())
+                .unwrap_or(&body_str)
+                .to_string();
+
+            let _ = db::insert_record(&clean_table, &title, &content);
+
+            let res_json = serde_json::json!({
+                "status": "ok",
+                "message": "Resource saved successfully",
+                "endpoint": format!("/api/{}", clean_table)
+            })
+            .to_string();
+
+            let resp = tiny_http::Response::from_string(res_json).with_header(
+                tiny_http::Header::from_bytes(&b"Content-Type"[..], &b"application/json"[..])
+                    .unwrap(),
+            );
+            let _ = req.respond(apply_security_headers(resp));
+        } else {
+            // GET /api/<table_name>
+            let items = db::query_records(&clean_table, 50).unwrap_or_default();
+            let res_json = serde_json::to_string(&items).unwrap_or_else(|_| "[]".to_string());
+            let resp = tiny_http::Response::from_string(res_json).with_header(
+                tiny_http::Header::from_bytes(&b"Content-Type"[..], &b"application/json"[..])
+                    .unwrap(),
+            );
+            let _ = req.respond(apply_security_headers(resp));
+        }
+    }
+}
+
+fn handle_static_asset(mut req: tiny_http::Request, raw_url: &str) {
+    let clean_path = raw_url
+        .trim_start_matches('/')
+        .split('?')
+        .next()
+        .unwrap_or("favicon.ico");
+
+    // Prevent path traversal
+    if clean_path.contains("..") {
+        let resp = tiny_http::Response::empty(403);
+        let _ = req.respond(apply_security_headers(resp));
+        return;
+    }
+
+    let possible_paths = [
+        PathBuf::from(clean_path),
+        PathBuf::from("website").join(clean_path),
+        PathBuf::from("website/dist").join(clean_path),
+        PathBuf::from("dist").join(clean_path),
+        if clean_path.ends_with("logo.png") || clean_path.ends_with(".png") {
+            PathBuf::from("assets/branding/logo-package/source/logo-master-transparent.png")
+        } else {
+            PathBuf::from("assets/branding/logo-package/ico/favicon.ico")
+        },
+    ];
+
+    let mut found_bytes = None;
+    let mut mime_type = "application/octet-stream";
+    for p in &possible_paths {
+        if p.exists() {
+            if let Ok(bytes) = std::fs::read(p) {
+                found_bytes = Some(bytes);
+                if clean_path.ends_with(".png") {
+                    mime_type = "image/png";
+                } else if clean_path.ends_with(".ico") {
+                    mime_type = "image/x-icon";
+                } else if clean_path.ends_with(".css") {
+                    mime_type = "text/css";
+                } else if clean_path.ends_with(".js") {
+                    mime_type = "application/javascript";
+                } else if clean_path.ends_with(".svg") {
+                    mime_type = "image/svg+xml";
+                }
+                break;
+            }
+        }
+    }
+
+    if let Some(bytes) = found_bytes {
+        let resp = tiny_http::Response::from_data(bytes)
+            .with_header(
+                tiny_http::Header::from_bytes(&b"Content-Type"[..], mime_type.as_bytes()).unwrap(),
+            )
+            .with_header(
+                tiny_http::Header::from_bytes(&b"Cache-Control"[..], &b"public, max-age=86400"[..])
+                    .unwrap(),
+            );
+        let _ = req.respond(apply_security_headers(resp));
+    } else {
+        let resp = tiny_http::Response::empty(404);
+        let _ = req.respond(apply_security_headers(resp));
+    }
+}
+
+fn handle_spa_response(mut req: tiny_http::Request) {
+    let page = PAGE_CONTENT.lock().unwrap();
+    let resp = tiny_http::Response::from_string(&*page).with_header(
+        tiny_http::Header::from_bytes(&b"Content-Type"[..], &b"text/html; charset=utf-8"[..])
+            .unwrap(),
+    );
+    let _ = req.respond(apply_security_headers(resp));
+}
+
+fn handle_request(req: tiny_http::Request) {
+    let raw_url = req.url().to_string();
+    let method = req.method().as_str().to_string();
+
+    if raw_url.contains("/api/") {
+        handle_api_request(req, &raw_url, &method);
+    } else if raw_url.starts_with("/assets/") || raw_url == "/favicon.ico" {
+        handle_static_asset(req, &raw_url);
+    } else {
+        handle_spa_response(req);
+    }
+}
+
 /// Starts the WebForge local HTTP server.
 pub fn start_webforge_server(port: u16) -> Result<RuntimeValue, RuntimeError> {
     if SERVER_RUNNING.load(Ordering::SeqCst) {
@@ -151,243 +367,8 @@ pub fn start_webforge_server(port: u16) -> Result<RuntimeValue, RuntimeError> {
                 s.recv_timeout(std::time::Duration::from_millis(200))
             };
 
-            if let Ok(Some(mut req)) = req_res {
-                let raw_url = req.url().to_string();
-                let method = req.method().as_str().to_string();
-
-                // 1. Handle REST API endpoints
-                if let Some(idx) = raw_url.find("/api/") {
-                    let path_part = raw_url[idx + 5..].split('?').next().unwrap_or("health");
-                    let clean_table = db::sanitize_identifier(path_part);
-
-                    if method == "OPTIONS" {
-                        let resp = tiny_http::Response::empty(200).with_header(
-                            tiny_http::Header::from_bytes(
-                                &b"Content-Type"[..],
-                                &b"application/json"[..],
-                            )
-                            .unwrap(),
-                        );
-                        let _ = req.respond(apply_security_headers(resp));
-                        continue;
-                    }
-
-                    if clean_table == "health" && method == "GET" {
-                        let res_json = serde_json::json!({
-                            "status": "ok",
-                            "framework": "WebForge",
-                            "version": "2.0.0",
-                            "language": "TechScript",
-                            "compiler": "techscriptc / webforge",
-                            "database": "SQLite (integrated)",
-                            "security": "strict-isolated",
-                            "timestamp": std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_secs()
-                        }).to_string();
-
-                        let resp = tiny_http::Response::from_string(res_json).with_header(
-                            tiny_http::Header::from_bytes(
-                                &b"Content-Type"[..],
-                                &b"application/json"[..],
-                            )
-                            .unwrap(),
-                        );
-                        let _ = req.respond(apply_security_headers(resp));
-                        continue;
-                    }
-
-                    if clean_table == "examples" && method == "GET" {
-                        let res_json = serde_json::json!([
-                            {
-                                "id": "01-counter",
-                                "title": "Interactive State & Events",
-                                "category": "basics",
-                                "file": "src/pages/framework.txs",
-                                "description": "Declarative reactive buttons with inline state mutation."
-                            },
-                            {
-                                "id": "02-3d-lab",
-                                "title": "Procedural 3D Visualizer",
-                                "category": "3d",
-                                "file": "src/scenes/logo.txs",
-                                "description": "Hardware-accelerated WebGL with OrbitControls, PBR materials, and live TechScript reflection."
-                            },
-                            {
-                                "id": "03-sqlite-fullstack",
-                                "title": "Embedded SQLite Persistence",
-                                "category": "backend",
-                                "file": "src/server/api.txs",
-                                "description": "Zero-config parameterized SQLite queries and real REST API endpoints."
-                            },
-                            {
-                                "id": "04-multipage-router",
-                                "title": "SPA Routing Engine",
-                                "category": "routing",
-                                "file": "src/main.txs",
-                                "description": "Direct browser URL navigation, browser history, bookmarks, and deep links."
-                            }
-                        ]).to_string();
-
-                        let resp = tiny_http::Response::from_string(res_json).with_header(
-                            tiny_http::Header::from_bytes(
-                                &b"Content-Type"[..],
-                                &b"application/json"[..],
-                            )
-                            .unwrap(),
-                        );
-                        let _ = req.respond(apply_security_headers(resp));
-                        continue;
-                    }
-
-                    if method == "POST" {
-                        let mut body_str = String::new();
-                        let _ = req.as_reader().read_to_string(&mut body_str);
-                        let json_val: Result<serde_json::Value, _> =
-                            serde_json::from_str(&body_str);
-
-                        let title = json_val
-                            .as_ref()
-                            .ok()
-                            .and_then(|j| {
-                                j.get("title")
-                                    .or_else(|| j.get("name"))
-                                    .or_else(|| j.get("content"))
-                            })
-                            .and_then(|v| v.as_str())
-                            .unwrap_or(&body_str)
-                            .to_string();
-
-                        let content = json_val
-                            .as_ref()
-                            .ok()
-                            .and_then(|j| {
-                                j.get("content")
-                                    .or_else(|| j.get("message"))
-                                    .or_else(|| j.get("title"))
-                            })
-                            .and_then(|v| v.as_str())
-                            .unwrap_or(&body_str)
-                            .to_string();
-
-                        let _ = db::insert_record(&clean_table, &title, &content);
-
-                        let res_json = serde_json::json!({
-                            "status": "ok",
-                            "message": "Resource saved successfully",
-                            "endpoint": format!("/api/{}", clean_table)
-                        })
-                        .to_string();
-
-                        let resp = tiny_http::Response::from_string(res_json).with_header(
-                            tiny_http::Header::from_bytes(
-                                &b"Content-Type"[..],
-                                &b"application/json"[..],
-                            )
-                            .unwrap(),
-                        );
-                        let _ = req.respond(apply_security_headers(resp));
-                        continue;
-                    } else {
-                        // GET /api/<table_name>
-                        let items = db::query_records(&clean_table, 50).unwrap_or_default();
-                        let res_json =
-                            serde_json::to_string(&items).unwrap_or_else(|_| "[]".to_string());
-                        let resp = tiny_http::Response::from_string(res_json).with_header(
-                            tiny_http::Header::from_bytes(
-                                &b"Content-Type"[..],
-                                &b"application/json"[..],
-                            )
-                            .unwrap(),
-                        );
-                        let _ = req.respond(apply_security_headers(resp));
-                        continue;
-                    }
-                }
-
-                // 2. Handle Static Assets (/assets/ and /favicon.ico)
-                if raw_url.starts_with("/assets/") || raw_url == "/favicon.ico" {
-                    let clean_path = raw_url
-                        .trim_start_matches('/')
-                        .split('?')
-                        .next()
-                        .unwrap_or("favicon.ico");
-
-                    // Prevent path traversal
-                    if clean_path.contains("..") {
-                        let resp = tiny_http::Response::empty(403);
-                        let _ = req.respond(apply_security_headers(resp));
-                        continue;
-                    }
-
-                    let possible_paths = [
-                        PathBuf::from(clean_path),
-                        PathBuf::from("website").join(clean_path),
-                        PathBuf::from("website/dist").join(clean_path),
-                        PathBuf::from("dist").join(clean_path),
-                        if clean_path.ends_with("logo.png") || clean_path.ends_with(".png") {
-                            PathBuf::from(
-                                "assets/branding/logo-package/source/logo-master-transparent.png",
-                            )
-                        } else {
-                            PathBuf::from("assets/branding/logo-package/ico/favicon.ico")
-                        },
-                    ];
-
-                    let mut found_bytes = None;
-                    let mut mime_type = "application/octet-stream";
-                    for p in &possible_paths {
-                        if p.exists() {
-                            if let Ok(bytes) = std::fs::read(p) {
-                                found_bytes = Some(bytes);
-                                if clean_path.ends_with(".png") {
-                                    mime_type = "image/png";
-                                } else if clean_path.ends_with(".ico") {
-                                    mime_type = "image/x-icon";
-                                } else if clean_path.ends_with(".css") {
-                                    mime_type = "text/css";
-                                } else if clean_path.ends_with(".js") {
-                                    mime_type = "application/javascript";
-                                } else if clean_path.ends_with(".svg") {
-                                    mime_type = "image/svg+xml";
-                                }
-                                break;
-                            }
-                        }
-                    }
-
-                    if let Some(bytes) = found_bytes {
-                        let resp = tiny_http::Response::from_data(bytes)
-                            .with_header(
-                                tiny_http::Header::from_bytes(
-                                    &b"Content-Type"[..],
-                                    mime_type.as_bytes(),
-                                )
-                                .unwrap(),
-                            )
-                            .with_header(
-                                tiny_http::Header::from_bytes(
-                                    &b"Cache-Control"[..],
-                                    &b"public, max-age=86400"[..],
-                                )
-                                .unwrap(),
-                            );
-                        let _ = req.respond(apply_security_headers(resp));
-                    } else {
-                        let resp = tiny_http::Response::empty(404);
-                        let _ = req.respond(apply_security_headers(resp));
-                    }
-                    continue;
-                }
-
-                // 3. Serve the Single-Page Application (SPA) HTML for all page routes
-                let page = PAGE_CONTENT.lock().unwrap();
-                let resp = tiny_http::Response::from_string(&*page).with_header(
-                    tiny_http::Header::from_bytes(
-                        &b"Content-Type"[..],
-                        &b"text/html; charset=utf-8"[..],
-                    )
-                    .unwrap(),
-                );
-                let _ = req.respond(apply_security_headers(resp));
+            if let Ok(Some(req)) = req_res {
+                handle_request(req);
             }
         }
     });

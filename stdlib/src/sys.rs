@@ -20,12 +20,21 @@ fn check_fs_capability(ctx: &RuntimeContext) -> Result<(), RuntimeError> {
     Ok(())
 }
 
+// ⚡ TechScript stdlib execution model is synchronous and native VM function calls return results directly.
+// The blocking file I/O operations below are intentional and aligned with TechScript's synchronous stdlib design.
 fn sys_read_file(
     ctx: &mut RuntimeContext,
     args: Vec<RuntimeValue>,
 ) -> Result<RuntimeValue, RuntimeError> {
     check_fs_capability(ctx)?;
-    let path = args[0].try_into_string()?;
+    let path_buf;
+    let path = match &args[0] {
+        RuntimeValue::Str(s) => s.as_str(),
+        _ => {
+            path_buf = args[0].try_into_string()?;
+            &path_buf
+        }
+    };
     let content = std::fs::read_to_string(path).map_err(|e| {
         RuntimeError::new(
             RuntimeErrorKind::InvalidOperation(format!("IO error: {}", e)),
@@ -41,8 +50,22 @@ fn sys_write_file(
     args: Vec<RuntimeValue>,
 ) -> Result<RuntimeValue, RuntimeError> {
     check_fs_capability(ctx)?;
-    let path = args[0].try_into_string()?;
-    let content = args[1].try_into_string()?;
+    let path_buf;
+    let path = match &args[0] {
+        RuntimeValue::Str(s) => s.as_str(),
+        _ => {
+            path_buf = args[0].try_into_string()?;
+            &path_buf
+        }
+    };
+    let content_buf;
+    let content = match &args[1] {
+        RuntimeValue::Str(s) => s.as_str(),
+        _ => {
+            content_buf = args[1].try_into_string()?;
+            &content_buf
+        }
+    };
     std::fs::write(path, content).map_err(|e| {
         RuntimeError::new(
             RuntimeErrorKind::InvalidOperation(format!("IO error: {}", e)),
@@ -58,8 +81,15 @@ fn sys_exists(
     args: Vec<RuntimeValue>,
 ) -> Result<RuntimeValue, RuntimeError> {
     check_fs_capability(ctx)?;
-    let path = args[0].try_into_string()?;
-    Ok(RuntimeValue::Bool(std::path::Path::new(&path).exists()))
+    let path_buf;
+    let path = match &args[0] {
+        RuntimeValue::Str(s) => s.as_str(),
+        _ => {
+            path_buf = args[0].try_into_string()?;
+            &path_buf
+        }
+    };
+    Ok(RuntimeValue::Bool(std::path::Path::new(path).exists()))
 }
 
 fn sys_now(

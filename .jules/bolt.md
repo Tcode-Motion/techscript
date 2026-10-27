@@ -70,3 +70,7 @@
 ## 2024-05-24 - Web Property Extraction Optimization
 **Learning:** Extracting properties from the `RuntimeValue` DSL property lists in `stdlib/src/web/renderer.rs` and `stdlib/src/web/db.rs` was inefficient because the code called `.iter().find()` to resolve `text`, `id`, and `name` attributes, which creates unnecessary iterator overhead and closure allocation.
 **Action:** Replace `.iter().find()` calls with a single-pass `for p in &dsl.properties` loop and `if` statements on the property names, stopping early when found, which significantly reduces execution overhead.
+
+## 2026-09-28 - String Path Borrowing in std.fs Module
+**Learning:** Extracting string arguments via `try_into_string()` in standard library callbacks causes unnecessary string cloning and heap allocations even when arguments are already `RuntimeValue::Str`.
+**Action:** Borrow `&str` directly from `RuntimeValue::Str` using pattern matching rather than calling `try_into_string()` when passing string path arguments to file I/O operations.

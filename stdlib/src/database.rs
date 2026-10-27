@@ -127,7 +127,7 @@ fn std_database_query(
         .map(|s| s.to_string())
         .collect();
 
-    let mut rows = stmt.query(params_refs.as_slice()).map_err(|e| {
+    let rows = stmt.query(params_refs.as_slice()).map_err(|e| {
         RuntimeError::new(
             RuntimeErrorKind::InvalidOperation(format!("Database query error: {}", e)),
             None,
@@ -135,6 +135,30 @@ fn std_database_query(
         )
     })?;
 
+    let result_rows = process_query_rows(rows, &column_names)?;
+
+    Ok(RuntimeValue::List {
+        items: Rc::new(RefCell::new(result_rows)),
+        is_const: false,
+    })
+}
+
+fn convert_value_ref(val: rusqlite::types::ValueRef<'_>) -> RuntimeValue {
+    match val {
+        rusqlite::types::ValueRef::Null => RuntimeValue::Null,
+        rusqlite::types::ValueRef::Integer(i) => RuntimeValue::Int(i),
+        rusqlite::types::ValueRef::Real(f) => RuntimeValue::Float(f),
+        rusqlite::types::ValueRef::Text(bytes) | rusqlite::types::ValueRef::Blob(bytes) => {
+            let s = String::from_utf8_lossy(bytes).into_owned();
+            RuntimeValue::Str(s)
+        }
+    }
+}
+
+fn process_query_rows(
+    mut rows: rusqlite::Rows<'_>,
+    column_names: &[String],
+) -> Result<Vec<RuntimeValue>, RuntimeError> {
     // ⚡ Bolt Performance Optimization:
     // Instead of constructing a new IndexMap for each row, cloning every column string,
     // and re-hashing all keys, we create a prototype map once containing null values.
@@ -143,7 +167,7 @@ fn std_database_query(
     // We map the database column indices to the deduplicated IndexMap indices.
     let mut prototype_map = IndexMap::with_capacity(column_names.len());
     let mut col_idx_to_map_idx = Vec::with_capacity(column_names.len());
-    for name in &column_names {
+    for name in column_names {
         let (map_idx, _) = prototype_map.insert_full(name.clone(), RuntimeValue::Null);
         col_idx_to_map_idx.push(map_idx);
     }
@@ -159,25 +183,14 @@ fn std_database_query(
     })? {
         let mut row_map = prototype_map.clone();
         for (idx, &map_idx) in col_idx_to_map_idx.iter().enumerate() {
-            let value = match row.get_ref(idx).map_err(|e| {
+            let val_ref = row.get_ref(idx).map_err(|e| {
                 RuntimeError::new(
                     RuntimeErrorKind::InvalidOperation(format!("Database column get error: {}", e)),
                     None,
                     None,
                 )
-            })? {
-                rusqlite::types::ValueRef::Null => RuntimeValue::Null,
-                rusqlite::types::ValueRef::Integer(i) => RuntimeValue::Int(i),
-                rusqlite::types::ValueRef::Real(f) => RuntimeValue::Float(f),
-                rusqlite::types::ValueRef::Text(bytes) => {
-                    let s = String::from_utf8_lossy(bytes).into_owned();
-                    RuntimeValue::Str(s)
-                }
-                rusqlite::types::ValueRef::Blob(bytes) => {
-                    let s = String::from_utf8_lossy(bytes).into_owned();
-                    RuntimeValue::Str(s)
-                }
-            };
+            })?;
+            let value = convert_value_ref(val_ref);
             if let Some((_, v)) = row_map.get_index_mut(map_idx) {
                 *v = value;
             }
@@ -188,10 +201,7 @@ fn std_database_query(
         });
     }
 
-    Ok(RuntimeValue::List {
-        items: Rc::new(RefCell::new(result_rows)),
-        is_const: false,
-    })
+    Ok(result_rows)
 }
 
 fn std_database_execute(

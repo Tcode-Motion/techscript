@@ -519,6 +519,7 @@ fn test_http_module() {
             let response = "HTTP/1.1 200 OK\r\nContent-Length: 13\r\nContent-Type: text/plain\r\nConnection: close\r\n\r\nHello Server!";
             let _ = stream.write_all(response.as_bytes());
             let _ = stream.flush();
+            let _ = stream.shutdown(std::net::Shutdown::Both);
         }
     });
 
@@ -1330,4 +1331,53 @@ fn test_uuid_module() {
     let uuid_str = res.as_string().expect("Expected string");
     assert!(!uuid_str.is_empty());
     assert!(uuid_str.contains("-"));
+}
+
+#[test]
+fn test_sys_read_file_benchmark() {
+    let registry = StdlibRegistry::new();
+    let fs = registry.get_module("std.fs").unwrap();
+
+    let temp_dir = std::env::temp_dir();
+    let temp_file = temp_dir.join("techscript_sys_read_bench.txt");
+    let temp_file_str = temp_file.to_string_lossy().to_string();
+
+    let mut caps = HashSet::new();
+    caps.insert(Capability::FileSystem);
+    let config = RuntimeConfig {
+        strict_mode: false,
+        max_recursion_depth: 1000,
+        enable_assertions: true,
+        capabilities: caps,
+    };
+    let mut ctx = RuntimeContext::new(config);
+
+    let write_file = fs.exports.get("write_file").unwrap();
+    let read_file = fs.exports.get("read_file").unwrap();
+
+    write_file
+        .call(
+            &mut ctx,
+            vec![
+                RuntimeValue::Str(temp_file_str.clone()),
+                RuntimeValue::Str("Benchmark test content for sys_read_file".to_string()),
+            ],
+        )
+        .unwrap();
+
+    let path_val = RuntimeValue::Str(temp_file_str);
+    let iterations = 10_000;
+    let start = std::time::Instant::now();
+
+    for _ in 0..iterations {
+        let _ = read_file.call(&mut ctx, vec![path_val.clone()]).unwrap();
+    }
+
+    let elapsed = start.elapsed();
+    println!(
+        "\n[BENCHMARK] sys_read_file {} iterations: {:?}",
+        iterations, elapsed
+    );
+
+    std::fs::remove_file(temp_file).ok();
 }

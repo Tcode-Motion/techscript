@@ -37,10 +37,7 @@ pub fn web_render_html_pub(ctx: &RuntimeContext) -> String {
     renderer::render_complete_document(&blocks, &event_handlers)
 }
 
-fn web_start(
-    ctx: &mut RuntimeContext,
-    args: Vec<RuntimeValue>,
-) -> Result<RuntimeValue, RuntimeError> {
+fn check_network_capability(ctx: &RuntimeContext) -> Result<(), RuntimeError> {
     if !ctx.config.capabilities.contains(&Capability::Network) {
         return Err(RuntimeError::new(
             techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
@@ -50,15 +47,32 @@ fn web_start(
             None,
         ));
     }
-    let port = args[0].try_into_int().map_err(|e| {
-        RuntimeError::new(
-            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(e.to_string()),
-            None,
-            None,
-        )
-    })? as u16;
-    let content = args[1].to_string();
+    Ok(())
+}
+
+fn parse_port_arg(arg: &RuntimeValue) -> Result<u16, RuntimeError> {
+    arg.try_into_int()
+        .map_err(|e| {
+            RuntimeError::new(
+                techscript_runtime::error::RuntimeErrorKind::InvalidOperation(e.to_string()),
+                None,
+                None,
+            )
+        })
+        .map(|p| p as u16)
+}
+
+fn set_page_content(content: String) {
     *server::PAGE_CONTENT.lock().unwrap() = content;
+}
+
+fn web_start(
+    ctx: &mut RuntimeContext,
+    args: Vec<RuntimeValue>,
+) -> Result<RuntimeValue, RuntimeError> {
+    check_network_capability(ctx)?;
+    let port = parse_port_arg(&args[0])?;
+    set_page_content(args[1].to_string());
     server::start_webforge_server(port)
 }
 
@@ -67,8 +81,7 @@ fn web_page(
     args: Vec<RuntimeValue>,
 ) -> Result<RuntimeValue, RuntimeError> {
     let _path = args[0].to_string();
-    let content = args[1].to_string();
-    *server::PAGE_CONTENT.lock().unwrap() = content;
+    set_page_content(args[1].to_string());
     Ok(RuntimeValue::Null)
 }
 
@@ -76,22 +89,8 @@ fn web_serve(
     ctx: &mut RuntimeContext,
     args: Vec<RuntimeValue>,
 ) -> Result<RuntimeValue, RuntimeError> {
-    if !ctx.config.capabilities.contains(&Capability::Network) {
-        return Err(RuntimeError::new(
-            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
-                "Security policy violation: Network capability is denied".to_string(),
-            ),
-            None,
-            None,
-        ));
-    }
-    let port = args[0].try_into_int().map_err(|e| {
-        RuntimeError::new(
-            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(e.to_string()),
-            None,
-            None,
-        )
-    })? as u16;
+    check_network_capability(ctx)?;
+    let port = parse_port_arg(&args[0])?;
     server::start_webforge_server(port)
 }
 
@@ -107,8 +106,7 @@ fn web_set_content(
     _ctx: &mut RuntimeContext,
     args: Vec<RuntimeValue>,
 ) -> Result<RuntimeValue, RuntimeError> {
-    let new_content = args[0].to_string();
-    *server::PAGE_CONTENT.lock().unwrap() = new_content;
+    set_page_content(args[0].to_string());
     Ok(RuntimeValue::Str("Content updated".to_string()))
 }
 
@@ -116,15 +114,7 @@ fn web_fetch(
     ctx: &mut RuntimeContext,
     args: Vec<RuntimeValue>,
 ) -> Result<RuntimeValue, RuntimeError> {
-    if !ctx.config.capabilities.contains(&Capability::Network) {
-        return Err(RuntimeError::new(
-            techscript_runtime::error::RuntimeErrorKind::InvalidOperation(
-                "Security policy violation: Network capability is denied".to_string(),
-            ),
-            None,
-            None,
-        ));
-    }
+    check_network_capability(ctx)?;
     let url = args[0].to_string();
 
     if !server::is_safe_url(&url) {

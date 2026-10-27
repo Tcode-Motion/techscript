@@ -19,3 +19,21 @@ impl StdlibRegistry {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::StdlibRegistry;
+
+    #[test]
+    fn test_register_docs() {
+        let registry = StdlibRegistry::new();
+        let module = registry
+            .get_module("std.docs")
+            .expect("std.docs module should be registered");
+
+        assert_eq!(module.name, "std.docs");
+        assert_eq!(module.version, "1.0.0");
+        assert!(module.required_capabilities.is_empty());
+    }
+}

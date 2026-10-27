@@ -1331,3 +1331,15 @@ fn test_uuid_module() {
     assert!(!uuid_str.is_empty());
     assert!(uuid_str.contains("-"));
 }
+
+#[test]
+fn test_docs_module() {
+    let registry = StdlibRegistry::new();
+    let docs = registry
+        .get_module("std.docs")
+        .expect("std.docs module should be registered");
+
+    assert_eq!(docs.name, "std.docs");
+    assert_eq!(docs.version, "1.0.0");
+    assert!(docs.required_capabilities.is_empty());
+}

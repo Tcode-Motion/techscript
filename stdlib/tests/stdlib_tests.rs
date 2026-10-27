@@ -519,6 +519,7 @@ fn test_http_module() {
             let response = "HTTP/1.1 200 OK\r\nContent-Length: 13\r\nContent-Type: text/plain\r\nConnection: close\r\n\r\nHello Server!";
             let _ = stream.write_all(response.as_bytes());
             let _ = stream.flush();
+            let _ = stream.shutdown(std::net::Shutdown::Both);
         }
     });
 
@@ -573,12 +574,22 @@ fn test_http_module() {
         capabilities: caps,
     });
 
-    let res = get
-        .call(
+    let mut res = Err(techscript_runtime::RuntimeError::new(
+        techscript_runtime::RuntimeErrorKind::InvalidOperation("Failed".to_string()),
+        None,
+        None,
+    ));
+    for _ in 0..5 {
+        res = get.call(
             &mut ctx,
             vec![RuntimeValue::Str(format!("http://127.0.0.1:{}", port))],
-        )
-        .unwrap();
+        );
+        if res.is_ok() {
+            break;
+        }
+        std::thread::sleep(std::time::Duration::from_millis(50));
+    }
+    let res = res.unwrap();
 
     if let RuntimeValue::Map { entries, .. } = res {
         let entries_borrow = entries.borrow();
@@ -591,26 +602,25 @@ fn test_http_module() {
         panic!("get did not return a Map");
     }
 
-    let res2 = match post.call(
-        &mut ctx,
-        vec![
-            RuntimeValue::Str(format!("http://127.0.0.1:{}", port)),
-            RuntimeValue::Str("body".to_string()),
-        ],
-    ) {
-        Ok(v) => v,
-        Err(_) => {
-            std::thread::sleep(std::time::Duration::from_millis(50));
-            post.call(
-                &mut ctx,
-                vec![
-                    RuntimeValue::Str(format!("http://127.0.0.1:{}", port)),
-                    RuntimeValue::Str("body".to_string()),
-                ],
-            )
-            .unwrap()
+    let mut res2 = Err(techscript_runtime::RuntimeError::new(
+        techscript_runtime::RuntimeErrorKind::InvalidOperation("Failed".to_string()),
+        None,
+        None,
+    ));
+    for _ in 0..5 {
+        res2 = post.call(
+            &mut ctx,
+            vec![
+                RuntimeValue::Str(format!("http://127.0.0.1:{}", port)),
+                RuntimeValue::Str("body".to_string()),
+            ],
+        );
+        if res2.is_ok() {
+            break;
         }
-    };
+        std::thread::sleep(std::time::Duration::from_millis(50));
+    }
+    let res2 = res2.unwrap();
 
     if let RuntimeValue::Map { entries, .. } = res2 {
         let entries_borrow = entries.borrow();

@@ -6,7 +6,7 @@ spawn_fn = thread["spawn"]
 join_fn = thread["join"]
 
 do task_a()
-    time.sleep(100)
+    time.sleep(250)
     say "Task A completed on worker thread."
 end
 

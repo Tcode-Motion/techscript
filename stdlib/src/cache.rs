@@ -106,3 +106,166 @@ impl StdlibRegistry {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use techscript_runtime::context::{RuntimeConfig, RuntimeContext};
+
+    #[test]
+    fn test_register_cache() {
+        let mut registry = StdlibRegistry::default();
+        registry.register_cache();
+
+        let module = registry
+            .modules
+            .get("std.cache")
+            .expect("Module std.cache should be registered");
+        assert_eq!(module.name, "std.cache");
+        assert_eq!(module.version, "1.0.0");
+        assert!(module.exports.contains_key("set"));
+        assert!(module.exports.contains_key("set_ttl"));
+        assert!(module.exports.contains_key("get"));
+        assert!(module.exports.contains_key("remove"));
+        assert!(module.exports.contains_key("clear"));
+    }
+
+    #[test]
+    fn test_cache_set_and_get() {
+        let mut registry = StdlibRegistry::default();
+        registry.register_cache();
+
+        let module = registry.modules.get("std.cache").unwrap();
+        let set_fn = module.exports.get("set").unwrap();
+        let get_fn = module.exports.get("get").unwrap();
+
+        let mut ctx = RuntimeContext::new(RuntimeConfig::default());
+
+        // Test non-existent key
+        let res = get_fn
+            .call(&mut ctx, vec![RuntimeValue::Str("missing".to_string())])
+            .unwrap();
+        assert_eq!(res, RuntimeValue::Null);
+
+        // Test setting a value
+        let set_res = set_fn
+            .call(
+                &mut ctx,
+                vec![
+                    RuntimeValue::Str("k1".to_string()),
+                    RuntimeValue::Str("v1".to_string()),
+                ],
+            )
+            .unwrap();
+        assert_eq!(set_res, RuntimeValue::Null);
+
+        // Test getting the set value
+        let get_res = get_fn
+            .call(&mut ctx, vec![RuntimeValue::Str("k1".to_string())])
+            .unwrap();
+        assert_eq!(get_res, RuntimeValue::Str("v1".to_string()));
+    }
+
+    #[test]
+    fn test_cache_set_ttl() {
+        let mut registry = StdlibRegistry::default();
+        registry.register_cache();
+
+        let module = registry.modules.get("std.cache").unwrap();
+        let set_ttl_fn = module.exports.get("set_ttl").unwrap();
+        let get_fn = module.exports.get("get").unwrap();
+
+        let mut ctx = RuntimeContext::new(RuntimeConfig::default());
+
+        // Set key with TTL of 10 seconds
+        set_ttl_fn
+            .call(
+                &mut ctx,
+                vec![
+                    RuntimeValue::Str("ttl_key".to_string()),
+                    RuntimeValue::Int(100),
+                    RuntimeValue::Int(10),
+                ],
+            )
+            .unwrap();
+
+        let val = get_fn
+            .call(&mut ctx, vec![RuntimeValue::Str("ttl_key".to_string())])
+            .unwrap();
+        assert_eq!(val, RuntimeValue::Int(100));
+
+        // Set key with TTL of 1 second and sleep 2.1 seconds to test expiration
+        set_ttl_fn
+            .call(
+                &mut ctx,
+                vec![
+                    RuntimeValue::Str("exp_key".to_string()),
+                    RuntimeValue::Str("exp_val".to_string()),
+                    RuntimeValue::Int(1),
+                ],
+            )
+            .unwrap();
+
+        std::thread::sleep(std::time::Duration::from_millis(2100));
+
+        let expired_val = get_fn
+            .call(&mut ctx, vec![RuntimeValue::Str("exp_key".to_string())])
+            .unwrap();
+        assert_eq!(expired_val, RuntimeValue::Null);
+    }
+
+    #[test]
+    fn test_cache_remove_and_clear() {
+        let mut registry = StdlibRegistry::default();
+        registry.register_cache();
+
+        let module = registry.modules.get("std.cache").unwrap();
+        let set_fn = module.exports.get("set").unwrap();
+        let get_fn = module.exports.get("get").unwrap();
+        let remove_fn = module.exports.get("remove").unwrap();
+        let clear_fn = module.exports.get("clear").unwrap();
+
+        let mut ctx = RuntimeContext::new(RuntimeConfig::default());
+
+        set_fn
+            .call(
+                &mut ctx,
+                vec![RuntimeValue::Str("a".to_string()), RuntimeValue::Int(1)],
+            )
+            .unwrap();
+        set_fn
+            .call(
+                &mut ctx,
+                vec![RuntimeValue::Str("b".to_string()), RuntimeValue::Int(2)],
+            )
+            .unwrap();
+
+        // Remove key "a"
+        remove_fn
+            .call(&mut ctx, vec![RuntimeValue::Str("a".to_string())])
+            .unwrap();
+
+        assert_eq!(
+            get_fn
+                .call(&mut ctx, vec![RuntimeValue::Str("a".to_string())])
+                .unwrap(),
+            RuntimeValue::Null
+        );
+        assert_eq!(
+            get_fn
+                .call(&mut ctx, vec![RuntimeValue::Str("b".to_string())])
+                .unwrap(),
+            RuntimeValue::Int(2)
+        );
+
+        // Clear all keys
+        clear_fn.call(&mut ctx, vec![]).unwrap();
+
+        assert_eq!(
+            get_fn
+                .call(&mut ctx, vec![RuntimeValue::Str("b".to_string())])
+                .unwrap(),
+            RuntimeValue::Null
+        );
+    }
+}

@@ -1331,3 +1331,67 @@ fn test_uuid_module() {
     assert!(!uuid_str.is_empty());
     assert!(uuid_str.contains("-"));
 }
+
+#[test]
+fn test_cache_module() {
+    let registry = StdlibRegistry::new();
+    let cache = registry.get_module("std.cache").unwrap();
+
+    let mut ctx = RuntimeContext::new(RuntimeConfig::default());
+
+    let set = cache.exports.get("set").unwrap();
+    let set_ttl = cache.exports.get("set_ttl").unwrap();
+    let get = cache.exports.get("get").unwrap();
+    let remove = cache.exports.get("remove").unwrap();
+    let clear = cache.exports.get("clear").unwrap();
+
+    // Test set and get
+    set.call(
+        &mut ctx,
+        vec![
+            RuntimeValue::Str("session_1".to_string()),
+            RuntimeValue::Str("user_42".to_string()),
+        ],
+    )
+    .unwrap();
+
+    let res = get
+        .call(&mut ctx, vec![RuntimeValue::Str("session_1".to_string())])
+        .unwrap();
+    assert_eq!(res.as_string(), Some("user_42"));
+
+    // Test set_ttl
+    set_ttl
+        .call(
+            &mut ctx,
+            vec![
+                RuntimeValue::Str("temp_token".to_string()),
+                RuntimeValue::Str("abc123".to_string()),
+                RuntimeValue::Int(300),
+            ],
+        )
+        .unwrap();
+
+    let token = get
+        .call(&mut ctx, vec![RuntimeValue::Str("temp_token".to_string())])
+        .unwrap();
+    assert_eq!(token.as_string(), Some("abc123"));
+
+    // Test remove
+    remove
+        .call(&mut ctx, vec![RuntimeValue::Str("session_1".to_string())])
+        .unwrap();
+
+    let res = get
+        .call(&mut ctx, vec![RuntimeValue::Str("session_1".to_string())])
+        .unwrap();
+    assert_eq!(res, RuntimeValue::Null);
+
+    // Test clear
+    clear.call(&mut ctx, vec![]).unwrap();
+
+    let res = get
+        .call(&mut ctx, vec![RuntimeValue::Str("temp_token".to_string())])
+        .unwrap();
+    assert_eq!(res, RuntimeValue::Null);
+}

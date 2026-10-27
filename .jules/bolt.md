@@ -70,3 +70,7 @@
 ## 2024-05-24 - Web Property Extraction Optimization
 **Learning:** Extracting properties from the `RuntimeValue` DSL property lists in `stdlib/src/web/renderer.rs` and `stdlib/src/web/db.rs` was inefficient because the code called `.iter().find()` to resolve `text`, `id`, and `name` attributes, which creates unnecessary iterator overhead and closure allocation.
 **Action:** Replace `.iter().find()` calls with a single-pass `for p in &dsl.properties` loop and `if` statements on the property names, stopping early when found, which significantly reduces execution overhead.
+
+## 2026-09-29 - Pre-allocated String Buffer in Native fstring_concat
+**Learning:** Creating empty String buffers with `String::new()` in string concatenation loops (`fstring_concat`) causes repeated heap re-allocations as formatted components are appended. Pre-calculating total expected capacity using `String::with_capacity(capacity)` and utilizing direct `push_str` calls for `Value::Str` and `Value::Bool` bypasses both buffer reallocations and `write!` macro formatting dispatch overhead.
+**Action:** Always sum argument lengths upfront to call `String::with_capacity` and prefer `push_str` over `write!` macros when concatenating string values in runtime built-ins.

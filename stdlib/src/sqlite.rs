@@ -284,3 +284,27 @@ impl StdlibRegistry {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::StdlibRegistry;
+
+    #[test]
+    fn test_register_sqlite() {
+        let registry = StdlibRegistry::new();
+
+        let module = registry
+            .get_module("std.sqlite")
+            .expect("std.sqlite module should be registered");
+        assert_eq!(module.name, "std.sqlite");
+        assert_eq!(module.version, "1.0.0");
+        assert!(module.required_capabilities.is_empty());
+
+        assert!(module.exports.contains_key("open"));
+        assert!(module.exports.contains_key("execute"));
+        assert!(module.exports.contains_key("query"));
+        assert!(module.exports.contains_key("close"));
+        assert_eq!(module.exports.len(), 4);
+    }
+}

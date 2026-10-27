@@ -115,6 +115,9 @@ impl Callable for StdFunction {
     fn arity(&self) -> usize {
         self.arity
     }
+    fn accepts_arity(&self, count: usize) -> bool {
+        count >= self.arity
+    }
     fn call(
         &self,
         ctx: &mut RuntimeContext,

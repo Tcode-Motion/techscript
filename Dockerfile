@@ -21,6 +21,7 @@ COPY runtime/ ./runtime/
 COPY stdlib/ ./stdlib/
 COPY cli/ ./cli/
 COPY tools/ ./tools/
+COPY assets/ ./assets/
 
 # Compile optimized release binary
 RUN cargo build --release -p techscript_cli --bin tsc

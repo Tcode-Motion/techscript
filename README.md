@@ -1,146 +1,138 @@
 <p align="center">
   <a href="https://techscript.is-a.dev/">
-    <img src="docs/assets/brand/techscript-logo.png" alt="TechScript 2.0 Logo" width="160" />
+    <img src="docs/assets/brand/techscript-logo.png" alt="TechScript 2.0 Logo" width="140" />
   </a>
 </p>
 
 <h1 align="center">TechScript 2.0</h1>
 
 <p align="center">
-  <strong>The Independent, High-Performance Programming Language, WebForge Full-Stack Framework & AppForge Native Engine</strong>
+  <strong>Independent Programming Language &middot; WebForge Full-Stack Framework &middot; AppForge Native Engine</strong>
 </p>
 
 <p align="center">
-  <a href="https://techscript.is-a.dev/"><img src="https://img.shields.io/badge/website-techscript.is--a.dev-0284C7?logo=googlechrome&style=for-the-badge" alt="Official Website"></a>
-  <a href="https://techscript.is-a.dev/techscript/"><img src="https://img.shields.io/badge/WebForge%20Live-demo-0EA5E9?logo=html5&style=for-the-badge" alt="WebForge Live Demo"></a>
-  <a href="https://github.com/Tcode-Motion/techscript/releases"><img src="https://img.shields.io/github/v/release/Tcode-Motion/techscript?color=06B6D4&label=release&logo=github&style=for-the-badge" alt="Release"></a>
+  <a href="https://techscript.is-a.dev/"><img src="https://img.shields.io/badge/website-techscript.is--a.dev-0284C7?logo=googlechrome&amp;style=for-the-badge" alt="Website"></a>
+  <a href="https://techscript.is-a.dev/techscript/"><img src="https://img.shields.io/badge/WebForge%20Live-demo-0EA5E9?logo=html5&amp;style=for-the-badge" alt="WebForge Demo"></a>
+  <a href="https://github.com/Tcode-Motion/techscript/releases"><img src="https://img.shields.io/github/v/release/Tcode-Motion/techscript?color=06B6D4&amp;label=release&amp;logo=github&amp;style=for-the-badge" alt="Release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-0284C7.svg?style=for-the-badge" alt="License"></a>
-  <a href="https://github.com/Tcode-Motion/techscript/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Tcode-Motion/techscript/ci.yml?branch=main&label=CI&logo=github-actions&style=for-the-badge" alt="CI Status"></a>
-  <a href="https://marketplace.visualstudio.com/items?itemName=tanmoy.techscript"><img src="https://img.shields.io/badge/VS%20Code-tanmoy.techscript-007ACC?logo=visualstudiocode&style=for-the-badge" alt="VS Code Marketplace"></a>
-  <a href="https://open-vsx.org/extension/Tcode-Motion/techscript"><img src="https://img.shields.io/badge/Open%20VSX-Tcode--Motion.techscript-purple?logo=eclipseide&style=for-the-badge" alt="Open VSX Registry"></a>
+  <a href="https://github.com/Tcode-Motion/techscript/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Tcode-Motion/techscript/ci.yml?branch=main&amp;label=CI&amp;logo=github-actions&amp;style=for-the-badge" alt="CI"></a>
+</p>
+
+<p align="center">
+  <a href="https://marketplace.visualstudio.com/items?itemName=tanmoy.techscript"><img src="https://img.shields.io/badge/VS%20Code-tanmoy.techscript-007ACC?logo=visualstudiocode&amp;style=for-the-badge" alt="VS Code"></a>
+  <a href="https://open-vsx.org/extension/Tcode-Motion/techscript"><img src="https://img.shields.io/badge/Open%20VSX-Tcode--Motion.techscript-purple?logo=eclipseide&amp;style=for-the-badge" alt="Open VSX"></a>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS%20%7C%20Android-475569?style=flat-square" alt="Platforms">
-  <a href="https://github.com/Tcode-Motion/techscript/stargazers"><img src="https://img.shields.io/github/stars/Tcode-Motion/techscript?style=flat-square&logo=github" alt="Stars"></a>
+  <a href="https://github.com/Tcode-Motion/techscript/stargazers"><img src="https://img.shields.io/github/stars/Tcode-Motion/techscript?style=flat-square&amp;logo=github" alt="Stars"></a>
   <a href="https://github.com/Tcode-Motion/techscript/issues"><img src="https://img.shields.io/github/issues/Tcode-Motion/techscript?style=flat-square" alt="Issues"></a>
-  <a href="skills/techscript/SKILL.md"><img src="https://img.shields.io/badge/AI%20Skill-Antigravity%20%7C%20Cursor%20%7C%20Codex-10B981?style=flat-square&logo=openai" alt="AI Developer Skill"></a>
   <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square" alt="PRs Welcome"></a>
 </p>
 
 ---
 
-## 📑 Table of Contents
+## Table of Contents
 
-- [The Problem](#-the-problem)
-- [The Solution: What is TechScript 2.0?](#-the-solution-what-is-techscript-20)
-- [Why TechScript? (Comparison Matrix)](#-why-techscript-feature-comparison)
-- [Instant One-Line Installation](#-instant-one-line-installation)
-- [Canonical Syntax Quick-Start](#-canonical-syntax-quick-start)
-- [Syntax Mental Model & Invariants](#-syntax-mental-model--invariants)
-- [WebForge: Full-Stack Declarative Web Framework](#-webforge-full-stack-declarative-web-framework)
-- [AppForge: Native Mobile & Desktop Engine](#-appforge-native-mobile--desktop-engine)
-- [Official Editor Extensions (VS Code & Open VSX)](#-official-editor-extensions)
-- [AI Developer Skill](#-ai-developer-skill)
-- [Architecture & Compiler Pipeline](#-architecture--compiler-pipeline)
-- [Platform Support Matrix](#-platform-support-matrix)
-- [Complete Documentation Index](#-complete-documentation-index)
-- [License & Attribution](#-license--attribution)
-
----
-
-## 🛑 The Problem
-
-Modern software development has become deeply fragmented, fragile, and bloated:
-
-1. **Massive Dependency Bloat & Runtime Friction:**  
-   Building a simple utility or reactive website frequently pulls in gigabytes of `node_modules` or complex Python virtual environments. Toolchains break across OS boundaries, versions collide, and packaging standalone executables is notoriously brittle.
-
-2. **Ecosystem Fragmentation:**  
-   Engineers are forced to juggle separate, incompatible languages and frameworks: one for web frontends (JavaScript/TypeScript), another for APIs (Python/Go), another for mobile apps (Kotlin/Swift), and another for native performance (Rust/C++).
-
-3. **Ambiguous Syntax & Hidden Mutations:**  
-   Most languages allow variables to be mutated without clear intent, mix multiple assignment keywords (`let`, `var`, `const`, `:=`), or rely on cryptic symbols. This creates subtle bugs, increases cognitive load, and slows down code comprehension.
-
-4. **AI Hallucination & Syntactic Drift:**  
-   Because existing languages have evolved decades of overlapping, competing idioms, AI coding assistants frequently hallucinate non-idiomatic patterns, deprecated APIs, and invalid constructs.
+| # | Section |
+|---|---------|
+| 1 | [The Problem](#the-problem) |
+| 2 | [The Solution](#the-solution-what-is-techscript-20) |
+| 3 | [Why TechScript? (Comparison)](#why-techscript-feature-comparison) |
+| 4 | [Installation](#instant-one-line-installation) |
+| 5 | [Quick-Start Syntax](#canonical-syntax-quick-start) |
+| 6 | [Syntax Mental Model](#syntax-mental-model--invariants) |
+| 7 | [WebForge Framework](#webforge-full-stack-declarative-web-framework) |
+| 8 | [AppForge Engine & Screenshots](#appforge-native-mobile--desktop-engine) |
+| 9 | [Editor Extensions](#official-editor-extensions) |
+| 10 | [AI Developer Skill](#ai-developer-skill) |
+| 11 | [Architecture](#architecture--compiler-pipeline) |
+| 12 | [Platform Support](#platform-support-matrix) |
+| 13 | [Documentation Index](#complete-documentation-index) |
+| 14 | [License](#license--attribution) |
 
 ---
 
-## 💡 The Solution: What is TechScript 2.0?
+## The Problem
 
-**TechScript 2.0** is an independent, high-performance general-purpose programming language built from first principles in native Rust, unified with a full-stack web framework (**WebForge**) and a mobile native engine (**AppForge**).
+Modern development is fragmented, bloated, and brittle:
 
-It is designed to be **human-readable, mathematically rigorous, completely self-contained, and AI-native**:
-
-- 🗣️ **English-Like Locked Canonical Syntax:** Crystal-clear declaration (`is`), mutation (`becomes`), constants (`constant ... is`), and functions (`to name(params):`). No curly brace noise, no cryptic assignment operators.
-- ⚡ **Zero-Dependency Native Architecture:** Ships as a self-contained single binary (`tsc`). Zero Python runtime, zero Node.js runtime, zero external VM requirements.
-- 🌐 **WebForge Full-Stack Web:** Author complete reactive websites with embedded SQLite schemas, client-side routing, and native WebGL 3D scenes in a single expressive `.tech` file that builds to static, zero-dependency production bundles.
-- 📱 **AppForge Native Mobile:** Author cross-platform Android and desktop applications in pure `.txs` with a hardware-accelerated liquid glass UI design system.
-- 🤖 **Locked AI Agent Skill:** Ships with an authoritative AI skill (`SKILL.md`) that gives Antigravity, Cursor, Claude Code, and Codex an immutable grammar specification, eliminating hallucinated syntax.
-- 🚀 **High-Throughput Execution:** Dual-engine architecture with an ultra-fast register-based bytecode VM for instant development and an LLVM backend for native machine code compilation.
+| # | Problem | Impact |
+|---|---------|--------|
+| 1 | **Dependency Bloat** | Gigabytes of `node_modules`/venvs that break across OS boundaries |
+| 2 | **Ecosystem Fragmentation** | Separate languages for web (JS), API (Python), mobile (Kotlin/Swift), native (Rust/C++) |
+| 3 | **Ambiguous Mutations** | `let`/`var`/`const`/`:=` chaos creates subtle bugs and cognitive overload |
+| 4 | **AI Hallucination** | Decades of competing idioms cause agents to hallucinate invalid syntax |
 
 ---
 
-## 📊 Why TechScript? (Feature Comparison)
+## The Solution: What is TechScript 2.0?
 
-| Feature | **TechScript 2.0** | Python 3 | TypeScript / Node | Go |
+**TechScript 2.0** is an independent, high-performance general-purpose language built from first principles in native Rust, unified with **WebForge** (full-stack web) and **AppForge** (native mobile/desktop).
+
+| Pillar | Detail |
+|--------|--------|
+| **English-Like Locked Syntax** | `is` (declare), `becomes` (mutate), `constant`, `to name():` — zero symbol noise |
+| **Zero-Dependency Binary** | Ships as a single `tsc` binary — no Python, no Node.js, no external VM |
+| **WebForge** | Reactive websites + SQLite + WebGL 3D in one `.tech` file to zero-dep static bundle |
+| **AppForge** | Cross-platform Android/desktop in pure `.txs` with liquid-glass hardware-accelerated UI |
+| **Locked AI Skill** | `SKILL.md` gives agents an immutable grammar spec — eliminates hallucinated syntax |
+| **Dual Execution** | Ultra-fast register-based VM for dev + LLVM backend for native machine code |
+
+---
+
+## Why TechScript? (Feature Comparison)
+
+| Feature | **TechScript 2.0** | Python 3 | TypeScript/Node | Go |
 | :--- | :---: | :---: | :---: | :---: |
-| **Primary Philosophy** | Clear English Syntax & Unified Stack | Dynamic Scripting | Typed Web Scripting | Systems Concurrency |
-| **External Runtime Needed?** | ❌ **None** (Self-Contained) | ⚠️ Python Interpreter | ⚠️ Node.js / Bun runtime | ❌ None |
-| **Dependency Bloat** | ❌ **Zero** (`node_modules`-free) | ⚠️ `site-packages` / venv | ⚠️ Heavy `node_modules` | ❌ Minimal |
-| **Native Web Framework Built-in** | ✅ **WebForge** (3D + SQLite + UI) | ❌ External (Django/Flask) | ❌ External (Next.js/Vite) | ❌ External |
-| **Native Mobile Engine Built-in** | ✅ **AppForge** (Liquid Glass UI) | ❌ External (Kivy/BeeWare) | ❌ External (React Native) | ❌ Not suited |
-| **Locked AI Skill Specification** | ✅ **Built-in** (`SKILL.md`) | ❌ Fragmented | ❌ Fragmented | ❌ None |
-| **Syntax Invariant Lock** | ✅ **`is` vs `becomes`** | ❌ Mutable by default | ❌ `let` / `const` / `var` | ❌ `:=` vs `=` |
-| **Verified Test Pass Rate** | ✅ **100 / 100 Examples** | Varies | Varies | Varies |
+| External Runtime | **None** | Python Interpreter | Node / Bun | None |
+| Dependency Bloat | **Zero** | venv/site-packages | Heavy node_modules | Minimal |
+| Web Framework Built-in | **WebForge** | External (Django/Flask) | External (Next.js) | External |
+| Mobile Engine Built-in | **AppForge** | External (Kivy) | External (RN) | Not suited |
+| Locked AI Skill | **SKILL.md** | None | None | None |
+| Syntax Invariants | **`is` / `becomes`** | Mutable by default | let/const/var | := vs = |
+| Verified Test Suite | **100/100** | Varies | Varies | Varies |
 
 ---
 
-## ⚡ Instant One-Line Installation
+## Instant One-Line Installation
 
-TechScript requires **zero prerequisites**. Choose your operating system below:
+> Zero prerequisites. Choose your OS:
 
-### 🪟 Windows (PowerShell One-Liner)
-Installs pre-compiled native binaries into `%LOCALAPPDATA%\TechScript\bin` and automatically configures your User `PATH`:
+**Windows (PowerShell)**
 ```powershell
 irm https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.ps1 | iex
 ```
 
-### 🐧 Linux, 🍎 macOS & 📱 Android (Termux)
-Universal POSIX installer with architecture auto-detection (`x86_64`, `aarch64`, Apple Silicon) and shell profile integration:
+**Linux / macOS / Android Termux**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/scripts/install.sh | bash
 ```
 
-### 📦 Standalone Windows Setup Wizard (`.exe`)
-Download the self-contained installer with modern wizard UI, desktop shortcuts, file associations, and uninstaller support:
-- 🔗 **[Download TechScript_Setup.exe](releases/current/TechScript_Setup.exe)** *(Or via [GitHub Releases](https://github.com/Tcode-Motion/techscript/releases/latest))*
-- 📦 **[Download TechScript_Portable.zip](releases/current/TechScript_Portable.zip)** *(Standalone portable archive)*
-- 🛡️ **[Verification SHA256 Checksums](releases/current/SHA256SUMS.txt)**
+**Standalone Packages**
 
-### 🐳 Docker Container
-Run TechScript in isolated environments with zero local installation:
+| Package | Download |
+|---------|----------|
+| Windows Setup Wizard | [TechScript_Setup.exe](releases/current/TechScript_Setup.exe) — [GitHub Releases](https://github.com/Tcode-Motion/techscript/releases/latest) |
+| Portable Archive | [TechScript_Portable.zip](releases/current/TechScript_Portable.zip) |
+| SHA256 Checksums | [SHA256SUMS.txt](releases/current/SHA256SUMS.txt) |
+
+**Docker**
 ```bash
-# Verify version
 docker run --rm ghcr.io/tcode-motion/techscript:latest --version
-
-# Run a TechScript project from your current directory
 docker run --rm -v "${PWD}:/workspace" ghcr.io/tcode-motion/techscript:latest run main.txs
 ```
 
 ---
 
-## 🚀 Canonical Syntax Quick-Start
+## Canonical Syntax Quick-Start
 
-TechScript code is clean, readable, and strictly locked to the canonical grammar:
-
-```techscript
-# Declare constants and initial variables
+```python
+# Constants and variables
 constant platform_name is "TechScript 2.0"
 counter is 0
 
-# Functions use 'to name(params):' with colon and 4-space indentation
+# Functions: 'to name(params):' with colon + 4-space indent
 to calculate_bonus(score, base_payout):
     if score >= 90:
         return base_payout * 2.0
@@ -151,77 +143,72 @@ to calculate_bonus(score, base_payout):
 
 to greet_developer(name):
     say "Hello, {name}! Welcome to {platform_name}."
-    return "done"
 
-# Invoke functions
+# Invocation
 greet_developer("Engineer")
-
 bonus is calculate_bonus(95, 500.0)
-say "Awarded Bonus: ${bonus}"
+say "Awarded Bonus: {bonus}"
 
-# Counted repetition loop
+# Counted repetition
 repeat 3 times:
     say "Writing clean, native, high-performance code."
 
-# While loop with explicit 'becomes' mutation
+# While loop — 'becomes' for explicit mutation
 while counter < 2:
     counter becomes counter + 1
     say "Processing job {counter}..."
 ```
 
-Run your program instantly:
 ```bash
-tsc run main.txs
+tsc run main.txs   # Run instantly
 ```
+
+**Syntax Rules at a Glance**
+
+| Construct | Syntax | Example |
+|-----------|--------|---------|
+| Declare variable | `name is value` | `count is 0` |
+| Reassign variable | `name becomes value` | `count becomes count + 1` |
+| Constant | `constant name is value` | `constant max is 5` |
+| Function | `to name(params):` | `to greet(x):` |
+| Return | `return value` | `return result` |
+| Print | `say "text {var}"` | `say "Hi {name}"` |
+| If / Else | `if cond:` / `else if:` / `else:` | With 4-space indent |
+| Repeat N times | `repeat N times:` | `repeat 3 times:` |
+| For loop | `for item in list:` | With 4-space indent |
+| While loop | `while cond:` | With 4-space indent |
 
 ---
 
-## 🎯 Syntax Mental Model & Invariants
-
-To keep programs completely free of assignment ambiguity, TechScript enforces three clear invariants:
+## Syntax Mental Model & Invariants
 
 ```mermaid
-flowchart TD
-    Q1{"Is this the first time creating the variable?"}
-    Q1 -- Yes --> S1["Use 'is':<br><code>score is 100</code>"]
-    Q1 -- No --> Q2{"Are you modifying an existing variable?"}
-    Q2 -- Yes --> S2["Use 'becomes':<br><code>score becomes score + 10</code>"]
-    Q2 -- No --> Q3{"Is the value permanently constant?"}
-    Q3 -- Yes --> S3["Use 'constant ... is':<br><code>constant max_limit is 500</code>"]
+flowchart LR
+    Q1{"First use\nof variable?"}
+    Q1 -- Yes --> S1["use 'is'\nscore is 100"]
+    Q1 -- No --> Q2{"Changing\nexisting value?"}
+    Q2 -- Yes --> S2["use 'becomes'\nscore becomes score + 10"]
+    Q2 -- No --> S3["use 'constant ... is'\nconstant max is 500"]
 ```
 
-- **Variables:** Declared with `is` on first assignment (`name is "TechScript"`).
-- **Reassignment:** Modified only with `becomes` (`count becomes count + 1`).
-- **Constants:** Declared with `constant` and `is` (`constant max_retries is 5`).
-- **Blocks:** Colon `:` followed by 4-space indentation. No `do`, `then`, `begin`, or `{}` brackets.
-- **Output:** Built-in `say` expression with native curly-brace string interpolation (`say "Count: {count}"`).
+- **No `{}` delimiters** — blocks open with `:` and 4-space indentation
+- **No prefix needed** — `"Count: {count}"` interpolates natively, no `$` or `f`
+- **No ambiguous assignment** — `is` vs `becomes` is always visually clear
 
 ---
 
-## 🌐 WebForge: Full-Stack Declarative Web Framework
+## WebForge: Full-Stack Declarative Web Framework
 
-- 🌐 **Official Main Website:** [**https://techscript.is-a.dev/**](https://techscript.is-a.dev/)
-- 🚀 **WebForge Live Interactive Example:** [**https://techscript.is-a.dev/techscript/**](https://techscript.is-a.dev/techscript/)
+| | |
+|---|---|
+| **Main Website** | [https://techscript.is-a.dev/](https://techscript.is-a.dev/) |
+| **WebForge Live Example** | [https://techscript.is-a.dev/techscript/](https://techscript.is-a.dev/techscript/) |
 
-> **What WebForge Does:**  
-> WebForge compiles declarative `.tech` full-stack applications—including reactive components, client-side routing, SQLite database persistence, and WebGL 3D CSG modeling—directly to zero-dependency static production bundles with zero `node_modules`.
+> Compiles declarative `.tech` files — reactive UI, routing, embedded SQLite, WebGL 3D — to **zero-dependency static bundles**.
 
-### 🎥 WebForge Official Demonstration Video
+**WebForge Code Sample**
 
-<div align="center">
-  <video width="85%" controls playsinline preload="metadata" style="border-radius: 12px; border: 1px solid #334155; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-    <source src="images&videos/webdemo.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-  <p align="center">
-    🎬 <strong><a href="images&videos/webdemo.mp4">▶️ Watch / Download WebForge High-Definition Video Tour (images&videos/webdemo.mp4)</a></strong>
-  </p>
-</div>
-
-### 🌐 Full-Stack WebForge Code Sample
-
-```tech
-# Full-Stack WebForge Application with Embedded 3D Scene and Database
+```yaml
 make a website called TechScriptForge
 
 database Notes:
@@ -231,7 +218,7 @@ database Notes:
 
 page Home:
     show heading "TechScript WebForge"
-    show text "A full-stack website created entirely with English-like TechScript!"
+    show text "A full-stack site built with English-like TechScript!"
 
     show 3D scene called World:
         add cube:
@@ -239,277 +226,280 @@ page Home:
             rotation speed is 3
         enable mouse controls
 
-    show input "Write a note or idea" called NoteInput
+    show input "Write a note" called NoteInput
     show button "Save Note" called SaveButton
 
 when SaveButton is clicked:
     send NoteInput to /api/notes
-    show message "Note saved successfully!"
+    show message "Saved!"
 
 start website
 ```
 
-### WebForge Developer Commands
+**WebForge CLI**
+
 ```bash
-tsc web create my-portal   # Scaffold full-stack WebForge website
-cd my-portal
-tsc web dev                # Launch live hot-reloading dev server on http://localhost:3000
-tsc web build              # Compile static production bundle to dist/
+tsc web create my-portal   # Scaffold new project
+tsc web dev                # Hot-reload dev server on http://localhost:3000
+tsc web build              # Compile to dist/ (zero-dep static bundle)
 ```
 
+**WebForge Compilation Pipeline**
+
 ```mermaid
-graph TD
-    subgraph WebForge_Pipeline["WebForge Architecture"]
-        CODE[".tech Full-Stack Declarative Code"] --> PARSER["WebForge AST & Domain Parser"]
-        PARSER --> DB["Relational SQLite Schema & Client ORM"]
-        PARSER --> UI["Reactive Virtual DOM Components"]
-        PARSER --> SCENE["WebGL 3D Engine & Orbit Controller"]
-        DB --> BUNDLE["Zero-Dependency Static Bundle (dist/)"]
-        UI --> BUNDLE
-        SCENE --> BUNDLE
-        BUNDLE --> DEPLOY["GitHub Pages / Static Host Deployment"]
-    end
+flowchart LR
+    A[".tech Source"] --> B["AST Parser"]
+    B --> C["SQLite Schema"]
+    B --> D["Reactive DOM"]
+    B --> E["WebGL 3D Engine"]
+    C & D & E --> F["Static Bundle dist/"]
+    F --> G["GitHub Pages / CDN"]
+```
+
+**WebForge Demo Video**
+
+<div align="center">
+  <video width="85%" controls playsinline preload="metadata">
+    <source src="images&amp;videos/webdemo.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+  <p><a href="images&amp;videos/webdemo.mp4">Watch / Download WebForge Video Tour</a></p>
+</div>
+
+---
+
+## AppForge: Native Mobile & Desktop Engine
+
+> The companion app ([`examples/appforge/techscript-appforge/`](examples/appforge/techscript-appforge/)) is authored **100% in pure `.txs`** on the native Android engine with hardware-accelerated liquid-glass UI.
+
+| Download | Link |
+|----------|------|
+| Release APK (v2.0.2) | [TechScript-AppForge-v2.0.0-release.apk](dist/TechScript-AppForge-v2.0.0-release.apk) |
+| GitHub Releases | [Direct APK Download](https://github.com/Tcode-Motion/techscript/releases/download/v2.0.0/TechScript-AppForge-v2.0.0-release.apk) |
+
+### Real Device Screenshots (Android 14 / 16)
+
+<table align="center" width="100%">
+  <tr>
+    <td align="center">
+      <img src="images&amp;videos/apphome.jpeg" alt="AppForge Home" width="190" style="border-radius:12px"/><br/>
+      <sub><b>Home</b></sub>
+    </td>
+    <td align="center">
+      <img src="images&amp;videos/appdocs.jpeg" alt="AppForge Docs" width="190" style="border-radius:12px"/><br/>
+      <sub><b>Docs</b></sub>
+    </td>
+    <td align="center">
+      <img src="images&amp;videos/appexplore.jpeg" alt="AppForge Explore" width="190" style="border-radius:12px"/><br/>
+      <sub><b>Explore</b></sub>
+    </td>
+    <td align="center">
+      <img src="images&amp;videos/applaba.jpeg" alt="AppForge Lab" width="190" style="border-radius:12px"/><br/>
+      <sub><b>Lab</b></sub>
+    </td>
+  </tr>
+</table>
+
+**AppForge Architecture**
+
+```mermaid
+flowchart LR
+    TXS[".txs Screens"] --> BRIDGE["JNI Native Bridge"]
+    BRIDGE --> RENDER["Skia / Vulkan / GL"]
+    RENDER --> GLASS["Liquid Glass UI"]
+    GLASS --> TOUCH["Zero-Latency Touch"]
+```
+
+**AppForge Screen Sample**
+
+```python
+screen Home:
+    background is gradient("indigo", "violet")
+
+    show card:
+        show heading "TechScript AppForge"
+        show text "Native Android, built in pure .txs"
+        show button "Open Lab" called OpenLab
+
+when OpenLab is tapped:
+    navigate to Lab
 ```
 
 ---
 
-## 📱 AppForge: Native Mobile & Desktop Engine
+## Official Editor Extensions
 
-The official **TechScript AppForge** companion ([`examples/appforge/techscript-appforge/`](examples/appforge/techscript-appforge/)) is authored **100% in pure TechScript (`.txs`)** running on the native Android engine with hardware bridge acceleration, liquid glass styling, and an interactive coding playground.
-
-- 📥 **[Download Verified Release APK (v2.0.0 / v2.0.2)](dist/TechScript-AppForge-v2.0.0-release.apk)** *(Scheme v2 signed, 30.5 MB)*
-- 🔗 **[Direct GitHub Releases Download](https://github.com/Tcode-Motion/techscript/releases/download/v2.0.0/TechScript-AppForge-v2.0.0-release.apk)**
-
-### Real Device Screen Showcase (Android 14 / 16)
-
-<p align="center">
-  <img src="images&videos/apphome.jpeg" alt="AppForge Home Screen" width="210" style="border-radius: 10px; margin: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"/>
-  <img src="images&videos/appdocs.jpeg" alt="AppForge Interactive Documentation" width="210" style="border-radius: 10px; margin: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"/>
-  <img src="images&videos/appexplore.jpeg" alt="AppForge Explore & Packages" width="210" style="border-radius: 10px; margin: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"/>
-  <img src="images&videos/applaba.jpeg" alt="AppForge Code Playground" width="210" style="border-radius: 10px; margin: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"/>
-</p>
-<p align="center">
-  <em>Figure: TechScript AppForge running natively on Android with liquid-glass UI, documentation browser, package explorer, and live playground.</em>
-</p>
-
-```mermaid
-graph LR
-    subgraph AppForge_Engine["AppForge Mobile Architecture"]
-        TXS["Pure .txs Screens & Components"] --> BRIDGE["Hardware JNI Native Bridge"]
-        BRIDGE --> RENDER["Hardware Accelerated Canvas (Skia/Vulkan/GL)"]
-        RENDER --> GLASS["Liquid Glass Dynamic Design System"]
-        GLASS --> TOUCH["Zero-Latency Touch & Motion Engine"]
-    end
-```
-
----
-
-## 🧩 Official Editor Extensions
-
-TechScript provides dedicated, platform-verified extension packages tailored for both the Visual Studio Marketplace and the Eclipse Open VSX Registry:
-
-| Registry Target | Publisher ID | Extension Identifier | Direct VSIX Package | Official Registry Listing |
+| Registry | Publisher | Extension ID | VSIX Package | Listing |
 | :--- | :---: | :---: | :--- | :--- |
-| **VS Code Marketplace** | `tanmoy` | `tanmoy.techscript` | [**techscript-vscode-2.0.3.vsix**](releases/current/techscript-vscode-2.0.3.vsix) | [**Visual Studio Marketplace**](https://marketplace.visualstudio.com/items?itemName=tanmoy.techscript) |
-| **Open VSX Registry** | `Tcode-Motion` | `Tcode-Motion.techscript` | [**techscript-openvsx-2.0.4.vsix**](releases/current/techscript-openvsx-2.0.4.vsix) | [**Open VSX Registry**](https://open-vsx.org/extension/Tcode-Motion/techscript) |
+| **VS Code Marketplace** | `tanmoy` | `tanmoy.techscript` | [techscript-vscode-2.0.3.vsix](releases/current/techscript-vscode-2.0.3.vsix) | [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=tanmoy.techscript) |
+| **Open VSX Registry** | `Tcode-Motion` | `Tcode-Motion.techscript` | [techscript-openvsx-2.0.4.vsix](releases/current/techscript-openvsx-2.0.4.vsix) | [Open VSX Registry](https://open-vsx.org/extension/Tcode-Motion/techscript) |
 
-> **Key Capabilities:** Real-time Language Server Protocol (LSP) diagnostics, intelligent code completion, semantic syntax highlighting, colon-based auto-indentation, canonical snippets, and one-click build and execution inside VS Code, Cursor, and VSCodium.
-
----
-
-## 🤖 AI Developer Skill
-
-TechScript ships with a first-class **AI Developer Skill** ([`skills/techscript/SKILL.md`](skills/techscript/SKILL.md)) that provides language models and autonomous coding agents with the complete locked syntax, standard library signatures, CLI patterns, and invariant rules.
-
-- 📖 **[Authoritative AI Skill Guide](skills/techscript/SKILL.md)** — Full specification and agent operational runbook.
-
-### Install Skill in 1 Line:
-- **Google Antigravity & Agentic IDEs:** Automatically loaded from [`.agents/skills/techscript/SKILL.md`](.agents/skills/techscript/SKILL.md).
-- **Cursor / Claude Code / Codex / OpenClaw (POSIX):**
-  ```bash
-  curl -fsSL https://raw.githubusercontent.com/Tcode-Motion/techscript/main/skills/techscript/install.sh | bash
-  ```
-- **Windows PowerShell (Gemini CLI / Antigravity):**
-  ```powershell
-  irm https://raw.githubusercontent.com/Tcode-Motion/techscript/main/skills/techscript/install.ps1 | iex
-  ```
+> **Features:** LSP diagnostics, intelligent completion, semantic highlighting, colon auto-indent, canonical snippets, one-click build & run
 
 ---
 
-## 🏗️ Architecture & Compiler Pipeline
+## AI Developer Skill
+
+Ships with a first-class **AI Developer Skill** ([`skills/techscript/SKILL.md`](skills/techscript/SKILL.md)) — locked grammar spec, stdlib signatures, and CLI patterns for all major AI agents.
+
+| Platform | Install |
+|----------|---------|
+| Google Antigravity / Agentic IDEs | Auto-loaded from [`.agents/skills/techscript/SKILL.md`](.agents/skills/techscript/SKILL.md) |
+| Cursor / Claude Code / Codex (POSIX) | `curl -fsSL .../install.sh | bash` |
+| Windows PowerShell | `irm .../install.ps1 | iex` |
+
+Full scripts: [POSIX install.sh](https://raw.githubusercontent.com/Tcode-Motion/techscript/main/skills/techscript/install.sh) &middot; [PowerShell install.ps1](https://raw.githubusercontent.com/Tcode-Motion/techscript/main/skills/techscript/install.ps1)
+
+---
+
+## Architecture & Compiler Pipeline
 
 ```mermaid
-graph TD
-    A[".txs Source Code"] --> B["Lexer (Syntax & String Interpolation)"]
-    B --> C["Parser (AST & Indentation Block Handling)"]
-    C --> D["Semantic Analyzer ('is'/'becomes' Lifetime Invariants)"]
-    D --> E["Intermediate Representation (IR Lowering)"]
-    E --> F["Bytecode Optimizer"]
-    F --> G["Virtual Machine (VM Execution)"]
-    F --> H["Native LLVM / AOT Compiler"]
-    H --> I["Windows Executables (.exe)"]
-    H --> J["Android Native Library (libtechscript_runtime.so)"]
-    H --> K["WebForge Static Engine (HTML/CSS/WASM)"]
+flowchart TD
+    SRC[".txs Source"] --> LEX["Lexer"]
+    LEX --> PARSE["Parser to AST"]
+    PARSE --> SEM["Semantic Analyzer\n'is'/'becomes' Invariants"]
+    SEM --> IR["IR Lowering"]
+    IR --> OPT["Bytecode Optimizer"]
+    OPT --> VM["VM Execution\nFast Dev Mode"]
+    OPT --> LLVM["LLVM / AOT Compiler"]
+    LLVM --> WIN["Windows .exe"]
+    LLVM --> AND["Android .so"]
+    LLVM --> WEB["WebForge WASM/HTML"]
 ```
 
+**Ecosystem Overview**
+
 ```mermaid
-graph LR
-    subgraph Toolchain["TechScript Unified Ecosystem"]
+flowchart LR
+    subgraph Tools["Toolchain"]
         CLI["tsc CLI"]
-        LSP["Language Server (LSP)"]
-        PACK["Packager & Inno Setup"]
-        DOCK["Docker Engine"]
+        LSP["LSP Server"]
+        PKG["Packager"]
     end
-    subgraph Frameworks["Framework Layers"]
-        STD["Standard Library (11 Modules)"]
-        WEB["WebForge Web Framework"]
-        APP["AppForge Mobile Engine"]
+    subgraph Frameworks["Frameworks"]
+        STD["Stdlib (11 modules)"]
+        WEB["WebForge"]
+        APP["AppForge"]
     end
-    subgraph Targets["Deployment Targets"]
-        WIN["Windows 10/11 x64"]
-        LNX["Linux x64 / aarch64"]
-        MAC["macOS Apple Silicon & Intel"]
-        AND["Android APK (Arm64)"]
-        WEB_OUT["WebForge dist/ (GitHub Pages)"]
+    subgraph Targets["Targets"]
+        WIN["Windows x64"]
+        LNX["Linux / aarch64"]
+        MAC["macOS (Intel + AS)"]
+        AND["Android APK"]
+        WO["WebForge dist/"]
     end
-    Toolchain --> Frameworks
-    Frameworks --> Targets
+    Tools --> Frameworks --> Targets
 ```
 
 ---
 
-## 📋 Platform Support Matrix
+## Platform Support Matrix
 
-| Platform / Target | Tier | Build Artifact | Verification Evidence |
-| :--- | :---: | :--- | :--- |
-| **Windows x86_64** | **Tier 1** | `TechScript_Setup.exe`, `tsc.exe`, `.zip` | Native Windows 11 compilation, 100/100 tests pass |
-| **Android APK** | **Tier 1** | `TechScript-AppForge-v2.0.0-release.apk` | Scheme v2 signed, verified on real device (`10ME8DF1CT0001Z`) |
-| **WebForge Static Web** | **Tier 1** | `dist/` (HTML, CSS, JS, SQLite, 3D CSG) | Deployed to [techscript.is-a.dev](https://techscript.is-a.dev/techscript/) |
-| **Linux x86_64 / aarch64** | **Tier 1** | `.tar.gz` pre-compiled binaries | GitHub Actions CI/CD automated cross-compilation |
-| **macOS (Apple Silicon & Intel)** | **Tier 1** | `.tar.gz` pre-compiled binaries | GitHub Actions CI/CD native macOS runner builds |
-| **Android Termux** | **Tier 1** | `techscript-2.0.0-termux-aarch64.tar.gz` | Built for `aarch64-linux-android` |
-| **Docker** | **Tier 1** | `ghcr.io/tcode-motion/techscript` | Multi-stage slim container with automated GHCR CI |
-
----
-
-## 📚 Complete Documentation Index
-
-### 1. 📖 Core Language Specifications & Grammar
-- [**TechScript Final Syntax & Language Master Spec**](docs/language/TechScript_Final_Syntax_and_Language_Master_Spec.md) — The single frozen authoritative master specification.
-- [**TechScript Language Specification**](docs/language/TECHSCRIPT_LANGUAGE_SPEC.md) — Comprehensive technical language specification.
-- [**TechScript Language Reference**](docs/TECHSCRIPT_LANGUAGE_REFERENCE.md) — Complete guide to grammar, primitives, functions, and classes.
-- [**TechScript Syntax Memory Guide**](docs/language/TECHSCRIPT_SYNTAX_MEMORY.md) — Canonical constructs vs prohibited legacy habits.
-- [**TechScript Syntax Guide**](docs/SyntaxGuide.md) — Practical code walkthrough of core syntax.
-- [**File Extension & Shebang Standard**](docs/TECHSCRIPT_FILE_EXTENSION_STANDARD.md) — Multi-format file standards (`.txs`, `.tech`).
-- [**Code Style Guide**](docs/style-guide.md) — Indentation, naming, and structure guidelines.
-- [**Constants Guide**](docs/constants.md) — Immutable bindings with `constant ... is`.
-- [**Strings & Interpolation**](docs/strings.md) — Native double-quoted interpolation syntax.
-- [**Generics Guide**](docs/generics.md) — Generic types and type constraints.
-- [**Modules & Imports**](docs/modules.md) — Modular code reuse with `use`.
-- [**Frequently Asked Questions (FAQ)**](docs/faq.md) — Common questions and design rationale.
-
-### 2. 📘 Deep-Dive Language Guides
-- [**Language Overview**](docs/language/overview.md) — High-level introduction to TechScript semantics.
-- [**Variables & Mutations**](docs/language/variables.md) — Invariant binding (`is`) and mutation (`becomes`).
-- [**Data Types**](docs/language/types.md) — Primitives, objects, and type system rules.
-- [**Functions**](docs/language/functions.md) — Function definition, parameters, and returns.
-- [**Control Flow**](docs/language/control-flow.md) — `if`, `else if`, `else`, `repeat`, `for`, `while`.
-- [**Classes & OOP**](docs/language/classes.md) — Object-oriented programming and `to init(...)`.
-- [**Inheritance**](docs/language/inheritance.md) — Class hierarchies and method dispatch.
-- [**Interfaces**](docs/language/interfaces.md) — Contract definitions and polymorphism.
-- [**Traits**](docs/language/traits.md) — Reusable behavioral traits.
-- [**Arrays**](docs/language/arrays.md) — Dynamic lists and indexing.
-- [**Maps & Dictionaries**](docs/language/maps.md) — Key-value pair operations.
-- [**Closures**](docs/language/closures.md) — First-class functions and lexical scoping.
-- [**Asynchronous Programming**](docs/language/async.md) — Non-blocking operations and tasks.
-- [**Concurrency**](docs/language/concurrency.md) — Threading and parallel execution models.
-- [**Error Handling**](docs/language/error-handling.md) — Robust error management patterns.
-- [**Pattern Matching**](docs/language/pattern-matching.md) — Structural pattern matching expressions.
-- [**Memory Management**](docs/language/memory.md) — Ownership, lifetime, and garbage collection.
-- [**Operators**](docs/language/operators.md) — Arithmetic, logical, and bitwise operators.
-- [**Imports & Exports**](docs/language/imports-exports.md) — Packaging and namespace exports.
-- [**Packages Guide**](docs/language/packages.md) — Building and sharing TechScript packages.
-
-### 3. 🌐 WebForge Full-Stack Web Framework
-- [**WebForge Comprehensive Guide**](docs/WebForge.md) — Core web framework overview.
-- [**WebForge Getting Started**](docs/WEBFORGE_GETTING_STARTED.md) — Scaffolding your first web application.
-- [**WebForge Architecture**](docs/WEBFORGE_ARCHITECTURE.md) — Internal web runtime and compilation model.
-- [**WebForge Concise Syntax Spec**](docs/WEBFORGE_CONCISE_SYNTAX_SPEC.md) — Declarative UI component syntax.
-- [**WebForge Language Guide**](docs/WEBFORGE_LANGUAGE_GUIDE.md) — Idiomatic WebForge authoring.
-- [**WebForge API Reference**](docs/WEBFORGE_API.md) — Standard web API surface.
-- [**WebForge Frontend**](docs/WEBFORGE_FRONTEND.md) — Reactive client rendering and DOM reconciliation.
-- [**WebForge Backend**](docs/WEBFORGE_BACKEND.md) — Embedded HTTP server and SSR engine.
-- [**WebForge Databases**](docs/WEBFORGE_DATABASES.md) — Embedded SQLite and ORM capabilities.
-- [**WebForge 3D CSG Modeling**](docs/WEBFORGE_3D.md) — Native WebGL 3D constructive solid geometry.
-- [**WebForge CLI**](docs/WEBFORGE_CLI.md) — `tsc web` command suite.
-- [**WebForge Build & Deploy**](docs/WEBFORGE_BUILD_DEPLOY.md) — Production static bundling and deployment.
-- [**WebForge Package Ecosystem**](docs/WEBFORGE_PACKAGES.md) — Web component packages.
-- [**WebForge Security**](docs/WEBFORGE_SECURITY.md) — XSS prevention, sanitization, and CSP headers.
-- [**WebForge Testing**](docs/WEBFORGE_TESTING.md) — Component unit testing and integration tests.
-- [**WebForge Audit Report**](docs/WEBFORGE_AUDIT_REPORT.md) — Web framework quality and verification audit.
-- [**Web Guide**](docs/WebGuide.md) — General web application development manual.
-- [**Canvas Guide**](docs/CanvasGuide.md) — 2D canvas drawing and graphics.
-
-### 4. 📱 AppForge Mobile & Desktop Native Engine
-- [**AppForge Architecture**](docs/appforge/architecture.md) — Cross-platform native rendering pipeline.
-- [**AppForge Project Structure**](docs/appforge/project-structure.md) — File layout and configuration.
-- [**AppForge Build System**](docs/appforge/build-system.md) — Gradle, NDK, and JNI compilation.
-- [**AppForge Platform Support**](docs/appforge/platform-support.md) — Android, Windows, and Linux platform targets.
-- [**AppForge Native Languages**](docs/appforge/native-languages.md) — Rust, Kotlin, and C++ interoperability.
-- [**AppForge Web Wrapping**](docs/appforge/web-wrapping.md) — Hybrid web view bridge acceleration.
-- [**Frameworks & CLI Guide**](docs/FRAMEWORKS_AND_CLI.md) — Unified AppForge and WebForge operational manual.
-- [**DSL Guide**](docs/DSLGuide.md) — Domain-specific language constructs for mobile screens.
-
-### 5. ⚙️ Compiler, VM & Systems Engineering
-- [**Compiler Architecture**](docs/compiler/architecture.md) — Lexer, parser, semantic analyzer, and optimizer.
-- [**Virtual Machine Architecture**](docs/compiler/vm.md) — Register-based bytecode VM execution.
-- [**LLVM Backend**](docs/compiler/llvm-backend.md) — Native machine code generation.
-- [**Compiler Reference**](docs/compiler.md) — High-level compiler subsystem specifications.
-- [**Performance Guide**](docs/Performance.md) — Benchmarks, micro-optimizations, and zero-cost abstractions.
-- [**Benchmark Reports**](docs/benchmark.md) — Execution speed comparisons vs other languages.
-- [**Development & Security**](docs/DEVELOPMENT_AND_SECURITY.md) — Security policies and compiler hardening.
-- [**Security Policy**](docs/Security.md) — Vulnerability reporting and cryptographic standards.
-
-### 6. 🛠️ CLI, Developer Tools & Standard Library
-- [**CLI Commands Reference**](docs/cli/commands.md) — `run`, `build`, `check`, `fmt`, `lint`, `test`, `web`, `app`.
-- [**Toolchains Guide**](docs/cli/toolchains.md) — Cross-compilation and native toolchain configuration.
-- [**Package Manager (tspm)**](docs/tooling/package-manager.md) — Dependency resolution and lockfiles.
-- [**Formatter (tsfmt)**](docs/tooling/formatter.md) — Automatic AST code formatting.
-- [**Test Runner**](docs/tooling/test-runner.md) — Built-in test execution framework.
-- [**API Reference**](docs/reference/APIReference.md) — Full API documentation.
-- [**Standard Library Reference**](docs/reference/StdlibReference.md) — Function index for all 11 standard modules.
-- [**VS Code Marketplace Extension (`tanmoy.techscript`)**](https://marketplace.visualstudio.com/items?itemName=tanmoy.techscript) — Official Visual Studio Marketplace listing.
-- [**Open VSX Registry Extension (`Tcode-Motion.techscript`)**](https://open-vsx.org/extension/Tcode-Motion/techscript) — Official Eclipse Open VSX listing.
-- [**Migration Guide**](docs/MigrationGuide.md) — Upgrading from legacy syntax to canonical TechScript.
-
-### 7. 🚀 Tutorials, Guides & 100 Verified Examples
-- [**Getting Started Tutorial**](docs/getting-started/getting-started.md) — Beginner walkthrough.
-- [**Installation Guide**](docs/getting-started/installation.md) — Manual installation and setup.
-- [**Best Practices**](docs/guides/BestPractices.md) — Design patterns and idiomatic authoring.
-- [**Examples Guide**](docs/guides/ExamplesGuide.md) — Index and descriptions of the 100 verified examples.
-- [**100 Verified Examples Directory**](examples/) — 100 working `.txs` programs (**100/100 automated test pass rate**).
-
-### 8. 📋 Governance, Release Engineering & Audits
-- [**Release Notes**](docs/ReleaseNotes.md) — Comprehensive v2.0.2 / v2.0.0 release notes.
-- [**Changelog**](CHANGELOG.md) — Chronological history of changes.
-- [**Release Process**](docs/RELEASE_PROCESS.md) — Step-by-step release engineering playbook.
-- [**Release Notes Template**](docs/RELEASE_NOTES_TEMPLATE.md) — Standardization template for future releases.
-- [**Version 2.0.0 Report**](docs/RELEASE_2.0.0_REPORT.md) — Historical milestone release documentation.
-- [**Final Release & Deployment Report**](docs/FINAL_RELEASE_AND_DEPLOYMENT_REPORT.md) — Automated audit report.
-- [**Codebase Audit**](docs/TECHSCRIPT_CODEBASE_AUDIT.md) — Complete repository source audit.
-- [**Completeness Audit**](docs/TECHSCRIPT_COMPLETENESS_AUDIT.md) — Language completeness verification.
-- [**Language Roadmap**](docs/TECHSCRIPT_LANGUAGE_ROADMAP.md) — Strategic future directions.
-- [**Roadmap**](docs/Roadmap.md) — Milestones and scheduled enhancements.
-- [**Versioning Standard**](docs/VERSIONING.md) — Semantic versioning policy.
-- [**Supported Versions**](docs/SUPPORTED_VERSIONS.md) — LTS and support lifecycles.
-- [**Support Policy**](docs/SUPPORT.md) — Getting help and community channels.
-- [**Contributing Guidelines**](CONTRIBUTING.md) — How to contribute to TechScript.
-- [**Code of Conduct**](docs/CODE_OF_CONDUCT.md) — Community behavioral standards.
-- [**Media Guidelines**](docs/assets/README.md) — Guidelines for screenshots, logos, and videos.
+| Platform | Tier | Artifact | Status |
+| :--- | :---: | :--- | :---: |
+| Windows x86_64 | **Tier 1** | `TechScript_Setup.exe`, `tsc.exe` | 100/100 tests |
+| Android APK | **Tier 1** | `TechScript-AppForge-v2.0.0-release.apk` | Real device verified |
+| WebForge Static | **Tier 1** | `dist/` (HTML + CSS + JS + SQLite + 3D) | Live at [techscript.is-a.dev](https://techscript.is-a.dev/techscript/) |
+| Linux x86_64 / aarch64 | **Tier 1** | `.tar.gz` pre-compiled | CI/CD cross-compiled |
+| macOS (Apple Silicon + Intel) | **Tier 1** | `.tar.gz` pre-compiled | Native macOS CI runner |
+| Android Termux | **Tier 1** | `techscript-2.0.0-termux-aarch64.tar.gz` | `aarch64-linux-android` |
+| Docker | **Tier 1** | `ghcr.io/tcode-motion/techscript` | Multi-stage slim GHCR |
 
 ---
 
-## 📄 License & Attribution
+## Complete Documentation Index
+
+<details>
+<summary><b>1. Core Language Specifications</b></summary>
+
+- [TechScript Final Syntax & Language Master Spec](docs/language/TechScript_Final_Syntax_and_Language_Master_Spec.md)
+- [TechScript Language Specification](docs/language/TECHSCRIPT_LANGUAGE_SPEC.md)
+- [Language Reference](docs/TECHSCRIPT_LANGUAGE_REFERENCE.md) &middot; [Syntax Memory Guide](docs/language/TECHSCRIPT_SYNTAX_MEMORY.md) &middot; [Syntax Guide](docs/SyntaxGuide.md)
+- [Code Style Guide](docs/style-guide.md) &middot; [Constants](docs/constants.md) &middot; [Strings & Interpolation](docs/strings.md)
+- [Generics](docs/generics.md) &middot; [Modules & Imports](docs/modules.md) &middot; [File Extension Standard](docs/TECHSCRIPT_FILE_EXTENSION_STANDARD.md) &middot; [FAQ](docs/faq.md)
+
+</details>
+
+<details>
+<summary><b>2. Deep-Dive Language Guides</b></summary>
+
+- [Language Overview](docs/language/overview.md) &middot; [Variables & Mutations](docs/language/variables.md) &middot; [Data Types](docs/language/types.md)
+- [Functions](docs/language/functions.md) &middot; [Control Flow](docs/language/control-flow.md) &middot; [Classes & OOP](docs/language/classes.md)
+- [Inheritance](docs/language/inheritance.md) &middot; [Interfaces](docs/language/interfaces.md) &middot; [Traits](docs/language/traits.md)
+- [Arrays](docs/language/arrays.md) &middot; [Maps](docs/language/maps.md) &middot; [Closures](docs/language/closures.md)
+- [Async](docs/language/async.md) &middot; [Concurrency](docs/language/concurrency.md) &middot; [Error Handling](docs/language/error-handling.md)
+- [Pattern Matching](docs/language/pattern-matching.md) &middot; [Memory Management](docs/language/memory.md) &middot; [Operators](docs/language/operators.md)
+- [Imports & Exports](docs/language/imports-exports.md) &middot; [Packages](docs/language/packages.md)
+
+</details>
+
+<details>
+<summary><b>3. WebForge Full-Stack Framework</b></summary>
+
+- [Comprehensive Guide](docs/WebForge.md) &middot; [Getting Started](docs/WEBFORGE_GETTING_STARTED.md) &middot; [Architecture](docs/WEBFORGE_ARCHITECTURE.md)
+- [Syntax Spec](docs/WEBFORGE_CONCISE_SYNTAX_SPEC.md) &middot; [Language Guide](docs/WEBFORGE_LANGUAGE_GUIDE.md) &middot; [API Reference](docs/WEBFORGE_API.md)
+- [Frontend](docs/WEBFORGE_FRONTEND.md) &middot; [Backend](docs/WEBFORGE_BACKEND.md) &middot; [Databases](docs/WEBFORGE_DATABASES.md)
+- [3D CSG Modeling](docs/WEBFORGE_3D.md) &middot; [CLI](docs/WEBFORGE_CLI.md) &middot; [Build & Deploy](docs/WEBFORGE_BUILD_DEPLOY.md)
+- [Packages](docs/WEBFORGE_PACKAGES.md) &middot; [Security](docs/WEBFORGE_SECURITY.md) &middot; [Testing](docs/WEBFORGE_TESTING.md)
+- [Audit Report](docs/WEBFORGE_AUDIT_REPORT.md) &middot; [Web Guide](docs/WebGuide.md) &middot; [Canvas Guide](docs/CanvasGuide.md)
+
+</details>
+
+<details>
+<summary><b>4. AppForge Mobile & Desktop Engine</b></summary>
+
+- [Architecture](docs/appforge/architecture.md) &middot; [Project Structure](docs/appforge/project-structure.md) &middot; [Build System](docs/appforge/build-system.md)
+- [Platform Support](docs/appforge/platform-support.md) &middot; [Native Languages](docs/appforge/native-languages.md) &middot; [Web Wrapping](docs/appforge/web-wrapping.md)
+- [Frameworks & CLI Guide](docs/FRAMEWORKS_AND_CLI.md) &middot; [DSL Guide](docs/DSLGuide.md)
+
+</details>
+
+<details>
+<summary><b>5. Compiler, VM & Systems Engineering</b></summary>
+
+- [Compiler Architecture](docs/compiler/architecture.md) &middot; [VM Architecture](docs/compiler/vm.md) &middot; [LLVM Backend](docs/compiler/llvm-backend.md)
+- [Compiler Reference](docs/compiler.md) &middot; [Performance Guide](docs/Performance.md) &middot; [Benchmark Reports](docs/benchmark.md)
+- [Development & Security](docs/DEVELOPMENT_AND_SECURITY.md) &middot; [Security Policy](docs/Security.md)
+
+</details>
+
+<details>
+<summary><b>6. CLI, Developer Tools & Standard Library</b></summary>
+
+- [CLI Commands](docs/cli/commands.md): `run`, `build`, `check`, `fmt`, `lint`, `test`, `web`, `app`
+- [Toolchains Guide](docs/cli/toolchains.md) &middot; [Package Manager (tspm)](docs/tooling/package-manager.md)
+- [Formatter (tsfmt)](docs/tooling/formatter.md) &middot; [Test Runner](docs/tooling/test-runner.md)
+- [API Reference](docs/reference/APIReference.md) &middot; [Standard Library Reference](docs/reference/StdlibReference.md) (11 modules)
+- [VS Code Extension](https://marketplace.visualstudio.com/items?itemName=tanmoy.techscript) &middot; [Open VSX Extension](https://open-vsx.org/extension/Tcode-Motion/techscript)
+- [Migration Guide](docs/MigrationGuide.md)
+
+</details>
+
+<details>
+<summary><b>7. Tutorials, Guides & 100 Verified Examples</b></summary>
+
+- [Getting Started Tutorial](docs/getting-started/getting-started.md) &middot; [Installation Guide](docs/getting-started/installation.md)
+- [Best Practices](docs/guides/BestPractices.md) &middot; [Examples Guide](docs/guides/ExamplesGuide.md)
+- [100 Verified Examples](examples/) — **100/100 automated test pass rate**
+
+</details>
+
+<details>
+<summary><b>8. Governance, Release Engineering & Audits</b></summary>
+
+- [Release Notes](docs/ReleaseNotes.md) &middot; [Changelog](CHANGELOG.md) &middot; [Release Process](docs/RELEASE_PROCESS.md)
+- [v2.0.0 Report](docs/RELEASE_2.0.0_REPORT.md) &middot; [Final Deployment Report](docs/FINAL_RELEASE_AND_DEPLOYMENT_REPORT.md)
+- [Codebase Audit](docs/TECHSCRIPT_CODEBASE_AUDIT.md) &middot; [Completeness Audit](docs/TECHSCRIPT_COMPLETENESS_AUDIT.md)
+- [Language Roadmap](docs/TECHSCRIPT_LANGUAGE_ROADMAP.md) &middot; [Roadmap](docs/Roadmap.md) &middot; [Versioning](docs/VERSIONING.md)
+- [Supported Versions](docs/SUPPORTED_VERSIONS.md) &middot; [Support Policy](docs/SUPPORT.md)
+- [Contributing](CONTRIBUTING.md) &middot; [Code of Conduct](docs/CODE_OF_CONDUCT.md) &middot; [Media Guidelines](docs/assets/README.md)
+
+</details>
+
+---
+
+## License & Attribution
 
 TechScript is open-source software licensed under the **[Apache License 2.0](LICENSE)**.  
-Created and maintained with ❤️ by **Tanmoy Majumder ([@Tcode-Motion](https://github.com/Tcode-Motion))**.
+Created and maintained with love by **Tanmoy Majumder ([@Tcode-Motion](https://github.com/Tcode-Motion))**.

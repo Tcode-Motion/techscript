@@ -149,8 +149,7 @@ impl VM {
                 }
 
                 Opcode::Dup => {
-                    let val = self.stack.peek()?.clone();
-                    self.stack.push(val)?;
+                    self.stack.dup()?;
                 }
 
                 Opcode::Add => {

@@ -30,6 +30,16 @@ impl ValueStack {
         self.data.pop().ok_or(VMError::StackUnderflow)
     }
 
+    /// Duplicates the top value on the stack.
+    pub fn dup(&mut self) -> Result<(), VMError> {
+        let val = self.data.last().ok_or(VMError::StackUnderflow)?;
+        if self.data.len() >= self.max_size {
+            return Err(VMError::StackOverflow);
+        }
+        self.data.push(val.clone());
+        Ok(())
+    }
+
     /// Returns a reference to the top value.
     pub fn peek(&self) -> Result<&RuntimeValue, VMError> {
         self.data.last().ok_or(VMError::StackUnderflow)
@@ -78,5 +88,25 @@ impl ValueStack {
     /// Returns a slice of the stack data.
     pub fn data_slice(&self) -> &[RuntimeValue] {
         &self.data
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_stack_dup() {
+        let mut stack = ValueStack::new(2);
+        assert_eq!(stack.dup(), Err(VMError::StackUnderflow));
+
+        stack.push(RuntimeValue::Int(42)).unwrap();
+        assert_eq!(stack.len(), 1);
+
+        stack.dup().unwrap();
+        assert_eq!(stack.len(), 2);
+        assert_eq!(stack.peek().unwrap(), &RuntimeValue::Int(42));
+
+        assert_eq!(stack.dup(), Err(VMError::StackOverflow));
     }
 }

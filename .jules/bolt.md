@@ -70,3 +70,7 @@
 ## 2024-05-24 - Web Property Extraction Optimization
 **Learning:** Extracting properties from the `RuntimeValue` DSL property lists in `stdlib/src/web/renderer.rs` and `stdlib/src/web/db.rs` was inefficient because the code called `.iter().find()` to resolve `text`, `id`, and `name` attributes, which creates unnecessary iterator overhead and closure allocation.
 **Action:** Replace `.iter().find()` calls with a single-pass `for p in &dsl.properties` loop and `if` statements on the property names, stopping early when found, which significantly reduces execution overhead.
+
+## 2026-09-30 - ValueStack duplication optimization
+**Learning:** In VM execution loop, handling stack duplication (`Opcode::Dup`) via separate `stack.peek()?` and `stack.push()` calls incurs redundant stack bounds checks and error handling overhead. Encapsulating this in a single `stack.dup()` method simplifies the execution path.
+**Action:** Always provide dedicated single-pass methods on collection wrappers (such as `ValueStack::dup`) when an operation involves reading and duplicating the top element on the same structure.

@@ -138,3 +138,137 @@ impl StdlibRegistry {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use indexmap::IndexMap;
+    use std::cell::RefCell;
+    use techscript_runtime::context::{RuntimeConfig, RuntimeContext};
+
+    #[test]
+    fn test_register_ai() {
+        let mut registry = StdlibRegistry::new();
+        registry.register_ai();
+
+        assert!(registry.has_module("std.ai"));
+
+        let module = registry
+            .get_module("std.ai")
+            .expect("std.ai module should exist");
+        assert_eq!(module.name, "std.ai");
+        assert_eq!(module.version, "1.0.0");
+        assert!(module
+            .required_capabilities
+            .contains(&Capability::Environment));
+        assert!(module.required_capabilities.contains(&Capability::Network));
+
+        let gen_text = module
+            .exports
+            .get("generate_text")
+            .expect("generate_text function should exist");
+        assert_eq!(gen_text.name(), "generate_text");
+        assert_eq!(gen_text.arity(), 3);
+    }
+
+    #[test]
+    fn test_generate_text_capabilities() {
+        let mut registry = StdlibRegistry::new();
+        registry.register_ai();
+
+        let module = registry.get_module("std.ai").unwrap();
+        let gen_text = module.exports.get("generate_text").unwrap();
+
+        // 1. Missing both capabilities
+        let mut config_none = RuntimeConfig::default();
+        config_none.capabilities.remove(&Capability::Environment);
+        config_none.capabilities.remove(&Capability::Network);
+        let mut ctx_none = RuntimeContext::new(config_none);
+
+        let args = vec![
+            RuntimeValue::Str("openai".to_string()),
+            RuntimeValue::Str("test".to_string()),
+            RuntimeValue::Map {
+                entries: Rc::new(RefCell::new(IndexMap::new())),
+                is_const: false,
+            },
+        ];
+        let err = gen_text.call(&mut ctx_none, args.clone()).unwrap_err();
+        assert!(err.message.contains("Environment capability is denied"));
+
+        // 2. Has Environment, missing Network
+        let mut config_env = RuntimeConfig::default();
+        config_env.capabilities.insert(Capability::Environment);
+        config_env.capabilities.remove(&Capability::Network);
+        let mut ctx_env = RuntimeContext::new(config_env);
+
+        let err = gen_text.call(&mut ctx_env, args.clone()).unwrap_err();
+        assert!(err.message.contains("Network capability is denied"));
+    }
+
+    #[test]
+    fn test_generate_text_providers_and_errors() {
+        let mut registry = StdlibRegistry::new();
+        registry.register_ai();
+
+        let module = registry.get_module("std.ai").unwrap();
+        let gen_text = module.exports.get("generate_text").unwrap();
+
+        let mut config = RuntimeConfig::default();
+        config.capabilities.insert(Capability::Environment);
+        config.capabilities.insert(Capability::Network);
+        let mut ctx = RuntimeContext::new(config);
+
+        let map_val = RuntimeValue::Map {
+            entries: Rc::new(RefCell::new(IndexMap::new())),
+            is_const: false,
+        };
+
+        // Unknown provider
+        let res_err = gen_text.call(
+            &mut ctx,
+            vec![
+                RuntimeValue::Str("unknown_provider".to_string()),
+                RuntimeValue::Str("hello".to_string()),
+                map_val.clone(),
+            ],
+        );
+        assert!(res_err.is_err());
+        assert!(res_err
+            .unwrap_err()
+            .message
+            .contains("Unknown AI provider: unknown_provider"));
+
+        // Gemini mock response (when GEMINI_API_KEY is unset)
+        let res_gemini = gen_text
+            .call(
+                &mut ctx,
+                vec![
+                    RuntimeValue::Str("gemini".to_string()),
+                    RuntimeValue::Str("hello gemini".to_string()),
+                    map_val.clone(),
+                ],
+            )
+            .unwrap();
+        assert!(res_gemini
+            .as_string()
+            .unwrap()
+            .contains("[Mock Gemini Response] Prompt: hello gemini"));
+
+        // Local mock response (when local server is down)
+        let res_local = gen_text
+            .call(
+                &mut ctx,
+                vec![
+                    RuntimeValue::Str("local".to_string()),
+                    RuntimeValue::Str("hello local".to_string()),
+                    map_val.clone(),
+                ],
+            )
+            .unwrap();
+        assert!(res_local
+            .as_string()
+            .unwrap()
+            .contains("[Mock Local LLM Response] Prompt: hello local"));
+    }
+}

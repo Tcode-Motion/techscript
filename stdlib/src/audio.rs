@@ -19,3 +19,20 @@ impl StdlibRegistry {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::StdlibRegistry;
+
+    #[test]
+    fn test_register_audio() {
+        let registry = StdlibRegistry::new();
+        let module = registry
+            .get_module("std.audio")
+            .expect("Module std.audio should be registered");
+        assert_eq!(module.name, "std.audio");
+        assert_eq!(module.version, "1.0.0");
+        assert_eq!(module.required_capabilities.len(), 0);
+    }
+}

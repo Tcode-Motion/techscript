@@ -1768,40 +1768,48 @@ pub fn render_footer_block(html: &mut String, dsl: &DslBlockValue) {
     html.push_str("</footer>");
 }
 
+pub fn render_component(html: &mut String, dsl: &DslBlockValue) {
+    html.push_str("<div class=\"webforge-component card\">");
+    render_children(html, dsl);
+    html.push_str("</div>");
+}
+
+pub fn render_website(html: &mut String, dsl: &DslBlockValue) {
+    render_children(html, dsl);
+}
+
+pub fn render_dsl_block(html: &mut String, dsl: &DslBlockValue) {
+    match dsl.kind.as_str() {
+        "page" => render_page(html, dsl),
+        "hero" => render_hero(html, dsl),
+        "section" => render_section(html, dsl),
+        "card" => render_card(html, dsl),
+        "heading" => render_heading(html, dsl),
+        "text" => render_text(html, dsl),
+        "button" => render_button(html, dsl),
+        "input" => render_input(html, dsl),
+        "timeline" => render_timeline(html, dsl),
+        "accordion" => render_accordion(html, dsl),
+        "tabs" => render_tabs(html, dsl),
+        "stats" => render_stats(html, dsl),
+        "alert" | "callout" | "banner" => render_alert(html, dsl),
+        "scene" | "scene3d" | "model3d" | "model3D" => render_scene3d(html, dsl),
+        "link" => render_link(html, dsl),
+        "nav" => render_nav(html, dsl),
+        "header" => render_header_block(html, dsl),
+        "footer" => render_footer_block(html, dsl),
+        "component" => render_component(html, dsl),
+        "website" => render_website(html, dsl),
+        "database" | "table" | "cube" => {}
+        _ => {
+            render_children(html, dsl);
+        }
+    }
+}
+
 pub fn dsl_to_html_inner(val: &RuntimeValue, html: &mut String) {
     if let RuntimeValue::DslBlock(dsl) = val {
-        match dsl.kind.as_str() {
-            "page" => render_page(html, dsl),
-            "hero" => render_hero(html, dsl),
-            "section" => render_section(html, dsl),
-            "card" => render_card(html, dsl),
-            "heading" => render_heading(html, dsl),
-            "text" => render_text(html, dsl),
-            "button" => render_button(html, dsl),
-            "input" => render_input(html, dsl),
-            "timeline" => render_timeline(html, dsl),
-            "accordion" => render_accordion(html, dsl),
-            "tabs" => render_tabs(html, dsl),
-            "stats" => render_stats(html, dsl),
-            "alert" | "callout" | "banner" => render_alert(html, dsl),
-            "scene" | "scene3d" | "model3d" | "model3D" => render_scene3d(html, dsl),
-            "link" => render_link(html, dsl),
-            "nav" => render_nav(html, dsl),
-            "header" => render_header_block(html, dsl),
-            "footer" => render_footer_block(html, dsl),
-            "component" => {
-                html.push_str("<div class=\"webforge-component card\">");
-                render_children(html, dsl);
-                html.push_str("</div>");
-            }
-            "website" => {
-                render_children(html, dsl);
-            }
-            "database" | "table" | "cube" => {}
-            _ => {
-                render_children(html, dsl);
-            }
-        }
+        render_dsl_block(html, dsl);
     }
 }
 
@@ -2277,4 +2285,48 @@ pub fn render_complete_document(
 
     doc.push_str("</body></html>");
     doc
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::rc::Rc;
+    use techscript_runtime::{DslBlockValue, RuntimeValue};
+
+    #[test]
+    fn test_render_website_and_component() {
+        let block = DslBlockValue {
+            kind: "component".to_string(),
+            args: vec![],
+            properties: vec![],
+            children: vec![],
+        };
+        let mut html = String::new();
+        render_component(&mut html, &block);
+        assert_eq!(html, "<div class=\"webforge-component card\"></div>");
+
+        let mut website_html = String::new();
+        let website_block = DslBlockValue {
+            kind: "website".to_string(),
+            args: vec![],
+            properties: vec![],
+            children: vec![],
+        };
+        render_website(&mut website_html, &website_block);
+        assert_eq!(website_html, "");
+    }
+
+    #[test]
+    fn test_dsl_to_html_inner() {
+        let block = DslBlockValue {
+            kind: "component".to_string(),
+            args: vec![],
+            properties: vec![],
+            children: vec![],
+        };
+        let val = RuntimeValue::DslBlock(Rc::new(block));
+        let mut html = String::new();
+        dsl_to_html_inner(&val, &mut html);
+        assert_eq!(html, "<div class=\"webforge-component card\"></div>");
+    }
 }

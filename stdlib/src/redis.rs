@@ -30,3 +30,40 @@ impl StdlibRegistry {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::StdlibRegistry;
+    use techscript_runtime::RuntimeContext;
+
+    #[test]
+    fn test_register_redis() {
+        let mut registry = StdlibRegistry {
+            modules: std::collections::HashMap::new(),
+        };
+        registry.register_redis();
+
+        assert!(registry.modules.contains_key("std.redis"));
+        let module = registry.modules.get("std.redis").unwrap();
+        assert_eq!(module.name, "std.redis");
+        assert_eq!(module.version, "1.0.0");
+        assert!(module.exports.contains_key("connect"));
+
+        let connect_func = module.exports.get("connect").unwrap();
+        assert_eq!(connect_func.name(), "connect");
+        assert_eq!(connect_func.arity(), 1);
+
+        use techscript_runtime::RuntimeConfig;
+        let mut ctx = RuntimeContext::new(RuntimeConfig::default());
+        let res = connect_func.call(
+            &mut ctx,
+            vec![RuntimeValue::Str("redis://localhost".to_string())],
+        );
+        assert!(res.is_ok());
+        assert_eq!(
+            res.unwrap(),
+            RuntimeValue::Str("Redis not yet available".to_string())
+        );
+    }
+}

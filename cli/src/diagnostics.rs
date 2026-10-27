@@ -387,12 +387,28 @@ impl<'a> DiagnosticRenderer<'a> {
             .map(|r| serde_json::json!({ "severity": r.severity.label(), "message": r.message }))
             .collect();
 
+        let suggestions_json: Vec<_> = diag
+            .suggestions
+            .iter()
+            .map(|s| {
+                serde_json::json!({
+                    "message": s.message,
+                    "replacement": s.replacement,
+                    "span": {
+                        "start": s.span.start,
+                        "end": s.span.end,
+                    }
+                })
+            })
+            .collect();
+
         let obj = serde_json::json!({
             "severity": diag.severity.label(),
             "code": diag.code.map(|c| format!("{:?}", c)),
             "message": diag.message,
             "span": span_json,
             "related": related_json,
+            "suggestions": suggestions_json,
         });
 
         obj.to_string()
@@ -478,5 +494,43 @@ impl DiagnosticStats {
             "peak_memory_bytes": self.peak_memory_bytes,
         })
         .to_string()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use techscript_common::Span;
+
+    #[test]
+    fn test_fix_suggestion_rendering() {
+        let sm = SourceManager::new();
+        let diag =
+            RichDiagnostic::error("undefined variable `foo`").with_suggestion(FixSuggestion {
+                message: "change to `bar`".into(),
+                span: Span::new(0, 3),
+                replacement: "bar".into(),
+            });
+
+        // Plain output rendering
+        let renderer_plain = DiagnosticRenderer::new(DiagnosticOutput::Plain, &sm);
+        let rendered_plain = renderer_plain.render(&diag);
+        assert!(rendered_plain.contains("suggestion: change to `bar` → `bar`"));
+
+        // Colored output rendering
+        let renderer_colored = DiagnosticRenderer::new(DiagnosticOutput::Colored, &sm);
+        let rendered_colored = renderer_colored.render(&diag);
+        assert!(rendered_colored.contains("suggestion"));
+        assert!(rendered_colored.contains("change to `bar`"));
+        assert!(rendered_colored.contains("bar"));
+
+        // JSON output rendering
+        let renderer_json = DiagnosticRenderer::new(DiagnosticOutput::Json, &sm);
+        let json_str = renderer_json.render(&diag);
+        let parsed: serde_json::Value = serde_json::from_str(&json_str).unwrap();
+        assert_eq!(parsed["suggestions"][0]["message"], "change to `bar`");
+        assert_eq!(parsed["suggestions"][0]["replacement"], "bar");
+        assert_eq!(parsed["suggestions"][0]["span"]["start"], 0);
+        assert_eq!(parsed["suggestions"][0]["span"]["end"], 3);
     }
 }

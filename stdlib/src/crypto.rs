@@ -185,3 +185,59 @@ impl StdlibRegistry {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use techscript_runtime::context::{RuntimeConfig, RuntimeContext};
+
+    #[test]
+    fn test_register_crypto() {
+        let mut registry = StdlibRegistry::new();
+        registry.register_crypto();
+
+        let module = registry.get_module("std.crypto").unwrap();
+
+        let aes_encrypt_fn = module.exports.get("aes_encrypt").unwrap();
+        assert_eq!(aes_encrypt_fn.name(), "aes_encrypt");
+        assert_eq!(aes_encrypt_fn.arity(), 2);
+
+        let aes_decrypt_fn = module.exports.get("aes_decrypt").unwrap();
+        assert_eq!(aes_decrypt_fn.name(), "aes_decrypt");
+        assert_eq!(aes_decrypt_fn.arity(), 2);
+
+        let bcrypt_hash_fn = module.exports.get("bcrypt_hash").unwrap();
+        assert_eq!(bcrypt_hash_fn.name(), "bcrypt_hash");
+        assert_eq!(bcrypt_hash_fn.arity(), 2);
+
+        let bcrypt_verify_fn = module.exports.get("bcrypt_verify").unwrap();
+        assert_eq!(bcrypt_verify_fn.name(), "bcrypt_verify");
+        assert_eq!(bcrypt_verify_fn.arity(), 2);
+
+        let mut ctx = RuntimeContext::new(RuntimeConfig::default());
+
+        let key = RuntimeValue::Str("my_secret_key".to_string());
+        let text = RuntimeValue::Str("hello world".to_string());
+
+        let encrypted = aes_encrypt_fn
+            .call(&mut ctx, vec![key.clone(), text.clone()])
+            .unwrap();
+
+        let decrypted = aes_decrypt_fn
+            .call(&mut ctx, vec![key.clone(), encrypted])
+            .unwrap();
+        assert_eq!(decrypted, text);
+
+        let password = RuntimeValue::Str("password123".to_string());
+        let cost = RuntimeValue::Int(4); // low cost for fast test execution
+
+        let hashed = bcrypt_hash_fn
+            .call(&mut ctx, vec![password.clone(), cost])
+            .unwrap();
+
+        let verified = bcrypt_verify_fn
+            .call(&mut ctx, vec![password.clone(), hashed])
+            .unwrap();
+        assert_eq!(verified, RuntimeValue::Bool(true));
+    }
+}

@@ -114,6 +114,11 @@ fn sys_sleep(
 
 impl StdlibRegistry {
     pub fn register_sys(&mut self) {
+        self.register_sys_fs();
+        self.register_sys_time();
+    }
+
+    fn register_sys_fs(&mut self) {
         let mut exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
             HashMap::new();
 
@@ -149,11 +154,13 @@ impl StdlibRegistry {
             StdlibModule {
                 name: "std.fs".to_string(),
                 version: "1.0.0".to_string(),
-                exports: exports.clone(),
+                exports,
                 required_capabilities: vec![Capability::FileSystem],
             },
         );
+    }
 
+    fn register_sys_time(&mut self) {
         let mut time_exports: HashMap<String, Rc<dyn techscript_runtime::function::Callable>> =
             HashMap::new();
         time_exports.insert(

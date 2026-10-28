@@ -66,3 +66,82 @@ impl StdlibRegistry {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use techscript_runtime::context::{RuntimeConfig, RuntimeContext};
+
+    #[test]
+    fn test_register_xml() {
+        let mut registry = StdlibRegistry::default();
+        registry.register_xml();
+
+        let module = registry
+            .modules
+            .get("std.xml")
+            .expect("Module std.xml should be registered");
+        assert_eq!(module.name, "std.xml");
+        assert_eq!(module.version, "1.0.0");
+        assert!(module.required_capabilities.is_empty());
+        assert!(module.exports.contains_key("parse"));
+        assert!(module.exports.contains_key("stringify"));
+    }
+
+    #[test]
+    fn test_xml_parse() {
+        let mut registry = StdlibRegistry::default();
+        registry.register_xml();
+
+        let module = registry.modules.get("std.xml").unwrap();
+        let parse_fn = module.exports.get("parse").unwrap();
+
+        let mut ctx = RuntimeContext::new(RuntimeConfig::default());
+
+        // Valid XML
+        let args = vec![RuntimeValue::Str("<item>hello</item>".to_string())];
+        let result = parse_fn.call(&mut ctx, args).unwrap();
+
+        if let RuntimeValue::Map { entries, .. } = result {
+            let map = entries.borrow();
+            assert_eq!(map.get("item").and_then(|v| v.as_string()), Some("hello"));
+        } else {
+            panic!("parse should return a Map");
+        }
+
+        // Non-matching XML input (returns empty map)
+        let plain_str = vec![RuntimeValue::Str("not xml".to_string())];
+        let result = parse_fn.call(&mut ctx, plain_str).unwrap();
+        if let RuntimeValue::Map { entries, .. } = result {
+            assert!(entries.borrow().is_empty());
+        } else {
+            panic!("parse should return a Map even for non-matching strings");
+        }
+    }
+
+    #[test]
+    fn test_xml_stringify() {
+        let mut registry = StdlibRegistry::default();
+        registry.register_xml();
+
+        let module = registry.modules.get("std.xml").unwrap();
+        let stringify_fn = module.exports.get("stringify").unwrap();
+
+        let mut ctx = RuntimeContext::new(RuntimeConfig::default());
+
+        let mut map = IndexMap::new();
+        map.insert("name".to_string(), RuntimeValue::Str("Alice".to_string()));
+        let map_val = RuntimeValue::Map {
+            entries: Rc::new(RefCell::new(map)),
+            is_const: false,
+        };
+
+        let result = stringify_fn.call(&mut ctx, vec![map_val]).unwrap();
+        assert_eq!(result.as_string(), Some("<name>Alice</name>"));
+
+        // Non-map argument returns empty string
+        let non_map = vec![RuntimeValue::Int(42)];
+        let result = stringify_fn.call(&mut ctx, non_map).unwrap();
+        assert_eq!(result.as_string(), Some(""));
+    }
+}

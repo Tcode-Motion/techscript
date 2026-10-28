@@ -182,7 +182,7 @@ pub fn migrate_source(source: &str) -> String {
         .collect();
 
     if deprecation_warnings.is_empty() {
-        return source.to_string();
+        return post_process(source);
     }
 
     // Sort by span start in reverse order
@@ -281,7 +281,9 @@ fn post_process(source: &str) -> String {
     let stdlib_rewrites: &[(&str, &str)] = &[
         ("std.math.", "math."),
         ("std.strings.", "string."),
+        ("std.string.", "string."),
         ("std.fs.", "file."),
+        ("std.file.", "file."),
         ("std.path.", "path."),
         ("std.env.", "env."),
         ("std.os.", "os."),
@@ -298,6 +300,71 @@ fn post_process(source: &str) -> String {
         ("std.uuid.", "uuid."),
         ("std.database.", "database."),
         ("std.sqlite.", "sqlite."),
+        ("std.collections.", "collections."),
+        ("std.datetime.", "datetime."),
+        ("std.hash.", "hash."),
+        ("std.random.", "random."),
+        ("std.thread.", "thread."),
+        ("std.sync.", "sync."),
+        ("std.async.", "async."),
+        ("std.future.", "future."),
+        ("std.channel.", "channel."),
+        ("std.testing.", "testing."),
+        ("std.logging.", "logging."),
+        ("std.compress.", "compress."),
+        ("std.encoding.", "encoding."),
+        ("std.base64.", "base64."),
+        ("std.hex.", "hex."),
+        ("std.url.", "url."),
+        ("std.system.", "system."),
+        ("std.sys.", "sys."),
+        ("std.graphics.", "graphics."),
+        ("std.ai.", "ai."),
+        ("std.process.", "process."),
+        ("std.terminal.", "terminal."),
+        ("std.socket.", "socket."),
+        ("std.websocket.", "websocket."),
+        ("std.dns.", "dns."),
+        ("std.email.", "email."),
+        ("std.ftp.", "ftp."),
+        ("std.mysql.", "mysql."),
+        ("std.postgres.", "postgres."),
+        ("std.mongodb.", "mongodb."),
+        ("std.redis.", "redis."),
+        ("std.jwt.", "jwt."),
+        ("std.oauth.", "oauth."),
+        ("std.image.", "image."),
+        ("std.gui.", "gui."),
+        ("std.web.", "web."),
+        ("std.audio.", "audio."),
+        ("std.video.", "video."),
+        ("std.scheduler.", "scheduler."),
+        ("std.cache.", "cache."),
+        ("std.binary.", "binary."),
+        ("std.ini.", "ini."),
+        ("std.docs.", "docs."),
+        ("std.task.", "task."),
+        ("std.config.", "config."),
+        ("std.parallel.", "parallel."),
+        ("std.benchmark.", "benchmark."),
+        ("std.profiler.", "profiler."),
+        ("std.svg.", "svg."),
+        ("std.pdf.", "pdf."),
+        ("std.barcode.", "barcode."),
+        ("std.qrcode.", "qrcode."),
+        ("std.notification.", "notification."),
+        ("std.security.", "security."),
+        ("std.settings.", "settings."),
+        ("std.localization.", "localization."),
+        ("std.theme.", "theme."),
+        ("std.charts.", "charts."),
+        ("std.report.", "report."),
+        ("std.excel.", "excel."),
+        ("std.word.", "word."),
+        ("std.powerpoint.", "powerpoint."),
+        ("std.canvas.", "canvas."),
+        ("std.debug.", "debug."),
+        ("std.mock.", "mock."),
     ];
     for (old, new) in stdlib_rewrites {
         out = out.replace(old, new);
@@ -462,6 +529,25 @@ mod tests {
         let input = "x = std.math.abs(-42)";
         let result = post_process(input);
         assert_eq!(result, "x = math.abs(-42)");
+    }
+
+    #[test]
+    fn test_post_process_std_module_calls() {
+        let input = "x = std.collections.new()\nt = std.datetime.now()\nparsed = std.json.parse(s)\nlen = std.string.length(str)\nf = std.file.open(path)\nh = std.hash.sha256(data)";
+        let result = post_process(input);
+        assert!(result.contains("x = collections.new()"));
+        assert!(result.contains("t = datetime.now()"));
+        assert!(result.contains("parsed = json.parse(s)"));
+        assert!(result.contains("len = string.length(str)"));
+        assert!(result.contains("f = file.open(path)"));
+        assert!(result.contains("h = hash.sha256(data)"));
+    }
+
+    #[test]
+    fn test_migrate_source_std_calls() {
+        let input = "data = std.json.parse(s)";
+        let result = migrate_source(input);
+        assert_eq!(result, "data = json.parse(s)");
     }
 
     #[test]

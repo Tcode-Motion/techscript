@@ -1768,6 +1768,12 @@ pub fn render_footer_block(html: &mut String, dsl: &DslBlockValue) {
     html.push_str("</footer>");
 }
 
+pub fn render_component(html: &mut String, dsl: &DslBlockValue) {
+    html.push_str("<div class=\"webforge-component card\">");
+    render_children(html, dsl);
+    html.push_str("</div>");
+}
+
 pub fn dsl_to_html_inner(val: &RuntimeValue, html: &mut String) {
     if let RuntimeValue::DslBlock(dsl) = val {
         match dsl.kind.as_str() {
@@ -1789,11 +1795,7 @@ pub fn dsl_to_html_inner(val: &RuntimeValue, html: &mut String) {
             "nav" => render_nav(html, dsl),
             "header" => render_header_block(html, dsl),
             "footer" => render_footer_block(html, dsl),
-            "component" => {
-                html.push_str("<div class=\"webforge-component card\">");
-                render_children(html, dsl);
-                html.push_str("</div>");
-            }
+            "component" => render_component(html, dsl),
             "website" => {
                 render_children(html, dsl);
             }

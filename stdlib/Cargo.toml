@@ -10,7 +10,7 @@ techscript_runtime = { path = "../runtime/runtime" }
 serde_json = { workspace = true }
 serde = { workspace = true }
 indexmap = { version = "2", features = ["serde"] }
-ureq = { version = "2.10", features = ["json", "native-tls"] }
+ureq = { version = "2.10", default-features = false, features = ["json", "native-tls"] }
 toml = { workspace = true }
 rusqlite = { version = "0.40", features = ["bundled"] }
 md5 = "0.8"

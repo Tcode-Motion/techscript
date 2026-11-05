@@ -6,6 +6,7 @@
 use crate::commands::app::android::resolve_android_home;
 use crate::exit_code::ExitCode;
 use colored::Colorize;
+use std::fmt::Write;
 use std::fs;
 use std::path::PathBuf;
 use std::process::Command;
@@ -33,30 +34,33 @@ pub fn execute() -> ExitCode {
     let current_dir = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
     let mut report = String::new();
 
-    report.push_str("# TechScript 2.0 Diagnostic & Environment Report\n\n");
-    report.push_str(&format!("- **Timestamp**: {}\n", chrono_timestamp()));
-    report.push_str(&format!(
-        "- **TechScript Compiler Version**: {}\n",
+    let _ = writeln!(report, "# TechScript 2.0 Diagnostic & Environment Report\n");
+    let _ = writeln!(report, "- **Timestamp**: {}", chrono_timestamp());
+    let _ = writeln!(
+        report,
+        "- **TechScript Compiler Version**: {}",
         techscript_common::TECHSCRIPT_VERSION
-    ));
-    report.push_str(&format!(
-        "- **Working Directory**: `{}`\n",
+    );
+    let _ = writeln!(
+        report,
+        "- **Working Directory**: `{}`",
         current_dir.display()
-    ));
+    );
 
     println!("Collecting environment metadata...");
 
     // Host OS & CPU
-    report.push_str("\n## Host Environment\n");
-    report.push_str(&format!("- **OS**: {}\n", std::env::consts::OS));
-    report.push_str(&format!("- **Architecture**: {}\n", std::env::consts::ARCH));
+    let _ = writeln!(report, "\n## Host Environment");
+    let _ = writeln!(report, "- **OS**: {}", std::env::consts::OS);
+    let _ = writeln!(report, "- **Architecture**: {}", std::env::consts::ARCH);
 
     // Rust
     if let Ok(out) = Command::new("rustc").arg("--version").output() {
-        report.push_str(&format!(
-            "- **Rustc**: {}\n",
+        let _ = writeln!(
+            report,
+            "- **Rustc**: {}",
             String::from_utf8_lossy(&out.stdout).trim()
-        ));
+        );
     }
 
     // Java
@@ -66,7 +70,7 @@ pub fn execute() -> ExitCode {
             String::from_utf8_lossy(&out.stdout),
             String::from_utf8_lossy(&out.stderr)
         );
-        report.push_str(&format!("- **JDK (javac)**: {}\n", ver.trim()));
+        let _ = writeln!(report, "- **JDK (javac)**: {}", ver.trim());
     }
 
     // Gradle
@@ -76,23 +80,28 @@ pub fn execute() -> ExitCode {
             .lines()
             .find(|l| l.contains("Gradle "))
             .unwrap_or("Gradle installed");
-        report.push_str(&format!("- **Gradle**: {}\n", first.trim()));
+        let _ = writeln!(report, "- **Gradle**: {}", first.trim());
     }
 
     // Android SDK
-    report.push_str("\n## Android Toolchain\n");
+    let _ = writeln!(report, "\n## Android Toolchain");
     match resolve_android_home() {
-        Ok(sdk) => report.push_str(&format!("- **ANDROID_HOME**: `{}`\n", sdk)),
-        Err(e) => report.push_str(&format!("- **ANDROID_HOME**: Missing ({})\n", e)),
+        Ok(sdk) => {
+            let _ = writeln!(report, "- **ANDROID_HOME**: `{}`", sdk);
+        }
+        Err(e) => {
+            let _ = writeln!(report, "- **ANDROID_HOME**: Missing ({})", e);
+        }
     }
 
     // ADB
     if let Ok(out) = Command::new("adb").arg("version").output() {
         let line = String::from_utf8_lossy(&out.stdout);
-        report.push_str(&format!(
-            "- **ADB Version**: {}\n",
+        let _ = writeln!(
+            report,
+            "- **ADB Version**: {}",
             line.lines().next().unwrap_or("").trim()
-        ));
+        );
     }
 
     // Devices
@@ -102,13 +111,14 @@ pub fn execute() -> ExitCode {
         for line in text.lines() {
             if line.ends_with("device") {
                 count += 1;
-                report.push_str(&format!(
-                    "  - Device: `{}`\n",
+                let _ = writeln!(
+                    report,
+                    "  - Device: `{}`",
                     line.split_whitespace().next().unwrap_or("")
-                ));
+                );
             }
         }
-        report.push_str(&format!("- **Attached Devices**: {}\n", count));
+        let _ = writeln!(report, "- **Attached Devices**: {}", count);
     }
 
     // Save report to reports/report.md

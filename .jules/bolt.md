@@ -74,3 +74,4 @@
 ## 2026-09-28 - String Path Borrowing in std.fs Module
 **Learning:** Extracting string arguments via `try_into_string()` in standard library callbacks causes unnecessary string cloning and heap allocations even when arguments are already `RuntimeValue::Str`.
 **Action:** Borrow `&str` directly from `RuntimeValue::Str` using pattern matching rather than calling `try_into_string()` when passing string path arguments to file I/O operations.
+## 2026-11-05 - String Concatenation Optimization in Report Command\n**Learning:** Using `report.push_str(&format!(...))` inside multiple lines to build an output report string unnecessarily allocates temporary `String` objects for each formatted piece. This puts pressure on the heap and creates memory fragmentation.\n**Action:** Utilize the `std::fmt::Write` trait directly onto the mutable `String` buffer with `writeln!` or `write!` to completely bypass intermediate heap allocations when constructing large report strings.

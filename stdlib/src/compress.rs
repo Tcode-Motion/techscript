@@ -257,12 +257,61 @@ pub fn unzip_archive(archive_path: &str, dest_dir: &str) -> std::io::Result<()> 
     let file = File::open(archive_path)?;
     let mut archive = zip::ZipArchive::new(file)?;
     std::fs::create_dir_all(dest_dir)?;
+    let dest_dir_canon = std::fs::canonicalize(dest_dir)?;
 
-    // The zip crate's `extract` method already has built-in directory traversal
-    // protections which prevent absolute paths and parent directory traversals
-    // from escaping the destination directory. Therefore, we revert the manual
-    // path validation that caused a regression with uncanonicalized relative paths.
-    archive.extract(dest_dir)?;
+    for i in 0..archive.len() {
+        let mut file = archive.by_index(i)?;
+        let path = match file.enclosed_name() {
+            Some(path) => path.to_path_buf(),
+            None => continue,
+        };
+
+        let mut current = dest_dir_canon.clone();
+        for component in path.components() {
+            match component {
+                std::path::Component::Normal(name) => {
+                    current.push(name);
+                    if current.exists() {
+                        current = std::fs::canonicalize(&current)?;
+                        if !current.starts_with(&dest_dir_canon) {
+                            return Err(std::io::Error::new(
+                                std::io::ErrorKind::InvalidData,
+                                "Directory traversal detected via symlink",
+                            ));
+                        }
+                    }
+                }
+                _ => {
+                    return Err(std::io::Error::new(
+                        std::io::ErrorKind::InvalidData,
+                        "Invalid path component in archive",
+                    ));
+                }
+            }
+        }
+
+        let outpath = current;
+
+        if file.is_dir() {
+            std::fs::create_dir_all(&outpath)?;
+        } else {
+            if let Some(p) = outpath.parent() {
+                if !p.exists() {
+                    std::fs::create_dir_all(p)?;
+                }
+            }
+            let mut outfile = std::fs::File::create(&outpath)?;
+            std::io::copy(&mut file, &mut outfile)?;
+        }
+
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            if let Some(mode) = file.unix_mode() {
+                let _ = std::fs::set_permissions(&outpath, std::fs::Permissions::from_mode(mode));
+            }
+        }
+    }
     Ok(())
 }
 

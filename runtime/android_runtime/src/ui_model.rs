@@ -25,7 +25,12 @@ pub struct AppSpec {
 
 impl AppSpec {
     pub fn screen_by_id(&self, id: &str) -> Option<&Screen> {
-        self.screens.iter().find(|s| s.id == id)
+        for screen in &self.screens {
+            if screen.id == id {
+                return Some(screen);
+            }
+        }
+        None
     }
 
     /// Default spec used when app_spec.json is missing or malformed.

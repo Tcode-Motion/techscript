@@ -274,10 +274,10 @@ impl StdlibRegistry {
     }
 
     pub fn construct_std_namespace(&self) -> RuntimeValue {
-        let mut std_map = IndexMap::new();
+        let mut std_map = IndexMap::with_capacity(self.modules.len());
         for (name, module) in &self.modules {
             if let Some(sub_name) = name.strip_prefix("std.") {
-                let mut module_map = IndexMap::new();
+                let mut module_map = IndexMap::with_capacity(module.exports.len());
                 for (func_name, func) in &module.exports {
                     module_map.insert(func_name.clone(), RuntimeValue::Function(Rc::clone(func)));
                 }

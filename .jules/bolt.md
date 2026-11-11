@@ -78,3 +78,7 @@
 ## 2024-06-25 - Incorrect Micro-optimization of `iter().find()`
 **Learning:** Replaced `iter().find(...)` with a manual `for` loop in `runtime/android_runtime/src/ui_model.rs`. The code review rejected this optimization because in Rust, iterators are zero-cost abstractions and `iter().find()` is highly optimized and often compiles to the exact same or better assembly via internal iteration. Expanding it into a manual `for` loop degrades code readability and conciseness while providing zero performance benefit.
 **Action:** Never replace simple, single-pass idiomatic iterators like `.iter().find()` with manual loops, as these are zero-cost abstractions and replacing them decreases readability without any performance gain.
+
+## 2024-05-24 - String allocation optimization in stdlib strings
+**Learning:** Extracting string arguments via `try_into_string()` inside `stdlib/src/strings.rs` was unnecessarily cloning `String` objects due to passing owned values. Passing arguments by taking ownership and using `.into_string()` prevents cloning when the underlying argument is already a `RuntimeValue::Str`.
+**Action:** Replaced `.try_into_string()` with `.into_string()` after obtaining ownership of the arguments through `args.into_iter()` to remove unnecessary heap allocations and string cloning.

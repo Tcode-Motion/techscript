@@ -12,7 +12,7 @@ serde = { workspace = true }
 indexmap = { version = "2", features = ["serde"] }
 ureq = { version = "3.5", default-features = false, features = ["json", "native-tls"] }
 toml = { workspace = true }
-rusqlite = { version = "0.42", features = ["bundled"] }
+rusqlite = { version = "0.43", features = ["bundled"] }
 md5 = "0.8"
 sha2 = "0.11"
 sha-1 = "0.10.1"
@@ -30,7 +30,7 @@ shlex = "2.0"
 url = "2.5"
 base64 = "0.23"
 quick-xml = "0.42"
-qrcode = "0.14"
+qrcode = "0.15"
 notify-rust = "4.10"
 chrono = "0.4"
 csv = "1.3"
